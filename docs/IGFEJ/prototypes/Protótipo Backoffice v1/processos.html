@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IGFEJ - Processos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+      body { font-family: Inter, system-ui, Arial, sans-serif; background:#f8fafc; }
+      .badge{font-size:.75rem;line-height:1;padding:.25rem .5rem;border-radius:9999px}
+      .badge.gray{background:#f3f4f6;color:#374151}
+      .badge.green{background:#dcfce7;color:#166534}
+      .badge.red{background:#fee2e2;color:#991b1b}
+      .badge.yellow{background:#fef3c7;color:#92400e}
+      .badge.blue{background:#dbeafe;color:#1e40af}
+      .badge.purple{background:#e9d5ff;color:#5929ac}
+      .menu-panel{position:fixed;min-width:240px;background:#fff;border:1px solid #e5e7eb;border-radius:.5rem;box-shadow:0 10px 20px rgba(0,0,0,.08);display:none;z-index:2000}
+      .menu-panel a,.menu-panel button{display:flex;gap:.5rem;align-items:center;padding:.6rem .75rem;width:100%;font-size:.9rem;text-align:left}
+      .menu-panel a:hover,.menu-panel button:hover{background:#f3f4f6}
+      .gradient-bg{background:linear-gradient(135deg,#1e3a8a 0%,#1e40af 100%)}
+      .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.35);display:none;align-items:center;justify-content:center;z-index:3000}
+      /* Toasts */
+      #toastContainer{position:fixed;right:1rem;bottom:1rem;display:flex;flex-direction:column;gap:.5rem;z-index:4000}
+      .toast{display:flex;align-items:flex-start;gap:.5rem;min-width:260px;max-width:360px;background:#111827;color:#fff;border-radius:.5rem;padding:.75rem 1rem;box-shadow:0 10px 20px rgba(0,0,0,.15);opacity:.98}
+      .toast.success{background:#065f46}
+      .toast.info{background:#1f2937}
+      .toast.warn{background:#92400e}
+      .toast.error{background:#7f1d1d}
+      .toast .title{font-weight:600;font-size:.9rem}
+      .toast .msg{font-size:.85rem;opacity:.95}
+      .toast .close{margin-left:auto;opacity:.8}
+      
+    </style>
+  </head>
+  <body class="min-h-screen overflow-x-hidden">
+    <div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
+    <div class="flex">
+      <!-- Sidebar (desktop) -->
+       <aside class="hidden md:block fixed inset-y-0 left-0 w-64 z-40" aria-label="Navegação lateral">
+      <div class="h-screen overflow-y-auto flex flex-col gradient-bg text-white w-64">
+        <div class="flex items-center justify-center h-16 px-4 border-b border-blue-800">
+          <div class="flex items-center">
+            <i data-feather="layers" class="w-8 h-8 text-blue-200" aria-hidden="true"></i>
+            <span class="ml-2 text-xl font-semibold">IGFEJ</span>
+          </div>
+        </div>
+        <div class="flex flex-col flex-grow px-4 py-4 overflow-y-auto">
+          <nav class="flex-1 space-y-2">
+            <a href="index.html" class="flex items-center px-4 py-3 text-sm rounded-lg sidebar-link text-blue-100">
+              <i data-feather="home" class="w-5 h-5 mr-3" aria-hidden="true"></i>Dashboard
+            </a>
+            <a href="processos.html" aria-current="page" class="flex items-center px-4 py-3 text-sm rounded-lg sidebar-link bg-blue-800">
+              <i data-feather="file-text" class="w-5 h-5 mr-3" aria-hidden="true"></i>Processos
+            </a>
+            <a href="teams.html" class="flex items-center px-4 py-3 text-sm rounded-lg sidebar-link text-blue-100">
+              <i data-feather="users" class="w-5 h-5 mr-3" aria-hidden="true"></i>Equipas
+            </a>
+            <a href="relatorios.html" class="flex items-center px-4 py-3 text-sm rounded-lg sidebar-link text-blue-100">
+              <i data-feather="bar-chart-2" class="w-5 h-5 mr-3" aria-hidden="true"></i>Relatórios
+            </a>
+            <a href="configuracoes.html" class="flex items-center px-4 py-3 text-sm rounded-lg sidebar-link text-blue-100">
+              <i data-feather="settings" class="w-5 h-5 mr-3" aria-hidden="true"></i>Configurações
+            </a>
+          </nav>
+          <div class="mt-auto mb-4">
+            <div class="p-4 bg-blue-800 rounded-lg">
+              <h4 class="text-sm font-medium text-white">
+                Ajuda &amp; Suporte
+              </h4>
+              <p class="mt-1 text-xs text-blue-200">
+                Contacte a nossa equipa para qualquer questão.
+              </p>
+              <button
+                class="mt-2 w-full px-3 py-2 text-xs font-medium text-center text-blue-900 bg-white rounded-md"
+              >
+                Contactar Suporte
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+      <!-- Mobile drawer for nav -->
+      <div id="mobileDrawer" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/40" id="drawerBackdrop"></div>
+        <aside class="absolute left-0 top-0 h-full w-72 gradient-bg text-white shadow-xl">
+          <div class="flex items-center justify-between h-16 px-4 border-b border-blue-800">
+            <div class="flex items-center">
+              <i data-feather="scale" class="w-7 h-7 text-blue-200"></i>
+              <span class="ml-2 text-lg font-semibold">IGFEJ</span>
+            </div>
+          </div>
+          <nav class="p-4 space-y-2">
+            <a href="index.html" class="flex items-center px-4 py-3 text-sm rounded-lg sidebar-link text-blue-100">
+              <i data-feather="home" class="w-5 h-5 mr-3"></i> Dashboard
+            </a>
+            <a href="processos.html" class="flex items-center px-4 py-3 text-sm rounded-lg sidebar-link bg-blue-800">
+              <i data-feather="file-text" class="w-5 h-5 mr-3"></i> Processos
+            </a>
+            <a href="teams.html" class="flex items-center px-4 py-3 text-sm rounded-lg sidebar-link text-blue-100">
+              <i data-feather="users" class="w-5 h-5 mr-3"></i> Equipas
+            </a>
+            <a href="relatorios.html" class="flex items-center px-4 py-3 text-sm rounded-lg sidebar-link text-blue-100">
+              <i data-feather="bar-chart-2" class="w-5 h-5 mr-3"></i> Relatórios
+            </a>
+            <a href="configuracoes.html" class="flex items-center px-4 py-3 text-sm rounded-lg sidebar-link text-blue-100">
+              <i data-feather="settings" class="w-5 h-5 mr-3"></i> Configurações
+            </a>
+          </nav>
+        </aside>
+      </div>
+
+      <!-- Main -->
+      <div class="flex flex-col flex-1 overflow-hidden md:ml-64">
+        <header class="sticky top-0 z-20 flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 bg-white border-b border-gray-200">
+          <div class="flex items-center">
+            <button id="openDrawer" class="md:hidden mr-2 sm:mr-4 p-2 rounded hover:bg-gray-100" aria-label="Abrir menu">
+              <i data-feather="menu" class="w-6 h-6 text-gray-600"></i>
+            </button>
+            <h1 class="text-lg sm:text-xl font-semibold text-gray-800">Processos</h1>
+          </div>
+          <div class="flex items-center flex-wrap gap-2 sm:gap-3">
+            <div class="relative w-40 sm:w-64 order-1">
+              <i data-feather="search" class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+              <input id="searchInput" type="text" placeholder="Pesquisar..." class="w-full pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"/>
+            </div>
+            <button id="btnExport" class="order-3 sm:order-2 inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+              <i data-feather="download" class="w-4 h-4"></i><span class="hidden sm:inline">Exportar CSV</span>
+            </button>
+            <button id="btnNovo" class="order-2 sm:order-3 inline-flex items-center gap-2 px-3 sm:px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+              <i data-feather="plus" class="w-4 h-4"></i><span class="hidden sm:inline">Novo Processo</span>
+            </button>
+          </div>
+        </header>
+
+        <!-- Filtros -->
+        <section class="p-4 sm:p-6 bg-gray-50 border-b border-gray-200">
+          <div class="grid grid-cols-1 md:grid-cols-6 gap-4 items-end">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+              <select id="filterTipo" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                <option value="">Todos</option>
+                <option>Cível</option>
+                <option>Comercial</option>
+                <option>Familiar</option>
+                <option>Fiscal</option>
+                <option>Penal</option>
+                <option>Internacional</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Data (de)</label>
+              <input id="filterDe" type="date" class="w-full px-3 py-2 border border-gray-300 rounded-md"/>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Data (até)</label>
+              <input id="filterAte" type="date" class="w-full px-3 py-2 border border-gray-300 rounded-md"/>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Estado da versão</label>
+              <select id="filterVersaoEstado" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                <option value="">Todos</option>
+                <option>Rascunho</option>
+                <option>Em revisão</option>
+                <option>Pendente</option>
+                <option>Aprovada</option>
+              </select>
+            </div>
+            <div class="md:col-span-2 flex items-end">
+              <div class="flex gap-3 w-full">
+                <button id="applyFilters" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">Aplicar</button>
+                <button id="clearFilters" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">Limpar</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Tabela -->
+        <main class="flex-1 overflow-y-auto p-4 sm:p-6 bg-gray-50">
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+            <div class="overflow-x-auto" style="overflow-y: visible">
+              <table id="tblProcessos" class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th data-sort="id" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer">Processo</th>
+                    <th data-sort="tipo" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer">Tipo</th>
+                    <th data-sort="tribunal" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer hidden sm:table-cell">Tribunal</th>
+                    <th data-sort="data" class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase cursor-pointer">Data</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Versão ativa</th>
+                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase hidden md:table-cell">Estado da versão</th>
+                    <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Ações</th>
+                  </tr>
+                </thead>
+                <tbody id="tbodyProcessos" class="divide-y divide-gray-200"></tbody>
+              </table>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Modal: Novo Processo -->
+    <div id="novoProcessoModal" class="modal-backdrop" aria-hidden="true">
+      <div class="bg-white rounded-xl shadow-xl w-[560px] max-w-[95vw] p-5" role="dialog" aria-modal="true" aria-labelledby="newProcTitle">
+        <div class="flex items-center justify-between mb-3">
+          <h4 id="newProcTitle" class="text-base font-semibold text-gray-900">Novo Processo</h4>
+          <button class="p-2 rounded hover:bg-gray-100" onclick="toggleNovoModal(false)" aria-label="Fechar">
+            <i data-feather="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+        <form id="formNovo" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Identificador</label>
+            <input name="id" required class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="PROC-2025-0007"/>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Tipo</label>
+            <select name="tipo" class="w-full px-3 py-2 border border-gray-300 rounded-md" required>
+              <option>Cível</option><option>Comercial</option><option>Familiar</option><option>Fiscal</option><option>Penal</option><option>Internacional</option>
+            </select>
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Tribunal</label>
+            <input name="tribunal" required class="w-full px-3 py-2 border border-gray-300 rounded-md" placeholder="Tribunal Judicial de Lisboa"/>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Estado da versão</label>
+            <select name="estado" class="w-full px-3 py-2 border border-gray-300 rounded-md" required>
+              <option>Rascunho</option><option>Em revisão</option><option>Pendente</option><option>Aprovada</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Data</label>
+            <input name="data" type="date" required class="w-full px-3 py-2 border border-gray-300 rounded-md"/>
+          </div>
+          <div class="md:col-span-2 flex justify-end gap-2 mt-2">
+            <button type="button" onclick="toggleNovoModal(false)" class="px-4 py-2 bg-gray-200 rounded-md">Cancelar</button>
+            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md">Criar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal compartilhado: Criar Versão -->
+    <div id="modalCriarVersao" class="modal-backdrop" aria-hidden="true">
+      <div class="bg-white rounded-xl shadow-xl w-[560px] max-w-[95vw] p-5" role="dialog" aria-modal="true" aria-labelledby="criarVersaoTitle">
+        <div class="flex items-center justify-between mb-3">
+          <h4 id="criarVersaoTitle" class="text-base font-semibold text-gray-900">Criar nova versão</h4>
+          <button class="p-2 rounded hover:bg-gray-100" onclick="IGFEJ.closeCreateVersion()" aria-label="Fechar">
+            <i data-feather="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">SemVer</label>
+            <input id="cvSemver" class="w-full border rounded-md p-2" placeholder="ex.: 1.1.0"/>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Estado inicial</label>
+            <select id="cvEstado" class="w-full border rounded-md p-2">
+              <option>Rascunho</option>
+              <option>Em revisão</option>
+            </select>
+          </div>
+          <div class="md:col-span-3">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Resumo das alterações (changelog)</label>
+            <textarea id="cvChangelog" rows="3" class="w-full border rounded-md p-2" placeholder="Breve descrição..."></textarea>
+          </div>
+        </div>
+        <div class="mt-4 flex items-center justify-end gap-2">
+          <button class="px-3 py-2 text-sm bg-gray-200 rounded-md" onclick="IGFEJ.closeCreateVersion()">Cancelar</button>
+          <button class="px-3 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700" onclick="IGFEJ.confirmCreateVersion()">
+            <i data-feather="plus" class="inline w-4 h-4 mr-1"></i> Criar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="toastTemplate" class="hidden">
+      <div class="toast info">
+        <div class="content">
+          <div class="title">Informação</div>
+          <div class="msg">Ação executada.</div>
+        </div>
+        <button class="close" aria-label="Fechar" onclick="this.parentElement.remove()">
+          <i data-feather="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+
+    <script>
+      // ===== Shared utilities (namespace) =====
+      window.IGFEJ = (function(){
+        const STORE_KEY = "igfej_processos_v5";
+        const HIST_KEY = "igfej_historico_v5";
+        const load = (k, f) => { try { return JSON.parse(localStorage.getItem(k)) || f; } catch(e){ return f; } };
+        const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+
+        // Toasts
+        function showToast(message, type="info", titleMap){
+          const container = document.getElementById("toastContainer");
+          const t = document.getElementById("toastTemplate").firstElementChild.cloneNode(true);
+          t.className = "toast " + (type||"info");
+          const title = (titleMap && titleMap[type]) || (type==="success"?"Sucesso": type==="error"?"Erro": type==="warn"?"Atenção":"Informação");
+          t.querySelector(".title").textContent = title;
+          t.querySelector(".msg").textContent = message;
+          container.appendChild(t);
+          feather.replace();
+          setTimeout(()=>{ t.style.opacity=".0"; setTimeout(()=> t.remove(), 300); }, 2600);
+        }
+
+        let currentProcIdForCreate = null;
+
+        function openCreateVersion(procId){
+          currentProcIdForCreate = procId;
+          document.getElementById("cvSemver").value = "";
+          document.getElementById("cvEstado").value = "Rascunho";
+          document.getElementById("cvChangelog").value = "";
+          const m = document.getElementById("modalCriarVersao");
+          m.style.display = "flex";
+          m.setAttribute("aria-hidden", "false");
+        }
+        function closeCreateVersion(){
+          const m = document.getElementById("modalCriarVersao");
+          m.style.display = "none";
+          m.setAttribute("aria-hidden", "true");
+        }
+        function confirmCreateVersion(){
+          const semv = document.getElementById("cvSemver").value.trim();
+          const est = document.getElementById("cvEstado").value;
+          const chg = document.getElementById("cvChangelog").value.trim();
+          if(!semv){ showToast("Indique a SemVer.", "warn"); return; }
+
+          const processos = load(STORE_KEY, []);
+          const historico = load(HIST_KEY, {});
+          const proc = processos.find(p=>p.id===currentProcIdForCreate);
+          if(!proc){ showToast("Processo não encontrado.", "error"); return; }
+
+          proc.versoes = proc.versoes || [];
+          proc.versoes.push({ v: semv, status: est, autor:"Utilizador", criadoEm: new Date().toISOString(), changelog: chg || "-" });
+
+          historico[currentProcIdForCreate] = historico[currentProcIdForCreate] || [];
+          historico[currentProcIdForCreate].push({ evento: "Criada versão " + semv + " (" + est + ")", dt: new Date().toISOString() });
+
+          save(STORE_KEY, processos);
+          save(HIST_KEY, historico);
+
+          closeCreateVersion();
+          showToast("Versão criada.", "success");
+          if (typeof window.onVersionCreated === "function") window.onVersionCreated(currentProcIdForCreate);
+          if (typeof window.applyFilters === "function") window.applyFilters();
+        }
+
+        function exportJSON(procId){
+          const processos = load(STORE_KEY, []);
+          const proc = processos.find(p=>p.id===procId);
+          if(!proc){ showToast("Processo não encontrado.", "error"); return; }
+          const blob = new Blob([JSON.stringify(proc, null, 2)], {type:"application/json"});
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a"); a.href=url; a.download= proc.id + ".json"; a.click(); URL.revokeObjectURL(url);
+          showToast("Exportação iniciada.", "info");
+        }
+
+        return { openCreateVersion, closeCreateVersion, confirmCreateVersion, exportJSON, showToast };
+      })();
+
+      // Icons
+      feather.replace();
+
+      // Store keys
+      const STORE_KEY = "igfej_processos_v5";
+      const HIST_KEY = "igfej_historico_v5";
+
+      // Utils
+      const nowISO = () => new Date().toISOString();
+      const load = (k, f) => { try { return JSON.parse(localStorage.getItem(k)) || f; } catch(e){ return f; } };
+      const save = (k, v) => localStorage.setItem(k, JSON.stringify(v));
+      const byNewest = (a,b) => (a.criadoEm < b.criadoEm ? 1 : -1);
+      const formatDate = (d) => { const [y,m,da] = d.split("-"); return da + "/" + m + "/" + y; };
+
+      // Seed
+      const seed = () => [
+        { id:"PROC-2025-0456", tipo:"Cível", tribunal:"Lisboa", data:"2025-06-15",
+          versoes:[
+            { v:"1.0.0", status:"Aprovada", autor:"Ana", criadoEm:"2025-06-01T09:00:00Z", changelog:"Publicação inicial."},
+            { v:"1.1.0", status:"Em revisão", autor:"Ana", criadoEm:"2025-06-12T10:00:00Z", changelog:"Atualização da peça A."}
+          ],
+          versaoAtiva:"1.0.0"
+        },
+        { id:"PROC-2025-0455", tipo:"Comercial", tribunal:"Porto", data:"2025-06-14",
+          versoes:[ { v:"0.1.0", status:"Rascunho", autor:"Carlos", criadoEm:"2025-06-10T11:00:00Z", changelog:"Estrutura inicial." } ],
+          versaoAtiva:"0.1.0"
+        }
+      ];
+
+      let processos = load(STORE_KEY, null);
+if (!Array.isArray(processos) || processos.length === 0) {
+  processos = seed();
+  save(STORE_KEY, processos);
+}
+
+let historico = load(HIST_KEY, null);
+if (!historico || typeof historico !== 'object') {
+  historico = {};
+  save(HIST_KEY, historico);
+}
+
+      // Elements
+      const tbody = document.getElementById("tbodyProcessos");
+      const searchInput = document.getElementById("searchInput");
+      const filterTipo = document.getElementById("filterTipo");
+      const filterDe = document.getElementById("filterDe");
+      const filterAte = document.getElementById("filterAte");
+      const filterVersaoEstado = document.getElementById("filterVersaoEstado");
+
+      let sortKey = null, sortAsc = true;
+
+      function versaoBadge(status){
+        const map = { "Rascunho":"gray", "Em revisão":"purple", "Pendente":"yellow", "Aprovada":"green" };
+        const cls = map[status] || "gray";
+        return `<span class="badge ${cls}">${status}</span>`;
+      }
+
+      function render(rows){
+        tbody.innerHTML = "";
+        rows.forEach(r => {
+          const ativa = r.versoes.find(x=>x.v===r.versaoAtiva) || r.versoes[0];
+          const detalheUrl = `processo-detalhe.html?id=${encodeURIComponent(r.id)}`;
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td class="px-4 py-2 text-sm font-medium text-gray-900">
+              <a href="${detalheUrl}" class="text-blue-600 hover:text-blue-900">${r.id}</a>
+            </td>
+            <td class="px-4 py-2 text-sm text-gray-700">${r.tipo}</td>
+            <td class="px-4 py-2 text-sm text-gray-700 hidden sm:table-cell">Tribunal Judicial de ${r.tribunal}</td>
+            <td class="px-4 py-2 text-sm text-gray-700">${formatDate(r.data)}</td>
+            <td class="px-4 py-2 text-sm">${r.versaoAtiva}</td>
+            <td class="px-4 py-2 text-sm hidden md:table-cell">${versaoBadge(ativa.status)}</td>
+            <td class="px-4 py-2 text-right">
+              <div class="inline-flex items-center gap-1 menu relative">
+                <a class="px-2 py-1 rounded hover:bg-gray-100" title="Abrir em nova aba" target="_blank" rel="noopener" href="${detalheUrl}#dados">
+                  <i data-feather="external-link" class="w-4 h-4"></i>
+                </a>
+                <button class="px-2 py-1 rounded hover:bg-gray-100" aria-haspopup="true" aria-expanded="false" onclick="toggleRowMenu(event)">
+                  <i data-feather="more-vertical" class="w-4 h-4"></i>
+                </button>
+                <div class="menu-panel" role="menu">
+                  <a role="menuitem" href="${detalheUrl}#dados"><i data-feather="edit-2" class="w-4 h-4"></i> Editar</a>
+                  <a role="menuitem" href="${detalheUrl}#conteudo"><i data-feather="message-square" class="w-4 h-4"></i> Revisar</a>
+                  <a role="menuitem" href="${detalheUrl}#versoes"><i data-feather="git-pull-request" class="w-4 h-4"></i> Gerir versões</a>
+                  <a role="menuitem" href="${detalheUrl}#historico"><i data-feather="clock" class="w-4 h-4"></i> Ver histórico</a>
+                  <a role="menuitem" href="${detalheUrl}#comparar"><i data-feather="shuffle" class="w-4 h-4"></i> Comparar</a>
+                  <a role="menuitem" href="javascript:void(0)" onclick="IGFEJ.openCreateVersion('${r.id}')"><i data-feather="plus" class="w-4 h-4"></i> Criar versão</a>
+                  <a role="menuitem" href="javascript:void(0)" onclick="IGFEJ.exportJSON('${r.id}')"><i data-feather="download" class="w-4 h-4"></i> Exportar JSON</a>
+                  <button role="menuitem" onclick="excluirProcesso('${r.id}')" class="text-red-600"><i data-feather="trash-2" class="w-4 h-4"></i> Excluir</button>
+                </div>
+              </div>
+            </td>`;
+          tbody.appendChild(tr);
+        });
+        feather.replace();
+      }
+
+      function toggleRowMenu(e){
+        document.querySelectorAll(".menu-panel").forEach(p=>p.style.display="none");
+        document.querySelectorAll(".menu > button[aria-expanded]").forEach(b=>b.setAttribute("aria-expanded","false"));
+
+        const btn = e.currentTarget;
+        const panel = btn.parentElement.querySelector(".menu-panel");
+
+        const rect = btn.getBoundingClientRect();
+        const gap = 8;
+        panel.style.display = "block";
+        panel.style.left = Math.max(8, Math.min(window.innerWidth - 248, rect.right - 248)) + "px";
+        panel.style.top = (rect.bottom + gap) + "px";
+        btn.setAttribute("aria-expanded","true");
+
+        const onDoc = (ev)=>{
+          if(ev.key==="Escape" || (!panel.contains(ev.target) && !btn.contains(ev.target))){
+            panel.style.display = "none";
+            btn.setAttribute("aria-expanded","false");
+            document.removeEventListener("click", onDoc);
+            document.removeEventListener("keydown", onDoc);
+          }
+        };
+        document.addEventListener("click", onDoc);
+        document.addEventListener("keydown", onDoc);
+      }
+
+      function applyFilters(){
+        const q = (searchInput.value||"").toLowerCase();
+        const tipo = filterTipo.value;
+        const de = filterDe.value;
+        const ate = filterAte.value;
+        const vstatus = filterVersaoEstado.value;
+
+        let rows = processos.filter(p => {
+          const ativa = p.versoes.find(x=>x.v===p.versaoAtiva) || p.versoes[0];
+          const text = (p.id + p.tipo + p.tribunal + p.versaoAtiva + (ativa?.status||"")).toLowerCase();
+          const matchQ = text.includes(q);
+          const matchTipo = !tipo || p.tipo === tipo;
+          const matchDe = !de || p.data >= de;
+          const matchAte = !ate || p.data <= ate;
+          const matchV = !vstatus || ativa?.status === vstatus;
+          return matchQ && matchTipo && matchDe && matchAte && matchV;
+        });
+
+        if (sortKey){
+          rows.sort((a,b)=>{
+            let va=a[sortKey], vb=b[sortKey];
+            if (sortKey==="data") return sortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+            return sortAsc ? (""+va).localeCompare(""+vb) : (""+vb).localeCompare(""+va);
+          });
+        }
+        render(rows);
+      }
+      window.applyFilters = applyFilters;
+
+      document.querySelectorAll("th[data-sort]").forEach(th => {
+        th.addEventListener("click", ()=>{
+          const key = th.getAttribute("data-sort");
+          if (sortKey === key){ sortAsc = !sortAsc; } else { sortKey = key; sortAsc = true; }
+          applyFilters();
+        });
+      });
+
+      document.getElementById("applyFilters").addEventListener("click", applyFilters);
+      document.getElementById("clearFilters").addEventListener("click", ()=>{
+        searchInput.value=""; filterTipo.value=""; filterDe.value=""; filterAte.value=""; filterVersaoEstado.value="";
+        sortKey=null; sortAsc=true; render(processos);
+      });
+      searchInput.addEventListener("input", applyFilters);
+
+      document.getElementById("btnExport").addEventListener("click", ()=>{
+        const headers = ["Processo","Tipo","Tribunal","Data","Versão ativa","Estado"];
+        const rows = [headers];
+        (document.querySelectorAll("#tbodyProcessos tr") || []).forEach(tr=>{
+          const tds = tr.querySelectorAll("td");
+          rows.push([tds[0].innerText, tds[1].innerText, tds[2].innerText, tds[3].innerText, tds[4].innerText, (tds[5]?.innerText||"")]);
+        });
+        const csv = rows.map(r=>r.map(v=>`"${(v||"").replace(/"/g,'""')}"`).join(",")).join("\n");
+        const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a"); a.href=url; a.download="processos.csv"; a.click(); URL.revokeObjectURL(url);
+        IGFEJ.showToast("Exportação CSV gerada.", "info");
+      });
+
+      // Mobile nav open/close
+      document.getElementById("openDrawer")?.addEventListener("click", ()=>document.getElementById("mobileDrawer").classList.remove("hidden"));
+      document.getElementById("drawerBackdrop")?.addEventListener("click", ()=>document.getElementById("mobileDrawer").classList.add("hidden"));
+
+      // Novo Processo modal
+      function toggleNovoModal(show){
+        const el = document.getElementById("novoProcessoModal");
+        if (show===false) { el.style.display = "none"; el.classList.add("hidden"); el.setAttribute("aria-hidden","true"); return; }
+        if (show===true) { el.style.display = "flex";
+        el.classList.remove("hidden"); el.setAttribute("aria-hidden","false"); }
+      }
+      document.getElementById("btnNovo").addEventListener("click", ()=>toggleNovoModal(true));
+      document.getElementById("formNovo").addEventListener("submit", (e)=>{
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const id = fd.get("id").trim();
+        if (!id) return;
+        const novo = {
+          id,
+          tipo: fd.get("tipo"),
+          tribunal: fd.get("tribunal"),
+          data: fd.get("data"),
+          versoes: [ { v:"0.1.0", status:"Rascunho", autor:"Utilizador", criadoEm: nowISO(), changelog:"Criação do processo" } ],
+          versaoAtiva: "0.1.0"
+        };
+        processos.push(novo);
+        save(STORE_KEY, processos);
+        toggleNovoModal(false);
+        e.target.reset();
+        render(processos);
+        IGFEJ.showToast("Processo criado.", "success");
+      });
+
+      // Excluir processo + todas as versões
+      function excluirProcesso(pid){
+        if(!confirm("Excluir o processo " + pid + " e todas as suas versões? Esta ação é irreversível.")) return;
+        const idx = processos.findIndex(p=>p.id===pid);
+        if (idx>=0){
+          processos.splice(idx,1);
+          save(STORE_KEY, processos);
+          try {
+            const hist = load("igfej_historico_v5", {});
+            delete hist[pid];
+            save("igfej_historico_v5", hist);
+
+            const comm = load("igfej_comentarios_v5", {});
+            delete comm[pid];
+            save("igfej_comentarios_v5", comm);
+
+            const cont = load("igfej_conteudo_v5", {});
+            const cleaned = Object.fromEntries(Object.entries(cont).filter(([k]) => !k.startsWith(pid + "#")));
+            save("igfej_conteudo_v5", cleaned);
+          } catch(e){}
+          applyFilters();
+          IGFEJ.showToast("Processo excluído.", "success");
+        }
+      }
+      window.excluirProcesso = excluirProcesso;
+
+      // Initial render
+      render(processos);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IGFEJ - Relatórios</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f8fafc;
+      }
+      .gradient-bg {
+        background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+      }
+      .sidebar-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+      .tooltip {
+        position: fixed;
+        pointer-events: none;
+        z-index: 50;
+      }
+      
+    </style>
+  </head>
+  <body class="min-h-screen overflow-x-hidden">
+    <div class="flex">
+      <!-- Sidebar (desktop) -->
+      <aside class="hidden md:block fixed inset-y-0 left-0 w-64 z-40">
+        <div
+          class="h-screen overflow-y-auto flex flex-col gradient-bg text-white w-64"
+        >
+          <div
+            class="flex items-center justify-center h-16 px-4 border-b border-blue-800"
+          >
+            <div class="flex items-center">
+              <i data-feather="layers" class="w-8 h-8 text-blue-200"></i>
+              <span class="ml-2 text-xl font-semibold">IGFEJ</span>
+            </div>
+          </div>
+          <div class="flex flex-col flex-grow px-4 py-4 overflow-y-auto">
+            <nav class="flex-1 space-y-2">
+              <a
+                href="index.html"
+                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-blue-100"
+              >
+                <i data-feather="home" class="w-5 h-5 mr-3"></i> Dashboard
+              </a>
+              <a
+                href="processos.html"
+                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-blue-100"
+              >
+                <i data-feather="file-text" class="w-5 h-5 mr-3"></i> Processos
+              </a>
+              <a
+                href="teams.html"
+                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-blue-100"
+              >
+                <i data-feather="users" class="w-5 h-5 mr-3"></i> Equipas
+              </a>
+              <a
+                href="relatorios.html"
+                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-white bg-blue-800"
+              >
+                <i data-feather="bar-chart-2" class="w-5 h-5 mr-3"></i>
+                Relatórios
+              </a>
+              <a
+                href="configuracoes.html"
+                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-blue-100"
+              >
+                <i data-feather="settings" class="w-5 h-5 mr-3"></i>
+                Configurações
+              </a>
+            </nav>
+            <div class="mt-auto mb-4">
+              <div class="p-4 bg-blue-800 rounded-lg">
+                <h4 class="text-sm font-medium text-white">
+                  Ajuda &amp; Suporte
+                </h4>
+                <p class="mt-1 text-xs text-blue-200">
+                  Contacte a nossa equipa para qualquer questão.
+                </p>
+                <button
+                  class="mt-2 w-full px-3 py-2 text-xs font-medium text-center text-blue-900 bg-white rounded-md"
+                >
+                  Contactar Suporte
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Mobile drawer -->
+      <div id="mobileDrawer" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/40" id="drawerBackdrop"></div>
+        <aside
+          class="absolute left-0 top-0 h-full w-72 gradient-bg text-white shadow-xl"
+        >
+          <div
+            class="flex items-center justify-between h-16 px-4 border-b border-blue-800"
+          >
+            <div class="flex items-center">
+              <i data-feather="scale" class="w-7 h-7 text-blue-200"></i>
+              <span class="ml-2 text-lg font-semibold">IGFEJ</span>
+            </div>
+            <button
+              id="closeDrawer"
+              class="p-2 rounded hover:bg-white/10"
+              aria-label="Fechar menu"
+            >
+              <i data-feather="x" class="w-5 h-5"></i>
+            </button>
+          </div>
+          <nav class="p-4 space-y-2">
+            <a
+              href="index.html"
+              class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-blue-100"
+            >
+              <i data-feather="home" class="w-5 h-5 mr-3"></i> Dashboard
+            </a>
+            <a
+              href="processos.html"
+              class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-blue-100"
+            >
+              <i data-feather="file-text" class="w-5 h-5 mr-3"></i> Processos
+            </a>
+            <a
+              href="teams.html"
+              class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-blue-100"
+            >
+              <i data-feather="users" class="w-5 h-5 mr-3"></i> Equipas
+            </a>
+            <a
+              href="relatorios.html"
+              class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-white bg-blue-800"
+            >
+              <i data-feather="bar-chart-2" class="w-5 h-5 mr-3"></i> Relatórios
+            </a>
+            <a
+              href="configuracoes.html"
+              class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-blue-100"
+            >
+              <i data-feather="settings" class="w-5 h-5 mr-3"></i> Configurações
+            </a>
+          </nav>
+        </aside>
+      </div>
+
+      <!-- Main content -->
+      <div class="flex flex-col flex-1 overflow-hidden md:ml-64">
+        <!-- Top bar -->
+        <header
+          class="sticky top-0 z-20 flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200"
+        >
+          <div class="flex items-center">
+            <button
+              id="openDrawer"
+              class="md:hidden mr-4 p-2 rounded hover:bg-gray-100"
+              aria-label="Abrir menu"
+            >
+              <i data-feather="menu" class="w-6 h-6 text-gray-600"></i>
+            </button>
+            <h1 class="text-xl font-semibold text-gray-800">Relatórios</h1>
+          </div>
+          <div class="flex items-center gap-3">
+            <button
+              id="btnGerar"
+              class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              <i data-feather="file-plus" class="w-4 h-4"></i> Gerar Relatório
+            </button>
+            <button
+              id="btnExportPDF"
+              class="inline-flex items-center gap-2 px-4 py-2 bg-gray-800 text-white rounded-lg hover:bg-black"
+            >
+              <i data-feather="download" class="w-4 h-4"></i> Exportar PDF
+            </button>
+            <button
+              id="btnExportCSV"
+              class="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            >
+              <i data-feather="download" class="w-4 h-4"></i> Exportar CSV
+            </button>
+          </div>
+        </header>
+
+        <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+          <!-- Builder -->
+          <section
+            class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6"
+          >
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">
+              Construtor de Relatórios
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Período</label
+                >
+                <select id="periodo" class="w-full px-3 py-2 border rounded-md">
+                  <option value="30">Últimos 30 dias</option>
+                  <option value="90">Últimos 90 dias</option>
+                  <option value="365">Últimos 12 meses</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Tipo de Processo</label
+                >
+                <select
+                  id="tipoProc"
+                  class="w-full px-3 py-2 border rounded-md"
+                >
+                  <option value="">Todos</option>
+                  <option value="Cível">Cível</option>
+                  <option value="Comercial">Comercial</option>
+                  <option value="Familiar">Familiar</option>
+                  <option value="Fiscal">Fiscal</option>
+                  <option value="Penal">Penal</option>
+                  <option value="Internacional">Internacional</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Métrica</label
+                >
+                <select id="metrica" class="w-full px-3 py-2 border rounded-md">
+                  <option value="total">Total</option>
+                  <option value="concluidos">Concluídos</option>
+                  <option value="pendentes">Pendentes</option>
+                  <option value="analise">Em análise</option>
+                  <option value="sla">Tempo médio (dias)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1"
+                  >Agrupamento</label
+                >
+                <select
+                  id="grouping"
+                  class="w-full px-3 py-2 border rounded-md"
+                >
+                  <option value="auto">Automático</option>
+                  <option value="dia">Dia</option>
+                  <option value="semana">Semana</option>
+                  <option value="mes">Mês</option>
+                </select>
+              </div>
+              <div class="flex items-end">
+                <button
+                  id="btnAplicar"
+                  class="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                >
+                  Aplicar
+                </button>
+              </div>
+            </div>
+            <div class="mt-3 flex items-center gap-4 text-sm">
+              <div class="flex items-center gap-2">
+                <span
+                  class="w-3 h-3 rounded-sm bg-blue-600 inline-block"
+                ></span>
+                <span>Em análise</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span
+                  class="w-3 h-3 rounded-sm bg-green-600 inline-block"
+                ></span>
+                <span>Concluídos</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span
+                  class="w-3 h-3 rounded-sm bg-yellow-500 inline-block"
+                ></span>
+                <span>Pendentes</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Charts -->
+          <section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Stacked Bars by Type -->
+            <div
+              class="bg-white rounded-xl shadow-sm border border-gray-100 p-6"
+            >
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold text-gray-900">
+                  Processos por Tipo
+                </h3>
+                <div class="text-sm text-gray-500" id="chartPeriodoLabel">
+                  Últimos 30 dias
+                </div>
+              </div>
+              <div
+                id="chartBars"
+                class="w-full h-64 flex items-end gap-4"
+              ></div>
+            </div>
+
+            <!-- Time Series -->
+            <div
+              class="bg-white rounded-xl shadow-sm border border-gray-100 p-6"
+            >
+              <div class="flex items-center justify-between mb-1">
+                <h3 class="text-lg font-semibold text-gray-900">Evolução</h3>
+                <div class="text-sm text-gray-500" id="chartLineLabel">—</div>
+              </div>
+              <svg
+                id="chartLine"
+                viewBox="0 0 680 280"
+                class="w-full h-72"
+              ></svg>
+              <div
+                class="text-xs text-gray-500 mt-1"
+                id="chartLineLegend"
+              ></div>
+            </div>
+          </section>
+
+          <!-- Tabela resumo -->
+          <section
+            class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mt-6"
+          >
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">Resumo</h3>
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                  <tr>
+                    <th
+                      class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"
+                    >
+                      Tipo
+                    </th>
+                    <th
+                      class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"
+                    >
+                      Total
+                    </th>
+                    <th
+                      class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"
+                    >
+                      Concluídos
+                    </th>
+                    <th
+                      class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"
+                    >
+                      Pendentes
+                    </th>
+                    <th
+                      class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"
+                    >
+                      Em análise
+                    </th>
+                    <th
+                      class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"
+                    >
+                      Tempo médio
+                    </th>
+                  </tr>
+                </thead>
+                <tbody
+                  id="tbodyResumo"
+                  class="divide-y divide-gray-200"
+                ></tbody>
+              </table>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <div
+      id="tooltip"
+      class="tooltip hidden rounded-md bg-black text-white text-xs px-2 py-1"
+    ></div>
+
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+      // ---------- Deterministic synthetic data (last 18 months, daily) ----------
+      const TIPOS = [
+        "Cível",
+        "Comercial",
+        "Familiar",
+        "Fiscal",
+        "Penal",
+        "Internacional",
+      ];
+
+      function hashCode(str) {
+        let h = 0;
+        for (let i = 0; i < str.length; i++) {
+          h = (h << 5) - h + str.charCodeAt(i);
+          h |= 0;
+        }
+        return h >>> 0;
+      }
+      function prng(seed) {
+        // xorshift32
+        let x = seed || 123456789;
+        return function () {
+          x ^= x << 13;
+          x ^= x >>> 17;
+          x ^= x << 5;
+          return (x >>> 0) / 4294967296;
+        };
+      }
+
+      function dailyFor(dateStr, tipo) {
+        // stable number per day+tipo
+        const seed = hashCode(dateStr + "|" + tipo);
+        const rnd = prng(seed);
+        const base = 20 + Math.floor(rnd() * 50); // 20..69
+        const concluidos = Math.floor(base * (0.35 + rnd() * 0.35)); // ~35%-70%
+        const pendentes = Math.floor((base - concluidos) * (0.4 + rnd() * 0.3)); // share of remaining
+        const analise = Math.max(0, base - concluidos - pendentes);
+        const sla = 10 + Math.floor(rnd() * 25); // 10..35
+        return { total: base, concluidos, pendentes, analise, sla };
+      }
+
+      function dateToISO(d) {
+        return d.toISOString().slice(0, 10);
+      }
+      function addDays(d, n) {
+        const nd = new Date(d);
+        nd.setDate(nd.getDate() + n);
+        return nd;
+      }
+
+      // Build list of days for 18 months (~548 days)
+      const TODAY = new Date();
+      const START_ALL = addDays(TODAY, -548);
+      const ALL_DAYS = [];
+      for (let d = new Date(START_ALL); d <= TODAY; d = addDays(d, 1)) {
+        ALL_DAYS.push(dateToISO(d));
+      }
+
+      // ---------- Aggregation helpers ----------
+      function aggregateRange(daysBack, tipoFilter) {
+        const start = addDays(TODAY, -daysBack + 1); // inclusive
+        const set = ALL_DAYS.filter((ds) => new Date(ds) >= start);
+        const byTipo = {};
+        TIPOS.forEach(
+          (t) =>
+            (byTipo[t] = {
+              total: 0,
+              concluidos: 0,
+              pendentes: 0,
+              analise: 0,
+              slaSum: 0,
+              slaCount: 0,
+            })
+        );
+
+        set.forEach((ds) => {
+          TIPOS.forEach((t) => {
+            if (tipoFilter && t !== tipoFilter) return;
+            const v = dailyFor(ds, t);
+            const a = byTipo[t];
+            a.total += v.total;
+            a.concluidos += v.concluidos;
+            a.pendentes += v.pendentes;
+            a.analise += v.analise;
+            a.slaSum += v.sla * v.total;
+            a.slaCount += v.total;
+          });
+        });
+
+        // Compute overall sums (for line series when tipo=Todos)
+        const overall = {
+          total: 0,
+          concluidos: 0,
+          pendentes: 0,
+          analise: 0,
+          sla: 0,
+        };
+        TIPOS.forEach((t) => {
+          overall.total += byTipo[t].total;
+          overall.concluidos += byTipo[t].concluidos;
+          overall.pendentes += byTipo[t].pendentes;
+          overall.analise += byTipo[t].analise;
+        });
+        overall.sla = Math.round(
+          TIPOS.reduce((acc, t) => acc + byTipo[t].slaSum, 0) /
+            Math.max(
+              1,
+              TIPOS.reduce((acc, t) => acc + byTipo[t].slaCount, 0)
+            )
+        );
+
+        return { byTipo, overall, start };
+      }
+
+      function groupSeries(daysBack, tipoFilter, metric, groupingSel) {
+        const start = addDays(TODAY, -daysBack + 1);
+        const rows = [];
+        const group =
+          groupingSel === "auto"
+            ? daysBack <= 30
+              ? "dia"
+              : daysBack <= 120
+              ? "semana"
+              : "mes"
+            : groupingSel;
+
+        if (group === "dia") {
+          for (let d = new Date(start); d <= TODAY; d = addDays(d, 1)) {
+            const ds = dateToISO(d);
+            let val = 0,
+              tot = 0;
+            if (tipoFilter) {
+              const v = dailyFor(ds, tipoFilter);
+              val = metric === "sla" ? v.sla : v[metric];
+              tot = v.total;
+            } else {
+              TIPOS.forEach((t) => {
+                const v = dailyFor(ds, t);
+                val += metric === "sla" ? v.sla * v.total : v[metric];
+                tot += v.total;
+              });
+              if (metric === "sla") val = Math.round(val / Math.max(1, tot));
+            }
+            rows.push({ label: ds.slice(5), value: val }); // MM-DD
+          }
+        } else if (group === "semana") {
+          // ISO week grouping
+          function isoWeek(d) {
+            const dt = new Date(d);
+            dt.setHours(0, 0, 0, 0);
+            // Thursday in current week decides the year.
+            dt.setDate(dt.getDate() + 3 - ((dt.getDay() + 6) % 7));
+            const week1 = new Date(dt.getFullYear(), 0, 4);
+            return (
+              1 +
+              Math.round(
+                ((dt - week1) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7
+              )
+            );
+          }
+          const bucket = {};
+          for (let d = new Date(start); d <= TODAY; d = addDays(d, 1)) {
+            const year = d.getFullYear();
+            const wk = isoWeek(d);
+            const key = year + "-W" + ("" + wk).padStart(2, "0");
+            if (!bucket[key]) bucket[key] = { acc: 0, tot: 0, days: 0 };
+            if (tipoFilter) {
+              const v = dailyFor(dateToISO(d), tipoFilter);
+              if (metric === "sla") {
+                bucket[key].acc += v.sla * v.total;
+                bucket[key].tot += v.total;
+              } else {
+                bucket[key].acc += v[metric];
+              }
+            } else {
+              TIPOS.forEach((t) => {
+                const v = dailyFor(dateToISO(d), t);
+                if (metric === "sla") {
+                  bucket[key].acc += v.sla * v.total;
+                  bucket[key].tot += v.total;
+                } else {
+                  bucket[key].acc += v[metric];
+                }
+              });
+            }
+            bucket[key].days++;
+          }
+          Object.keys(bucket)
+            .sort()
+            .forEach((k) => {
+              const b = bucket[k];
+              const val =
+                metric === "sla"
+                  ? Math.round(b.acc / Math.max(1, b.tot))
+                  : b.acc;
+              rows.push({ label: k.slice(2), value: val }); // drop '20'
+            });
+        } else {
+          // mes
+          const bucket = {};
+          for (let d = new Date(start); d <= TODAY; d = addDays(d, 1)) {
+            const k =
+              d.getFullYear() +
+              "-" +
+              ("" + (d.getMonth() + 1)).padStart(2, "0");
+            if (!bucket[k]) bucket[k] = { acc: 0, tot: 0 };
+            if (tipoFilter) {
+              const v = dailyFor(dateToISO(d), tipoFilter);
+              if (metric === "sla") {
+                bucket[k].acc += v.sla * v.total;
+                bucket[k].tot += v.total;
+              } else {
+                bucket[k].acc += v[metric];
+              }
+            } else {
+              TIPOS.forEach((t) => {
+                const v = dailyFor(dateToISO(d), t);
+                if (metric === "sla") {
+                  bucket[k].acc += v.sla * v.total;
+                  bucket[k].tot += v.total;
+                } else {
+                  bucket[k].acc += v[metric];
+                }
+              });
+            }
+          }
+          Object.keys(bucket)
+            .sort()
+            .forEach((k) => {
+              const b = bucket[k];
+              const val =
+                metric === "sla"
+                  ? Math.round(b.acc / Math.max(1, b.tot))
+                  : b.acc;
+              rows.push({ label: k, value: val });
+            });
+        }
+        return rows;
+      }
+
+      // ---------- UI renderers ----------
+      function renderBars(byTipo) {
+        const wrap = document.getElementById("chartBars");
+        wrap.innerHTML = "";
+
+        // Determine max total for scale
+        let max = 0;
+        TIPOS.forEach((t) => {
+          max = Math.max(max, byTipo[t].total);
+        });
+
+        TIPOS.forEach((t) => {
+          const item = byTipo[t];
+          const totalH = 200; // px
+          const scale = (v) => Math.round(totalH * (v / Math.max(1, max)));
+
+          const hAnalise = scale(item.analise);
+          const hConcl = scale(item.concluidos);
+          const hPend = scale(item.pendentes);
+
+          const col = document.createElement("div");
+          col.className = "flex-1 flex flex-col items-center";
+
+          const bar = document.createElement("div");
+          bar.className =
+            "w-10 lg:w-12 flex flex-col justify-end rounded-t-md overflow-hidden";
+          bar.style.height = totalH + "px";
+
+          const segAnalise = document.createElement("div");
+          segAnalise.className = "bg-blue-600";
+          segAnalise.style.height = hAnalise + "px";
+          segAnalise.title = `Em análise: ${item.analise}`;
+
+          const segConcl = document.createElement("div");
+          segConcl.className = "bg-green-600";
+          segConcl.style.height = hConcl + "px";
+          segConcl.title = `Concluídos: ${item.concluidos}`;
+
+          const segPend = document.createElement("div");
+          segPend.className = "bg-yellow-500";
+          segPend.style.height = hPend + "px";
+          segPend.title = `Pendentes: ${item.pendentes}`;
+
+          [segAnalise, segConcl, segPend].forEach((seg) => {
+            seg.addEventListener("mousemove", (e) => showTip(e, seg.title));
+            seg.addEventListener("mouseleave", hideTip);
+          });
+
+          bar.appendChild(segAnalise);
+          bar.appendChild(segConcl);
+          bar.appendChild(segPend);
+
+          const label = document.createElement("div");
+          label.className = "text-xs text-gray-600 mt-2 text-center";
+          label.textContent = t;
+
+          const totalLbl = document.createElement("div");
+          totalLbl.className = "text-xs font-semibold text-gray-800 mt-1";
+          totalLbl.textContent = item.total;
+
+          col.appendChild(bar);
+          col.appendChild(label);
+          col.appendChild(totalLbl);
+          wrap.appendChild(col);
+        });
+      }
+
+      function renderLine(series, labelText, metric) {
+        const svg = document.getElementById("chartLine");
+        svg.innerHTML = "";
+        document.getElementById("chartLineLabel").textContent = labelText;
+
+        const w = 680,
+          h = 280,
+          padL = 40,
+          padR = 16,
+          padT = 16,
+          padB = 32;
+        const xW = w - padL - padR;
+        const yH = h - padT - padB;
+
+        let maxY = 0;
+        series.forEach((p) => {
+          maxY = Math.max(maxY, p.value);
+        });
+        if (maxY === 0) maxY = 1;
+
+        // Axes
+        const axis = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "path"
+        );
+        axis.setAttribute(
+          "d",
+          `M${padL},${h - padB} L${w - padR},${h - padB} M${padL},${
+            h - padB
+          } L${padL},${padT}`
+        );
+        axis.setAttribute("stroke", "#CBD5E1");
+        axis.setAttribute("fill", "none");
+        svg.appendChild(axis);
+
+        // Y grid lines + labels (4)
+        for (let i = 0; i <= 4; i++) {
+          const y = h - padB - (i / 4) * yH;
+          const grid = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "line"
+          );
+          grid.setAttribute("x1", padL);
+          grid.setAttribute("x2", w - padR);
+          grid.setAttribute("y1", y);
+          grid.setAttribute("y2", y);
+          grid.setAttribute("stroke", "#E2E8F0");
+          grid.setAttribute("stroke-dasharray", "3,3");
+          svg.appendChild(grid);
+
+          const lbl = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "text"
+          );
+          lbl.setAttribute("x", 4);
+          lbl.setAttribute("y", y + 4);
+          lbl.setAttribute("font-size", "10");
+          lbl.setAttribute("fill", "#475569");
+          const val = Math.round((i / 4) * maxY);
+          lbl.textContent = metric === "sla" ? `${val}d` : val;
+          svg.appendChild(lbl);
+        }
+
+        // X labels (max 10)
+        const n = series.length;
+        const stepX = xW / Math.max(1, n - 1);
+        const skip = Math.ceil(n / 10);
+        series.forEach((p, i) => {
+          if (i % skip !== 0 && i !== n - 1) return;
+          const x = padL + i * stepX;
+          const tx = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "text"
+          );
+          tx.setAttribute("x", x);
+          tx.setAttribute("y", h - 10);
+          tx.setAttribute("font-size", "10");
+          tx.setAttribute("fill", "#475569");
+          tx.setAttribute("text-anchor", "middle");
+          tx.textContent = p.label;
+          svg.appendChild(tx);
+        });
+
+        // Line path
+        let d = "";
+        series.forEach((p, i) => {
+          const x = padL + i * stepX;
+          const y = padT + (1 - p.value / maxY) * yH;
+          d += i === 0 ? `M${x},${y}` : ` L${x},${y}`;
+        });
+        const path = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "path"
+        );
+        path.setAttribute("d", d);
+        path.setAttribute("fill", "none");
+        path.setAttribute("stroke", "#2563eb");
+        path.setAttribute("stroke-width", "2");
+        svg.appendChild(path);
+
+        // Dots + tooltips
+        series.forEach((p, i) => {
+          const x = padL + i * stepX;
+          const y = padT + (1 - p.value / maxY) * yH;
+          const dot = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "circle"
+          );
+          dot.setAttribute("cx", x);
+          dot.setAttribute("cy", y);
+          dot.setAttribute("r", 3.5);
+          dot.setAttribute("fill", "#2563eb");
+          dot.addEventListener("mousemove", (e) =>
+            showTip(e, `${p.label}: ${p.value}${metric === "sla" ? "d" : ""}`)
+          );
+          dot.addEventListener("mouseleave", hideTip);
+          svg.appendChild(dot);
+        });
+
+        // Animate line
+        const totalLength = path.getTotalLength ? path.getTotalLength() : 0;
+        path.setAttribute("stroke-dasharray", totalLength);
+        path.setAttribute("stroke-dashoffset", totalLength);
+        setTimeout(() => {
+          path.style.transition = "stroke-dashoffset 700ms ease";
+          path.setAttribute("stroke-dashoffset", "0");
+        }, 10);
+
+        document.getElementById("chartLineLegend").textContent =
+          metric === "sla" ? "Tempo médio (dias)" : "Quantidade";
+      }
+
+      function renderResumo(byTipo) {
+        const tbody = document.getElementById("tbodyResumo");
+        tbody.innerHTML = "";
+        TIPOS.forEach((t) => {
+          const x = byTipo[t];
+          const sla = Math.round(x.slaSum / Math.max(1, x.slaCount));
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+          <td class="px-4 py-2 text-sm text-gray-800">${t}</td>
+          <td class="px-4 py-2 text-sm text-gray-800">${x.total}</td>
+          <td class="px-4 py-2 text-sm text-gray-800">${x.concluidos}</td>
+          <td class="px-4 py-2 text-sm text-gray-800">${x.pendentes}</td>
+          <td class="px-4 py-2 text-sm text-gray-800">${x.analise}</td>
+          <td class="px-4 py-2 text-sm text-gray-800">${sla} dias</td>`;
+          tbody.appendChild(tr);
+        });
+      }
+
+      function exportResumoCSV(byTipo) {
+        const headers = [
+          "Tipo",
+          "Total",
+          "Concluídos",
+          "Pendentes",
+          "Em análise",
+          "Tempo médio (dias)",
+        ];
+        const rows = [headers];
+        TIPOS.forEach((t) => {
+          const x = byTipo[t];
+          const sla = Math.round(x.slaSum / Math.max(1, x.slaCount));
+          rows.push([t, x.total, x.concluidos, x.pendentes, x.analise, sla]);
+        });
+        const csv = rows
+          .map((r) =>
+            r.map((v) => `"${(v + "").replace(/"/g, '""')}"`).join(",")
+          )
+          .join("\n");
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "relatorio_resumo.csv";
+        a.click();
+        URL.revokeObjectURL(url);
+      }
+
+      // ---------- Tooltip ----------
+      const TIP = document.getElementById("tooltip");
+      function showTip(e, text) {
+        TIP.textContent = text;
+        TIP.style.left = e.clientX + 10 + "px";
+        TIP.style.top = e.clientY + 10 + "px";
+        TIP.classList.remove("hidden");
+      }
+      function hideTip() {
+        TIP.classList.add("hidden");
+      }
+
+      // ---------- Controller ----------
+      function apply() {
+        const periodo = parseInt(document.getElementById("periodo").value, 10);
+        const tipo = document.getElementById("tipoProc").value || null;
+        const metrica = document.getElementById("metrica").value;
+        const grouping = document.getElementById("grouping").value;
+
+        const { byTipo, overall, start } = aggregateRange(periodo, tipo);
+        document.getElementById("chartPeriodoLabel").textContent =
+          periodo === 30
+            ? "Últimos 30 dias"
+            : periodo === 90
+            ? "Últimos 90 dias"
+            : "Últimos 12 meses";
+
+        // Bars always show split by type for period (ignores single-type filter for a broader picture)
+        renderBars(aggregateRange(periodo, null).byTipo);
+
+        // Time series reacts to filters & metric
+        const series = groupSeries(
+          periodo,
+          tipo,
+          metrica === "analise" ? "analise" : metrica,
+          grouping
+        );
+        const labelText =
+          (tipo ? tipo : "Todos os tipos") +
+          " • " +
+          (metrica === "sla"
+            ? "Tempo médio"
+            : metrica === "concluidos"
+            ? "Concluídos"
+            : metrica === "pendentes"
+            ? "Pendentes"
+            : metrica === "analise"
+            ? "Em análise"
+            : "Total");
+        renderLine(series, labelText, metrica);
+
+        // Resumo
+        renderResumo(aggregateRange(periodo, null).byTipo);
+      }
+
+      document.addEventListener("DOMContentLoaded", () => {
+        AOS.init({ once: true });
+        feather.replace();
+
+        // Drawer
+        const drawer = document.getElementById("mobileDrawer");
+        document
+          .getElementById("openDrawer")
+          ?.addEventListener("click", () => drawer.classList.remove("hidden"));
+        document
+          .getElementById("closeDrawer")
+          ?.addEventListener("click", () => drawer.classList.add("hidden"));
+        document
+          .getElementById("drawerBackdrop")
+          ?.addEventListener("click", () => drawer.classList.add("hidden"));
+
+        // Buttons
+        document.getElementById("btnAplicar").addEventListener("click", apply);
+        document.getElementById("btnGerar").addEventListener("click", () => {
+          apply();
+          anime({
+            targets: "#tbodyResumo tr",
+            opacity: [0, 1],
+            translateY: [10, 0],
+            delay: anime.stagger(40),
+          });
+        });
+        document
+          .getElementById("btnExportPDF")
+          .addEventListener("click", () => window.print());
+        document
+          .getElementById("btnExportCSV")
+          .addEventListener("click", () =>
+            exportResumoCSV(
+              aggregateRange(
+                parseInt(document.getElementById("periodo").value, 10),
+                null
+              ).byTipo
+            )
+          );
+
+        // Live re-apply on changes
+        ["periodo", "tipoProc", "metrica", "grouping"].forEach((id) => {
+          document.getElementById(id).addEventListener("change", apply);
+        });
+
+        // First render
+        apply();
+      });
+    </script>
+  </body>
+</html>

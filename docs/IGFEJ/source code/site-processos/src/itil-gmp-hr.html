@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>1&nbsp; Gestão de Recursos Humanos – IGFEJ</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./itil-smp-srm.html" rel="next">
+<link href="./methodology.html" rel="prev">
+<link href="./cover.png" rel="icon" type="image/png">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Nenhum resultado",
+    "search-matching-documents-text": "documentos correspondentes",
+    "search-copy-link-title": "Copiar link para a busca",
+    "search-hide-matches-text": "Esconder correspondências adicionais",
+    "search-more-match-text": "mais correspondência neste documento",
+    "search-more-matches-text": "mais correspondências neste documento",
+    "search-clear-button-title": "Limpar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Procurar"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+</head>
+
+<body class="nav-sidebar docked slimcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./itil-gmp-hr.html">Gestão Global</a></li><li class="breadcrumb-item"><a href="./itil-gmp-hr.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Gestão de Recursos Humanos</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Procurar" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      <img src="./cover.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">IGFEJ</a> 
+        <div class="sidebar-tools-main">
+    <a href="./IGFEJ.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Alternar modo escuro"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Procurar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introdução</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./methodology.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Metodologia</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Gestão Global</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar seção">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./itil-gmp-hr.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Gestão de Recursos Humanos</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Gestão de Serviço</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Alternar seção">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./itil-smp-srm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Gestão de Pedidos de Serviço</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./itil-smp-im.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Gestão de Incidentes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./itil-smp-am.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Gestão de Ativos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./itil-smp-cm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Gestão de Alterações</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./itil-smp-cfm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Gestão de Configurações</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Gestão de Serviço (TOBE)</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Alternar seção">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./itil-smp-im-tobe.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Gestão de Serviços de Suporte</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="1">
+    <h2 id="toc-title">Índice</h2>
+   
+  <ul class="collapse">
+  <li><a href="#sec-proc-4" id="toc-sec-proc-4" class="nav-link active" data-scroll-target="#sec-proc-4"><span class="header-section-number">1.1</span> Mudança de Local: Oficiais Justiça, Magistrados</a></li>
+  <li><a href="#sec-proc-5" id="toc-sec-proc-5" class="nav-link" data-scroll-target="#sec-proc-5"><span class="header-section-number">1.2</span> Onboarding de Colaborador</a></li>
+  <li><a href="#sec-proc-70" id="toc-sec-proc-70" class="nav-link" data-scroll-target="#sec-proc-70"><span class="header-section-number">1.3</span> Onboarding de um colaborador externo</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content page-columns page-full" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./itil-gmp-hr.html">Gestão Global</a></li><li class="breadcrumb-item"><a href="./itil-gmp-hr.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Gestão de Recursos Humanos</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Gestão de Recursos Humanos</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>A gestão de recursos humanos (GRH) é uma área da administração que se concentra na gestão de pessoas dentro das organizações. O principal objetivo da GRH é garantir que a empresa tenha a força de trabalho necessária, motivada e capacitada para atingir os seus objetivos estratégicos. A GRH envolve várias funções e práticas, incluindo:</p>
+<ol type="1">
+<li><p><strong>Recrutamento e Seleção:</strong> Identificação das necessidades de pessoal, atração de candidatos qualificados, avaliação e seleção dos melhores candidatos para preencher as vagas disponíveis.</p></li>
+<li><p><strong>Formação e Desenvolvimento:</strong> Provisão de programas de formação e desenvolvimento para melhorar as habilidades, conhecimentos e competências dos funcionários.</p></li>
+<li><p><strong>Gestão de Desempenho:</strong> Avaliação do desempenho dos funcionários, estabelecimento de objetivos e metas, feedback contínuo e gestão de melhorias de desempenho.</p></li>
+<li><p><strong>Remuneração e Benefícios:</strong> Desenvolvimento de políticas de remuneração, administração de salários, bónus e benefícios para garantir a satisfação e retenção dos funcionários.</p></li>
+<li><p><strong>Relações no Trabalho:</strong> Gestão das relações entre empregadores e empregados, incluindo negociação com sindicatos, resolução de conflitos e manutenção de um ambiente de trabalho positivo.</p></li>
+<li><p><strong>Saúde e Segurança no Trabalho:</strong> Implementação de políticas e práticas para garantir a segurança e o bem-estar dos funcionários no local de trabalho.</p></li>
+<li><p><strong>Planeamento de Carreira e Sucessão:</strong> Desenvolvimento de planos de carreira para funcionários e planeamento de sucessão para posições-chave dentro da organização.</p></li>
+<li><p><strong>Compliance e Legislação no Trabalho:</strong> Garantia de que a empresa cumpre todas as leis e regulamentações no trabalho aplicáveis.</p></li>
+</ol>
+<p>A GRH é essencial para alinhar as políticas de gestão de pessoas com a estratégia organizacional, contribuindo para o sucesso e a sustentabilidade da organização.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><br><br><br><br><br><br><br><br><br></p>
+<div id="fig-4-1" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" target="_blank" width="95%">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-4-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="viewers/model.html?url=0004-00-igfej-mudanca-de-local-do-utilizador.bpmn" target="_blank" title="Click para abrir o modelo (BPMN/DMN)"><img src="models/0004-00-igfej-mudanca-de-local-do-utilizador.svg" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:95.0%"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-4-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1.1: Modelo de processo de mudança de local de utilizador
+</figcaption>
+</figure>
+</div>
+</div></div><div style="page-break-after: always;"></div>
+<section id="sec-proc-4" class="level2 numbered page-columns page-full" data-number="1.1">
+<h2 class="numbered anchored" data-number="1.1" data-anchor-id="sec-proc-4"><span class="header-section-number">1.1</span> Mudança de Local: Oficiais Justiça, Magistrados</h2>
+<section id="entidade" class="level3 numbered" data-number="1.1.1">
+<h3 class="numbered anchored" data-number="1.1.1" data-anchor-id="entidade"><span class="header-section-number">1.1.1</span> Entidade</h3>
+<ul>
+<li>DGAJ/IGFEJ</li>
+</ul>
+</section>
+<section id="responsável" class="level3 numbered" data-number="1.1.2">
+<h3 class="numbered anchored" data-number="1.1.2" data-anchor-id="responsável"><span class="header-section-number">1.1.2</span> Responsável</h3>
+<ul>
+<li>Não identificado</li>
+</ul>
+</section>
+<section id="descrição" class="level3 numbered" data-number="1.1.3">
+<h3 class="numbered anchored" data-number="1.1.3" data-anchor-id="descrição"><span class="header-section-number">1.1.3</span> Descrição</h3>
+<p>A DGAJ em conjunto com a Comarca define e atribue nova localização quer a Funcionários Judiciais como a Magistrados após o que envia para o Help Desk do IGFEJ a informação necessária e o pedido de instalação e configuração de aplicações necessárias ao desempenho de actividade do colaborador no novo local, quer seja funcionário judicial ou magistrado. Caso não exista, na nova localização, PC disponivel para o utilizador é informada a comarca que o solicita à DGAJ sendo por esta enviado para o HD do IGFEJ que procede, então, à instalação e configuração das aplicações necessárias, após o que informa o utilizador e encerra o pedido/ticket.</p>
+</section>
+<section id="palavras-chave" class="level3 numbered" data-number="1.1.4">
+<h3 class="numbered anchored" data-number="1.1.4" data-anchor-id="palavras-chave"><span class="header-section-number">1.1.4</span> Palavras Chave</h3>
+<p><strong>igfej, dgaj, mudança de local, funcionários judiciais, magistrados</strong></p>
+</section>
+<section id="objetivos" class="level3 numbered" data-number="1.1.5">
+<h3 class="numbered anchored" data-number="1.1.5" data-anchor-id="objetivos"><span class="header-section-number">1.1.5</span> Objetivos</h3>
+<ul>
+<li>Detalhar o processo de Mudança de Local de um Funcionário Judicial ou Magistrado</li>
+</ul>
+</section>
+<section id="inputs" class="level3 numbered" data-number="1.1.6">
+<h3 class="numbered anchored" data-number="1.1.6" data-anchor-id="inputs"><span class="header-section-number">1.1.6</span> Inputs</h3>
+<ul>
+<li>Mudança de local de trabalho de um Funcionário Judicial ou Magistrado</li>
+</ul>
+</section>
+<section id="actividades" class="level3 numbered" data-number="1.1.7">
+<h3 class="numbered anchored" data-number="1.1.7" data-anchor-id="actividades"><span class="header-section-number">1.1.7</span> Actividades</h3>
+<p>Para fazer a mudança de local de um utilizador, mudança de tribunal ou comarca, são realizadas as seguintes actividades:</p>
+<ol type="1">
+<li><strong>Publicar em Diário da Républica</strong></li>
+</ol>
+<ul>
+<li>O processo inicia-se após a publicação em Diário da República</li>
+</ul>
+<ol start="2" type="1">
+<li><strong>Notificação à Comarca</strong></li>
+</ol>
+<ul>
+<li>Após a publicação em DR é comunicado à Comarca a nova localização do utilizador</li>
+</ul>
+<ol start="3" type="1">
+<li><strong>Criação de nova Ficha de Utilizador</strong></li>
+</ol>
+<ul>
+<li>É criada um anova ficha de utilizador com os seguintes dados: Nome, Categoria Profissional, Departamento, Contactos, Origem, Nº Mecanográfico.</li>
+<li>A nova ficha de utilizador é enviada para o Helpdesk do IGFEJ.</li>
+</ul>
+<ol start="4" type="1">
+<li><strong>Recepção de pedido de Help Desk</strong></li>
+</ol>
+<ul>
+<li><p>Após a recepção do pedido, confirma-se a existência ou não de PC disponível para o utilizador.</p></li>
+<li><p>Caso não existe PC é notificada a Comarca que solicita à DGAJ a atribuição de PC</p></li>
+<li><p>Caso exista PC procede-se à instalação e configuração</p></li>
+</ul>
+<ol start="5" type="1">
+<li><strong>Configuração PC</strong></li>
+</ol>
+<ul>
+<li><p>Configuração do PC com novo IP, acesso à rede, criação de utilizador na AD, mudança de OU</p></li>
+<li><p>Mediante a qualidade do utilizador, Funcionário Judicial, Magistrado Judicial ou MP</p></li>
+</ul>
+<p>5.1 <strong>Funcionário Judicial</strong></p>
+<ul>
+<li>Configuração do PC com as aplicações Citius, Custas e Tmenu</li>
+</ul>
+<p>5.2 <strong>Magistrado Judicial</strong></p>
+<ul>
+<li>Configuração do PC com a aplicação Citius</li>
+</ul>
+<p>5.3 <strong>Magistrado MP</strong> - Configuração PC com as aplicações SITAF e Tmenu</p>
+<ol start="6" type="1">
+<li><strong>Informação ao Utilizador</strong></li>
+</ol>
+<ul>
+<li>Após a instalação e configuração do PC do novo utilizador é enviada informação ao mesmo</li>
+</ul>
+<ol start="7" type="1">
+<li><strong>Fechar pedido</strong></li>
+</ol>
+<ul>
+<li>Com a conclusão das actividades descritas é fechado o pedido.</li>
+</ul>
+</section>
+<section id="entregáveis" class="level3 numbered" data-number="1.1.8">
+<h3 class="numbered anchored" data-number="1.1.8" data-anchor-id="entregáveis"><span class="header-section-number">1.1.8</span> Entregáveis</h3>
+<ul>
+<li>Utilizador criado no novo local</li>
+</ul>
+</section>
+<section id="fornecedores" class="level3 numbered" data-number="1.1.9">
+<h3 class="numbered anchored" data-number="1.1.9" data-anchor-id="fornecedores"><span class="header-section-number">1.1.9</span> Fornecedores</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+</section>
+<section id="participantes" class="level3 numbered" data-number="1.1.10">
+<h3 class="numbered anchored" data-number="1.1.10" data-anchor-id="participantes"><span class="header-section-number">1.1.10</span> Participantes</h3>
+<ul>
+<li>Funcionários Judiciais, Magistrados, Equipas técnicas do IGFEJ</li>
+</ul>
+</section>
+<section id="clientes" class="level3 numbered" data-number="1.1.11">
+<h3 class="numbered anchored" data-number="1.1.11" data-anchor-id="clientes"><span class="header-section-number">1.1.11</span> Clientes</h3>
+<ul>
+<li>Os utilizadores dos tribunais das várias comarcas, Funcionários Judiciais, Oficiais de Justiça, Magistrados</li>
+</ul>
+</section>
+<section id="metodologias" class="level3 numbered" data-number="1.1.12">
+<h3 class="numbered anchored" data-number="1.1.12" data-anchor-id="metodologias"><span class="header-section-number">1.1.12</span> Metodologias</h3>
+<ul>
+<li>Nada a referir</li>
+</ul>
+</section>
+<section id="ferramentas" class="level3 numbered" data-number="1.1.13">
+<h3 class="numbered anchored" data-number="1.1.13" data-anchor-id="ferramentas"><span class="header-section-number">1.1.13</span> Ferramentas</h3>
+<ul>
+<li>Nada a referir</li>
+</ul>
+</section>
+<section id="métricas" class="level3 numbered" data-number="1.1.14">
+<h3 class="numbered anchored" data-number="1.1.14" data-anchor-id="métricas"><span class="header-section-number">1.1.14</span> Métricas</h3>
+<ul>
+<li>Nº ticket mensais registados vs resolvidos</li>
+</ul>
+</section>
+<section id="maturidade" class="level3 numbered" data-number="1.1.15">
+<h3 class="numbered anchored" data-number="1.1.15" data-anchor-id="maturidade"><span class="header-section-number">1.1.15</span> Maturidade</h3>
+<ul>
+<li>Nada a referir</li>
+</ul>
+</section>
+<section id="pedido-itsm" class="level3 numbered" data-number="1.1.16">
+<h3 class="numbered anchored" data-number="1.1.16" data-anchor-id="pedido-itsm"><span class="header-section-number">1.1.16</span> Pedido (ITSM)</h3>
+<ul>
+<li><strong>Mudança de Local: Oficiais Justiça, Magistrados</strong></li>
+</ul>
+</section>
+<section id="serviço-cmdb" class="level3 numbered" data-number="1.1.17">
+<h3 class="numbered anchored" data-number="1.1.17" data-anchor-id="serviço-cmdb"><span class="header-section-number">1.1.17</span> Serviço (CMDB)</h3>
+<ul>
+<li><strong>Mudança de Local: Oficiais Justiça, Magistrados</strong></li>
+</ul>
+</section>
+<section id="sugestões" class="level3 numbered" data-number="1.1.18">
+<h3 class="numbered anchored" data-number="1.1.18" data-anchor-id="sugestões"><span class="header-section-number">1.1.18</span> Sugestões</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+</section>
+<section id="suporte-legal-legislação" class="level3 numbered" data-number="1.1.19">
+<h3 class="numbered anchored" data-number="1.1.19" data-anchor-id="suporte-legal-legislação"><span class="header-section-number">1.1.19</span> Suporte Legal / Legislação</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+</section>
+<section id="classificação-da-informação" class="level3 numbered" data-number="1.1.20">
+<h3 class="numbered anchored" data-number="1.1.20" data-anchor-id="classificação-da-informação"><span class="header-section-number">1.1.20</span> Classificação da informação</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+<p><strong>Ex: Confidencial, Restrito, Interno, Público</strong></p>
+</section>
+<section id="metadados" class="level3 numbered page-columns page-full" data-number="1.1.21">
+<h3 class="numbered anchored" data-number="1.1.21" data-anchor-id="metadados"><span class="header-section-number">1.1.21</span> Metadados</h3>
+<ul>
+<li><strong>Entrevistador:</strong> Manuel Graça</li>
+<li><strong>Entrevistados:</strong> Vitor Dias, Ana Vila (28/11/2023)</li>
+</ul>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><br><br><br><br><br><br><br><br><br></p>
+<div id="fig-5-1" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" target="_blank" width="95%">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-5-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="viewers/model.html?url=0005-00-dgaj-onboarding.bpmn" target="_blank" title="Click para abrir o modelo (BPMN/DMN)"><img src="models/0005-00-dgaj-onboarding.svg" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:95.0%"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-5-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1.2: Modelo do processo de Onboarding (DGAJ).
+</figcaption>
+</figure>
+</div>
+<div id="fig-5-2" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" target="_blank" width="95%">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-5-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="viewers/model.html?url=0005-01-igfej-criacao-utilizador.bpmn" target="_blank" title="Click para abrir o modelo (BPMN/DMN)"><img src="models/0005-01-igfej-criacao-utilizador.svg" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:95.0%"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-5-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1.3: Modelo do sub-processo criação de utilizador nos vários sistemas.
+</figcaption>
+</figure>
+</div>
+<div id="fig-5-3" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" target="_blank" width="95%">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-5-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="viewers/model.html?url=0005-02-igfej-criacao-vpn.bpmn" target="_blank" title="Click para abrir o modelo (BPMN/DMN)"><img src="models/0005-02-igfej-criacao-vpn.svg" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:95.0%"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-5-3-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1.4: Configurações de VPN.
+</figcaption>
+</figure>
+</div>
+</div></div><div style="page-break-after: always;"></div>
+</section>
+</section>
+<section id="sec-proc-5" class="level2 numbered page-columns page-full" data-number="1.2">
+<h2 class="numbered anchored" data-number="1.2" data-anchor-id="sec-proc-5"><span class="header-section-number">1.2</span> Onboarding de Colaborador</h2>
+<section id="entidade-1" class="level3 numbered" data-number="1.2.1">
+<h3 class="numbered anchored" data-number="1.2.1" data-anchor-id="entidade-1"><span class="header-section-number">1.2.1</span> Entidade</h3>
+<ul>
+<li>Direcção Geral da Administração da Justiça (DGAJ)</li>
+</ul>
+</section>
+<section id="responsável-1" class="level3 numbered" data-number="1.2.2">
+<h3 class="numbered anchored" data-number="1.2.2" data-anchor-id="responsável-1"><span class="header-section-number">1.2.2</span> Responsável</h3>
+<ul>
+<li>Não identificado.</li>
+</ul>
+</section>
+<section id="descrição-1" class="level3 numbered" data-number="1.2.3">
+<h3 class="numbered anchored" data-number="1.2.3" data-anchor-id="descrição-1"><span class="header-section-number">1.2.3</span> Descrição</h3>
+<p>O processo de integração, também conhecido como onboarding de um colaborador, é uma etapa crucial para garantir que os novos colaboradores se integrem eficientemente à empresa. Um processo deste tipo, numa perspectiva mais alargada, é normalmente estruturado da seguinte forma:</p>
+<ol type="1">
+<li><strong>Documentação e Processos Administrativos:</strong>
+<ul>
+<li>Após a confirmação da sua entrada, os novos colaboradores preenchem formulários necessários, como documentos de impostos e informações de contacto. Além disso, são orientados sobre políticas internas, benefícios e procedimentos administrativos.</li>
+</ul></li>
+<li><strong>Preparação de Ambientes Tecnológicos:</strong>
+<ul>
+<li>Os novos membros são adicionados aos sistemas de informação da organização e devem ser-lhe atribuídos os acessos e permissões aplicacionais que a sua posição exisge.</li>
+</ul></li>
+<li><strong>Formação e Desenvolvimento:</strong>
+<ul>
+<li>São ministrados treinos específicos relacionados às funções dos novos colaboradores. Isso pode envolver sessões de formação presenciais ou online, materiais educativos e mentorias.</li>
+<li>Os novos colaboradores recebem formação sobre os sistemas, softwares e ferramentas utilizados na empresa. Isso inclui sistemas de comunicação interna, plataformas de colaboração e outras tecnologias essenciais.</li>
+</ul></li>
+<li><strong>Avaliação de Desempenho:</strong>
+<ul>
+<li>Ao final do período de integração, pode ser conduzida uma avaliação de desempenho para entender como os novos colaboradores se adaptaram à cultura da empresa e assimilarão as informações recebidas.</li>
+</ul></li>
+<li><strong>Feedback Contínuo:</strong>
+<ul>
+<li>Um sistema contínuo de feedback deve ser estabelecido para que os colaboradores possam fornecer suas próprias opiniões sobre o processo de onboarding, permitindo ajustes e melhorias constantes.</li>
+</ul></li>
+</ol>
+<p>Este processo visa proporcionar uma transição suave para os novos colaboradores, ajudando-os a se sentirem confortáveis, capacitados e integrados à cultura e dinâmica da empresa.</p>
+</section>
+<section id="palavras-chave-1" class="level3 numbered" data-number="1.2.4">
+<h3 class="numbered anchored" data-number="1.2.4" data-anchor-id="palavras-chave-1"><span class="header-section-number">1.2.4</span> Palavras Chave</h3>
+<p><strong>dgaj, onboarding de colaborador, oficiais de justiça, tribunais, comarcas</strong></p>
+</section>
+<section id="objetivos-1" class="level3 numbered" data-number="1.2.5">
+<h3 class="numbered anchored" data-number="1.2.5" data-anchor-id="objetivos-1"><span class="header-section-number">1.2.5</span> Objetivos</h3>
+<ul>
+<li>Centralizar e agilizar o processo de entrada de colaboradores nas comarcas.</li>
+<li>Validar os requisitos para a adesão de um colaborador à Função Pública.</li>
+<li>Gestão de acesso e segurança aos recursos tecnológicos da DGAJ.</li>
+</ul>
+</section>
+<section id="inputs-1" class="level3 numbered" data-number="1.2.6">
+<h3 class="numbered anchored" data-number="1.2.6" data-anchor-id="inputs-1"><span class="header-section-number">1.2.6</span> Inputs</h3>
+<ul>
+<li>Detalhes pessoais do novo colaborador</li>
+<li>Lista de acessos aplicacionais do novo colaborador</li>
+<li>Identificação de permissões para o novo colaborador</li>
+</ul>
+</section>
+<section id="actividades-1" class="level3 numbered" data-number="1.2.7">
+<h3 class="numbered anchored" data-number="1.2.7" data-anchor-id="actividades-1"><span class="header-section-number">1.2.7</span> Actividades</h3>
+<p>Para fazer entrada de um novo colaborador, são executadas as seguintes atividades:</p>
+<ol type="1">
+<li><strong>Publicar em Diário da República:</strong>
+<ul>
+<li>O processo inicia-se após a publicação, em Diário da República, sobre a decisão de aceitação do colaborador em entrar na Função Pública.</li>
+</ul></li>
+<li><strong>Notificar a Comarca:</strong>
+<ul>
+<li>É notificada a comarca sobre a entrada de um novo colaborador. De acordo com as funções do colaborador, são fornecidos, pela comarca, informação sobre quais as necessidades aplicacionais do novo funcionário (<strong>Citius, Custas, TMenu, Sitaf</strong>).</li>
+</ul></li>
+<li><strong>Criar ficha de funcionário:</strong>
+<ul>
+<li>É criada a ficha de funcionário que servirá de base para a gestão individual do recurso que inicia funções.</li>
+</ul></li>
+<li><strong>Validar requisitos para entrada na Função Pública:</strong>
+<ul>
+<li>São validados os vários requisitos para entrada de qualquer pessoa na Função Pública (FP). Os requisitos podem ser: a vacinação, o registo criminal, a nacionalidade e idade legal para entrada.</li>
+<li>Da mesma forma é validada a existência de alguma inibição para entrada na FP (art. 17, Lei Geral da FP).</li>
+</ul></li>
+<li><strong>Enviar ao IGFEJ os dados do colaborador:</strong>
+<ul>
+<li>Os dados do colaborador são envidados ao IGFEJ para que possam ser criadas as credenciais de domínio e de email, nos sistemas corporativos (Active Directory e Office 365).</li>
+<li>Adicionalmente podem ser criadas credenciais para utilização de VPN e acesso externo à organização.</li>
+</ul></li>
+<li><strong>Criar utilizador nos sistemas de informação:</strong>
+<ul>
+<li>O utilizador é criado tal como já identificado no processo <a href="itil-smp-srm.html#sec-proc-18" class="quarto-xref"><span>Seção 2.8</span></a>.</li>
+<li>São configuradas as permissões aplicacionais, (aplicações essas, já identificadas anteriormente) de acordo com o perfil do utilizador.</li>
+</ul></li>
+<li><strong>Conclusão:</strong>
+<ul>
+<li>Após confirmação de que o colaborador está operacional, o processo termina.</li>
+</ul></li>
+</ol>
+</section>
+<section id="entregáveis-1" class="level3 numbered" data-number="1.2.8">
+<h3 class="numbered anchored" data-number="1.2.8" data-anchor-id="entregáveis-1"><span class="header-section-number">1.2.8</span> Entregáveis</h3>
+<ul>
+<li>Colaborador inserido na base de dados de funcionários</li>
+<li>Utilizador criado no Active Directory</li>
+<li>Utilizador com endereço de email Office 365 criado</li>
+</ul>
+</section>
+<section id="fornecedores-1" class="level3 numbered" data-number="1.2.9">
+<h3 class="numbered anchored" data-number="1.2.9" data-anchor-id="fornecedores-1"><span class="header-section-number">1.2.9</span> Fornecedores</h3>
+<ul>
+<li>IGFEJ</li>
+<li>Comarcas</li>
+</ul>
+</section>
+<section id="participantes-1" class="level3 numbered" data-number="1.2.10">
+<h3 class="numbered anchored" data-number="1.2.10" data-anchor-id="participantes-1"><span class="header-section-number">1.2.10</span> Participantes</h3>
+<ul>
+<li>Recursos Humanos (DGAJ)</li>
+<li>Administradores Judiciais</li>
+<li>IGFEJ (Sistemas e Tecnologias de Informação)</li>
+</ul>
+</section>
+<section id="clientes-1" class="level3 numbered" data-number="1.2.11">
+<h3 class="numbered anchored" data-number="1.2.11" data-anchor-id="clientes-1"><span class="header-section-number">1.2.11</span> Clientes</h3>
+<ul>
+<li>DGAJ</li>
+<li>Comarcas</li>
+</ul>
+</section>
+<section id="metodologias-1" class="level3 numbered" data-number="1.2.12">
+<h3 class="numbered anchored" data-number="1.2.12" data-anchor-id="metodologias-1"><span class="header-section-number">1.2.12</span> Metodologias</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+</section>
+<section id="ferramentas-1" class="level3 numbered" data-number="1.2.13">
+<h3 class="numbered anchored" data-number="1.2.13" data-anchor-id="ferramentas-1"><span class="header-section-number">1.2.13</span> Ferramentas</h3>
+<ul>
+<li>PDA</li>
+<li>AD Manager</li>
+<li>Office 365</li>
+</ul>
+</section>
+<section id="métricas-1" class="level3 numbered" data-number="1.2.14">
+<h3 class="numbered anchored" data-number="1.2.14" data-anchor-id="métricas-1"><span class="header-section-number">1.2.14</span> Métricas</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+</section>
+<section id="maturidade-1" class="level3 numbered" data-number="1.2.15">
+<h3 class="numbered anchored" data-number="1.2.15" data-anchor-id="maturidade-1"><span class="header-section-number">1.2.15</span> Maturidade</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+</section>
+<section id="pedido-itsm-1" class="level3 numbered" data-number="1.2.16">
+<h3 class="numbered anchored" data-number="1.2.16" data-anchor-id="pedido-itsm-1"><span class="header-section-number">1.2.16</span> Pedido (ITSM)</h3>
+<ul>
+<li><strong>Onboarding de Colaborador</strong></li>
+</ul>
+</section>
+<section id="serviço-cmdb-1" class="level3 numbered" data-number="1.2.17">
+<h3 class="numbered anchored" data-number="1.2.17" data-anchor-id="serviço-cmdb-1"><span class="header-section-number">1.2.17</span> Serviço (CMDB)</h3>
+<ul>
+<li><strong>Onboarding de Colaborador</strong></li>
+</ul>
+</section>
+<section id="sugestões-1" class="level3 numbered" data-number="1.2.18">
+<h3 class="numbered anchored" data-number="1.2.18" data-anchor-id="sugestões-1"><span class="header-section-number">1.2.18</span> Sugestões</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+</section>
+<section id="suporte-legal-legislação-1" class="level3 numbered" data-number="1.2.19">
+<h3 class="numbered anchored" data-number="1.2.19" data-anchor-id="suporte-legal-legislação-1"><span class="header-section-number">1.2.19</span> Suporte Legal / Legislação</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+</section>
+<section id="classificação-da-informação-1" class="level3 numbered" data-number="1.2.20">
+<h3 class="numbered anchored" data-number="1.2.20" data-anchor-id="classificação-da-informação-1"><span class="header-section-number">1.2.20</span> Classificação da informação</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+<p><strong>Ex: Confidencial, Restrito, Interno, Público</strong></p>
+</section>
+<section id="metadados-1" class="level3 numbered page-columns page-full" data-number="1.2.21">
+<h3 class="numbered anchored" data-number="1.2.21" data-anchor-id="metadados-1"><span class="header-section-number">1.2.21</span> Metadados</h3>
+<ul>
+<li><strong>Entrevistador:</strong> João Caldeira</li>
+<li><strong>Entrevistados:</strong> João Carvalho (09/10/2023), Vitor Dias (05/11/2023), Jorge Gralha (16/10/2023), Joaquim Coelho (16/10/2013), Luís Vale (17/10/2023)</li>
+</ul>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><br><br><br><br><br><br><br><br><br></p>
+<div id="fig-70-1" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" target="_blank" width="95%">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-70-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="viewers/model.html?url=0070-00-igfej-onboarding-colaborador-externo.bpmn" target="_blank" title="Click para abrir o modelo (BPMN/DMN)"><img src="models/0070-00-igfej-onboarding-colaborador-externo.svg" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:95.0%"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-70-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1.5: Modelo do Processo Onboarding de Colaborador Externo
+</figcaption>
+</figure>
+</div>
+<div id="fig-70-2" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center" target="_blank" width="95%">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-70-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="viewers/model.html?url=0070-01-igfej-cartao-acesso-edificio.bpmn" target="_blank" title="Click para abrir o modelo (BPMN/DMN)"><img src="models/0070-01-igfej-cartao-acesso-edificio.svg" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:95.0%"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-70-2-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;1.6: Modelo do Procedimento de Atribuição do Cartão de Acesso ao Edíficio
+</figcaption>
+</figure>
+</div>
+</div></div><div style="page-break-after: always;"></div>
+</section>
+</section>
+<section id="sec-proc-70" class="level2 numbered" data-number="1.3">
+<h2 class="numbered anchored" data-number="1.3" data-anchor-id="sec-proc-70"><span class="header-section-number">1.3</span> Onboarding de um colaborador externo</h2>
+<section id="entidade-2" class="level3 numbered" data-number="1.3.1">
+<h3 class="numbered anchored" data-number="1.3.1" data-anchor-id="entidade-2"><span class="header-section-number">1.3.1</span> Entidade</h3>
+<p>Instituto de Gestão Financeira e Equipamentos da Justiça (IGFEJ)</p>
+</section>
+<section id="responsável-2" class="level3 numbered" data-number="1.3.2">
+<h3 class="numbered anchored" data-number="1.3.2" data-anchor-id="responsável-2"><span class="header-section-number">1.3.2</span> Responsável</h3>
+<ul>
+<li>Diretor do Departamento que recebe o colaborador</li>
+</ul>
+</section>
+<section id="descrição-2" class="level3 numbered" data-number="1.3.3">
+<h3 class="numbered anchored" data-number="1.3.3" data-anchor-id="descrição-2"><span class="header-section-number">1.3.3</span> Descrição</h3>
+<p>O processo de Onboarding de um colaborador externo no IGFEJ descreve as tarefas a elaborar para garantir a integração de um colaborador subcontratado no IGFEJ. O colaborador externo é um elemento alocado ao IGFEJ para prestação de serviços que não pertence ao Ministério da Justiça. Neste sentido, este tipo de utilizadores apresentam um e-mail com indicação de que é externo (ex: nome.ext@igfej.mj.pt) e a VPN é do fornecedor. Relativamente às fases de um processo de Onboarding, as mesmas não diferem consoante a natureza (interno ou externo) do colaborador, sendo estruturadas geralmente da seguinte forma:</p>
+<ul>
+<li><p>Documentação e Processos Administrativos: Após a confirmação da sua entrada, o colaborador pode ter de preencher formulários de dados pessoais e profissionais. Além disso, no primeiro dia de trabalho, ser-lhe-á apresentado as instalações e o seu local de trabalho, assim como, as políticas internas e de segurança do IGFEJ.</p></li>
+<li><p>Preparação de Ambientes Tecnológicos: Os novos membros são adicionados aos sistemas de informação da organização e devem ser-lhe atribuídos os acessos e permissões aplicacionais que a sua posição existe.</p></li>
+<li><p>Formação e Desenvolvimento: São ministrados treinos específicos relacionados às funções dos novos colaboradores. Isso pode envolver sessões de formação presenciais ou online, materiais educativos e mentorias. Os novos colaboradores recebem formação sobre os sistemas, softwares e ferramentas utilizados na empresa. Isso inclui sistemas de comunicação interna, plataformas de colaboração e outras tecnologias essenciais.</p></li>
+<li><p>Avaliação de Desempenho: Ao final do período de integração, pode ser conduzida uma avaliação de desempenho para entender como os novos colaboradores se adaptaram à cultura da empresa e assimilarão as informações recebidas.</p></li>
+<li><p>Feedback Contínuo: Um sistema contínuo de feedback deve ser estabelecido para que os colaboradores possam fornecer suas próprias opiniões sobre o processo de onboarding, permitindo ajustes e melhorias constantes.</p></li>
+</ul>
+</section>
+<section id="palavras-chave-2" class="level3 numbered" data-number="1.3.4">
+<h3 class="numbered anchored" data-number="1.3.4" data-anchor-id="palavras-chave-2"><span class="header-section-number">1.3.4</span> Palavras Chave</h3>
+<p><strong>igfej, onboarding de colaborador, cartão de acesso ao edíficio</strong></p>
+</section>
+<section id="objetivos-2" class="level3 numbered" data-number="1.3.5">
+<h3 class="numbered anchored" data-number="1.3.5" data-anchor-id="objetivos-2"><span class="header-section-number">1.3.5</span> Objetivos</h3>
+<ul>
+<li>Facilitar a integração e adaptação do colaborador à organização;</li>
+<li>Agilizar o processo de entrada de colaboradores;</li>
+<li>Garantir que o colaborador tem os recursos e acessos necessários para iniciar o trabalho.</li>
+</ul>
+</section>
+<section id="inputs-2" class="level3 numbered" data-number="1.3.6">
+<h3 class="numbered anchored" data-number="1.3.6" data-anchor-id="inputs-2"><span class="header-section-number">1.3.6</span> Inputs</h3>
+<ul>
+<li>Dados pessoais do novo colaborador (enviados pelo Fornecedor)</li>
+<li>Identificação de permissões para o novo colaborador</li>
+<li>Lista de acessos aplicacionais do novo colaborador</li>
+</ul>
+</section>
+<section id="actividades-2" class="level3 numbered" data-number="1.3.7">
+<h3 class="numbered anchored" data-number="1.3.7" data-anchor-id="actividades-2"><span class="header-section-number">1.3.7</span> Actividades</h3>
+<p>O processo de onboarding de um colaborador externo carece a montante do processo de contratualização com a entidade fornecedora. No processo de integração de um colaborador externo no IGFEJ são executadas um conjunto de atividades em simultâneo:</p>
+<ol type="1">
+<li><strong>Divulgar entrada do colaborador:</strong>
+<ul>
+<li>O processo inicia-se com o anúncio da chegada do colaborador via e-mail ou presencialmente ao departamento e apresentação à equipa a integrar.</li>
+</ul></li>
+<li><strong>Elaborar visita guiada ao local de trabalho:</strong>
+<ul>
+<li>O responsável do Departamento deve apresentar as instalações físicas ao novo colaborador assim como o seu local de trabalho, garantindo previamente, que o mesmo já se encontra preparado para receber o novo colaborador.</li>
+</ul></li>
+<li><strong>Disponibilizar sessão de acolhimento:</strong>
+<ul>
+<li>O responsável apresenta a missão, visão, valores e organograma da instituição ao colaborador. Além disso, é lhe enviado documentação sobre a organização e respetivo departamento, os procedimentos internos e informação específica de apoio para o trabalho que irá realizar.</li>
+</ul></li>
+<li><strong>Pedido de cartão de acesso:</strong>
+<ul>
+<li>Na sequência destas atividades, o departamento deverá solicitar através de um ticket o cartão de acesso ao edíficio (subprocesso).</li>
+</ul></li>
+<li><strong>Definir acessos do colaborador:</strong>
+<ul>
+<li>Paralelamente às etapas descritas anteriormente, o responsável da equipa deve verificar quais os acessos necessários configurar para o colaborador, isto é, criação de utilizador na AD, acesso ao e-mail, acesso à intranet, se precisa de VPN e acesso a aplicações específicas ou outras plataformas.</li>
+</ul></li>
+<li><strong>Solicitar acessos:</strong>
+<ul>
+<li>Posteriormente, o responsável deve enviar um e-mail ou criar pedido/s no Easyvista a solicitar os respetivos acessos, indicando os dados necessários considerando o tipo de pedido.</li>
+</ul></li>
+<li><strong>Gestão do Pedido de Serviço:</strong>
+<ul>
+<li>Este subprocesso permitirá à equipa do helpdesk analisar o pedido e dar resposta ao mesmo ou reencaminhá-lo para as respetivas equipas responsáveis.</li>
+</ul></li>
+<li><strong>Validar acessos:</strong>
+<ul>
+<li>O colaborador receberá notificações no seu e-mail pessoal (anterior à criação do seu e-mail institucional) e deverá validar os seus acessos ao e-mail, VPN e outras aplicações e plataformas. Caso o mesmo confirme o acesso, o processo de onboarding do colaborador termina Por sua vez, caso não tenha acesso, deve reportar ao seu responsável de equipa.</li>
+</ul></li>
+<li><strong>Reportar incidente:</strong>
+<ul>
+<li>O responsável de equipa deve reportar o incidente ao Helpdesk via e-mail ou pedido no Easyvista.</li>
+</ul></li>
+<li><strong>Gestão de Incidentes:</strong></li>
+</ol>
+<ul>
+<li>Este subprocesso permite à equipa de Helpdek analisar a questão e dar resposta ao incidente. Em seguida, o processo regressa à etapa “validar acessos” para que o colaborador confirme resolução do incidente.</li>
+</ul>
+<ol start="11" type="1">
+<li><strong>Recolher feedback</strong></li>
+</ol>
+<ul>
+<li>Esta etapa acontece no decorrer de todo o processo e permite um alinhamento de expectativas entre o colaborador e a instituição. Além disso, o responsável consegue identificar precocemente as dificuldades do colaborador no processo de integração e pode orientá-lo nesse sentido, assim como, identificar oportunidades de melhoria neste processo.</li>
+</ul>
+</section>
+<section id="entregáveis-2" class="level3 numbered" data-number="1.3.8">
+<h3 class="numbered anchored" data-number="1.3.8" data-anchor-id="entregáveis-2"><span class="header-section-number">1.3.8</span> Entregáveis</h3>
+<ul>
+<li>Utilizador criado no Active Directory (AD)</li>
+<li>Utilizador com endereço de e-mail Office 365 criado</li>
+<li>Utilizador com acessos aplicacionais</li>
+</ul>
+</section>
+<section id="fornecedores-2" class="level3 numbered" data-number="1.3.9">
+<h3 class="numbered anchored" data-number="1.3.9" data-anchor-id="fornecedores-2"><span class="header-section-number">1.3.9</span> Fornecedores</h3>
+<ul>
+<li>Entidade fornecedora (Empresa à qual o colaborador externo pertence que contratualizou a prestação de serviços com o IGFEJ).</li>
+</ul>
+</section>
+<section id="participantes-2" class="level3 numbered" data-number="1.3.10">
+<h3 class="numbered anchored" data-number="1.3.10" data-anchor-id="participantes-2"><span class="header-section-number">1.3.10</span> Participantes</h3>
+<p>Colaborador externo, Departamento que o colaborador externo irá integrar (Responsável do Departamento e da equipa), HelpDesk (HD)</p>
+</section>
+<section id="clientes-2" class="level3 numbered" data-number="1.3.11">
+<h3 class="numbered anchored" data-number="1.3.11" data-anchor-id="clientes-2"><span class="header-section-number">1.3.11</span> Clientes</h3>
+<p>Colaborador externo</p>
+</section>
+<section id="metodologias-2" class="level3 numbered" data-number="1.3.12">
+<h3 class="numbered anchored" data-number="1.3.12" data-anchor-id="metodologias-2"><span class="header-section-number">1.3.12</span> Metodologias</h3>
+<p>Nada a referir.</p>
+</section>
+<section id="ferramentas-2" class="level3 numbered" data-number="1.3.13">
+<h3 class="numbered anchored" data-number="1.3.13" data-anchor-id="ferramentas-2"><span class="header-section-number">1.3.13</span> Ferramentas</h3>
+<ul>
+<li>AD Manager</li>
+<li>Office 365</li>
+</ul>
+</section>
+<section id="métricas-2" class="level3 numbered" data-number="1.3.14">
+<h3 class="numbered anchored" data-number="1.3.14" data-anchor-id="métricas-2"><span class="header-section-number">1.3.14</span> Métricas</h3>
+<p>Nada a referir.</p>
+</section>
+<section id="maturidade-2" class="level3 numbered" data-number="1.3.15">
+<h3 class="numbered anchored" data-number="1.3.15" data-anchor-id="maturidade-2"><span class="header-section-number">1.3.15</span> Maturidade</h3>
+<p>Nada a referir.</p>
+</section>
+<section id="pedido-itsm-2" class="level3 numbered" data-number="1.3.16">
+<h3 class="numbered anchored" data-number="1.3.16" data-anchor-id="pedido-itsm-2"><span class="header-section-number">1.3.16</span> Pedido (ITSM)</h3>
+<ul>
+<li><strong>Onboarding de um colaborador externo</strong></li>
+</ul>
+</section>
+<section id="serviço-cmdb-2" class="level3 numbered" data-number="1.3.17">
+<h3 class="numbered anchored" data-number="1.3.17" data-anchor-id="serviço-cmdb-2"><span class="header-section-number">1.3.17</span> Serviço (CMDB)</h3>
+<ul>
+<li><strong>Onboarding de um colaborador externo</strong></li>
+</ul>
+</section>
+<section id="sugestões-2" class="level3 numbered" data-number="1.3.18">
+<h3 class="numbered anchored" data-number="1.3.18" data-anchor-id="sugestões-2"><span class="header-section-number">1.3.18</span> Sugestões</h3>
+<p>Nada a referir.</p>
+</section>
+<section id="suporte-legal-legislação-2" class="level3 numbered" data-number="1.3.19">
+<h3 class="numbered anchored" data-number="1.3.19" data-anchor-id="suporte-legal-legislação-2"><span class="header-section-number">1.3.19</span> Suporte Legal / Legislação</h3>
+<p>Nada a referir.</p>
+</section>
+<section id="classificação-da-informação-2" class="level3 numbered" data-number="1.3.20">
+<h3 class="numbered anchored" data-number="1.3.20" data-anchor-id="classificação-da-informação-2"><span class="header-section-number">1.3.20</span> Classificação da informação</h3>
+<p>Nada a referir.</p>
+<p><strong>Ex: Confidencial, Restrito, Interno, Público</strong></p>
+</section>
+<section id="metadados-2" class="level3 numbered" data-number="1.3.21">
+<h3 class="numbered anchored" data-number="1.3.21" data-anchor-id="metadados-2"><span class="header-section-number">1.3.21</span> Metadados</h3>
+<p><strong>Entrevistador:</strong> Maria Estibeiro <strong>Entrevistados:</strong> NA (09/09/2024)</p>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiada");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiada");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+          // default icon
+          link.classList.add("external");
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./methodology.html" class="pagination-link" aria-label="Metodologia">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Metodologia</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./itil-smp-srm.html" class="pagination-link" aria-label="Gestão de Pedidos de Serviço">
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Gestão de Pedidos de Serviço</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Copyright 2024, IGFEJ. Todos os Direitos Reservados.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p><a href="https://igfej.justica.gov.pt/">IGFEJ</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

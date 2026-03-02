@@ -1,0 +1,74 @@
+[
+  {
+    "objectID": "process-4.0",
+    "href": "#process-4.0",
+    "title": "Mudança de Local do Utilizador",
+    "section": "Gerir Pedidos de Serviço",
+    "text": "Processo de mudança de local de utilizador",
+    "crumbs": [
+      "Início",
+      "Gerir Pedidos de Serviço",
+      "Mudança de Local do Utilizador"
+    ],
+    "type": "process",
+    "category": "Gerir Pedidos de Serviço",
+    "keywords": ["mudança de local", "utilizador", "igfej"],
+    "code": "4.0"
+  },
+  {
+    "objectID": "asset-4.0",
+    "href": "#asset-4.0",
+    "title": "Modelo de processo de mudança de local de utilizador",
+    "section": "Gerir Pedidos de Serviço",
+    "text": "Assets do processo 0004-00: BPMN/SVG/DMN (quando aplicável).",
+    "crumbs": [
+      "Início",
+      "Gerir Pedidos de Serviço",
+      "Mudança de Local do Utilizador",
+      "Assets"
+    ],
+    "type": "asset",
+    "category": "Gerir Pedidos de Serviço",
+    "keywords": ["bpmn", "svg", "dmn"],
+    "code": "4.0"
+  },
+  {
+    "objectID": "process-5.0",
+    "href": "#process-5.0",
+    "title": "Gestão de Acessos e Utilizadores",
+    "section": "Gerir Pedidos de Serviço",
+    "text": "Processos operacionais de gestão de acessos e utilizadores",
+    "crumbs": [
+      "Início",
+      "Gerir Pedidos de Serviço",
+      "Gestão de Acessos e Utilizadores"
+    ],
+    "type": "process",
+    "category": "Gerir Pedidos de Serviço",
+    "keywords": ["acessos", "utilizadores", "onboarding", "igfej"],
+    "code": "5.0"
+  },
+  {
+    "objectID": "subprocess-5.1",
+    "href": "#subprocess-5.1",
+    "title": "Criação de Utilizador",
+    "section": "Gerir Pedidos de Serviço",
+    "text": "Criação de conta de utilizador em diretório (ex.: AD) e disponibilização de credenciais e acessos base.",
+    "crumbs": [
+      "Início",
+      "Gerir Pedidos de Serviço",
+      "Gestão de Acessos e Utilizadores",
+      "Criação de Utilizador"
+    ],
+    "type": "subprocess",
+    "category": "Gerir Pedidos de Serviço",
+    "keywords": [
+      "utilizador",
+      "active directory",
+      "conta",
+      "acesso",
+      "onboarding"
+    ],
+    "code": "5.1"
+  }
+]

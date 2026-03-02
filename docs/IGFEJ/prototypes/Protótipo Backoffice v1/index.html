@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IGFEJ - Gestão de Processos</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- AOS (optional animations on scroll) -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
+    <!-- Feather Icons (load once) -->
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+
+    <!-- Anime.js for entrance animations -->
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f8fafc;
+      }
+      .gradient-bg {
+        background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+      }
+      .process-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+      .sidebar-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+      
+    </style>
+  </head>
+  <body class="min-h-screen overflow-x-hidden">
+    <div class="flex">
+      <!-- Sidebar (desktop) -->
+      <aside class="hidden md:block fixed inset-y-0 left-0 w-64 z-40">
+        <div
+          class="h-screen overflow-y-auto flex flex-col gradient-bg text-white w-64"
+        >
+          <div
+            class="flex items-center justify-center h-16 px-4 border-b border-blue-800"
+          >
+            <div class="flex items-center gap-2">
+              <i data-feather="layers" class="w-8 h-8 text-blue-200"></i>
+              <span class="text-xl font-semibold">IGFEJ</span>
+            </div>
+          </div>
+          <div class="flex flex-col flex-grow px-4 py-4 overflow-y-auto">
+            <nav class="flex-1 space-y-2">
+              <a
+                href="index.html"
+                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-white bg-blue-800"
+              >
+                <i data-feather="home" class="w-5 h-5 mr-3"></i> Dashboard
+              </a>
+              <a
+                href="processos.html"
+                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-blue-100"
+              >
+                <i data-feather="file-text" class="w-5 h-5 mr-3"></i> Processos
+              </a>
+              <a
+                href="teams.html"
+                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-blue-100"
+              >
+                <i data-feather="users" class="w-5 h-5 mr-3"></i> Equipas
+              </a>
+              <a
+                href="relatorios.html"
+                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-blue-100"
+              >
+                <i data-feather="bar-chart-2" class="w-5 h-5 mr-3"></i>
+                Relatórios
+              </a>
+              <a
+                href="configuracoes.html"
+                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-blue-100"
+              >
+                <i data-feather="settings" class="w-5 h-5 mr-3"></i>
+                Configurações
+              </a>
+            </nav>
+            <div class="mt-auto mb-4">
+              <div class="p-4 bg-blue-800 rounded-lg">
+                <h4 class="text-sm font-medium text-white">
+                  Ajuda &amp; Suporte
+                </h4>
+                <p class="mt-1 text-xs text-blue-200">
+                  Contacte a nossa equipa para qualquer questão.
+                </p>
+                <button
+                  class="mt-2 w-full px-3 py-2 text-xs font-medium text-center text-blue-900 bg-white rounded-md"
+                >
+                  Contactar Suporte
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Mobile sidebar drawer -->
+      <div id="mobileDrawer" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/40" id="drawerBackdrop"></div>
+        <aside
+          class="absolute left-0 top-0 h-full w-72 gradient-bg text-white shadow-xl"
+        >
+          <div
+            class="flex items-center justify-between h-16 px-4 border-b border-blue-800"
+          >
+            <div class="flex items-center">
+              <i data-feather="scale" class="w-7 h-7 text-blue-200"></i>
+              <span class="ml-2 text-lg font-semibold">IGFEJ</span>
+            </div>
+            <button
+              id="closeDrawer"
+              class="p-2 rounded hover:bg-white/10"
+              aria-label="Fechar menu"
+            >
+              <i data-feather="x" class="w-5 h-5"></i>
+            </button>
+          </div>
+          <nav class="p-4 space-y-2">
+            <a
+              href="index.html"
+              class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-blue-100"
+            >
+              <i data-feather="home" class="w-5 h-5 mr-3"></i> Dashboard
+            </a>
+            <a
+              href="processos.html"
+              class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-blue-100"
+            >
+              <i data-feather="file-text" class="w-5 h-5 mr-3"></i> Processos
+            </a>
+            <a
+              href="teams.html"
+              class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-blue-100"
+            >
+              <i data-feather="users" class="w-5 h-5 mr-3"></i> Equipas
+            </a>
+            <a
+              href="relatorios.html"
+              class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-white bg-blue-800"
+            >
+              <i data-feather="bar-chart-2" class="w-5 h-5 mr-3"></i> Relatórios
+            </a>
+            <a
+              href="configuracoes.html"
+              class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-blue-100"
+            >
+              <i data-feather="settings" class="w-5 h-5 mr-3"></i> Configurações
+            </a>
+          </nav>
+        </aside>
+      </div>
+
+      <!-- Main content -->
+      <div class="flex flex-col flex-1 overflow-hidden md:ml-64">
+        <!-- Top navigation -->
+        <header
+          class="sticky top-0 z-20 flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200"
+        >
+          <div class="flex items-center">
+            <button
+              id="openDrawer"
+              class="md:hidden mr-4 p-2 rounded hover:bg-gray-100"
+              aria-label="Abrir menu"
+            >
+              <i data-feather="menu" class="w-6 h-6 text-gray-600"></i>
+            </button>
+            <h1 class="text-xl font-semibold text-gray-800">Dashboard</h1>
+          </div>
+          <div class="flex items-center space-x-4">
+            <div class="relative">
+              <i
+                data-feather="search"
+                class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              ></i>
+              <input
+                type="text"
+                placeholder="Pesquisar..."
+                class="pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <button
+              class="p-2 text-gray-600 rounded-full hover:bg-gray-100"
+              aria-label="Notificações"
+            >
+              <i data-feather="bell" class="w-5 h-5"></i>
+            </button>
+            <div class="flex items-center">
+              <div
+                class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-medium"
+              >
+                JP
+              </div>
+              <span class="ml-2 text-sm font-medium hidden md:inline"
+                >João Pereira</span
+              >
+            </div>
+          </div>
+        </header>
+
+        <!-- Main content area -->
+        <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+          <div class="mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">Bem-vindo ao IGFEJ</h2>
+            <p class="text-gray-600">
+              Gestão e publicação de processos judiciais
+            </p>
+          </div>
+
+          <!-- Stats cards -->
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+          >
+            <div
+              class="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+              data-aos="fade-up"
+            >
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-500">
+                    Processos Ativos
+                  </p>
+                  <p class="mt-1 text-2xl font-semibold text-gray-900">1,248</p>
+                </div>
+                <div class="p-3 rounded-lg bg-blue-50 text-blue-600">
+                  <i data-feather="file-text" class="w-6 h-6"></i>
+                </div>
+              </div>
+              <div class="mt-4">
+                <span class="text-sm font-medium text-green-500">+12.5%</span>
+                <span class="text-sm text-gray-500 ml-1">vs último mês</span>
+              </div>
+            </div>
+
+            <div
+              class="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+              data-aos="fade-up"
+              data-aos-delay="100"
+            >
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-500">
+                    Versões Aprovadas
+                  </p>
+                  <p class="mt-1 text-2xl font-semibold text-gray-900">856</p>
+                </div>
+                <div class="p-3 rounded-lg bg-blue-50 text-blue-600">
+                  <i data-feather="check-circle" class="w-6 h-6"></i>
+                </div>
+              </div>
+              <div class="mt-4">
+                <span class="text-sm font-medium text-green-500">+8.3%</span>
+                <span class="text-sm text-gray-500 ml-1">vs último mês</span>
+              </div>
+            </div>
+
+            <div
+              class="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+              data-aos="fade-up"
+              data-aos-delay="200"
+            >
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-500">
+                    Equipas Ativas
+                  </p>
+                  <p class="mt-1 text-2xl font-semibold text-gray-900">24</p>
+                </div>
+                <div class="p-3 rounded-lg bg-blue-50 text-blue-600">
+                  <i data-feather="users" class="w-6 h-6"></i>
+                </div>
+              </div>
+              <div class="mt-4">
+                <span class="text-sm font-medium text-green-500">+2</span>
+                <span class="text-sm text-gray-500 ml-1">novas equipas</span>
+              </div>
+            </div>
+
+            <div
+              class="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+              data-aos="fade-up"
+              data-aos-delay="300"
+            >
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-500">
+                    Média de Tempo
+                  </p>
+                  <p class="mt-1 text-2xl font-semibold text-gray-900">18d</p>
+                </div>
+                <div class="p-3 rounded-lg bg-blue-50 text-blue-600">
+                  <i data-feather="clock" class="w-6 h-6"></i>
+                </div>
+              </div>
+              <div class="mt-4">
+                <span class="text-sm font-medium text-red-500">-2d</span>
+                <span class="text-sm text-gray-500 ml-1">vs último mês</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent processes -->
+          <div
+            class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden mb-8"
+          >
+            <div
+              class="px-6 py-4 border-b border-gray-200 flex items-center justify-between"
+            >
+              <h3 class="text-lg font-semibold text-gray-900">
+                Processos Recentes
+              </h3>
+              <button
+                class="text-sm font-medium text-blue-600 hover:text-blue-800"
+                onclick="window.location.href='processos.html'"
+              >
+                Ver todos
+              </button>
+            </div>
+            <div class="divide-y divide-gray-200">
+              <div
+                class="px-6 py-4 hover:bg-gray-50 transition-colors duration-150"
+              >
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h4 class="font-medium text-gray-900">
+                      Processo #2025-0456
+                    </h4>
+                    <p class="text-sm text-gray-500">
+                      Tribunal Judicial de Lisboa
+                    </p>
+                  </div>
+                  <div class="flex items-center space-x-4">
+                    <span
+                      class="px-3 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-800"
+                      >Em revisão</span
+                    >
+                    <span class="text-sm text-gray-500">15/06/2025</span>
+                    <button
+                      class="text-gray-400 hover:text-gray-600"
+                      aria-label="Mais opções"
+                    >
+                      <i data-feather="more-vertical" class="w-5 h-5"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="px-6 py-4 hover:bg-gray-50 transition-colors duration-150"
+              >
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h4 class="font-medium text-gray-900">
+                      Processo #2025-0455
+                    </h4>
+                    <p class="text-sm text-gray-500">
+                      Tribunal Judicial do Porto
+                    </p>
+                  </div>
+                  <div class="flex items-center space-x-4">
+                    <span
+                      class="px-3 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800"
+                      >Aprovado</span
+                    >
+                    <span class="text-sm text-gray-500">14/06/2025</span>
+                    <button
+                      class="text-gray-400 hover:text-gray-600"
+                      aria-label="Mais opções"
+                    >
+                      <i data-feather="more-vertical" class="w-5 h-5"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="px-6 py-4 hover:bg-gray-50 transition-colors duration-150"
+              >
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h4 class="font-medium text-gray-900">
+                      Processo #2025-0454
+                    </h4>
+                    <p class="text-sm text-gray-500">
+                      Tribunal Judicial de Coimbra
+                    </p>
+                  </div>
+                  <div class="flex items-center space-x-4">
+                    <span
+                      class="px-3 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800"
+                      >Pendente</span
+                    >
+                    <span class="text-sm text-gray-500">13/06/2025</span>
+                    <button
+                      class="text-gray-400 hover:text-gray-600"
+                      aria-label="Mais opções"
+                    >
+                      <i data-feather="more-vertical" class="w-5 h-5"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div
+                class="px-6 py-4 hover:bg-gray-50 transition-colors duration-150"
+              >
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h4 class="font-medium text-gray-900">
+                      Processo #2025-0453
+                    </h4>
+                    <p class="text-sm text-gray-500">
+                      Tribunal Judicial de Braga
+                    </p>
+                  </div>
+                  <div class="flex items-center space-x-4">
+                    <span
+                      class="px-3 py-1 text-xs font-medium rounded-full bg-purple-100 text-purple-800"
+                      >Em revisão</span
+                    >
+                    <span class="text-sm text-gray-500">12/06/2025</span>
+                    <button
+                      class="text-gray-400 hover:text-gray-600"
+                      aria-label="Mais opções"
+                    >
+                      <i data-feather="more-vertical" class="w-5 h-5"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Process types and quick actions -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2">
+              <div
+                class="bg-white rounded-xl shadow-sm border border-gray-100 p-6"
+              >
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                  Tipos de Processos
+                </h3>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div
+                    class="process-card p-4 border border-gray-200 rounded-lg hover:shadow-md transition-all duration-200 cursor-pointer"
+                  >
+                    <div
+                      class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center mb-3"
+                    >
+                      <i data-feather="file" class="w-5 h-5 text-blue-600"></i>
+                    </div>
+                    <h4 class="font-medium text-gray-900">Cível</h4>
+                    <p class="text-sm text-gray-500 mt-1">124 processos</p>
+                  </div>
+                  <div
+                    class="process-card p-4 border border-gray-200 rounded-lg hover:shadow-md transition-all duration-200 cursor-pointer"
+                  >
+                    <div
+                      class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center mb-3"
+                    >
+                      <i
+                        data-feather="briefcase"
+                        class="w-5 h-5 text-blue-600"
+                      ></i>
+                    </div>
+                    <h4 class="font-medium text-gray-900">Comercial</h4>
+                    <p class="text-sm text-gray-500 mt-1">89 processos</p>
+                  </div>
+                  <div
+                    class="process-card p-4 border border-gray-200 rounded-lg hover:shadow-md transition-all duration-200 cursor-pointer"
+                  >
+                    <div
+                      class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center mb-3"
+                    >
+                      <i
+                        data-feather="home"
+                        class="w-5 h-5 text-blue-600"
+                      ></i>
+                    </div>
+                    <h4 class="font-medium text-gray-900">Familiar</h4>
+                    <p class="text-sm text-gray-500 mt-1">76 processos</p>
+                  </div>
+                  <div
+                    class="process-card p-4 border border-gray-200 rounded-lg hover:shadow-md transition-all duration-200 cursor-pointer"
+                  >
+                    <div
+                      class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center mb-3"
+                    >
+                      <i
+                        data-feather="dollar-sign"
+                        class="w-5 h-5 text-blue-600"
+                      ></i>
+                    </div>
+                    <h4 class="font-medium text-gray-900">Fiscal</h4>
+                    <p class="text-sm text-gray-500 mt-1">65 processos</p>
+                  </div>
+                  <div
+                    class="process-card p-4 border border-gray-200 rounded-lg hover:shadow-md transition-all duration-200 cursor-pointer"
+                  >
+                    <div
+                      class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center mb-3"
+                    >
+                      <i data-feather="shield" class="w-5 h-5 text-blue-600"></i>
+                    </div>
+                    <h4 class="font-medium text-gray-900">Penal</h4>
+                    <p class="text-sm text-gray-500 mt-1">112 processos</p>
+                  </div>
+                  <div
+                    class="process-card p-4 border border-gray-200 rounded-lg hover:shadow-md transition-all duration-200 cursor-pointer"
+                  >
+                    <div
+                      class="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center mb-3"
+                    >
+                      <i
+                        data-feather="globe"
+                        class="w-5 h-5 text-blue-600"
+                      ></i>
+                    </div>
+                    <h4 class="font-medium text-gray-900">Internacional</h4>
+                    <p class="text-sm text-gray-500 mt-1">34 processos</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div
+                class="bg-white rounded-xl shadow-sm border border-gray-100 p-6"
+              >
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">
+                  Ações Rápidas
+                </h3>
+                <div class="space-y-3">
+                  <button
+                    class="w-full flex items-center justify-between px-4 py-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors duration-150"
+                  >
+                    <span class="font-medium">Novo Processo</span>
+                    <i data-feather="plus" class="w-5 h-5"></i>
+                  </button>
+                  <button
+                    class="w-full flex items-center justify-between px-4 py-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors duration-150"
+                  >
+                    <span class="font-medium">Atribuir Equipa</span>
+                    <i data-feather="users" class="w-5 h-5"></i>
+                  </button>
+                  <button
+                    class="w-full flex items-center justify-between px-4 py-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors duration-150"
+                  >
+                    <span class="font-medium">Gerar Relatório</span>
+                    <i data-feather="printer" class="w-5 h-5"></i>
+                  </button>
+                  <button
+                    class="w-full flex items-center justify-between px-4 py-3 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors duration-150"
+                  >
+                    <span class="font-medium">Exportar Dados</span>
+                    <i data-feather="download" class="w-5 h-5"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+      // Init libs after DOM is parsed
+      document.addEventListener("DOMContentLoaded", function () {
+        AOS.init({ once: true });
+        feather.replace();
+
+        // // Animate tiles on load (fallback even if AOS disabled)
+        // anime({
+        //   targets: '.process-card',
+        //   translateY: [20, 0],
+        //   opacity: [0, 1],
+        //   delay: anime.stagger(100),
+        //   easing: 'easeOutExpo'
+        // });
+
+        // Mobile drawer wiring
+        const drawer = document.getElementById("mobileDrawer");
+        const openBtn = document.getElementById("openDrawer");
+        const closeBtn = document.getElementById("closeDrawer");
+        const backdrop = document.getElementById("drawerBackdrop");
+
+        function openDrawer() {
+          drawer.classList.remove("hidden");
+        }
+        function closeDrawer() {
+          drawer.classList.add("hidden");
+        }
+
+        openBtn?.addEventListener("click", openDrawer);
+        closeBtn?.addEventListener("click", closeDrawer);
+        backdrop?.addEventListener("click", closeDrawer);
+      });
+    </script>
+  </body>
+</html>

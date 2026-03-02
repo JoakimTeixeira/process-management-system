@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IGFEJ - Equipas</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- AOS (optional; you aren't using data-aos yet but kept for future) -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+
+    <!-- Feather Icons (load ONCE) -->
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+
+    <!-- Anime.js -->
+    <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap");
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: #f8fafc;
+      }
+      .gradient-bg {
+        background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+      }
+      .team-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+          0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      }
+      .sidebar-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+      .member-avatar {
+        transition: transform 0.2s ease;
+      }
+      .member-avatar:hover {
+        transform: scale(1.1);
+      }
+      
+    </style>
+  </head>
+  <body class="min-h-screen overflow-x-hidden">
+    <div class="flex">
+      <!-- Sidebar (desktop) -->
+      <aside class="hidden md:block fixed inset-y-0 left-0 w-64 z-40">
+        <div
+          class="h-screen overflow-y-auto flex flex-col gradient-bg text-white w-64"
+        >
+          <div
+            class="flex items-center justify-center h-16 px-4 border-b border-blue-800"
+          >
+            <div class="flex items-center">
+              <i data-feather="layers" class="w-8 h-8 text-blue-200"></i>
+              <span class="ml-2 text-xl font-semibold">IGFEJ</span>
+            </div>
+          </div>
+          <div class="flex flex-col flex-grow px-4 py-4 overflow-y-auto">
+            <nav class="flex-1 space-y-2">
+              <a
+                href="index.html"
+                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-blue-100"
+              >
+                <i data-feather="home" class="w-5 h-5 mr-3"></i> Dashboard
+              </a>
+              <a
+                href="processos.html"
+                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-blue-100"
+              >
+                <i data-feather="file-text" class="w-5 h-5 mr-3"></i> Processos
+              </a>
+              <a
+                href="teams.html"
+                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-white bg-blue-800"
+              >
+                <i data-feather="users" class="w-5 h-5 mr-3"></i> Equipas
+              </a>
+              <a
+                href="relatorios.html"
+                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-blue-100"
+              >
+                <i data-feather="bar-chart-2" class="w-5 h-5 mr-3"></i>
+                Relatórios
+              </a>
+              <a
+                href="configuracoes.html"
+                class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-blue-100"
+              >
+                <i data-feather="settings" class="w-5 h-5 mr-3"></i>
+                Configurações
+              </a>
+            </nav>
+            <div class="mt-auto mb-4">
+              <div class="p-4 bg-blue-800 rounded-lg">
+                <h4 class="text-sm font-medium text-white">
+                  Ajuda &amp; Suporte
+                </h4>
+                <p class="mt-1 text-xs text-blue-200">
+                  Contacte a nossa equipa para qualquer questão.
+                </p>
+                <button
+                  class="mt-2 w-full px-3 py-2 text-xs font-medium text-center text-blue-900 bg-white rounded-md"
+                >
+                  Contactar Suporte
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Mobile sidebar drawer -->
+      <div id="mobileDrawer" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/40" id="drawerBackdrop"></div>
+        <aside
+          class="absolute left-0 top-0 h-full w-72 gradient-bg text-white shadow-xl"
+        >
+          <div
+            class="flex items-center justify-between h-16 px-4 border-b border-blue-800"
+          >
+            <div class="flex items-center">
+              <i data-feather="scale" class="w-7 h-7 text-blue-200"></i>
+              <span class="ml-2 text-lg font-semibold">IGFEJ</span>
+            </div>
+            <button id="closeDrawer" class="p-2 rounded hover:bg-white/10">
+              <i data-feather="x" class="w-5 h-5"></i>
+              <span class="sr-only">Fechar menu</span>
+            </button>
+          </div>
+          <nav class="p-4 space-y-2">
+            <a
+              href="index.html"
+              class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-blue-100"
+            >
+              <i data-feather="home" class="w-5 h-5 mr-3"></i> Dashboard
+            </a>
+            <a
+              href="processos.html"
+              class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-blue-100"
+            >
+              <i data-feather="file-text" class="w-5 h-5 mr-3"></i> Processos
+            </a>
+            <a
+              href="teams.html"
+              class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-white bg-blue-800"
+            >
+              <i data-feather="users" class="w-5 h-5 mr-3"></i> Equipas
+            </a>
+            <a
+              href="relatorios.html"
+              class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-blue-100"
+            >
+              <i data-feather="bar-chart-2" class="w-5 h-5 mr-3"></i> Relatórios
+            </a>
+            <a
+              href="configuracoes.html"
+              class="flex items-center px-4 py-3 text-sm font-medium rounded-lg sidebar-link text-blue-100"
+            >
+              <i data-feather="settings" class="w-5 h-5 mr-3"></i> Configurações
+            </a>
+          </nav>
+        </aside>
+      </div>
+
+      <!-- Main content -->
+      <div class="flex flex-col flex-1 overflow-hidden md:ml-64">
+        <!-- Top bar -->
+        <header
+          class="sticky top-0 z-20 flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200"
+        >
+          <div class="flex items-center">
+            <button
+              id="openDrawer"
+              class="md:hidden mr-4 p-2 rounded hover:bg-gray-100"
+              aria-label="Abrir menu"
+            >
+              <i data-feather="menu" class="w-6 h-6 text-gray-600"></i>
+            </button>
+            <h1 class="text-xl font-semibold text-gray-800">Equipas</h1>
+          </div>
+          <div class="flex items-center space-x-4">
+            <div class="relative">
+              <i
+                data-feather="search"
+                class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+              ></i>
+              <input
+                id="teamSearch"
+                type="text"
+                placeholder="Pesquisar equipas..."
+                class="pl-10 pr-4 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <button
+              onclick="openNewTeamModal()"
+              class="inline-flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-150"
+            >
+              <i data-feather="plus" class="w-4 h-4"></i>
+              <span>Nova Equipa</span>
+            </button>
+            <button
+              class="p-2 text-gray-600 rounded-full hover:bg-gray-100"
+              aria-label="Notificações"
+            >
+              <i data-feather="bell" class="w-5 h-5"></i>
+            </button>
+            <div class="flex items-center">
+              <div
+                class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-medium"
+              >
+                JP
+              </div>
+              <span class="ml-2 text-sm font-medium hidden md:inline"
+                >João Pereira</span
+              >
+            </div>
+          </div>
+        </header>
+
+        <!-- Main content area -->
+        <main class="flex-1 overflow-y-auto p-6 bg-gray-50">
+          <div class="mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">Gestão de Equipas</h2>
+            <p class="text-gray-600">
+              Organize e gerencie as equipas de trabalho
+            </p>
+          </div>
+
+          <!-- Stats cards -->
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+          >
+            <div
+              class="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+            >
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-500">
+                    Total de Equipas
+                  </p>
+                  <p class="mt-1 text-2xl font-semibold text-gray-900">24</p>
+                </div>
+                <div class="p-3 rounded-lg bg-blue-50 text-blue-600">
+                  <i data-feather="users" class="w-6 h-6"></i>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+            >
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-500">
+                    Membros Ativos
+                  </p>
+                  <p class="mt-1 text-2xl font-semibold text-gray-900">156</p>
+                </div>
+                <div class="p-3 rounded-lg bg-green-50 text-green-600">
+                  <i data-feather="user-check" class="w-6 h-6"></i>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+            >
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-500">
+                    Equipas Completas
+                  </p>
+                  <p class="mt-1 text-2xl font-semibold text-gray-900">18</p>
+                </div>
+                <div class="p-3 rounded-lg bg-purple-50 text-purple-600">
+                  <i data-feather="check-circle" class="w-6 h-6"></i>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="bg-white p-6 rounded-xl shadow-sm border border-gray-100"
+            >
+              <div class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-medium text-gray-500">
+                    Média por Equipa
+                  </p>
+                  <p class="mt-1 text-2xl font-semibold text-gray-900">6.5</p>
+                </div>
+                <div class="p-3 rounded-lg bg-yellow-50 text-yellow-600">
+                  <i data-feather="pie-chart" class="w-6 h-6"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Teams grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Team Card 1 -->
+            <div
+              class="team-card bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-200 min-h-0 flex flex-col"
+            >
+              <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center justify-between mb-2">
+                  <h3 class="text-base font-semibold text-gray-900">
+                    Equipa Jurídica A
+                  </h3>
+                  <span
+                    class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800"
+                    >Ativa</span
+                  >
+                </div>
+                <p class="text-xs text-gray-600 mb-2">
+                  Especializada em direito civil e comercial
+                </p>
+                <div
+                  class="flex items-center justify-between text-xs text-gray-500"
+                >
+                  <span>6 membros</span>
+                  <span>45 processos</span>
+                </div>
+              </div>
+              <div class="p-4 bg-gray-50 flex-1">
+                <h4 class="text-xs font-medium text-gray-700 mb-2">Membros</h4>
+                <div class="flex -space-x-2">
+                  <div
+                    class="member-avatar w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium"
+                  >
+                    AP
+                  </div>
+                  <div
+                    class="member-avatar w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-medium"
+                  >
+                    MR
+                  </div>
+                  <div
+                    class="member-avatar w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center text-white text-xs font-medium"
+                  >
+                    LS
+                  </div>
+                  <div
+                    class="member-avatar w-8 h-8 rounded-full bg-yellow-500 flex items-center justify-center text-white text-xs font-medium"
+                  >
+                    TC
+                  </div>
+                  <div
+                    class="member-avatar w-8 h-8 rounded-full bg-red-500 flex items-center justify-center text-white text-xs font-medium"
+                  >
+                    +2
+                  </div>
+                </div>
+              </div>
+              <div
+                class="px-4 py-3 border-t border-gray-200 flex items-center justify-between"
+              >
+                <button
+                  class="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                  onclick="openTeamDetailModal('Equipa Jurídica A','Especializada em direito civil e comercial','Ana Pereira')"
+                >
+                  Ver detalhes
+                </button>
+                <button
+                  class="text-gray-400 hover:text-gray-600"
+                  aria-label="Mais opções"
+                >
+                  <i data-feather="more-vertical" class="w-5 h-5"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Team Card 2 -->
+            <div
+              class="team-card bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-200 min-h-0 flex flex-col"
+            >
+              <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center justify-between mb-2">
+                  <h3 class="text-base font-semibold text-gray-900">
+                    Equipa Fiscal
+                  </h3>
+                  <span
+                    class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800"
+                    >Ativa</span
+                  >
+                </div>
+                <p class="text-xs text-gray-600 mb-2">
+                  Especializada em direito fiscal e tributário
+                </p>
+                <div
+                  class="flex items-center justify-between text-xs text-gray-500"
+                >
+                  <span>5 membros</span><span>32 processos</span>
+                </div>
+              </div>
+              <div class="p-4 bg-gray-50 flex-1">
+                <h4 class="text-xs font-medium text-gray-700 mb-2">Membros</h4>
+                <div class="flex -space-x-2">
+                  <div
+                    class="member-avatar w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium"
+                  >
+                    JP
+                  </div>
+                  <div
+                    class="member-avatar w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-medium"
+                  >
+                    AF
+                  </div>
+                  <div
+                    class="member-avatar w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center text-white text-xs font-medium"
+                  >
+                    MC
+                  </div>
+                  <div
+                    class="member-avatar w-8 h-8 rounded-full bg-yellow-500 flex items-center justify-center text-white text-xs font-medium"
+                  >
+                    +2
+                  </div>
+                </div>
+              </div>
+              <div
+                class="px-4 py-3 border-t border-gray-200 flex items-center justify-between"
+              >
+                <button
+                  class="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                  onclick="openTeamDetailModal('Equipa Fiscal','Especializada em direito fiscal e tributário','João Pereira')"
+                >
+                  Ver detalhes
+                </button>
+                <button
+                  class="text-gray-400 hover:text-gray-600"
+                  aria-label="Mais opções"
+                >
+                  <i data-feather="more-vertical" class="w-5 h-5"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Team Card 3 -->
+            <div
+              class="team-card bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-200 min-h-0 flex flex-col"
+            >
+              <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center justify-between mb-2">
+                  <h3 class="text-base font-semibold text-gray-900">
+                    Equipa Penal
+                  </h3>
+                  <span
+                    class="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800"
+                    >Parcial</span
+                  >
+                </div>
+                <p class="text-xs text-gray-600 mb-2">
+                  Especializada em direito penal e processual penal
+                </p>
+                <div
+                  class="flex items-center justify-between text-xs text-gray-500"
+                >
+                  <span>4 membros</span><span>28 processos</span>
+                </div>
+              </div>
+              <div class="p-4 bg-gray-50 flex-1">
+                <h4 class="text-xs font-medium text-gray-700 mb-2">Membros</h4>
+                <div class="flex -space-x-2">
+                  <div
+                    class="member-avatar w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium"
+                  >
+                    RS
+                  </div>
+                  <div
+                    class="member-avatar w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-medium"
+                  >
+                    PD
+                  </div>
+                  <div
+                    class="member-avatar w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center text-white text-xs font-medium"
+                  >
+                    +2
+                  </div>
+                </div>
+              </div>
+              <div
+                class="px-4 py-3 border-t border-gray-200 flex items-center justify-between"
+              >
+                <button
+                  class="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                  onclick="openTeamDetailModal('Equipa Penal','Especializada em direito penal e processual penal','Rita Sousa')"
+                >
+                  Ver detalhes
+                </button>
+                <button
+                  class="text-gray-400 hover:text-gray-600"
+                  aria-label="Mais opções"
+                >
+                  <i data-feather="more-vertical" class="w-5 h-5"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Team Card 4 -->
+            <div
+              class="team-card bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-200 min-h-0 flex flex-col"
+            >
+              <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center justify-between mb-2">
+                  <h3 class="text-base font-semibold text-gray-900">
+                    Equipa Familiar
+                  </h3>
+                  <span
+                    class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800"
+                    >Ativa</span
+                  >
+                </div>
+                <p class="text-xs text-gray-600 mb-2">
+                  Especializada em direito de família e sucessões
+                </p>
+                <div
+                  class="flex items-center justify-between text-xs text-gray-500"
+                >
+                  <span>7 membros</span><span>38 processos</span>
+                </div>
+              </div>
+              <div class="p-4 bg-gray-50 flex-1">
+                <h4 class="text-xs font-medium text-gray-700 mb-2">Membros</h4>
+                <div class="flex -space-x-2">
+                  <div
+                    class="member-avatar w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium"
+                  >
+                    MA
+                  </div>
+                  <div
+                    class="member-avatar w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-medium"
+                  >
+                    CP
+                  </div>
+                  <div
+                    class="member-avatar w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center text-white text-xs font-medium"
+                  >
+                    +5
+                  </div>
+                </div>
+              </div>
+              <div
+                class="px-4 py-3 border-t border-gray-200 flex items-center justify-between"
+              >
+                <button
+                  class="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                  onclick="openTeamDetailModal('Equipa Familiar','Especializada em direito de família e sucessões','Mariana Alves')"
+                >
+                  Ver detalhes
+                </button>
+                <button
+                  class="text-gray-400 hover:text-gray-600"
+                  aria-label="Mais opções"
+                >
+                  <i data-feather="more-vertical" class="w-5 h-5"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Team Card 5 -->
+            <div
+              class="team-card bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-200 min-h-0 flex flex-col"
+            >
+              <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center justify-between mb-2">
+                  <h3 class="text-base font-semibold text-gray-900">
+                    Equipa Comercial
+                  </h3>
+                  <span
+                    class="px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800"
+                    >Ativa</span
+                  >
+                </div>
+                <p class="text-xs text-gray-600 mb-2">
+                  Especializada em direito comercial e societário
+                </p>
+                <div
+                  class="flex items-center justify-between text-xs text-gray-500"
+                >
+                  <span>5 membros</span><span>41 processos</span>
+                </div>
+              </div>
+              <div class="p-4 bg-gray-50 flex-1">
+                <h4 class="text-xs font-medium text-gray-700 mb-2">Membros</h4>
+                <div class="flex -space-x-2">
+                  <div
+                    class="member-avatar w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium"
+                  >
+                    JM
+                  </div>
+                  <div
+                    class="member-avatar w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-medium"
+                  >
+                    RT
+                  </div>
+                  <div
+                    class="member-avatar w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center text-white text-xs font-medium"
+                  >
+                    +3
+                  </div>
+                </div>
+              </div>
+              <div
+                class="px-4 py-3 border-t border-gray-200 flex items-center justify-between"
+              >
+                <button
+                  class="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                  onclick="openTeamDetailModal('Equipa Comercial','Especializada em direito comercial e societário','João Matos')"
+                >
+                  Ver detalhes
+                </button>
+                <button
+                  class="text-gray-400 hover:text-gray-600"
+                  aria-label="Mais opções"
+                >
+                  <i data-feather="more-vertical" class="w-5 h-5"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Team Card 6 -->
+            <div
+              class="team-card bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-200 min-h-0 flex flex-col"
+            >
+              <div class="p-4 border-b border-gray-200">
+                <div class="flex items-center justify-between mb-2">
+                  <h3 class="text-base font-semibold text-gray-900">
+                    Equipa Internacional
+                  </h3>
+                  <span
+                    class="px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800"
+                    >Parcial</span
+                  >
+                </div>
+                <p class="text-xs text-gray-600 mb-2">
+                  Especializada em direito internacional privado
+                </p>
+                <div
+                  class="flex items-center justify-between text-xs text-gray-500"
+                >
+                  <span>3 membros</span><span>17 processos</span>
+                </div>
+              </div>
+              <div class="p-4 bg-gray-50 flex-1">
+                <h4 class="text-xs font-medium text-gray-700 mb-2">Membros</h4>
+                <div class="flex -space-x-2">
+                  <div
+                    class="member-avatar w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs font-medium"
+                  >
+                    IL
+                  </div>
+                  <div
+                    class="member-avatar w-8 h-8 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-medium"
+                  >
+                    +2
+                  </div>
+                </div>
+              </div>
+              <div
+                class="px-4 py-3 border-t border-gray-200 flex items-center justify-between"
+              >
+                <button
+                  class="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                  onclick="openTeamDetailModal('Equipa Internacional','Especializada em direito internacional privado','Inês Lopes')"
+                >
+                  Ver detalhes
+                </button>
+                <button
+                  class="text-gray-400 hover:text-gray-600"
+                  aria-label="Mais opções"
+                >
+                  <i data-feather="more-vertical" class="w-5 h-5"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- New Team Modal -->
+    <div
+      id="newTeamModal"
+      class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="newTeamTitle"
+    >
+      <div
+        class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white"
+      >
+        <div class="mt-3">
+          <div class="flex items-center justify-between mb-4">
+            <h3 id="newTeamTitle" class="text-lg font-medium text-gray-900">
+              Nova Equipa
+            </h3>
+            <button
+              onclick="closeNewTeamModal()"
+              class="text-gray-400 hover:text-gray-600"
+              aria-label="Fechar"
+            >
+              <i data-feather="x" class="w-5 h-5"></i>
+            </button>
+          </div>
+          <form class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Nome da Equipa</label
+              >
+              <input
+                type="text"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Digite o nome da equipa"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Descrição</label
+              >
+              <textarea
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Descreva a especialidade da equipa"
+                rows="3"
+              ></textarea>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Líder da Equipa</label
+              >
+              <select
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option>Selecionar líder</option>
+                <option>João Pereira</option>
+                <option>Maria Silva</option>
+                <option>Carlos Santos</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Membros</label
+              >
+              <div class="space-y-2">
+                <label class="flex items-center">
+                  <input type="checkbox" class="mr-2" />
+                  <span class="text-sm">João Pereira</span>
+                </label>
+                <label class="flex items-center">
+                  <input type="checkbox" class="mr-2" />
+                  <span class="text-sm">Maria Silva</span>
+                </label>
+                <label class="flex items-center">
+                  <input type="checkbox" class="mr-2" />
+                  <span class="text-sm">Carlos Santos</span>
+                </label>
+              </div>
+            </div>
+            <div class="flex justify-end space-x-3 pt-4">
+              <button
+                type="button"
+                onclick="closeNewTeamModal()"
+                class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+              >
+                Criar Equipa
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Team Detail Modal -->
+    <div
+      id="teamDetailModal"
+      class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="teamDetailTitle"
+    >
+      <div
+        class="relative top-10 mx-auto p-5 border w-11/12 max-w-4xl shadow-lg rounded-md bg-white"
+      >
+        <div class="flex items-center justify-between mb-4">
+          <h3 id="teamDetailTitle" class="text-lg font-semibold text-gray-900">
+            Detalhes da Equipa
+          </h3>
+          <button
+            onclick="closeTeamDetailModal()"
+            class="text-gray-400 hover:text-gray-600"
+            aria-label="Fechar"
+          >
+            <i data-feather="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="lg:col-span-2">
+            <div class="bg-gray-50 rounded-lg p-4 mb-4">
+              <h4 class="font-medium text-gray-900 mb-2">Informações Gerais</h4>
+              <p id="teamDetailDesc" class="text-sm text-gray-600 mb-3"></p>
+              <div class="grid grid-cols-2 gap-4 text-sm">
+                <div>
+                  <span class="font-medium">Líder:</span>
+                  <span id="teamDetailLeader" class="text-gray-600 ml-1"></span>
+                </div>
+                <div>
+                  <span class="font-medium">Criado em:</span>
+                  <span id="teamDetailCreated" class="text-gray-600 ml-1"
+                    >15/06/2025</span
+                  >
+                </div>
+              </div>
+            </div>
+            <div>
+              <h4 class="font-medium text-gray-900 mb-2">
+                Processos Atribuídos
+              </h4>
+              <div
+                class="bg-white border border-gray-200 rounded-lg overflow-hidden"
+              >
+                <table class="min-w-full divide-y divide-gray-200">
+                  <thead class="bg-gray-50">
+                    <tr>
+                      <th
+                        class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"
+                      >
+                        Processo
+                      </th>
+                      <th
+                        class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"
+                      >
+                        Status
+                      </th>
+                      <th
+                        class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase"
+                      >
+                        Data
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-200">
+                    <tr>
+                      <td class="px-4 py-2 text-sm">PROC-2025-0456</td>
+                      <td class="px-4 py-2">
+                        <span
+                          class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800"
+                          >Em análise</span
+                        >
+                      </td>
+                      <td class="px-4 py-2 text-sm">15/06/2025</td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-2 text-sm">PROC-2025-0455</td>
+                      <td class="px-4 py-2">
+                        <span
+                          class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800"
+                          >Concluído</span
+                        >
+                      </td>
+                      <td class="px-4 py-2 text-sm">14/06/2025</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h4 class="font-medium text-gray-900 mb-2">Membros</h4>
+            <div id="teamDetailMembers" class="space-y-2">
+              <!-- Populate programatically if needed -->
+            </div>
+            <button
+              onclick="openAddMemberModal()"
+              class="mt-4 w-full px-4 py-2 text-sm border border-gray-300 rounded-md hover:bg-gray-50"
+            >
+              <i data-feather="plus" class="w-4 h-4 mr-1 inline"></i>
+              Adicionar Membro
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Add Member Modal -->
+    <div
+      id="addMemberModal"
+      class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="addMemberTitle"
+    >
+      <div
+        class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white"
+      >
+        <div class="mt-3">
+          <div class="flex items-center justify-between mb-4">
+            <h3 id="addMemberTitle" class="text-lg font-medium text-gray-900">
+              Adicionar Membro
+            </h3>
+            <button
+              onclick="closeAddMemberModal()"
+              class="text-gray-400 hover:text-gray-600"
+              aria-label="Fechar"
+            >
+              <i data-feather="x" class="w-5 h-5"></i>
+            </button>
+          </div>
+          <form class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Nome</label
+              >
+              <input
+                type="text"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Nome completo"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Email</label
+              >
+              <input
+                type="email"
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="email@exemplo.pt"
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1"
+                >Função</label
+              >
+              <select
+                class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option>Advogado</option>
+                <option>Paralegal</option>
+                <option>Estagiário</option>
+              </select>
+            </div>
+            <div class="flex justify-end space-x-3 pt-4">
+              <button
+                type="button"
+                onclick="closeAddMemberModal()"
+                class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+              >
+                Adicionar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+      // Init libs after DOM is parsed
+      document.addEventListener("DOMContentLoaded", function () {
+        AOS.init();
+        feather.replace();
+
+        // Mobile drawer
+        const drawer = document.getElementById("mobileDrawer");
+        const openBtn = document.getElementById("openDrawer");
+        const closeBtn = document.getElementById("closeDrawer");
+        const backdrop = document.getElementById("drawerBackdrop");
+
+        function openDrawer() {
+          drawer.classList.remove("hidden");
+        }
+        function closeDrawer() {
+          drawer.classList.add("hidden");
+        }
+
+        openBtn?.addEventListener("click", openDrawer);
+        closeBtn?.addEventListener("click", closeDrawer);
+        backdrop?.addEventListener("click", closeDrawer);
+
+        // Team search
+        const search = document.getElementById("teamSearch");
+        search?.addEventListener("input", function (e) {
+          const term = e.target.value.toLowerCase();
+          document.querySelectorAll(".team-card").forEach((card) => {
+            const title =
+              card.querySelector("h3")?.textContent.toLowerCase() || "";
+            const desc =
+              card.querySelector("p")?.textContent.toLowerCase() || "";
+            card.style.display =
+              title.includes(term) || desc.includes(term) ? "flex" : "none";
+          });
+        });
+      });
+
+      // Modals
+      function openNewTeamModal() {
+        document.getElementById("newTeamModal").classList.remove("hidden");
+      }
+      function closeNewTeamModal() {
+        document.getElementById("newTeamModal").classList.add("hidden");
+      }
+
+      function openTeamDetailModal(teamName, teamDesc, teamLeader) {
+        document.getElementById("teamDetailTitle").textContent = teamName;
+        document.getElementById("teamDetailDesc").textContent = teamDesc;
+        document.getElementById("teamDetailLeader").textContent = teamLeader;
+
+        // Example member chips (replace with real data if you have it)
+        const members = [
+          "Ana Pereira",
+          "Miguel Rocha",
+          "Luís Silva",
+          "Teresa Costa",
+        ];
+        const wrap = document.getElementById("teamDetailMembers");
+        wrap.innerHTML = "";
+        members.forEach((m) => {
+          const chip = document.createElement("div");
+          chip.className =
+            "flex items-center justify-between px-3 py-2 bg-gray-50 border border-gray-200 rounded-md";
+          chip.innerHTML = `<span class="text-sm text-gray-700">${m}</span>
+                          <span class="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800">Ativo</span>`;
+          wrap.appendChild(chip);
+        });
+
+        document.getElementById("teamDetailModal").classList.remove("hidden");
+      }
+      function closeTeamDetailModal() {
+        document.getElementById("teamDetailModal").classList.add("hidden");
+      }
+      function openAddMemberModal() {
+        document.getElementById("addMemberModal").classList.remove("hidden");
+      }
+      function closeAddMemberModal() {
+        document.getElementById("addMemberModal").classList.add("hidden");
+      }
+
+      // Close modals by clicking on the shaded backdrop
+      window.addEventListener("click", function (event) {
+        ["newTeamModal", "teamDetailModal", "addMemberModal"].forEach((id) => {
+          const modal = document.getElementById(id);
+          if (event.target === modal) modal.classList.add("hidden");
+        });
+      });
+    </script>
+  </body>
+</html>

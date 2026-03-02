@@ -1,0 +1,2695 @@
+1
+00:00:00,000 --> 00:00:29,980
+E aí
+
+2
+00:00:29,980 --> 00:00:31,980
+E aí
+
+3
+00:00:31,980 --> 00:00:33,980
+E aí
+
+4
+00:00:33,980 --> 00:00:35,980
+E aí
+
+5
+00:00:35,980 --> 00:00:37,980
+E aí
+
+6
+00:00:37,980 --> 00:00:38,980
+E aí
+
+7
+00:00:38,980 --> 00:00:39,980
+E aí
+
+8
+00:00:39,980 --> 00:00:39,980
+E aí
+
+9
+00:00:39,980 --> 00:00:39,980
+E aí
+
+10
+00:00:39,980 --> 00:00:40,980
+E aí
+
+11
+00:00:40,980 --> 00:00:41,980
+E aí
+
+12
+00:00:41,980 --> 00:00:42,980
+E aí
+
+13
+00:00:42,980 --> 00:00:43,980
+E aí
+
+14
+00:00:43,980 --> 00:00:44,980
+E aí
+
+15
+00:00:44,980 --> 00:00:59,960
+Eu fiz uma tabelinha de funcionalidades dividi elas em a mas já que a currar a depois eu posso eu posso enviar essa tabela para vocês dar uma olhada melhor
+
+16
+00:00:59,960 --> 00:01:00,960
+Com mais calma
+
+17
+00:01:00,960 --> 00:01:22,960
+Mas isso aqui foi baseado na nossa conversa nas nossas conversas anteriores e com base nisso eu também identifiquei quais são as funções do COBIT mais apropriadas para lidar com cada funcionalidade quais são as funções COBIT mais usadas
+
+18
+00:01:22,960 --> 00:01:32,500
+porque eu só posso usar duas ou três para a tese, porque senão ficaria um escopo muito grande.
+
+19
+00:01:32,500 --> 00:01:44,280
+E também ainda estou preenchendo aqui como é que cada funcionalidade ajuda a atingir o objetivo final do sistema.
+
+20
+00:01:45,940 --> 00:01:56,740
+Já o Backoffice eu criei algumas interfaces, ele está funcional, mas é só um protótipo.
+
+21
+00:01:59,740 --> 00:02:02,000
+Deixa eu rodar aqui para vocês só um momento.
+
+22
+00:02:02,000 --> 00:02:09,000
+Já fiz mais dez versões diferentes até chegar nessa versão aqui.
+
+23
+00:02:09,000 --> 00:02:14,000
+Consegue ver?
+
+24
+00:02:14,000 --> 00:02:21,000
+Já fiz mais dez versões diferentes até chegar nessa versão aqui.
+
+25
+00:02:21,000 --> 00:02:23,000
+Consegue ver?
+
+26
+00:02:23,000 --> 00:02:24,000
+Sim.
+
+27
+00:02:24,000 --> 00:02:25,000
+Sim.
+
+28
+00:02:25,000 --> 00:02:26,000
+Sim.
+
+29
+00:02:26,000 --> 00:02:27,000
+Ok.
+
+30
+00:02:27,000 --> 00:02:31,000
+Então, eu ainda não inseri as informações de processos reais aqui.
+
+31
+00:02:31,000 --> 00:02:38,000
+Então, isso aqui é tudo informação mocada, hand coded.
+
+32
+00:02:38,000 --> 00:02:46,000
+Só para ter um exemplo da interface, como é que ficaria, como é que os componentes se comportariam, e como é que seria a trocação de processos.
+
+33
+00:02:46,000 --> 00:03:07,000
+dados entre os componentes entre os componentes, para ver se fica fácil de usar também em termos de UX.
+
+34
+00:03:07,000 --> 00:03:19,000
+Então, eu dividi com base nessa tabela aqui, das funcionalidades principais, eu dividi em algumas páginas.
+
+35
+00:03:19,000 --> 00:03:31,000
+Tem o dashboard em geral, que ele mostra alguns indicadores e um preview dos processos e os status deles.
+
+36
+00:03:31,000 --> 00:03:39,000
+Aqui embaixo, um certo agrupamento dos processos, que a gente pode ou não ter.
+
+37
+00:03:39,000 --> 00:03:43,000
+Algumas ações rápidas, para não precisar ficar navegando por lugares.
+
+38
+00:03:43,000 --> 00:03:52,000
+Aqui, já conseguimos ver alguns KPI's, que a gente pode mudar e refinar mais para frente.
+
+39
+00:03:52,000 --> 00:04:04,000
+Temos o sistema de notificações aqui em cima, na parte superior direita, que é um "could have", que a gente pode implementar em segundo momento.
+
+40
+00:04:04,000 --> 00:04:10,000
+Notificações internas ou por e-mail também, para a pessoa conseguir se logar no sistema.
+
+41
+00:04:10,000 --> 00:04:22,000
+ou, por exemplo, subscrever para alguma notificação de algum processo.
+
+42
+00:04:22,000 --> 00:04:25,000
+Por exemplo, o processo tal mudou, eu quero receber notificação.
+
+43
+00:04:25,000 --> 00:04:33,000
+E a gente tem o perfil do usuário também, que a gente vai ter... nós teremos dois interfaces.
+
+44
+00:04:33,000 --> 00:04:46,000
+Uma interface, que é o "front-end", que todos vão ter acesso, como "guest", e outro acesso, que seria um para os administradores.
+
+45
+00:04:46,000 --> 00:04:56,000
+E aí, administradores que eu falo, são pessoas que podem alterar dados dos processos, alterar configurações de outros usuários.
+
+46
+00:04:56,000 --> 00:05:03,000
+E aí, uma coisa que a gente pode definir melhor, são os papéis.
+
+47
+00:05:03,000 --> 00:05:13,000
+Se a gente vai ter só um papel de administrador, se a gente vai ter outros papéis, por exemplo, a gente pode dividir em equipas.
+
+48
+00:05:13,000 --> 00:05:18,000
+E aí, uma equipa pode ter um líder de equipa e os membros da equipa.
+
+49
+00:05:18,000 --> 00:05:29,000
+Por quê? Porque a gente pode, por exemplo, deixar só um membro da equipe tal publicar processos daquele tipo.
+
+50
+00:05:33,000 --> 00:05:38,000
+E a gente pode categorizar dessa forma. Mas os papéis a gente pode ver com mais detalhes depois.
+
+51
+00:05:38,000 --> 00:05:40,000
+Isso aqui é só um exemplo.
+
+52
+00:05:40,000 --> 00:05:46,000
+Então, esse é o dashboard. Visão geral, alguns indicadores e resumos.
+
+53
+00:05:46,000 --> 00:05:55,000
+Aqui temos a página de processos. A gente pode clicar aqui em "ver todos" também. Ele navega para o processo.
+
+54
+00:05:55,000 --> 00:06:00,000
+Aqui seria a lista mais detalhada de quais são os processos.
+
+55
+00:06:00,000 --> 00:06:06,000
+Com filtros. Tem filtros aqui de tipo, data, estado da versão.
+
+56
+00:06:06,000 --> 00:06:08,000
+Se está em rascunho, pendente, aprovado.
+
+57
+00:06:08,000 --> 00:06:13,000
+Então, aqui já tem um ciclo de vida de aprovação dos processos para publicação.
+
+58
+00:06:13,000 --> 00:06:25,000
+Tem aqui pesquisa, exportação desses dados aqui. Criação de um novo processo.
+
+59
+00:06:25,000 --> 00:06:32,000
+E aqui que seria a funcionalidade para poder adicionar os processos que a ferramenta atual faz.
+
+60
+00:06:32,000 --> 00:06:44,000
+Isso aqui é só um exemplo. Esse formulário seria maior para poder se utilizar dos subtipos lá do processo.
+
+61
+00:06:44,000 --> 00:06:55,000
+de informação do processo. E aqui nós temos, por exemplo, esse link é navegável. Ele vai para uma página de detalhes do processo.
+
+62
+00:06:55,000 --> 00:07:06,000
+Aqui ele abre uma nova aba. E nós temos algumas ações também. A gente pode editar, revisar o processo.
+
+63
+00:07:06,000 --> 00:07:10,000
+Gerir as versões de processo. Como a gente pode ver aqui, tem uma coluna de versões.
+
+64
+00:07:10,000 --> 00:07:13,000
+Então, os processos podem ser versionados, que a gente tinha conversado.
+
+65
+00:07:13,000 --> 00:07:20,000
+Essa aqui é a última data de modificação daquele processo. Então, tem bastante informação.
+
+66
+00:07:20,000 --> 00:07:32,000
+bem granular, pesquisável, ordenável, para poder ter uma visão bem completa dos processos que estão publicados.
+
+67
+00:07:33,000 --> 00:07:38,000
+Outra coisa também, ver histórico, que a gente já conversado, que histórico é muito importante.
+
+68
+00:07:38,000 --> 00:07:46,000
+Quem mudou, quando, por quê. A comparação de versões também é algo que eu vou mostrar para vocês.
+
+69
+00:07:46,000 --> 00:07:56,000
+Aqui também é só uma opção para criar uma versão do processo, sem precisar entrar na página de detalhes.
+
+70
+00:07:56,000 --> 00:08:05,000
+E exportação de JSON, se a gente tiver, por exemplo, precisar exportar isso para algum outro sistema, ou algo assim.
+
+71
+00:08:05,000 --> 00:08:13,000
+E aqui, exclusão do processo. Ele exclui todas as versões daquele processo, exclui todos os comentários, tudo relacionado àquele processo.
+
+72
+00:08:13,000 --> 00:08:15,000
+Vamos aqui na página de detalhes desse processo.
+
+73
+00:08:15,000 --> 00:08:20,000
+Vamos aqui na página de detalhes desse processo aqui.
+
+74
+00:08:20,000 --> 00:08:26,000
+Todas aquelas ações, elas navegam para uma dessas abas aqui.
+
+75
+00:08:26,000 --> 00:08:38,000
+Então, a gente tem os dados do processo, e a gente tem um conteúdo, que é aqui que vão ficar as informações do processo, imagens e tudo mais.
+
+76
+00:08:38,000 --> 00:08:47,000
+Temos as versões com as opções de tornar essa versão ativa ou não.
+
+77
+00:08:47,000 --> 00:08:56,000
+A versão ativa é a versão que está valendo, que vai ser publicada, que estará, que é a última versão aprovada.
+
+78
+00:08:57,000 --> 00:09:01,000
+Dá para ver o conteúdo, aprovar, rejeitar, remover. É um padrão.
+
+79
+00:09:01,000 --> 00:09:13,000
+Temos filtros aqui, como sempre. Temos também, navegação aqui embaixo, se a gente ficar com muitos processos, dá para navegar.
+
+80
+00:09:13,000 --> 00:09:28,000
+Tem o histórico de todas as modificações. Então, por exemplo, se eu criei aqui uma nova versão. Vamos dizer que eu tenho a versão 1.1.0. Aí, crio 1.1.2.
+
+81
+00:09:28,000 --> 00:09:36,000
+Ele vai criar um histórico. E aqui, como a gente pode ver, ele está agrupado e navegado.
+
+82
+00:09:37,000 --> 00:09:40,000
+Então, dá para ver todas as informações, bem fácil.
+
+83
+00:09:40,000 --> 00:09:46,000
+Aqui o histórico aqui. Foi criada uma nova versão e essa versão foi definida como ativa.
+
+84
+00:09:46,000 --> 00:09:54,000
+Isso é um comportamento que eu criei só para demonstração.
+
+85
+00:09:55,000 --> 00:09:59,000
+E aqui, por exemplo, a gente tem a parte de comparação.
+
+86
+00:09:59,000 --> 00:10:05,000
+Então, por exemplo, eu quero comparar a versão 1.0 com a versão 1.1.2.
+
+87
+00:10:05,000 --> 00:10:07,000
+Eu consigo ver o que mudou.
+
+88
+00:10:07,000 --> 00:10:13,000
+E eu posso ver dessa forma e eu posso ver dessa forma.
+
+89
+00:10:13,000 --> 00:10:20,000
+Ok? Então, por exemplo, eu venho aqui, sei lá, vou editar essa versão aqui.
+
+90
+00:10:20,000 --> 00:10:25,000
+Sei lá, text. E sei lá, hello.
+
+91
+00:10:25,000 --> 00:10:30,900
+Guarda o conteúdo. Aqui a gente tem notificação também que a alteração foi guardada.
+
+92
+00:10:31,660 --> 00:10:37,000
+E vamos lá, deixa eu ver a versão 1.1.1.1.0.
+
+93
+00:10:37,400 --> 00:10:39,880
+Coloca só a Hello, digamos assim.
+
+94
+00:10:40,440 --> 00:10:44,600
+Agora vamos comparar aqui, como podem ver, o histórico está sendo guardado.
+
+95
+00:10:45,160 --> 00:10:49,420
+Qual usuário mudou quando, que horas e em qual versão.
+
+96
+00:10:50,020 --> 00:10:51,600
+E quantos caracteres foram alterados.
+
+97
+00:10:52,480 --> 00:10:55,080
+Então, está bem detalhado.
+
+98
+00:10:55,740 --> 00:11:03,260
+Aí aqui, por exemplo, na comparação eu posso comparar, por exemplo, a versão 1.1.1.0 com a 1.2.
+
+99
+00:11:04,080 --> 00:11:07,880
+E aqui, a área, o conteúdo.
+
+100
+00:11:09,340 --> 00:11:16,980
+Eu consigo verificar, por exemplo, que isso aqui foi adicionado e isso aqui não modificou.
+
+101
+00:11:16,980 --> 00:11:17,480
+Está vendo?
+
+102
+00:11:18,140 --> 00:11:23,660
+Se eu, por exemplo, remover alguma coisa, ele vai mostrar em vermelho também.
+
+103
+00:11:24,800 --> 00:11:28,800
+Então, vamos dizer que eu tenho, sei lá, test Hello.
+
+104
+00:11:30,800 --> 00:11:40,380
+E vou criar uma nova versão, sei lá, é 1.1.3.
+
+105
+00:11:42,720 --> 00:11:43,400
+Vai ser...
+
+106
+00:11:48,400 --> 00:11:49,560
+3 Hello.
+
+107
+00:11:50,700 --> 00:11:50,980
+Não.
+
+108
+00:11:51,540 --> 00:11:52,600
+Na verdade, só 3.
+
+109
+00:11:53,440 --> 00:11:54,740
+Vamos deixar só o Hello.
+
+110
+00:11:54,740 --> 00:12:03,180
+Se eu for tentar comparar, ele mostra aqui o que foi removido.
+
+111
+00:12:03,960 --> 00:12:04,180
+Ok?
+
+112
+00:12:05,200 --> 00:12:08,480
+Isso dá para ver de várias formas.
+
+113
+00:12:09,340 --> 00:12:09,440
+Tá?
+
+114
+00:12:09,980 --> 00:12:14,120
+Eu implementei um algoritmo aqui simples para comparação de versões.
+
+115
+00:12:15,800 --> 00:12:23,120
+E isso aqui é possível ver tanto o que foi mudado em texto, quanto foi mudado em imagens.
+
+116
+00:12:23,360 --> 00:12:30,260
+Quando a gente tiver imagens aqui, vai dar para ver que foi alterada uma imagem, foi adicionada ou removida a imagem e tudo mais.
+
+117
+00:12:30,780 --> 00:12:36,240
+E aqui na parte direita, dá para, por exemplo, a parte direita de comentários está sempre à vista.
+
+118
+00:12:36,800 --> 00:12:40,000
+A gente pode falar, por exemplo, ah, é...
+
+119
+00:12:40,000 --> 00:12:46,500
+Faltou adicionar um ficheiro a BPMN.
+
+120
+00:12:48,160 --> 00:12:52,240
+E aí aqui, novamente, a gente tem notificação e tudo mais.
+
+121
+00:12:52,840 --> 00:12:54,820
+Quem comentou isso?
+
+122
+00:12:55,160 --> 00:12:55,540
+Quando?
+
+123
+00:12:55,880 --> 00:12:56,320
+Que horas?
+
+124
+00:12:57,440 --> 00:13:06,300
+E, por exemplo, se a gente mudar a versão do processo, ele mostra somente os comentários para aquela versão.
+
+125
+00:13:07,300 --> 00:13:18,300
+Então, dá para a gente saber, por exemplo, qual é a versão ativa, qual é a versão que a gente está olhando e todas as informações são atualizadas para aquela versão específica.
+
+126
+00:13:18,980 --> 00:13:23,160
+Então, se eu quiser ver todas as versões, mostra todas as versões, todos os comentários.
+
+127
+00:13:24,020 --> 00:13:28,660
+Se eu quiser ver só de 1.1.0, também, mesma coisa.
+
+128
+00:13:31,120 --> 00:13:36,300
+Enfim, essa aqui, basicamente, é a página de detalhes dos processos.
+
+129
+00:13:36,300 --> 00:13:45,300
+Então, novamente, se eu vier aqui, por exemplo, sei lá, gerir reversões, ele vai direto aqui para a página de gerir versões.
+
+130
+00:13:46,680 --> 00:13:46,860
+Ok?
+
+131
+00:13:48,060 --> 00:13:48,520
+Ok.
+
+132
+00:13:50,800 --> 00:13:52,320
+Posso falar, Joakim?
+
+133
+00:13:52,560 --> 00:13:52,760
+Sim.
+
+134
+00:13:55,560 --> 00:14:06,040
+Eu acho que a aplicação está com um bom aspecto, mas há aqui uma coisa de base que ou nós não explicamos bem ou não passou a mensagem.
+
+135
+00:14:06,040 --> 00:14:10,040
+É que, por exemplo, vou partilhar aqui o nosso site dos processos.
+
+136
+00:14:12,040 --> 00:14:18,300
+O site do front-end, eu ainda estou trabalhando no mock-ups, aqui é só o back-office, tá?
+
+137
+00:14:21,140 --> 00:14:22,040
+Sim, mas...
+
+138
+00:14:22,040 --> 00:14:22,760
+Se for isso que estiver falando.
+
+139
+00:14:24,640 --> 00:14:27,200
+Para mim, isto já é um front-end, não é?
+
+140
+00:14:27,860 --> 00:14:30,260
+Não, sim, sim, sim. É o front-end do back-office.
+
+141
+00:14:30,900 --> 00:14:36,480
+Mas o front-end que vai ser a visualização dos processos, ainda estou trabalhando nele.
+
+142
+00:14:38,080 --> 00:14:41,240
+Certo, mas tu aqui estás a falar de processos judiciais, não é?
+
+143
+00:14:41,420 --> 00:14:45,060
+Não estás a falar de processos de negócio, processos, desculpa, de BPMN.
+
+144
+00:14:45,360 --> 00:14:47,000
+Não, sim, isso aqui é só um exemplo, tá?
+
+145
+00:14:47,120 --> 00:14:49,400
+Só um exemplo para ver como é que ficaria a interface.
+
+146
+00:14:50,080 --> 00:14:53,080
+Sim, mas aqui por nós fazíamos sentir...
+
+147
+00:14:53,080 --> 00:14:53,520
+Sim, ok.
+
+148
+00:14:53,740 --> 00:14:56,980
+Mas aí na interface tu já tens associado aí um modelo de dados, ou não tens?
+
+149
+00:14:57,080 --> 00:14:59,640
+Não, ainda não, exatamente por isso.
+
+150
+00:15:00,000 --> 00:15:06,640
+Porque eu estou trabalhando na estrutura do front-end, onde vai ficar a visualização dos processos,
+
+151
+00:15:06,720 --> 00:15:09,720
+e aí depois eu adapto o back-office.
+
+152
+00:15:10,100 --> 00:15:19,560
+Porque o back-office é a parte mais complexa, e eu precisava já tirar logo de cara para ver se a interface ficaria...
+
+153
+00:15:19,560 --> 00:15:25,260
+Seria possível fazer essa interface, quão complicado seria, mas não foi tanto.
+
+154
+00:15:25,640 --> 00:15:28,520
+Mas interface não vai ser uma interface gráfica.
+
+155
+00:15:28,560 --> 00:15:30,240
+Enquanto estás a falar de interface, estás a falar do quê?
+
+156
+00:15:30,320 --> 00:15:34,360
+Porque para mim isto é uma interface, isto para mim servia de front-end, não é?
+
+157
+00:15:34,440 --> 00:15:37,260
+Porque a gente já consegue ir aí e editar, não é?
+
+158
+00:15:37,260 --> 00:15:38,480
+Não, sim, sim, exatamente.
+
+159
+00:15:38,760 --> 00:15:43,320
+É porque eu tive que criar o design dessas páginas todas, do zero.
+
+160
+00:15:44,320 --> 00:15:49,260
+E aí eu queria fazer um protótipo logo do back-office, que é a parte mais complicada,
+
+161
+00:15:49,980 --> 00:15:52,580
+para mostrar para vocês, para ver se...
+
+162
+00:15:52,580 --> 00:15:54,200
+Como é que depois processa não...
+
+163
+00:15:54,200 --> 00:16:00,420
+Se for bom ou não... Porque a parte do front-end vai ser muito trivial, porque é só visualização dos processos.
+
+164
+00:16:00,880 --> 00:16:02,240
+Isso aí eu vou mostrar sexta-feira.
+
+165
+00:16:03,920 --> 00:16:04,240
+Ok.
+
+166
+00:16:05,180 --> 00:16:09,080
+Então aqui, por exemplo, se a gente pedir aqui alguns ajustes para pôr...
+
+167
+00:16:09,080 --> 00:16:11,980
+E com os exemplos, para ficar mais mapeado aqui com os processos,
+
+168
+00:16:12,080 --> 00:16:16,360
+e se dermos aí uma estrutura dos atributos que têm que aparecer aí no detalhe do processo,
+
+169
+00:16:16,860 --> 00:16:17,920
+tu conseguires ajustar isso?
+
+170
+00:16:17,920 --> 00:16:18,640
+Com certeza.
+
+171
+00:16:18,640 --> 00:16:19,140
+Com certeza, sim.
+
+172
+00:16:19,420 --> 00:16:19,800
+Com certeza.
+
+173
+00:16:21,640 --> 00:16:25,580
+Se quiser, eu posso mandar o código-fonte desse protótipo aqui,
+
+174
+00:16:25,800 --> 00:16:28,180
+para vocês darem uma olhada, clicar...
+
+175
+00:16:28,180 --> 00:16:28,640
+Sim, pode.
+
+176
+00:16:28,640 --> 00:16:37,640
+experimentar e experimentar tá bom sim se isso tá em que mesmo tá ficou em reagir ficou em lá
+
+177
+00:16:37,640 --> 00:16:50,280
+ficou em que não fiz isso é só um protocolo fiz em HTML por HTML com JavaScript o ok HTML e só para
+
+178
+00:16:50,280 --> 00:16:57,480
+mostrar a interface como é que ele já tá bastante dinâmico isso é que não tava a fazer confusão e já tá em
+
+179
+00:16:57,480 --> 00:17:04,440
+HTML5 né Exato sim e por isso é que tem esses dinamismos já todos e com o jogo escrito sim é mais
+
+180
+00:17:04,440 --> 00:17:13,080
+para montar o design como é que ficaria o comportamento dos componentes navegação como estruturar os dados para
+
+181
+00:17:13,080 --> 00:17:21,420
+verificar entre páginas esse tipo de coisa de essa parte da arquitetura eu queria logo resolver para
+
+182
+00:17:21,420 --> 00:17:27,420
+mostrar para ver se tá bom tá bom em que caminho a gente segue
+
+183
+00:17:31,920 --> 00:17:41,100
+e então a pele não me liga a ideia nós por exemplo aqui nos campos que já estão preenchidos nós sugerimos
+
+184
+00:17:41,100 --> 00:17:53,760
+um exemplo do nosso é isso e assim ó ó como é que a gente pode aqui ajudar é na minha opinião era para
+
+185
+00:17:53,760 --> 00:18:00,960
+fazer isso associado a modalidades que já tínhamos né e foi isso que foi passado inicialmente e isto assim
+
+186
+00:18:00,960 --> 00:18:09,120
+pronto não nos mostra grande coisa né parece que é mais um estudo de versões do que propriamente um editor de processos eu
+
+187
+00:18:09,120 --> 00:18:11,140
+e meio, se calhar perdi aqui um bocadinho do início
+
+188
+00:18:11,140 --> 00:18:13,300
+gravei, está a gravar
+
+189
+00:18:13,300 --> 00:18:14,740
+eu acho é que
+
+190
+00:18:14,740 --> 00:18:16,820
+o nosso modelo de base de dados é aquilo
+
+191
+00:18:16,820 --> 00:18:18,460
+aqueles campos foram passados hoje aqui
+
+192
+00:18:18,460 --> 00:18:20,940
+eu acho que era interessante
+
+193
+00:18:20,940 --> 00:18:23,180
+primeiro ver no front-end, fazer um mock-up
+
+194
+00:18:23,180 --> 00:18:25,200
+de como é que seria a versão
+
+195
+00:18:25,200 --> 00:18:26,980
+que os utilizadores finais vão ver
+
+196
+00:18:26,980 --> 00:18:29,140
+e depois fazer o back-office para aquilo
+
+197
+00:18:29,140 --> 00:18:31,020
+não ao contrário, como se está
+
+198
+00:18:31,020 --> 00:18:32,260
+aqui a perceber, não é?
+
+199
+00:18:32,720 --> 00:18:34,680
+estamos a perder tempo no back-office
+
+200
+00:18:34,680 --> 00:18:36,880
+é mais interessante, é replicar
+
+201
+00:18:36,880 --> 00:18:39,180
+aquele portal que nós temos, mais ou menos
+
+202
+00:18:39,180 --> 00:18:40,680
+mais coisa, menos coisa
+
+203
+00:18:40,680 --> 00:18:42,180
+claro, com melhorias
+
+204
+00:18:42,180 --> 00:18:45,220
+mais eficazes
+
+205
+00:18:45,220 --> 00:18:46,600
+porque assim é um bocado
+
+206
+00:18:46,600 --> 00:18:48,600
+esquisito para nós analisarmos, não é?
+
+207
+00:18:48,600 --> 00:18:51,120
+nós estamos a analisar um back-office sem ver o front-end
+
+208
+00:18:51,120 --> 00:18:53,360
+percebes?
+
+209
+00:18:53,760 --> 00:18:55,480
+e os mock-ups normalmente servem para isso
+
+210
+00:18:55,480 --> 00:18:57,160
+em logo para fazer o front-end
+
+211
+00:18:57,160 --> 00:18:59,260
+olha, é isto que o computador final mais ou menos
+
+212
+00:18:59,260 --> 00:19:00,660
+vai ver, estão de acordo?
+
+213
+00:19:01,060 --> 00:19:03,300
+sim, e depois faz-se um back-office
+
+214
+00:19:03,300 --> 00:19:04,180
+associado a isso
+
+215
+00:19:04,180 --> 00:19:06,860
+este é o nosso portal, não tem nada a
+
+216
+00:19:06,860 --> 00:19:08,020
+assim, especial, mas pronto
+
+217
+00:19:08,020 --> 00:19:08,820
+mas tem aqui
+
+218
+00:19:08,820 --> 00:19:10,820
+tem que ser simples, não é?
+
+219
+00:19:10,880 --> 00:19:13,240
+tem um índice
+
+220
+00:19:13,240 --> 00:19:14,800
+pode ser de lado esquerdo, de lado direito
+
+221
+00:19:14,800 --> 00:19:16,920
+isto seria o detalhe do processo, não é?
+
+222
+00:19:17,200 --> 00:19:18,660
+tinha aqui o nome do processo
+
+223
+00:19:18,660 --> 00:19:20,200
+os atributos
+
+224
+00:19:20,200 --> 00:19:22,160
+isto são os campos
+
+225
+00:19:22,160 --> 00:19:23,660
+nós queremos um mock-up parecido com isto
+
+226
+00:19:23,660 --> 00:19:25,820
+ou pronto, como eventualmente melhor
+
+227
+00:19:25,820 --> 00:19:26,460
+mas...
+
+228
+00:19:26,460 --> 00:19:28,200
+até aquela parte
+
+229
+00:19:28,200 --> 00:19:28,960
+até a parte
+
+230
+00:19:28,960 --> 00:19:31,680
+ou na parte que ele está mostrado das versões
+
+231
+00:19:31,680 --> 00:19:33,020
+até pode fazer algum sentido
+
+232
+00:19:33,020 --> 00:19:35,000
+na ótica que a gente vai alterar
+
+233
+00:19:35,000 --> 00:19:36,620
+e conseguir perceber as alterações
+
+234
+00:19:36,620 --> 00:19:37,240
+está giro
+
+235
+00:19:37,240 --> 00:19:37,880
+tem dúvida
+
+236
+00:19:37,880 --> 00:19:42,700
+agora faz sentido ver estes atributos no detalhe do processo
+
+237
+00:19:42,700 --> 00:19:44,460
+e em vez de estarmos ali
+
+238
+00:19:44,460 --> 00:19:46,040
+porque eu assisti-me um bocado, confesso
+
+239
+00:19:46,040 --> 00:19:46,900
+porque como vi ali
+
+240
+00:19:46,900 --> 00:19:50,160
+pareci-te a desenvolver uma aplicação que a gente já tem cá
+
+241
+00:19:50,160 --> 00:19:50,820
+que é o Sítios
+
+242
+00:19:50,820 --> 00:19:53,180
+isto é, os processos
+
+243
+00:19:53,180 --> 00:19:55,360
+sim, veis os processos de família
+
+244
+00:19:55,360 --> 00:19:56,980
+os processos, não é?
+
+245
+00:19:57,480 --> 00:19:59,300
+e nós não queremos gerir esse tipo de processos
+
+246
+00:19:59,300 --> 00:20:01,200
+por isso é que eu podia estar aqui
+
+247
+00:20:01,200 --> 00:20:03,360
+ter causado aqui alguma confusão
+
+248
+00:20:03,360 --> 00:20:06,540
+uma coisa são os processos numa lógica de tribunal
+
+249
+00:20:06,540 --> 00:20:07,760
+não é?
+
+250
+00:20:08,240 --> 00:20:09,100
+outra coisa é aqui
+
+251
+00:20:09,100 --> 00:20:12,560
+é ao nível de arquitetura de processos
+
+252
+00:20:12,560 --> 00:20:14,120
+os processos que nós chegamos a formar
+
+253
+00:20:14,120 --> 00:20:14,820
+que é o ETIL
+
+254
+00:20:14,820 --> 00:20:17,460
+e os processos que nós temos cá
+
+255
+00:20:17,460 --> 00:20:19,680
+no nosso departamento
+
+256
+00:20:19,680 --> 00:20:20,820
+e que queremos documentar
+
+257
+00:20:20,820 --> 00:20:22,200
+e depois queremos ir para outras entidades
+
+258
+00:20:22,200 --> 00:20:23,600
+e ter também alguns processos de negócio
+
+259
+00:20:23,600 --> 00:20:25,940
+mas basicamente os atributos são estes, não é?
+
+260
+00:20:26,420 --> 00:20:28,660
+e nós até já acho que enviamos alguns
+
+261
+00:20:28,660 --> 00:20:30,920
+e depois tem um diagrama também
+
+262
+00:20:30,920 --> 00:20:32,540
+pronto, BPMN
+
+263
+00:20:32,540 --> 00:20:34,820
+com as atividades e com os inputs
+
+264
+00:20:34,820 --> 00:20:35,720
+e tudo mais
+
+265
+00:20:35,720 --> 00:20:37,880
+eu acho que até facilita-te o trabalho
+
+266
+00:20:37,880 --> 00:20:39,420
+começares com ele o front-end
+
+267
+00:20:39,420 --> 00:20:41,060
+faz um mock-up do front-end
+
+268
+00:20:41,060 --> 00:20:42,540
+uma coisa deste género
+
+269
+00:20:42,540 --> 00:20:45,680
+que também dê para ver a imagem do BPMN
+
+270
+00:20:45,680 --> 00:20:47,400
+e uma coisa da nossa área
+
+271
+00:20:47,400 --> 00:20:48,040
+uma coisa de TI
+
+272
+00:20:48,040 --> 00:20:50,380
+acho que a Maria chegou a enviar
+
+273
+00:20:50,380 --> 00:20:52,520
+alguns exemplos de processos TI, não é?
+
+274
+00:20:53,400 --> 00:20:55,180
+aquele realmente também me causou confusão
+
+275
+00:20:55,180 --> 00:20:56,380
+enviando processos judiciais
+
+276
+00:20:56,380 --> 00:20:59,280
+isso não tem nada a ver com os nossos processos
+
+277
+00:20:59,280 --> 00:21:00,720
+acho que é esquisito também, não é?
+
+278
+00:21:00,720 --> 00:21:03,040
+eu adicionei esse texto
+
+279
+00:21:03,040 --> 00:21:04,640
+somente para ter algum texto
+
+280
+00:21:04,640 --> 00:21:08,520
+para ver como é que fica o design do BPMN
+
+281
+00:21:08,520 --> 00:21:10,980
+mas tu continuas a ter acesso à nossa VPNN
+
+282
+00:21:10,980 --> 00:21:12,480
+e à tua VM
+
+283
+00:21:12,480 --> 00:21:13,480
+sim
+
+284
+00:21:13,480 --> 00:21:15,700
+consegues aceder a este site, não é?
+
+285
+00:21:16,100 --> 00:21:16,400
+sim
+
+286
+00:21:16,400 --> 00:21:18,360
+tem que ir buscar um
+
+287
+00:21:18,360 --> 00:21:19,460
+tem que ir buscar um
+
+288
+00:21:19,460 --> 00:21:21,540
+até que isto são macro processos
+
+289
+00:21:21,540 --> 00:21:22,700
+e depois processos por baixo
+
+290
+00:21:22,700 --> 00:21:24,500
+tenta fazer esta hierarquia
+
+291
+00:21:24,500 --> 00:21:25,540
+que é o que nós pretendemos
+
+292
+00:21:25,540 --> 00:21:27,260
+por exemplo, gestão de incidentes
+
+293
+00:21:27,260 --> 00:21:28,540
+e lá de baixo
+
+294
+00:21:28,540 --> 00:21:30,980
+podem estar-se subprocessos
+
+295
+00:21:30,980 --> 00:21:31,660
+é fazer uma coisa
+
+296
+00:21:31,660 --> 00:21:32,820
+não é muito mais do que isto
+
+297
+00:21:32,820 --> 00:21:33,400
+é o que nós
+
+298
+00:21:33,400 --> 00:21:34,860
+pedido de assistência, não é?
+
+299
+00:21:34,900 --> 00:21:36,120
+faz parte da gestão de incidentes
+
+300
+00:21:36,120 --> 00:21:37,820
+e por exemplo, olha
+
+301
+00:21:37,820 --> 00:21:38,840
+isto é um bom exemplo
+
+302
+00:21:38,840 --> 00:21:40,120
+usar o gestão de incidentes
+
+303
+00:21:40,120 --> 00:21:40,960
+e o pedido de assistência
+
+304
+00:21:40,960 --> 00:21:43,100
+para fazer hierarquia no mock-up
+
+305
+00:21:43,100 --> 00:21:47,140
+porque nós nos sentimos mais próximos daquilo que estamos a ver
+
+306
+00:21:47,140 --> 00:21:48,680
+eu também havia ali coisas
+
+307
+00:21:48,680 --> 00:21:51,120
+o processo inicial também fiquei confuso, confesso
+
+308
+00:21:51,120 --> 00:21:54,120
+isto é sempre igual a isto
+
+309
+00:21:54,120 --> 00:21:56,260
+eu comecei pelo back-office
+
+310
+00:21:56,260 --> 00:21:58,920
+porque já que vai ser um sistema integrado
+
+311
+00:21:58,920 --> 00:22:03,120
+tanto a visualização dos processos
+
+312
+00:22:03,120 --> 00:22:04,480
+para todos os usuários
+
+313
+00:22:04,480 --> 00:22:08,080
+como a gestão dos processos
+
+314
+00:22:08,080 --> 00:22:09,140
+para os administradores
+
+315
+00:22:09,140 --> 00:22:12,120
+eu comecei mais pelo back-office
+
+316
+00:22:12,120 --> 00:22:13,620
+para eu conseguir perceber
+
+317
+00:22:13,620 --> 00:22:17,880
+por exemplo, a arquitetura que eu vou precisar
+
+318
+00:22:17,880 --> 00:22:20,940
+é uma arquitetura de alto nível
+
+319
+00:22:20,940 --> 00:22:24,180
+que eu vou precisar para o back-end e para o banco de dados
+
+320
+00:22:24,180 --> 00:22:28,020
+porque eu vou precisar servir as informações
+
+321
+00:22:28,020 --> 00:22:32,480
+tanto para o back-office e tanto para o front-end
+
+322
+00:22:32,480 --> 00:22:36,860
+e eu gosto de arquitetar os dados
+
+323
+00:22:36,860 --> 00:22:44,300
+antes de implementar o front-end
+
+324
+00:22:44,300 --> 00:22:47,080
+então isto aqui seria mais para uma visão de back-end
+
+325
+00:22:47,080 --> 00:22:51,500
+como eu não vou criar o back-end só para fazer um protótipo
+
+326
+00:22:51,500 --> 00:22:53,860
+eu comecei pelo back-office que é a parte mais complexa
+
+327
+00:22:53,860 --> 00:22:57,220
+para eu perceber como é que fluem os dados
+
+328
+00:22:57,220 --> 00:22:58,960
+como é que eu vou servir estes dados
+
+329
+00:22:58,960 --> 00:23:00,880
+quais dados eu vou compartilhar
+
+330
+00:23:00,880 --> 00:23:03,660
+como é que fica essa comunicação
+
+331
+00:23:03,660 --> 00:23:07,720
+Sim, mas também na minha opinião
+
+332
+00:23:07,720 --> 00:23:08,880
+isto na arquitetura é básica
+
+333
+00:23:08,880 --> 00:23:09,760
+isto é nada especial
+
+334
+00:23:09,760 --> 00:23:10,640
+é uma base de dados
+
+335
+00:23:10,640 --> 00:23:12,300
+é um back-office e um front-end
+
+336
+00:23:12,300 --> 00:23:12,940
+está feito
+
+337
+00:23:12,940 --> 00:23:15,140
+é two-tier
+
+338
+00:23:15,140 --> 00:23:18,880
+normal, uma web application normal
+
+339
+00:23:18,880 --> 00:23:20,620
+eu na minha opinião
+
+340
+00:23:20,620 --> 00:23:22,100
+mock-up são dados estáticos
+
+341
+00:23:22,100 --> 00:23:24,180
+não tens de estar a ligar nada ainda à base de dados
+
+342
+00:23:24,180 --> 00:23:26,420
+é só para fazer daqui o MVP
+
+343
+00:23:26,420 --> 00:23:30,700
+é um MVP para nós que somos os clientes vermos
+
+344
+00:23:30,700 --> 00:23:32,660
+fazer um mock-up rápido
+
+345
+00:23:32,660 --> 00:23:34,400
+estático
+
+346
+00:23:34,400 --> 00:23:36,340
+disto, do pedal que se alheenta isto
+
+347
+00:23:36,340 --> 00:23:37,600
+eventualmente mais bonito
+
+348
+00:23:37,600 --> 00:23:38,480
+mas pronto
+
+349
+00:23:38,480 --> 00:23:40,080
+e depois o resto
+
+350
+00:23:40,080 --> 00:23:42,400
+Pois eu até vejo ali do lado esquerdo
+
+351
+00:23:42,400 --> 00:23:43,360
+por este menu
+
+352
+00:23:43,360 --> 00:23:45,420
+lá onde ele tem
+
+353
+00:23:45,420 --> 00:23:47,520
+peraí
+
+354
+00:23:47,520 --> 00:23:49,740
+o modelo de dados é aquela tabela
+
+355
+00:23:49,740 --> 00:23:51,320
+é uma tabela com esta informação
+
+356
+00:23:51,320 --> 00:23:52,220
+com estes campos todos
+
+357
+00:23:52,220 --> 00:23:53,020
+não tem nada especial
+
+358
+00:23:53,020 --> 00:23:54,060
+nem sequer tinha relações
+
+359
+00:23:54,060 --> 00:23:54,680
+nem tinha nada
+
+360
+00:23:54,680 --> 00:23:56,000
+coisa básica mesmo
+
+361
+00:23:56,000 --> 00:23:57,540
+obviamente
+
+362
+00:23:57,540 --> 00:23:59,640
+pode ser melhorado
+
+363
+00:23:59,640 --> 00:24:01,260
+mas depois daí sim
+
+364
+00:24:01,260 --> 00:24:04,380
+avançar para a parte dinâmica
+
+365
+00:24:04,380 --> 00:24:06,600
+que aparentemente já fizeste aqui alguma coisa
+
+366
+00:24:06,600 --> 00:24:07,860
+desse aspecto
+
+367
+00:24:07,860 --> 00:24:10,260
+só que fica mais
+
+368
+00:24:10,260 --> 00:24:11,720
+numa minha opinião
+
+369
+00:24:11,720 --> 00:24:13,860
+devias ter feito o front-end primeiro em mock-up
+
+370
+00:24:13,860 --> 00:24:14,680
+e depois sim
+
+371
+00:24:14,680 --> 00:24:15,740
+nós dizemos
+
+372
+00:24:15,740 --> 00:24:16,560
+olha é mesmo isto
+
+373
+00:24:16,560 --> 00:24:17,200
+o mock-up está
+
+374
+00:24:17,200 --> 00:24:18,040
+e normalmente
+
+375
+00:24:18,040 --> 00:24:18,660
+sim
+
+376
+00:24:18,660 --> 00:24:19,400
+e normalmente
+
+377
+00:24:19,400 --> 00:24:20,700
+imagina
+
+378
+00:24:20,700 --> 00:24:22,160
+nós somos o teu cliente
+
+379
+00:24:22,160 --> 00:24:22,400
+não é?
+
+380
+00:24:22,820 --> 00:24:23,680
+é mais fácil
+
+381
+00:24:23,680 --> 00:24:26,360
+para perceberes o que se pretende
+
+382
+00:24:26,360 --> 00:24:27,480
+e ires para o cliente
+
+383
+00:24:27,480 --> 00:24:28,480
+com o mock-up
+
+384
+00:24:28,480 --> 00:24:29,820
+do front-end
+
+385
+00:24:29,820 --> 00:24:32,020
+pelo que eles conseguem visualizar
+
+386
+00:24:32,020 --> 00:24:33,160
+e ter uma perceção
+
+387
+00:24:33,160 --> 00:24:34,320
+daquilo que pretende
+
+388
+00:24:34,320 --> 00:24:35,680
+e como é que os dados fluem
+
+389
+00:24:35,680 --> 00:24:36,760
+e como é que se navega
+
+390
+00:24:36,760 --> 00:24:37,440
+nos ecrãs
+
+391
+00:24:37,440 --> 00:24:37,960
+e depois
+
+392
+00:24:37,960 --> 00:24:40,020
+tratares da parte do back-end
+
+393
+00:24:40,020 --> 00:24:41,080
+ou do back-office
+
+394
+00:24:41,080 --> 00:24:41,840
+depois tens a usar
+
+395
+00:24:41,840 --> 00:24:42,380
+dos conceitos
+
+396
+00:24:42,380 --> 00:24:43,200
+back-end e back-office
+
+397
+00:24:43,200 --> 00:24:43,780
+eu não sei bem
+
+398
+00:24:43,780 --> 00:24:45,320
+porque a gente aqui na realidade
+
+399
+00:24:45,320 --> 00:24:46,320
+ok
+
+400
+00:24:46,320 --> 00:24:47,340
+temos o back-office
+
+401
+00:24:47,340 --> 00:24:48,840
+que é tratado dos processos
+
+402
+00:24:48,840 --> 00:24:49,740
+em background
+
+403
+00:24:49,740 --> 00:24:50,140
+não é?
+
+404
+00:24:50,360 --> 00:24:50,780
+fora
+
+405
+00:24:50,780 --> 00:24:52,520
+que não é on-demand
+
+406
+00:24:52,520 --> 00:24:52,860
+não é?
+
+407
+00:24:53,000 --> 00:24:53,640
+digamos assim
+
+408
+00:24:53,640 --> 00:24:55,140
+on the fly
+
+409
+00:24:55,140 --> 00:24:56,000
+é isso?
+
+410
+00:24:57,280 --> 00:24:58,700
+eu tenho a sua ideia também
+
+411
+00:24:58,700 --> 00:25:00,140
+mas isto é uma apresentação
+
+412
+00:25:00,140 --> 00:25:01,380
+para o administrador dos processos
+
+413
+00:25:01,380 --> 00:25:01,680
+o WhatsApp
+
+414
+00:25:01,680 --> 00:25:03,080
+eventualmente seria a nossa equipa
+
+415
+00:25:03,080 --> 00:25:03,620
+que depois pode
+
+416
+00:25:03,620 --> 00:25:04,380
+consultar
+
+417
+00:25:04,380 --> 00:25:06,760
+editar e fazer versões novas
+
+418
+00:25:06,760 --> 00:25:07,140
+tudo bem
+
+419
+00:25:07,140 --> 00:25:07,260
+sim
+
+420
+00:25:07,260 --> 00:25:08,300
+numa lógica de CMS
+
+421
+00:25:08,300 --> 00:25:09,920
+seria alguém que publica
+
+422
+00:25:09,920 --> 00:25:11,220
+e depois alguém consulta
+
+423
+00:25:11,220 --> 00:25:11,840
+no portão
+
+424
+00:25:11,840 --> 00:25:12,740
+aquela informação
+
+425
+00:25:12,740 --> 00:25:13,140
+não é?
+
+426
+00:25:13,260 --> 00:25:14,620
+na prática nós vamos ser
+
+427
+00:25:14,620 --> 00:25:16,620
+editores de processos
+
+428
+00:25:16,620 --> 00:25:17,820
+e também visualizamos
+
+429
+00:25:17,820 --> 00:25:18,580
+antes de mostrar
+
+430
+00:25:18,580 --> 00:25:19,320
+pronto
+
+431
+00:25:19,320 --> 00:25:20,380
+mas é mais
+
+432
+00:25:20,380 --> 00:25:21,280
+eu também acho que é mais
+
+433
+00:25:21,280 --> 00:25:22,860
+interessante fazer o front-end
+
+434
+00:25:22,860 --> 00:25:23,440
+já afinal
+
+435
+00:25:23,440 --> 00:25:25,000
+até por
+
+436
+00:25:25,000 --> 00:25:25,680
+se nós quisermos
+
+437
+00:25:25,680 --> 00:25:26,720
+partilhar com alguns
+
+438
+00:25:26,720 --> 00:25:28,080
+stakeholders mais importantes
+
+439
+00:25:28,080 --> 00:25:29,280
+que vão usar isto
+
+440
+00:25:29,280 --> 00:25:29,880
+no dia-a-dia
+
+441
+00:25:29,880 --> 00:25:31,180
+para os darem o ok
+
+442
+00:25:31,180 --> 00:25:31,500
+não é?
+
+443
+00:25:32,040 --> 00:25:33,600
+agora assim fica confuso
+
+444
+00:25:33,600 --> 00:25:34,580
+porque estamos já a ver
+
+445
+00:25:34,580 --> 00:25:35,580
+a parte da administração
+
+446
+00:25:35,580 --> 00:25:36,900
+da edição
+
+447
+00:25:36,900 --> 00:25:38,840
+que não mostra nada
+
+448
+00:25:38,840 --> 00:25:39,420
+ao fim e ao cabo
+
+449
+00:25:39,420 --> 00:25:39,720
+quer dizer
+
+450
+00:25:39,720 --> 00:25:40,560
+mostrar a parte da edição
+
+451
+00:25:40,560 --> 00:25:41,960
+mas não mostra o resultado final
+
+452
+00:25:41,960 --> 00:25:42,940
+que é aquela página
+
+453
+00:25:42,940 --> 00:25:43,740
+que está ali ao lado
+
+454
+00:25:43,740 --> 00:25:44,900
+que nós
+
+455
+00:25:44,900 --> 00:25:45,240
+pronto
+
+456
+00:25:45,240 --> 00:25:45,960
+desde o início
+
+457
+00:25:45,960 --> 00:25:47,060
+é aquilo que pretendemos
+
+458
+00:25:47,060 --> 00:25:49,040
+obviamente queremos aquilo
+
+459
+00:25:49,040 --> 00:25:49,800
+de forma dinâmica
+
+460
+00:25:49,800 --> 00:25:50,640
+não queremos estática
+
+461
+00:25:50,640 --> 00:25:51,400
+e aí tudo bem
+
+462
+00:25:51,400 --> 00:25:52,060
+é mesmo assim
+
+463
+00:25:52,060 --> 00:25:53,140
+com este back-office
+
+464
+00:25:53,140 --> 00:25:53,780
+que já está aqui
+
+465
+00:25:53,780 --> 00:25:55,180
+mais ou menos
+
+466
+00:25:55,180 --> 00:25:56,900
+orientado
+
+467
+00:25:56,900 --> 00:25:58,780
+mas nós preferíamos
+
+468
+00:25:58,780 --> 00:26:00,020
+que atacasse um mock-up
+
+469
+00:26:00,020 --> 00:26:01,560
+com dados estáticos
+
+470
+00:26:01,560 --> 00:26:02,280
+a estrutura
+
+471
+00:26:02,280 --> 00:26:03,380
+é esta que está aqui
+
+472
+00:26:03,380 --> 00:26:04,560
+não me preocupo
+
+473
+00:26:04,560 --> 00:26:05,340
+com bases de dados
+
+474
+00:26:05,340 --> 00:26:05,800
+para nada disso
+
+475
+00:26:05,800 --> 00:26:07,800
+é um mock-up estático
+
+476
+00:26:07,800 --> 00:26:08,480
+para nós
+
+477
+00:26:08,480 --> 00:26:09,880
+que dê para ver também
+
+478
+00:26:09,880 --> 00:26:10,460
+o PDF
+
+479
+00:26:10,460 --> 00:26:11,600
+que gera PDF
+
+480
+00:26:11,600 --> 00:26:12,440
+e que dê para ver
+
+481
+00:26:12,440 --> 00:26:13,420
+a imagem
+
+482
+00:26:13,420 --> 00:26:15,040
+dos BPNNs
+
+483
+00:26:15,040 --> 00:26:16,040
+eu acho que a Maria
+
+484
+00:26:16,040 --> 00:26:17,160
+no passado já mandou
+
+485
+00:26:17,160 --> 00:26:19,220
+imagens
+
+486
+00:26:19,220 --> 00:26:20,080
+eu também já mandei
+
+487
+00:26:20,080 --> 00:26:21,260
+isso para ir nas conversas
+
+488
+00:26:21,260 --> 00:26:24,500
+usa esses exemplos
+
+489
+00:26:24,500 --> 00:26:25,460
+usa mesmo esses exemplos
+
+490
+00:26:25,460 --> 00:26:26,220
+que foram enviados
+
+491
+00:26:26,220 --> 00:26:26,600
+pronto
+
+492
+00:26:26,600 --> 00:26:27,540
+e não vais buscar
+
+493
+00:26:27,540 --> 00:26:28,520
+aqui processos judiciais
+
+494
+00:26:28,520 --> 00:26:28,800
+que isto
+
+495
+00:26:28,800 --> 00:26:29,300
+pronto
+
+496
+00:26:29,300 --> 00:26:31,540
+não é a mesma coisa
+
+497
+00:26:31,540 --> 00:26:33,440
+eu sei que é só um exemplo
+
+498
+00:26:33,440 --> 00:26:34,980
+mas até queria mais confusão
+
+499
+00:26:34,980 --> 00:26:35,500
+do que ajuda
+
+500
+00:26:35,500 --> 00:26:37,400
+e partimos dessa base
+
+501
+00:26:37,400 --> 00:26:38,020
+a partir daí
+
+502
+00:26:38,020 --> 00:26:38,800
+descascamos
+
+503
+00:26:38,800 --> 00:26:39,900
+depois para o back-office
+
+504
+00:26:39,900 --> 00:26:40,660
+e afiramos isto
+
+505
+00:26:40,660 --> 00:26:41,400
+na minha opinião
+
+506
+00:26:41,400 --> 00:26:42,640
+também programei muitos anos
+
+507
+00:26:42,640 --> 00:26:44,360
+e eu quando fazia um MVP
+
+508
+00:26:44,360 --> 00:26:44,900
+para um cliente
+
+509
+00:26:44,900 --> 00:26:46,080
+eu primeiro fazia o front-end
+
+510
+00:26:46,080 --> 00:26:46,580
+para ele ver
+
+511
+00:26:46,580 --> 00:26:47,380
+se era aquilo que queria
+
+512
+00:26:47,380 --> 00:26:48,600
+depois preocupava-me
+
+513
+00:26:48,600 --> 00:26:49,400
+com o back-office
+
+514
+00:26:49,400 --> 00:26:50,080
+e base de dados
+
+515
+00:26:50,080 --> 00:26:51,260
+introducres
+
+516
+00:26:51,260 --> 00:26:54,860
+mas isso é só meus dois centros
+
+517
+00:26:54,860 --> 00:26:55,880
+que eu digo aos americanos
+
+518
+00:26:55,880 --> 00:26:57,380
+essa é a minha opinião
+
+519
+00:26:57,380 --> 00:26:59,300
+não sei se concordam ou não
+
+520
+00:26:59,300 --> 00:27:00,580
+sim, eu estou trabalhando
+
+521
+00:27:00,580 --> 00:27:01,200
+no front-end
+
+522
+00:27:01,200 --> 00:27:02,500
+eu vou mostrar sexta-feira
+
+523
+00:27:02,500 --> 00:27:03,820
+mas realmente
+
+524
+00:27:03,820 --> 00:27:05,680
+eu já tive problemas
+
+525
+00:27:05,680 --> 00:27:06,400
+no passado
+
+526
+00:27:06,400 --> 00:27:08,760
+por começar pelo front-end
+
+527
+00:27:08,760 --> 00:27:10,620
+e eu tive depois
+
+528
+00:27:10,620 --> 00:27:12,220
+alguns problemas
+
+529
+00:27:12,220 --> 00:27:13,600
+de modelagem
+
+530
+00:27:13,600 --> 00:27:15,220
+e depois
+
+531
+00:27:15,220 --> 00:27:16,200
+mas para
+
+532
+00:27:16,200 --> 00:27:19,520
+mas eu vou
+
+533
+00:27:19,520 --> 00:27:20,300
+não vou mostrar
+
+534
+00:27:20,300 --> 00:27:20,880
+o front-end
+
+535
+00:27:20,880 --> 00:27:21,580
+em sexta-feira
+
+536
+00:27:21,580 --> 00:27:22,080
+não se preocupe
+
+537
+00:27:22,080 --> 00:27:22,900
+mas para
+
+538
+00:27:22,900 --> 00:27:23,300
+aqui
+
+539
+00:27:23,300 --> 00:27:25,460
+como é que eu ia dizer
+
+540
+00:27:25,460 --> 00:27:27,260
+imagina que tu já
+
+541
+00:27:27,260 --> 00:27:28,180
+antes das férias
+
+542
+00:27:28,180 --> 00:27:29,600
+nos tinhas mostrado isto
+
+543
+00:27:29,600 --> 00:27:31,400
+ou qualquer coisa
+
+544
+00:27:31,400 --> 00:27:32,140
+isto para mim
+
+545
+00:27:32,140 --> 00:27:33,060
+acaba por ser um front-end
+
+546
+00:27:33,060 --> 00:27:33,660
+porque aqui já estou
+
+547
+00:27:33,660 --> 00:27:34,540
+a visualizar
+
+548
+00:27:34,540 --> 00:27:35,720
+a estrutura
+
+549
+00:27:35,720 --> 00:27:36,200
+do
+
+550
+00:27:36,200 --> 00:27:36,900
+do
+
+551
+00:27:36,900 --> 00:27:38,900
+a estrutura
+
+552
+00:27:38,900 --> 00:27:40,020
+da aplicação
+
+553
+00:27:40,020 --> 00:27:40,420
+não é?
+
+554
+00:27:41,380 --> 00:27:42,800
+tu no teu front-end
+
+555
+00:27:42,800 --> 00:27:44,000
+há de ser muito parecido
+
+556
+00:27:44,000 --> 00:27:44,700
+ao detalhe aqui
+
+557
+00:27:44,700 --> 00:27:45,300
+do processo
+
+558
+00:27:45,300 --> 00:27:48,480
+não é?
+
+559
+00:27:48,480 --> 00:27:49,200
+já consigo ver
+
+560
+00:27:49,200 --> 00:27:49,740
+aqui os menus
+
+561
+00:27:49,740 --> 00:27:50,580
+também que dizia
+
+562
+00:27:50,580 --> 00:27:51,600
+pá, não vale a pena
+
+563
+00:27:51,600 --> 00:27:52,100
+estar-te a ficar
+
+564
+00:27:52,100 --> 00:27:52,880
+tanto aqui na parte
+
+565
+00:27:52,880 --> 00:27:54,100
+da gestão das equipas
+
+566
+00:27:54,100 --> 00:27:54,460
+e etc
+
+567
+00:27:54,460 --> 00:27:55,280
+começamos assim
+
+568
+00:27:55,280 --> 00:27:55,740
+com uma coisa
+
+569
+00:27:55,740 --> 00:27:56,780
+muito simples
+
+570
+00:27:56,780 --> 00:27:57,640
+mas só
+
+571
+00:27:57,640 --> 00:27:58,860
+de um crudo
+
+572
+00:27:58,860 --> 00:27:59,760
+dos processos
+
+573
+00:27:59,760 --> 00:28:00,460
+e como é que
+
+574
+00:28:00,460 --> 00:28:01,440
+os vamos visualizar
+
+575
+00:28:01,440 --> 00:28:02,400
+é isso mesmo
+
+576
+00:28:02,400 --> 00:28:03,500
+e depois
+
+577
+00:28:03,500 --> 00:28:04,380
+íamos acrescentando
+
+578
+00:28:04,380 --> 00:28:05,300
+funcionalidades
+
+579
+00:28:05,300 --> 00:28:06,380
+porque também já
+
+580
+00:28:06,380 --> 00:28:07,280
+no isto já estamos
+
+581
+00:28:07,280 --> 00:28:08,380
+bem com 4 meses
+
+582
+00:28:08,380 --> 00:28:09,000
+de projeto
+
+583
+00:28:09,000 --> 00:28:10,360
+e ainda não conseguimos
+
+584
+00:28:10,360 --> 00:28:11,180
+sair
+
+585
+00:28:11,180 --> 00:28:12,020
+percebes
+
+586
+00:28:12,020 --> 00:28:13,040
+visualizar ainda
+
+587
+00:28:13,040 --> 00:28:13,680
+o front-end
+
+588
+00:28:13,680 --> 00:28:14,860
+se nos tivesse mostrado
+
+589
+00:28:14,860 --> 00:28:15,720
+já tinha orientado
+
+590
+00:28:15,720 --> 00:28:16,300
+já tínhamos isto
+
+591
+00:28:16,300 --> 00:28:16,780
+mais ou menos
+
+592
+00:28:16,780 --> 00:28:17,260
+com o aspecto
+
+593
+00:28:17,260 --> 00:28:17,880
+que nós pretendíamos
+
+594
+00:28:17,880 --> 00:28:18,600
+e já estávamos
+
+595
+00:28:18,600 --> 00:28:19,400
+mais acelerados
+
+596
+00:28:19,400 --> 00:28:19,920
+mas pronto
+
+597
+00:28:19,920 --> 00:28:21,140
+mostraste agora
+
+598
+00:28:21,140 --> 00:28:22,400
+olha agradeço o esforço
+
+599
+00:28:22,400 --> 00:28:24,440
+mas pronto
+
+600
+00:28:24,440 --> 00:28:24,980
+tem atenção
+
+601
+00:28:24,980 --> 00:28:25,680
+então aqui é isto
+
+602
+00:28:25,680 --> 00:28:26,400
+que eu disse
+
+603
+00:28:26,400 --> 00:28:26,900
+não sei se Maria
+
+604
+00:28:26,900 --> 00:28:27,720
+quer acrescentar mais
+
+605
+00:28:27,720 --> 00:28:28,320
+alguma coisa
+
+606
+00:28:28,320 --> 00:28:29,220
+mas estou a falar
+
+607
+00:28:29,220 --> 00:28:30,380
+novamente na sexta
+
+608
+00:28:30,380 --> 00:28:30,800
+espero
+
+609
+00:28:30,800 --> 00:28:32,940
+deixa eu mostrar
+
+610
+00:28:32,940 --> 00:28:33,440
+as páginas aqui
+
+611
+00:28:33,440 --> 00:28:34,400
+do back office
+
+612
+00:28:34,400 --> 00:28:34,780
+também
+
+613
+00:28:34,780 --> 00:28:38,040
+tem a parte
+
+614
+00:28:38,040 --> 00:28:39,400
+como a gente tinha falado
+
+615
+00:28:39,400 --> 00:28:40,840
+da gestão das equipas
+
+616
+00:28:40,840 --> 00:28:43,440
+com os indicadores
+
+617
+00:28:43,440 --> 00:28:45,940
+detalhes das equipas
+
+618
+00:28:45,940 --> 00:28:48,320
+com gestão de membros
+
+619
+00:28:48,320 --> 00:28:49,020
+e tudo mais
+
+620
+00:28:49,020 --> 00:28:50,820
+dá para adicionar
+
+621
+00:28:50,820 --> 00:28:51,840
+novas equipas
+
+622
+00:28:51,840 --> 00:28:53,560
+selecionar líder
+
+623
+00:28:53,560 --> 00:28:54,340
+e tudo mais
+
+624
+00:28:54,340 --> 00:28:56,840
+tem a parte de relatórios
+
+625
+00:28:56,840 --> 00:28:58,440
+com equipas
+
+626
+00:28:58,440 --> 00:28:59,420
+agora não está se mostrando
+
+627
+00:28:59,420 --> 00:28:59,820
+atenção
+
+628
+00:28:59,820 --> 00:29:01,960
+não está se mostrando
+
+629
+00:29:01,960 --> 00:29:02,360
+não está se mostrando
+
+630
+00:29:02,360 --> 00:29:03,360
+tens de apresentar
+
+631
+00:29:03,360 --> 00:29:04,880
+opa
+
+632
+00:29:04,880 --> 00:29:05,360
+também
+
+633
+00:29:05,360 --> 00:29:09,800
+deixa eu compartilhar novamente
+
+634
+00:29:09,800 --> 00:29:15,240
+tá
+
+635
+00:29:15,240 --> 00:29:15,860
+aí
+
+636
+00:29:15,860 --> 00:29:16,840
+consegue ver?
+
+637
+00:29:16,840 --> 00:29:16,840
+sim
+
+638
+00:29:16,840 --> 00:29:26,280
+sim
+
+639
+00:29:26,280 --> 00:29:26,380
+sim
+
+640
+00:29:26,380 --> 00:29:26,980
+sim
+
+641
+00:29:26,980 --> 00:29:27,480
+está
+
+642
+00:29:27,480 --> 00:29:33,700
+aqui seria mais a gestão das equipas
+
+643
+00:29:33,700 --> 00:29:36,580
+uma funcionalidade para o futuro
+
+644
+00:29:36,580 --> 00:29:41,200
+mas eu queria perceber o design
+
+645
+00:29:41,200 --> 00:29:43,340
+padrão de padrão de design
+
+646
+00:29:43,340 --> 00:29:43,340
+padrão de design
+
+647
+00:29:43,340 --> 00:29:43,340
+padrão de design
+
+648
+00:29:43,340 --> 00:29:45,740
+estrutura
+
+649
+00:29:45,740 --> 00:29:49,000
+mas a gente já conversou sobre isso
+
+650
+00:29:49,000 --> 00:29:53,240
+aqui dá para ver os detalhes das equipas por exemplo
+
+651
+00:29:53,240 --> 00:29:57,240
+de gerir membros adicionar novos membros
+
+652
+00:29:57,240 --> 00:30:26,340
+dá para criar uma equipa um líder da equipa aqui temos relatórios por exemplo os tipos de processos e quantos processos foram concluídos pendentes em análises durante o mês da para poder fazer várias filtragens por semana.
+
+653
+00:30:26,340 --> 00:30:56,320
+tem um resumo de todos os indicadores aqui embaixo em tabela e também tem a configuração do usuário para autenticação e integração no futuro e notificações e tudo mais. alteração e gestão de password e notificações e tudo mais. alteração e gestão de password e notificações e tudo mais. alteração e gestão de password e notificações e tudo mais.
+
+654
+00:30:56,320 --> 00:31:14,020
+MFA, papéis, aqui embaixo também na parte inferior esquerda tem um botão aqui para entrar em contato com a equipe de suporte,
+
+655
+00:31:14,020 --> 00:31:20,940
+caso os clientes que forem usar o backoffice precisem de alguma ajuda ou algo não esteja funcionando.
+
+656
+00:31:23,180 --> 00:31:37,920
+E é basicamente isso. Eu fiz esse protótipo mais para ter uma visão geral de como ficaria com as funcionalidades que a gente tinha discutido nas reuniões,
+
+657
+00:31:37,920 --> 00:31:50,580
+para ver se faz sentido, se está no bom caminho. E é bom que a gente teve essa reunião.
+
+658
+00:31:50,720 --> 00:32:03,460
+Eu vou trabalhar para finalizar o front-end, mostrar para vocês sexta-feira e a gente pode usar ele então como base para fazer algumas alterações no backoffice,
+
+659
+00:32:03,460 --> 00:32:09,460
+ver quais funcionalidades a gente vai colocar para frente, baseado naquela tabela que eu tinha mostrado antes.
+
+660
+00:32:09,460 --> 00:32:21,160
+Vou compartilhar a tabela também de funcionalidade com vocês, vocês podem editar se quiserem. Vou enviar esse protótipo aqui, se quiserem mexer nele. E é isso.
+
+661
+00:32:27,460 --> 00:32:35,200
+Tá. Eu acho que não tenho nada a dizer. Um bocadinho isso que eles disseram.
+
+662
+00:32:35,200 --> 00:33:05,180
+A gente ainda vai discutir sobre o front-end, ver se está tudo ok. E quando a gente voltar para o backoffice eu queria fazer algumas perguntas sobre, por exemplo, quais são as diferentes equipas que vão utilizar esse sistema, quais os papéis que vocês preferem que tenham aqui, como querem que seja o ciclo de arquivo.
+
+663
+00:33:05,180 --> 00:33:11,180
+O ciclo de vida dos processos publicados. Esse tipo de pergunta.
+
+664
+00:33:11,180 --> 00:33:25,120
+Tá bem. Trata lá do front-end, capaz a gente só depois de ajustar e pôr-te no caminho certo e também começamos a ter uma visualização mais de acordo aqui com o que são estes processos aqui do ETIL, tá bem?
+
+665
+00:33:25,180 --> 00:33:39,180
+Deve-se fazer aí alguns ajustes. Porque, por exemplo, acho que estás a seguir muito a lógica dos processos judiciais. Mas também dá para adaptar. Mas dá para adaptar.
+
+666
+00:33:39,180 --> 00:33:45,180
+Não tem nada a ver. É só para ter algum texto porque levaria muito tempo para adaptar a estrutura que a gente tem ali.
+
+667
+00:33:45,180 --> 00:33:51,180
+Sim, mas mesmo aquela grelha que me estás há bocado onde tens as métricas dos processos tratados,
+
+668
+00:33:51,180 --> 00:34:07,180
+pronto, faz sentido para processos judiciais, mas se calhar aqui para as nossas métricas de processos de negócio, não faz muito sentido. Mas a gente a gente a isso traz lá o front-end e depois a gente escuta.
+
+669
+00:34:07,180 --> 00:34:13,180
+a gente escuta. Se eu precisar andar um bocadinho para trás, só para o lado, também se faz mas a gente ajuda por isso também.
+
+670
+00:34:13,180 --> 00:34:29,180
+Tá bom, tá ótimo. Tá, então fica uma retacada então para a sexta. Mostra o front-end. A gente faz alguns ajustes e a gente volta para o back-off com as informações vindo aí do front-end.
+
+671
+00:34:29,180 --> 00:34:38,180
+Ok, vou parar a gravação. Eu pedi só a Maria e a gente para ficar aqui um bocadinho. Se tem aqui mais um tema para falar com eles. Ok.
+
+672
+00:34:40,180 --> 00:34:48,180
+Obrigado, Júquio. Tá, deixa o banho. Obrigado. Obrigado. Um abraço. Até mais. Até mais. Até mais.
+
+673
+00:34:48,180 --> 00:34:48,680
+E aí
+
+674
+00:34:48,680 --> 00:34:52,000
+Obrigado.

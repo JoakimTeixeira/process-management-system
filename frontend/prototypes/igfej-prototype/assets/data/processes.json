@@ -1,0 +1,466 @@
+[
+  {
+    "id": "3b9aef06-9a7a-4e2f-8e57-6db6c3b7c9d1",
+    "code": "4.0",
+    "title": "Mudança de Local do Utilizador",
+    "macroprocess_id": "gestao-servico",
+    "state": "as_is",
+    "current_version_id": "7b4f0f52-b3a5-4fd4-a5de-7c1ab2a0d8a2",
+    "author_id": "user-001",
+    "updated_by": "user-001",
+    "created_at": "2026-01-05T10:00:00Z",
+    "updated_at": "2026-02-01T09:30:00Z",
+    "versions": [
+      {
+        "id": "7b4f0f52-b3a5-4fd4-a5de-7c1ab2a0d8a2",
+        "process_id": "3b9aef06-9a7a-4e2f-8e57-6db6c3b7c9d1",
+        "version": "1.0",
+        "code": "4.0",
+        "author_id": "user-001",
+        "updated_by": "user-001",
+        "change_description": "Versão inicial importada do protótipo (AS-IS).",
+        "created_at": "2026-01-05T10:00:00Z",
+        "updated_at": "2026-02-01T09:30:00Z",
+        "subprocesses": [],
+        "assets": [
+          {
+            "id": "cb7ff9aa-0c4f-4a3a-9c5c-0b6a3f3d5a31",
+            "code": "4.0",
+            "subtitle": "Modelo de processo de mudança de local de utilizador",
+            "files": [
+              {
+                "bpmn_file": "models/0004-00-igfej-mudanca-de-local-do-utilizador.bpmn",
+                "svg_file": "models/4.0-igfej-mudanca-de-local-do-utilizador.svg",
+                "dmn_file": null
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "8d9e1f23-4a5b-6c7d-8e9f-0a1b2c3d4e5f",
+        "process_id": "3b9aef06-9a7a-4e2f-8e57-6db6c3b7c9d1",
+        "version": "2.0",
+        "code": "4.0",
+        "author_id": "user-001",
+        "updated_by": "user-001",
+        "change_description": "Nova versão para teste de versionamento com subprocessos adicionados.",
+        "created_at": "2026-02-15T10:00:00Z",
+        "updated_at": "2026-02-15T10:00:00Z",
+        "subprocesses": [
+          {
+            "id": "5f4e3d2c-1b0a-9f8e-7d6c-5b4a39281706",
+            "code": "4.1",
+            "title": "Atualização de Localização no Sistema",
+            "entity": ["IGFEJ"],
+            "responsible": ["Equipa de Suporte"],
+            "description": "Subprocesso para atualizar a localização do utilizador no sistema após mudança física.",
+            "keywords": ["localização", "sistema", "atualização"],
+            "objectives": [
+              "Garantir que o sistema reflete a localização atual do utilizador"
+            ],
+            "inputs": ["Pedido de mudança", "Nova localização"],
+            "activities": [
+              {
+                "title": "Validar mudança",
+                "bullets": ["Confirmar aprovação", "Verificar nova localização"]
+              },
+              {
+                "title": "Atualizar sistema",
+                "bullets": [
+                  "Modificar dados no diretório",
+                  "Atualizar permissões se necessário"
+                ]
+              }
+            ],
+            "deliverables": ["Localização atualizada no sistema"],
+            "suppliers": ["RH", "Gestor"],
+            "participants": ["Service Desk"],
+            "clients": ["Utilizador"],
+            "methodologies": ["ITIL"],
+            "tools": ["Active Directory"],
+            "metrics": ["Tempo de atualização"],
+            "maturity": ["Definido"],
+            "suggestions": ["Automatizar atualização"],
+            "legal_support_or_legislation": ["Políticas internas"],
+            "information_classification": {
+              "values": ["Interno"],
+              "note": "Dados administrativos"
+            },
+            "metadata": ["source=mock", "version=2.0"]
+          }
+        ],
+        "assets": [
+          {
+            "id": "ef1a2b3c-4d5e-6f7g-8h9i-0j1k2l3m4n5",
+            "code": "4.0-v2",
+            "subtitle": "Modelo de processo v2 - mudança de local com subprocessos",
+            "files": [
+              {
+                "bpmn_file": "models/0004-00-igfej-mudanca-de-local-do-utilizador.bpmn",
+                "svg_file": "models/4.0-igfej-mudanca-de-local-do-utilizador.svg",
+                "dmn_file": null
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "c6cb6f1f-96a9-4b63-85a8-827a63b8f76f",
+    "code": "5.0",
+    "title": "Gestão de Acessos e Utilizadores",
+    "macroprocess_id": "gestao-servico",
+    "state": "as_is",
+    "current_version_id": "c2a1b2a2-1f1e-4c52-a9c2-9a35e5b2b8b0",
+    "author_id": "user-001",
+    "updated_by": "user-002",
+    "created_at": "2026-01-05T10:00:00Z",
+    "updated_at": "2026-02-01T09:30:00Z",
+    "versions": [
+      {
+        "id": "c2a1b2a2-1f1e-4c52-a9c2-9a35e5b2b8b0",
+        "process_id": "c6cb6f1f-96a9-4b63-85a8-827a63b8f76f",
+        "version": "1.0",
+        "code": "5.0",
+        "author_id": "user-001",
+        "updated_by": "user-002",
+        "change_description": "Versão inicial (AS-IS) com subprocessos de criação de utilizador e VPN.",
+        "created_at": "2026-01-05T10:00:00Z",
+        "updated_at": "2026-02-01T09:30:00Z",
+
+        "subprocesses": [
+          {
+            "id": "1b6aa1c4-7f40-4c3e-bbb8-6c6d4f4be0d5",
+            "code": "5.1",
+            "title": "Criação de Utilizador",
+
+            "entity": ["IGFEJ"],
+            "responsible": ["Equipa de Suporte (N1/N2)"],
+            "description": "Criação de conta de utilizador em diretório (ex.: AD) e disponibilização de credenciais e acessos base.",
+            "keywords": [
+              "utilizador",
+              "active directory",
+              "conta",
+              "acesso",
+              "onboarding"
+            ],
+            "objectives": [
+              "Criar utilizador com identificação correta e acessos mínimos necessários",
+              "Garantir rastreabilidade do pedido e evidências de execução"
+            ],
+            "inputs": [
+              "Pedido de criação de utilizador",
+              "Dados do utilizador (nome, email, unidade, perfil)"
+            ],
+
+            "activities": [
+              {
+                "title": "Registar e validar o pedido",
+                "bullets": [
+                  "Confirmar identidade do solicitante e dados do novo utilizador",
+                  "Verificar se já existe conta (evitar duplicados)"
+                ]
+              },
+              {
+                "title": "Criar utilizador e aplicar permissões base",
+                "bullets": [
+                  "Criar conta no diretório",
+                  "Atribuir grupos/perfis base conforme função e unidade"
+                ]
+              },
+              {
+                "title": "Comunicar credenciais e fechar pedido",
+                "bullets": [
+                  "Enviar instruções de primeiro acesso",
+                  "Registar evidências e encerrar no ITSM"
+                ]
+              }
+            ],
+
+            "deliverables": [
+              "Conta criada",
+              "Acessos base atribuídos",
+              "Evidência no ITSM"
+            ],
+            "suppliers": [
+              "Solicitante",
+              "RH/Unidade orgânica (quando aplicável)"
+            ],
+            "participants": ["Service Desk", "Equipa de sistemas"],
+            "clients": ["Utilizador final", "Unidade solicitante"],
+            "methodologies": ["ITIL (Service Request Management)"],
+            "tools": ["ITSM", "Active Directory", "Email"],
+            "metrics": [
+              "Tempo de ciclo",
+              "Pedidos reabertos",
+              "Incidentes pós-criação"
+            ],
+            "maturity": ["Em avaliação"],
+            "itsm_request": ["SR-5.1-EXAMPLE"],
+            "cmdb_service": ["SV-IDENTITY-ACCESS"],
+            "suggestions": [
+              "Automatizar via workflow com aprovação e templates de grupos."
+            ],
+            "legal_support_or_legislation": [
+              "Políticas internas de segurança",
+              "RGPD (quando aplicável)"
+            ],
+            "information_classification": {
+              "values": ["Confidencial"],
+              "note": "Pode conter dados pessoais e credenciais temporárias."
+            },
+            "metadata": ["source=mock", "domain=service_requests"]
+          },
+
+          {
+            "id": "8b5c8a5b-3b9f-4b59-9a09-5c5c04e9c0ce",
+            "code": "5.2",
+            "title": "Criação de VPN",
+
+            "entity": ["IGFEJ"],
+            "responsible": ["Equipa de Redes / Segurança"],
+            "description": "Provisionamento de acesso remoto VPN para utilizador autorizado, incluindo política de acesso e validações.",
+            "keywords": ["vpn", "acesso remoto", "segurança", "rede"],
+            "objectives": [
+              "Garantir acesso remoto seguro e rastreável",
+              "Validar autorização e perfil antes de ativar"
+            ],
+            "inputs": [
+              "Pedido de VPN",
+              "Justificação e aprovação",
+              "Identificação do utilizador"
+            ],
+
+            "activities": [
+              {
+                "title": "Validar autorização e necessidade",
+                "bullets": [
+                  "Confirmar aprovação do responsável",
+                  "Verificar perfil e âmbito (sistemas/segmentos)"
+                ]
+              },
+              {
+                "title": "Provisionar VPN e políticas",
+                "bullets": [
+                  "Criar/associar perfil VPN ao utilizador",
+                  "Aplicar regras de acesso (least privilege)"
+                ]
+              },
+              {
+                "title": "Testar e comunicar",
+                "bullets": [
+                  "Validar login e conectividade",
+                  "Enviar instruções e requisitos de cliente VPN"
+                ]
+              }
+            ],
+
+            "deliverables": [
+              "Acesso VPN ativo",
+              "Política aplicada",
+              "Evidências no ITSM"
+            ],
+            "suppliers": ["Gestor/Responsável da área", "Equipa de Segurança"],
+            "participants": ["Redes", "Segurança", "Service Desk"],
+            "clients": ["Utilizador final"],
+            "methodologies": [
+              "ITIL (Service Request Management)",
+              "Zero Trust (referência)"
+            ],
+            "tools": ["ITSM", "VPN Gateway", "MFA/IdP"],
+            "metrics": [
+              "Tempo de provisão",
+              "Falhas de autenticação",
+              "Revogações"
+            ],
+            "maturity": ["Em avaliação"],
+            "itsm_request": ["SR-0005-02-EXAMPLE"],
+            "cmdb_service": ["SV-REMOTE-ACCESS"],
+            "suggestions": [
+              "Adicionar DMN de elegibilidade (perfil, função, aprovação, risco)."
+            ],
+            "legal_support_or_legislation": [
+              "Políticas internas de segurança",
+              "RGPD (quando aplicável)"
+            ],
+            "information_classification": {
+              "values": ["Restrito"],
+              "note": "Acesso remoto a sistemas internos."
+            },
+            "metadata": ["source=mock", "requires_approval=true"]
+          }
+        ],
+
+        "assets": [
+          {
+            "id": "2d7b3c3a-8a62-4b4c-9e5d-3c0d6b2a5a77",
+            "code": "5.0",
+            "subtitle": "Modelo do Processo Onboarding (DGAJ)",
+            "files": [
+              {
+                "bpmn_file": "models/0005-00-dgaj-onboarding.bpmn",
+                "svg_file": "models/0005-00-dgaj-onboarding.svg",
+                "dmn_file": null
+              }
+            ]
+          },
+          {
+            "id": "1a6a1f2b-d7d9-46f7-86a0-0d4c5a3d15e8",
+            "code": "5.1",
+            "subtitle": "Modelo do Processo Criação de Utilizador",
+            "files": [
+              {
+                "bpmn_file": "models/0005-01-igfej-criacao-utilizador.bpmn",
+                "svg_file": "models/0005-01-igfej-criacao-utilizador.svg",
+                "dmn_file": null
+              }
+            ]
+          },
+          {
+            "id": "b9f2d53c-3f3f-43a8-95b1-8fb62c8d07c2",
+            "code": "5.2",
+            "subtitle": "Modelo do Processo Criação de VPN",
+            "files": [
+              {
+                "bpmn_file": "models/0005-02-igfej-criacao-vpn.bpmn",
+                "svg_file": "models/0005-02-igfej-criacao-vpn.svg",
+                "dmn_file": null
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+
+  {
+    "id": "a34a9f92-6f09-4bd4-a834-57c9f0f5a0ef",
+    "code": "9.0",
+    "title": "Redefinição de Password",
+    "macroprocess_id": "gestao-servico",
+    "state": "as_is",
+    "current_version_id": "9b13f0aa-6d84-4c25-a7c0-36cc0d3d7f9a",
+    "author_id": "user-001",
+    "updated_by": "user-003",
+    "created_at": "2026-01-05T10:00:00Z",
+    "updated_at": "2026-02-01T09:30:00Z",
+    "versions": [
+      {
+        "id": "9b13f0aa-6d84-4c25-a7c0-36cc0d3d7f9a",
+        "process_id": "a34a9f92-6f09-4bd4-a834-57c9f0f5a0ef",
+        "version": "1.0",
+        "code": "9.0",
+        "author_id": "user-001",
+        "updated_by": "user-003",
+        "change_description": "Versão inicial (AS-IS) com fluxo principal e variante para apps.",
+        "created_at": "2026-01-05T10:00:00Z",
+        "updated_at": "2026-02-01T09:30:00Z",
+
+        "subprocesses": [
+          {
+            "id": "f3e7c1fb-1aa6-4c1c-8c1b-2a5f0d1f7b22",
+            "code": "9.1",
+            "title": "Redefinição de Password (Apps)",
+
+            "entity": ["IGFEJ"],
+            "responsible": ["Service Desk"],
+            "description": "Fluxo específico para redefinir password em aplicações/sistemas (além do diretório).",
+            "keywords": ["password", "apps", "reset", "acesso"],
+            "objectives": [
+              "Restaurar acesso a aplicações com controlo e evidência",
+              "Garantir validação do utilizador antes do reset"
+            ],
+            "inputs": [
+              "Pedido de reset",
+              "Identificação do utilizador",
+              "Aplicação alvo"
+            ],
+
+            "activities": [
+              {
+                "title": "Validar identidade e elegibilidade",
+                "bullets": [
+                  "Confirmar identidade por procedimento interno",
+                  "Confirmar permissão e escopo do pedido"
+                ]
+              },
+              {
+                "title": "Executar reset na aplicação",
+                "bullets": [
+                  "Efetuar reset/admin unlock conforme ferramenta",
+                  "Forçar alteração no primeiro login (quando aplicável)"
+                ]
+              },
+              {
+                "title": "Registar evidências e encerrar",
+                "bullets": [
+                  "Registar hora, sistema, operador e resultado no ITSM",
+                  "Confirmar com utilizador e fechar"
+                ]
+              }
+            ],
+
+            "deliverables": ["Acesso restaurado", "Registo de evidência"],
+            "suppliers": [
+              "Utilizador final",
+              "Admin de aplicação (quando aplicável)"
+            ],
+            "participants": ["Service Desk", "Admin de aplicação"],
+            "clients": ["Utilizador final"],
+            "methodologies": ["ITIL (Service Request Management)"],
+            "tools": ["ITSM", "Admin Console / Ferramenta do sistema"],
+            "metrics": [
+              "Tempo de resolução",
+              "Falhas por validação",
+              "Reaberturas"
+            ],
+            "maturity": ["Em avaliação"],
+            "itsm_request": ["SR-0009-01-EXAMPLE"],
+            "cmdb_service": ["SV-APPLICATION-ACCESS"],
+            "suggestions": [
+              "Adicionar DMN para critérios de validação por tipo de app."
+            ],
+            "legal_support_or_legislation": [
+              "Políticas internas de segurança",
+              "RGPD (quando aplicável)"
+            ],
+            "information_classification": {
+              "values": ["Restrito"],
+              "note": "Procedimento sensível (controlo de acessos)."
+            },
+            "metadata": ["source=mock", "security_sensitive=true"]
+          }
+        ],
+
+        "assets": [
+          {
+            "id": "cf2ac3f9-ef55-4c07-8338-2df0b6f1f0c9",
+            "code": "9.0",
+            "subtitle": "Modelo do Processo Redefinição de Password",
+            "files": [
+              {
+                "bpmn_file": "models/0009-00-igfej-redefinicao-password.bpmn",
+                "svg_file": "models/0009-00-igfej-redefinicao-password.svg",
+                "dmn_file": null
+              }
+            ]
+          },
+          {
+            "id": "d6dff2d1-7f3b-4a4a-8c3e-1d1edc6b10e1",
+            "code": "9.1",
+            "subtitle": "Modelo do Processo Redefinição de Password (Apps)",
+            "files": [
+              {
+                "bpmn_file": "models/0009-01-igfej-redefinicao-password-apps.bpmn",
+                "svg_file": "models/0009-01-igfej-redefinicao-password-apps.svg",
+                "dmn_file": null
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

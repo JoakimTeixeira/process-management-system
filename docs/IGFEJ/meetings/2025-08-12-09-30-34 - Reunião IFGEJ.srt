@@ -1,0 +1,5999 @@
+1
+00:00:00,000 --> 00:00:10,040
+E ele disse basicamente para os Joakim nos mostrar o site que já tem, a parte estática que ele tinha pedido, não sei bem como é que ele combinou consigo.
+
+2
+00:00:10,040 --> 00:00:18,620
+E depois também para nos explicar aquele documento. E é isso. Posso gravar? Não se importam?
+
+3
+00:00:19,340 --> 00:00:19,580
+Sim.
+
+4
+00:00:20,840 --> 00:00:28,220
+Sim? Ok. Então eu vou começar aqui a gravar. E quando quiser Joakim, força, se quiser partilhe o ecrã.
+
+5
+00:00:28,220 --> 00:00:34,560
+E depois, interessante, o Abel disse que já entrava, é só porque ele está aqui com outras reuniões em conflito.
+
+6
+00:00:35,380 --> 00:00:40,480
+E então ele precisa de ir ali um bocadinho, mas ele disse para aí mais ou menos 15 minutos e depois entrava.
+
+7
+00:00:41,280 --> 00:00:44,600
+E por isso é que me pediu para gravar, que era para depois ouvir desde o início.
+
+8
+00:00:46,780 --> 00:00:48,520
+Pronto, então vou iniciar aqui.
+
+9
+00:00:54,160 --> 00:00:54,900
+Ok, já está.
+
+10
+00:00:54,900 --> 00:00:58,320
+Quando quiser Joakim, vou aqui tirar o meu micro.
+
+11
+00:00:58,900 --> 00:01:05,900
+E depois era para também nos explicar depois o que é que necessita mais para...
+
+12
+00:01:07,360 --> 00:01:11,460
+Pronto, para a questão da tese, para finalizar e para completar.
+
+13
+00:01:13,740 --> 00:01:15,740
+Ok, então vou-lhe dar a palavra.
+
+14
+00:01:15,740 --> 00:01:15,740
+Ok.
+
+15
+00:01:15,740 --> 00:01:21,040
+Só um momento.
+
+16
+00:01:21,040 --> 00:01:51,020
+E aí
+
+17
+00:01:51,020 --> 00:01:53,020
+Deixa eu compartilhar aqui...
+
+18
+00:02:05,020 --> 00:02:09,020
+Deixa eu mostrar pra vocês...
+
+19
+00:02:09,020 --> 00:02:13,020
+...convertar um pouco sobre o documento
+
+20
+00:02:13,020 --> 00:02:18,020
+Porque eu criei mais duas versões do protótipo
+
+21
+00:02:18,020 --> 00:02:22,020
+Eu apresentei pro meu orientador e...
+
+22
+00:02:30,020 --> 00:02:31,020
+Não...
+
+23
+00:02:31,020 --> 00:02:32,020
+Eu...
+
+24
+00:02:32,020 --> 00:02:34,020
+Não apresentei...
+
+25
+00:02:34,020 --> 00:02:38,020
+Tô pensando em me apresentar pro meu orientador
+
+26
+00:02:38,020 --> 00:02:40,020
+E eu tive reunião com um outro colega e...
+
+27
+00:02:40,020 --> 00:02:42,020
+Não foi...
+
+28
+00:02:42,020 --> 00:02:48,020
+Tipo, o protótipo não tem funcionalidades o suficiente pra tese
+
+29
+00:02:48,020 --> 00:02:52,020
+É isso que eu tô tentando falar
+
+30
+00:02:52,020 --> 00:02:54,020
+Sobre...
+
+31
+00:02:54,020 --> 00:02:58,020
+As funcionalidades do protótipo...
+
+32
+00:02:58,020 --> 00:03:02,020
+Eu entrei em conflito...
+
+33
+00:03:02,020 --> 00:03:04,020
+E...
+
+34
+00:03:04,020 --> 00:03:08,020
+Eu queria definir melhor os...
+
+35
+00:03:08,020 --> 00:03:10,020
+Requisitos não funcionais...
+
+36
+00:03:10,020 --> 00:03:12,020
+E quais funcionalidades são as principais...
+
+37
+00:03:12,020 --> 00:03:14,020
+Porque...
+
+38
+00:03:14,020 --> 00:03:16,020
+O protótipo que eu tinha criado...
+
+39
+00:03:16,020 --> 00:03:25,020
+Os dois protótipos que eu tinha criado eram mais um CRUD básico, então não vale a pena nem mostrar.
+
+40
+00:03:25,020 --> 00:03:41,020
+Então eu queria tirar mais essa dúvida: como é que a gente vai desenvolver essa aplicação?
+
+41
+00:03:41,020 --> 00:03:50,020
+Aqui eu tinha mapeado alguns problemas que a aplicação tinha que resolver.
+
+42
+00:03:50,020 --> 00:04:10,020
+Eu tinha falado com o Abel antes sobre esses problemas, mas pelo visto, maior parte desses problemas aqui já são,
+
+43
+00:04:10,020 --> 00:04:25,020
+ou serão resolvidos por outra ferramenta que está integrada ou vai ser integrada no sistema de GFest.
+
+44
+00:04:25,020 --> 00:04:40,020
+Então eu fico em dúvida, por exemplo, o sistema vai ser só um CRUD para enviar e visualizar processos?
+
+45
+00:04:40,020 --> 00:04:47,020
+Quais seriam as funcionalidades críticas para ajudar na documentação dos processos?
+
+46
+00:04:47,020 --> 00:04:55,020
+Quais seriam os requisitos não funcionais? Por exemplo, o que a gente quer? A gente quer uma notificabilidade do sistema?
+
+47
+00:04:55,020 --> 00:05:22,180
+A gente quer, não sei, segurança, a gente quer, sei lá, confiabilidade desses processos, algum tipo de auditabilidade para poder, sei lá, ver o histórico da modificação da versão dos processos, histórico de modificações.
+
+48
+00:05:23,540 --> 00:05:47,280
+Se teve algum acesso indevido ou não, porque o objetivo do sistema é ter um front-end para mostrar os processos e procedimentos, isso tem que ser bem definido para todos os setores da justiça conseguirem entender o que é um processo, o que é um procedimento.
+
+49
+00:05:47,280 --> 00:05:54,140
+Isso já tem meio que um mockup criado, uma ideia de mockup.
+
+50
+00:05:58,280 --> 00:06:18,080
+E a gente precisa definir quais são os requisitos não funcionais para focar e ver, por exemplo, os requisitos não funcionais vão ser, sei lá, manutenabilidade, auditabilidade e, não sei, segurança.
+
+51
+00:06:18,080 --> 00:06:31,300
+E aí a gente pode, por exemplo, selecionar boas práticas do COBIT para aplicar nas funcionalidades que atendem esses requisitos não funcionais.
+
+52
+00:06:31,300 --> 00:06:55,300
+Então, por exemplo, a criação de backups dos processos. O que o COBIT fala sobre backups de processos? Por exemplo, segurança para fazer backups e também para restaurar backups.
+
+53
+00:06:55,300 --> 00:07:22,300
+Evitar que desastres de consistência aconteçam no banco de dados. Esse tipo de detalhes que são regidos pelos requisitos não funcionais. Então, com a criação dos protógrafos que eu tinha apresentado a um colega, que está com o mesmo orientador, ele falou que vai ser...
+
+54
+00:07:22,300 --> 00:07:26,300
+E, por exemplo, precisa ter que ser definido primeiro.
+
+55
+00:07:28,300 --> 00:07:47,300
+Então, pelo que eu identifiquei aqui, com o ABEL, na engenharia com o ABEL, a gente precisa definir primeiros processos para definir depois a tecnologia. E isso é exatamente o que eu quero discutir hoje. Quais seriam os requisitos não funcionais?
+
+56
+00:07:47,300 --> 00:08:14,300
+Como é que a gente vai gerenciar os processos e procedimentos? E aí definir quais tecnologias que a gente vai usar? Eu tenho... eu fiz um overview geral, mas eu preciso definir isso hoje com a equipe. Então, as principais dificuldades que eu identifiquei na reunião, eu preciso definir isso com a equipe.
+
+57
+00:08:14,300 --> 00:08:42,300
+As principais dificuldades que eu identifiquei nas reuniões, são... é a parte de comunicação com as equipes que vão acessar esses processos para consultar. Então... e acompanhamento dessa implementação de processos nas equipes. Eu tinha... esse é um dos problemas principais, porém, o ABEL falou que já vai ter uma ferramenta que vai resolver esse problema.
+
+58
+00:08:42,300 --> 00:08:45,520
+que vai resolver esse problema.
+
+59
+00:08:45,520 --> 00:08:53,120
+E outro seria a documentação dos processos. Então, como é que a gente gerencia a documentação dos processos?
+
+60
+00:08:53,120 --> 00:09:05,500
+Eu tenho certeza que os processos estão disponíveis, que eles têm versionamento, que dê para ver o que foi mudado de uma versão para outra,
+
+61
+00:09:05,500 --> 00:09:19,900
+histórico, de alteração, de versionamento, quem pode acessar aquele processo, diferentes papéis, para quem pode alterar um processo.
+
+62
+00:09:19,900 --> 00:09:32,400
+É possível alterar um processo? Por exemplo, a gente queria um processo de aprovação de um software.
+
+63
+00:09:32,400 --> 00:09:44,400
+E aí o processo está na versão 2.5. Não sei. E aí a gente pode alterar aquele... Um administrador pode alterar aquele processo?
+
+64
+00:09:44,400 --> 00:09:55,400
+Ou tem que criar um processo 2.16? São esses tipos de dúvidas que estabelecendo as requisitos não funcionais daria para responder.
+
+65
+00:09:55,400 --> 00:10:04,400
+Joakim, posso? Sim. Desculpe, deixe-me só interrompê-lo. Porque eu acho que estamos aqui, se calhar, a focar em coisas que não...
+
+66
+00:10:04,400 --> 00:10:12,400
+Eu requisitos não funcionais eu deixava para uma segunda fase. Eu acho que não é o prioritário agora.
+
+67
+00:10:12,400 --> 00:10:25,400
+pronto. Esse era o primeiro ponto que eu queria dar aqui a minha opinião. E o segundo que eu queria dizer é: nós já temos uma ferramenta, sim, para onde estamos a carregar os processos.
+
+68
+00:10:25,400 --> 00:10:42,400
+e que nos permite fazer o que o Joakim estava a falar. Ou seja, permite-nos fazer edições e controla as versões e até faz a ligação dos processos com outras coisas, pronto, dentro da ferramenta. Não interessa.
+
+69
+00:10:42,400 --> 00:11:00,400
+aquilo é um repositório e o que é que... Agora, fazer daqui a ligação com o que nós queríamos. Nós, antigamente, tínhamos um site que era estático, não é? Que era estático, não. Tínhamos... quer dizer, não, não. Era estático, sim.
+
+70
+00:11:00,400 --> 00:11:18,400
+E... e nós... e pronto. E esse site era para que pudesse estar publicado. Porque esta ferramenta que nós temos, para onde nós estamos a carregar os processos, onde nós fazemos as edições, até que podemos começar a desenhar os processos lá dentro, tudo mais.
+
+71
+00:11:18,400 --> 00:11:33,400
+depois ela não está... ela precisa de licenças, portanto, as pessoas para poderem aceder, para poderem visualizar os processos, procedimentos, seja o que for, as pessoas precisavam de ter um utilizador dentro da ferramenta.
+
+72
+00:11:33,400 --> 00:11:49,740
+E nós queremos que esses processos estejam disponíveis para qualquer pessoa, para consulta. Eu diria que o principal desse portal, mas depois se vier o Abel, ele corrige-me, ele entretanto acrescenta alguma coisa às minhas palavras.
+
+73
+00:11:49,740 --> 00:12:02,780
+Mas eu diria que é consulta principalmente, porque tudo que é edição e essa questão das versões que estava a falar, tudo isso a gente já está a fazer dentro dessa dita cuja ferramenta.
+
+74
+00:12:03,700 --> 00:12:17,360
+E depois nós precisamos é de ter um sítio como tínhamos antigamente, que permite a qualquer pessoa aceder àquele link, não é? Uma coisa que uma pessoa acede àquele link e consegue consultar todos os processos da casa.
+
+75
+00:12:17,360 --> 00:12:41,980
+Se esse link tiver, por exemplo, não sei se é o seu objetivo, mas se esse link tiver disponível na internet, qualquer pessoa consegue consultar, é uma página de consulta dos processos que tem aquela estrutura organizadinha que nós conseguimos entender, como tínhamos falado consigo, que é, tem desde os processos mais alto nível até os ditos cujos pedimentos, por exemplo, ou não, ou tem só os processos de alto nível.
+
+76
+00:12:42,540 --> 00:12:59,400
+Nós, por exemplo, isto agora é um bocadinho à parte, mas nós, por exemplo, nessa ferramenta, neste momento, estamos só a carregar os processos de alto nível. E o que nós queremos é isso, é ter um sítio onde possamos consultar fora dessa dita cuja ferramenta.
+
+77
+00:13:00,300 --> 00:13:03,400
+Eu diria que a primeira, pronto, que isso é mais importante.
+
+78
+00:13:05,440 --> 00:13:07,000
+Que é isso, o Abel também já e tal.
+
+79
+00:13:07,000 --> 00:13:19,980
+Eu vou mostrar aqui o que eu tenho proposto.
+
+80
+00:13:22,980 --> 00:13:28,600
+Aqui eu documentei a evolução do sistema e como é que era.
+
+81
+00:13:31,900 --> 00:13:37,740
+O estado futuro, o que a gente pode fazer com a arquitetura.
+
+82
+00:13:39,840 --> 00:13:41,420
+Possíveis funcionalidades.
+
+83
+00:13:41,720 --> 00:13:47,380
+Aqui, por exemplo, comparar as versões, que atualmente o sistema atual de consulta não tem versionamento.
+
+84
+00:13:48,140 --> 00:13:55,460
+Não tem uma página geral para ver, por alto nível, quais são os processos.
+
+85
+00:13:56,300 --> 00:14:01,760
+Já mostra alguns processos e detalhes de cada processo.
+
+86
+00:14:04,240 --> 00:14:07,480
+E não tem uma gestão de utilizadores. Por quê?
+
+87
+00:14:08,080 --> 00:14:11,140
+O front-end e o back-office são separados.
+
+88
+00:14:11,520 --> 00:14:15,760
+A minha ideia seria unir o site com o back-office.
+
+89
+00:14:17,000 --> 00:14:18,960
+Para ter um sistema integrado.
+
+90
+00:14:21,140 --> 00:14:27,920
+Para poder consultar e enviar o processo para o website.
+
+91
+00:14:28,460 --> 00:14:30,480
+Numa mesma plataforma.
+
+92
+00:14:31,540 --> 00:14:33,300
+Só que é isso que eu estava falando.
+
+93
+00:14:34,980 --> 00:14:46,200
+Somente criar uma plataforma simples dessa de visualizar, pesquisar e enviar processo.
+
+94
+00:14:46,760 --> 00:14:48,560
+É simples demais para o teste.
+
+95
+00:14:49,760 --> 00:14:54,620
+E eu não vejo como eu conseguiria aplicar o cobit.
+
+96
+00:14:56,920 --> 00:14:58,060
+Nessas funcionalidades.
+
+97
+00:14:58,160 --> 00:14:59,020
+Porque tem o que?
+
+98
+00:14:59,100 --> 00:15:00,520
+Umas quatro funcionalidades só.
+
+99
+00:15:01,900 --> 00:15:05,280
+E eu preciso definir requisitos não funcionais.
+
+100
+00:15:05,580 --> 00:15:10,840
+Para escolher quais funções do cobit utilizar.
+
+101
+00:15:11,540 --> 00:15:13,180
+E quais quais práticas utilizar.
+
+102
+00:15:13,460 --> 00:15:14,120
+Então, por exemplo.
+
+103
+00:15:14,980 --> 00:15:16,840
+Somente o que a gente tem agora.
+
+104
+00:15:17,800 --> 00:15:23,560
+A gente poderia.
+
+105
+00:15:26,720 --> 00:15:29,660
+Seguindo a orientação de uma função do cobit.
+
+106
+00:15:29,880 --> 00:15:30,960
+Não lembro muito bem agora.
+
+107
+00:15:31,680 --> 00:15:34,280
+Daria para usar uma métrica.
+
+108
+00:15:34,820 --> 00:15:35,940
+Que é, por exemplo.
+
+109
+00:15:38,460 --> 00:15:39,800
+Mapear por.
+
+110
+00:15:43,940 --> 00:15:47,520
+Quantos por porcentagem de processos.
+
+111
+00:15:47,740 --> 00:15:49,980
+Já enviados para o site.
+
+112
+00:15:50,920 --> 00:15:53,000
+Então, digamos que a gente tem.
+
+113
+00:15:53,900 --> 00:15:54,360
+Não sei.
+
+114
+00:15:54,500 --> 00:15:56,700
+50 processos para uma área.
+
+115
+00:15:57,460 --> 00:15:58,900
+Já aprovados.
+
+116
+00:15:59,240 --> 00:16:00,480
+E no sistema interno.
+
+117
+00:16:01,260 --> 00:16:03,920
+Quantos desses 50 processos já estão no site.
+
+118
+00:16:04,360 --> 00:16:06,800
+Daria para criar um dashboard.
+
+119
+00:16:06,980 --> 00:16:07,820
+Para mostrar isso.
+
+120
+00:16:07,820 --> 00:16:08,940
+E aí.
+
+121
+00:16:09,440 --> 00:16:09,860
+Já.
+
+122
+00:16:10,980 --> 00:16:12,300
+Respeitaria o.
+
+123
+00:16:13,000 --> 00:16:13,220
+O.
+
+124
+00:16:17,620 --> 00:16:18,780
+Requisito não funcional.
+
+125
+00:16:19,120 --> 00:16:19,320
+De.
+
+126
+00:16:22,320 --> 00:16:23,280
+Auditabilidade.
+
+127
+00:16:25,140 --> 00:16:26,340
+E conformidade também.
+
+128
+00:16:26,720 --> 00:16:26,900
+Então.
+
+129
+00:16:29,480 --> 00:16:30,100
+Eu preciso.
+
+130
+00:16:30,660 --> 00:16:31,100
+Saber.
+
+131
+00:16:31,380 --> 00:16:32,100
+O que que.
+
+132
+00:16:32,440 --> 00:16:33,460
+A gente pode fazer.
+
+133
+00:16:34,180 --> 00:16:34,920
+O que que é.
+
+134
+00:16:35,320 --> 00:16:35,900
+Necessário.
+
+135
+00:16:36,060 --> 00:16:37,720
+E quais seriam requisitos não funcionais.
+
+136
+00:16:37,720 --> 00:16:38,120
+Porque senão.
+
+137
+00:16:38,120 --> 00:16:39,360
+Eu não consigo ter uma base.
+
+138
+00:16:39,520 --> 00:16:40,400
+Para aplicar.
+
+139
+00:16:41,400 --> 00:16:41,640
+O.
+
+140
+00:16:41,800 --> 00:16:41,920
+O.
+
+141
+00:16:42,920 --> 00:16:43,160
+Ou.
+
+142
+00:16:43,700 --> 00:16:44,400
+Aplicar.
+
+143
+00:16:46,460 --> 00:16:47,060
+Melhorias.
+
+144
+00:16:47,200 --> 00:16:48,100
+Outras funcionalidades.
+
+145
+00:16:48,280 --> 00:16:49,040
+Na aplicação.
+
+146
+00:16:50,060 --> 00:16:50,480
+Está certo?
+
+147
+00:16:55,300 --> 00:16:55,740
+Sim.
+
+148
+00:16:55,820 --> 00:16:57,460
+E relativamente.
+
+149
+00:16:57,520 --> 00:16:57,880
+A aplicação.
+
+150
+00:16:58,040 --> 00:16:58,900
+Já temos aplicação.
+
+151
+00:17:00,900 --> 00:17:01,880
+Eu fiz.
+
+152
+00:17:02,520 --> 00:17:03,300
+Eu fiz.
+
+153
+00:17:03,520 --> 00:17:04,580
+Dois protótipos.
+
+154
+00:17:05,400 --> 00:17:07,320
+Mas eu fiz uma...
+
+155
+00:17:07,320 --> 00:17:08,520
+É com aqueles apresentados.
+
+156
+00:17:09,520 --> 00:17:12,320
+É o mesmo que...
+
+157
+00:17:12,320 --> 00:17:15,000
+Do mesmo orientador.
+
+158
+00:17:15,100 --> 00:17:18,760
+Ele já apresentou a ideia dele para os orientadores.
+
+159
+00:17:20,640 --> 00:17:28,720
+Eu fiz um crudezinho básico que não é bom o suficiente.
+
+160
+00:17:29,360 --> 00:17:30,340
+Então nem vale a pena.
+
+161
+00:17:30,340 --> 00:17:31,360
+Eu vou mostrar aqui.
+
+162
+00:17:32,740 --> 00:17:34,740
+Então eu queria perceber...
+
+163
+00:17:36,120 --> 00:17:38,740
+Que tem diversas implicações.
+
+164
+00:17:38,960 --> 00:17:40,280
+Eu preciso perceber primeiro.
+
+165
+00:17:41,360 --> 00:17:45,280
+A gente discutiu bastante coisa sobre esse crude.
+
+166
+00:17:46,340 --> 00:17:50,140
+E eu preciso saber quais são os requisitos não funcionais.
+
+167
+00:17:50,260 --> 00:17:51,680
+Quais são as funcionalidades principais.
+
+168
+00:17:51,840 --> 00:17:53,180
+Quais são as funções do COBIT.
+
+169
+00:17:53,400 --> 00:17:54,340
+Para ter uma base.
+
+170
+00:17:54,920 --> 00:17:56,100
+Para saber quais são os requisitos não funcionais.
+
+171
+00:17:56,100 --> 00:17:57,140
+Faz uma proposta.
+
+172
+00:17:57,140 --> 00:18:00,960
+Porque isso também impacta a infraestrutura e a arquitetura.
+
+173
+00:18:02,080 --> 00:18:05,140
+Então, por exemplo, eu vou...
+
+174
+00:18:05,140 --> 00:18:06,880
+O desafio... Joakim, posso?
+
+175
+00:18:07,760 --> 00:18:08,240
+Diga-me.
+
+176
+00:18:08,860 --> 00:18:12,880
+Então, nós fizemos uma proposta que era pegar-se naquele site que nós já tínhamos,
+
+177
+00:18:12,960 --> 00:18:20,040
+um site a correr e funcional e operacional, e mudar-se a tecnologia e fazeres um site semelhante àquilo,
+
+178
+00:18:20,100 --> 00:18:23,680
+com a tecnologia que tu escolhestes para já, isso seria o ponto de base para depois
+
+179
+00:18:23,680 --> 00:18:27,940
+e fazermos evoluir uma aplicação para gerir os processos, certo?
+
+180
+00:18:29,140 --> 00:18:31,820
+Temos requisitos não funcionais e funcionais.
+
+181
+00:18:31,900 --> 00:18:35,200
+Os requisitos funcionais são as funções que já estão naquele site, não é?
+
+182
+00:18:35,960 --> 00:18:42,900
+E as funcionalidades que nós podemos operar, criar, consultar, alterar os processos, não é?
+
+183
+00:18:44,500 --> 00:18:45,680
+Então, aí que está.
+
+184
+00:18:45,780 --> 00:18:53,720
+Eu fiz umas duas diversões diferentes e eu estou confuso, porque tem várias opções,
+
+185
+00:18:53,720 --> 00:19:00,540
+são muitas opções de arquitetura, de formas de implementar as mesmas coisas.
+
+186
+00:19:01,480 --> 00:19:04,720
+Então, mas tu começaste com o React, mudaste para Angular...
+
+187
+00:19:04,720 --> 00:19:06,400
+Como?
+
+188
+00:19:06,480 --> 00:19:09,720
+Começaste com o React, depois mudaste para Angular, certo?
+
+189
+00:19:10,280 --> 00:19:10,760
+Exato.
+
+190
+00:19:11,580 --> 00:19:13,680
+Temos arquitetura, mas foram opções tuas, não é?
+
+191
+00:19:14,540 --> 00:19:15,540
+Nós só queremos um...
+
+192
+00:19:15,540 --> 00:19:15,720
+Vamos mostrar aqui.
+
+193
+00:19:16,720 --> 00:19:21,420
+O que que eu tinha proposto para o sistema?
+
+194
+00:19:25,420 --> 00:19:27,220
+Quero dizer compartilhamento...
+
+195
+00:19:27,220 --> 00:19:29,900
+Honestamente, a gente também não...
+
+196
+00:19:30,900 --> 00:19:33,680
+Queríamos que também esta parceria, não é?
+
+197
+00:19:33,740 --> 00:19:35,040
+Fosse o teu para as duas partes.
+
+198
+00:19:35,200 --> 00:19:37,920
+Nós contribuímos com aquilo que nós temos, não é?
+
+199
+00:19:37,960 --> 00:19:38,900
+Que são os nossos...
+
+200
+00:19:38,900 --> 00:19:43,820
+Os nossos processos, os nossos procedimentos, as nossas aplicações, não é?
+
+201
+00:19:44,820 --> 00:19:50,740
+E da tua parte nós estávamos à espera de obter uma aplicação, não é?
+
+202
+00:19:51,840 --> 00:19:53,560
+Ou melhorar a nossa aplicação.
+
+203
+00:19:53,920 --> 00:19:56,620
+Se não conseguís implementar, pronto, pelo menos melhorar a que já temos.
+
+204
+00:19:59,900 --> 00:20:01,160
+Porque até...
+
+205
+00:20:01,160 --> 00:20:04,820
+Confesso, nós até já estávamos a mudar de estratégia e...
+
+206
+00:20:04,820 --> 00:20:07,760
+E vamos pôr os processos todos no Atlas, basicamente.
+
+207
+00:20:08,520 --> 00:20:09,480
+A aplicação que já existe.
+
+208
+00:20:11,820 --> 00:20:12,300
+Porque...
+
+209
+00:20:12,300 --> 00:20:14,100
+Já estamos a aguardar há muito tempo.
+
+210
+00:20:14,100 --> 00:20:16,260
+Que apresente os resultados.
+
+211
+00:20:17,060 --> 00:20:18,100
+Então, eu estou...
+
+212
+00:20:18,640 --> 00:20:19,100
+Eu...
+
+213
+00:20:19,880 --> 00:20:22,720
+Preciso de clareza para criar esse sistema.
+
+214
+00:20:23,140 --> 00:20:23,380
+Ok.
+
+215
+00:20:23,580 --> 00:20:24,560
+Mas faz uma proposta.
+
+216
+00:20:24,700 --> 00:20:27,920
+Uma proposta, custa com os isto que achas que consegues implementar.
+
+217
+00:20:28,180 --> 00:20:30,080
+E nós funcionamos por baixo, não tem tema.
+
+218
+00:20:33,080 --> 00:20:38,600
+Faz uma proposta de uma arquitetura e de requisitos funcionais e não funcionais.
+
+219
+00:20:38,680 --> 00:20:39,580
+E nós validamos isso.
+
+220
+00:20:43,520 --> 00:20:44,040
+Ok.
+
+221
+00:20:44,040 --> 00:20:48,440
+Mas eu preciso perceber, por exemplo, até onde eu posso ir com esse sistema.
+
+222
+00:20:49,720 --> 00:20:58,040
+Porque, pelo que eu tinha conversado, somente um sistema de consulta não vai ser o suficiente para a TES.
+
+223
+00:20:58,040 --> 00:21:01,080
+Eu teria que expandir isso para fazer mais alguma coisa.
+
+224
+00:21:01,720 --> 00:21:03,320
+Sim, mas tens de começar por algum lado, não é?
+
+225
+00:21:03,640 --> 00:21:03,980
+Sim.
+
+226
+00:21:06,660 --> 00:21:11,060
+Mas aqui, em termos de processo, não é?
+
+227
+00:21:11,060 --> 00:21:18,780
+Podemos chegar até uma situação de, sei lá, de process mining, por exemplo, não é?
+
+228
+00:21:18,900 --> 00:21:20,960
+Aplicar AI aos processos.
+
+229
+00:21:21,460 --> 00:21:26,420
+Fazer o LLM para fazer consultas com o RAG ou o whatever, não é?
+
+230
+00:21:26,980 --> 00:21:29,380
+Obter as informações todas sobre os processos.
+
+231
+00:21:29,380 --> 00:21:31,180
+Sei lá, é o que quiseres, não é?
+
+232
+00:21:32,180 --> 00:21:33,540
+Um greenfield.
+
+233
+00:21:34,580 --> 00:21:35,060
+Não é?
+
+234
+00:21:36,260 --> 00:21:45,980
+Até conheces os conceitos como process mining e a aplicação de AI aos processos.
+
+235
+00:21:45,980 --> 00:21:47,980
+E, por exemplo, é o que eu tenho que fazer.
+
+236
+00:21:47,980 --> 00:21:49,580
+Agora é também que eu ia a ti também investigar, não é?
+
+237
+00:21:49,580 --> 00:21:53,980
+Tens a fazer uma... uma tese, não é?
+
+238
+00:21:53,980 --> 00:21:55,320
+Um mestrado, não é?
+
+239
+00:21:56,580 --> 00:21:58,520
+Há uma parte também de investigação, não é?
+
+240
+00:21:59,180 --> 00:22:06,000
+Nós aqui não nos importamos de ajudar e sempre estivermos disponíveis, mas tens de estar mais presente, não?
+
+241
+00:22:06,480 --> 00:22:07,380
+Sim, com certeza.
+
+242
+00:22:07,400 --> 00:22:11,980
+Aqui o Nuno e a Maria, eu não tenho tanta disponibilidade, mas eles falam sempre comigo, não é?
+
+243
+00:22:14,120 --> 00:22:23,180
+É, eu acho que toda essa conclusão é porque eu estava muito perdido do que fazer com essa aplicação, como é que eu vou escrever a tela sobre isso.
+
+244
+00:22:24,180 --> 00:22:54,160
+Sim, sim.
+
+245
+00:22:54,160 --> 00:22:55,200
+As funcionalidades, não é?
+
+246
+00:22:55,840 --> 00:22:56,700
+Isso é essa base.
+
+247
+00:22:58,800 --> 00:22:59,980
+Então, tem...
+
+248
+00:22:59,980 --> 00:23:03,220
+Então, estamos a sentir a confiança que também estejamos muito empenhado nisto.
+
+249
+00:23:03,840 --> 00:23:04,240
+Sim.
+
+250
+00:23:07,000 --> 00:23:12,700
+Bom, é por isso que eu criei aquele documento de proposta, para tentar mapear.
+
+251
+00:23:13,200 --> 00:23:15,240
+Porque eu tenho dúvidas.
+
+252
+00:23:16,180 --> 00:23:20,920
+Por exemplo, vamos dar uma olhada nesse diagrama aqui que eu criei.
+
+253
+00:23:23,920 --> 00:23:26,380
+Uma das funcionalidades que eu percebi...
+
+254
+00:23:26,380 --> 00:23:27,600
+Mas eu sempre ficava isso.
+
+255
+00:23:27,780 --> 00:23:29,920
+Eu nem sequer me preocupava muito com...
+
+256
+00:23:31,000 --> 00:23:34,620
+Estás a dividir o website, back-end e back-office.
+
+257
+00:23:36,080 --> 00:23:38,620
+Foca-te só no site e no back-end, por exemplo.
+
+258
+00:23:44,980 --> 00:23:49,520
+Fazer back-office, funcionamento, admin, load, crude...
+
+259
+00:23:49,520 --> 00:23:52,520
+Watch, upload...
+
+260
+00:23:52,520 --> 00:23:52,940
+Sim.
+
+261
+00:23:53,400 --> 00:23:55,640
+Pois, diversas funcionalidades, não vejo...
+
+262
+00:23:55,640 --> 00:24:01,660
+É focar-te em três ou num crude simples, montar o site, ter uma autenticação básica.
+
+263
+00:24:02,200 --> 00:24:04,560
+Nem precisa se preocupar com a autorização, não é?
+
+264
+00:24:06,140 --> 00:24:11,120
+Teria acesso a todas as funcionalidades e depois a autorização até podias implementar mais tarde, por já.
+
+265
+00:24:12,660 --> 00:24:15,100
+Nós cometemos o nosso site aberto, é público.
+
+266
+00:24:15,260 --> 00:24:16,320
+Não precisa de autenticação.
+
+267
+00:24:16,660 --> 00:24:17,660
+Consultar os processos.
+
+268
+00:24:17,900 --> 00:24:21,100
+Consciera os processos dentro da organização, dentro de uma rede fechada.
+
+269
+00:24:21,980 --> 00:24:24,200
+Mas para o payload dos...
+
+270
+00:24:24,200 --> 00:24:26,200
+Não precisa.
+
+271
+00:24:26,200 --> 00:24:26,200
+Não precisa.
+
+272
+00:24:26,200 --> 00:24:28,200
+Não precisa.
+
+273
+00:24:28,200 --> 00:24:30,320
+Para o payload dos processos.
+
+274
+00:24:30,460 --> 00:24:34,760
+Porque o website tem duas coisas.
+
+275
+00:24:34,960 --> 00:24:40,940
+Tem a visualização dos processos para os diferentes setores.
+
+276
+00:24:41,740 --> 00:24:47,700
+E tem o envio de processos, que vai ser feito por alguns usuários.
+
+277
+00:24:48,340 --> 00:24:51,560
+Não pode deixar qualquer pessoa enviar processos para o sistema.
+
+278
+00:24:51,560 --> 00:24:59,560
+Pode ser um requisito.
+
+279
+00:25:00,560 --> 00:25:05,920
+Mas para uma baseline, para já, quem tivesse acesso à aplicação, poderia registrar os processos.
+
+280
+00:25:07,140 --> 00:25:16,040
+E eu queria, por exemplo, perceber o que o ato já faz e quais outras ferramentas existem que gerenciam esses processos.
+
+281
+00:25:16,120 --> 00:25:30,080
+Eu preciso perceber quais as funcionalidades já existem para eu conseguir construir essa base e evoluir nas funcionalidades que ainda não existem.
+
+282
+00:25:31,120 --> 00:25:38,120
+Porque, por exemplo, eu estava pensando na funcionalidade de gestão dos processos para verificar quais são os que já foram revisados.
+
+283
+00:25:38,120 --> 00:25:40,120
+Para sair de revisão dos processos.
+
+284
+00:25:40,120 --> 00:25:41,120
+Por status.
+
+285
+00:25:41,120 --> 00:25:43,120
+Ah, foi aprovado.
+
+286
+00:25:43,120 --> 00:25:44,120
+Está ali em revisão.
+
+287
+00:25:44,120 --> 00:25:47,120
+Tipo, sei lá, versão 2.15 está em revisão ainda.
+
+288
+00:25:47,120 --> 00:25:49,120
+Aí foi aprovado.
+
+289
+00:25:49,120 --> 00:25:57,120
+No momento que foi aprovado, ele automaticamente mostra a visualização no site.
+
+290
+00:25:57,120 --> 00:26:08,120
+Nós tivéssemos esta aplicação e isso efetivamente podia ser uma aplicação para gerir a aprovação e a validação dos processos.
+
+291
+00:26:08,120 --> 00:26:17,120
+Ou seja, nós, nesta época, quando tivéssemos a criar os processos, podíamos criar fora do Atlas, depois passar para um processo de validação e aprovação e depois seria submetido para o Atlas.
+
+292
+00:26:17,120 --> 00:26:20,120
+O Atlas vai ser o repositório onde vão estar todos os nossos processos.
+
+293
+00:26:20,120 --> 00:26:26,120
+Depois podemos ligar com as aplicações, com as tecnologias, com tudo o que tem a ver com a arquitetura empresarial.
+
+294
+00:26:26,120 --> 00:26:40,120
+Mas para isso, é o que eu estou a dizer, tens de focar em duas ou três ecrãs, duas ou três funcionalidades e apresentar-lhes qualquer coisa que já funcione.
+
+295
+00:26:41,120 --> 00:26:53,120
+Teres funcionalidades, podemos usar a aplicação para fazer essa gestão dos processos e do life cycle do processo, o ciclo de vida do processo propriamente dito.
+
+296
+00:26:53,120 --> 00:26:55,120
+Ah, eu queria saber...
+
+297
+00:26:55,120 --> 00:26:57,120
+E que integrasse o Atlas, sim.
+
+298
+00:26:57,120 --> 00:27:04,120
+Então, eu queria saber o que o Atlas faz hoje em dia e o que do life cycle do processo a gente pode fazer?
+
+299
+00:27:04,120 --> 00:27:16,120
+O que o Atlas faz hoje em dia, o Atlas hoje em dia o que faz é serve de repositório dos nossos processos, das nossas aplicações e das nossas tecnologias.
+
+300
+00:27:16,120 --> 00:27:18,120
+É uma ferramenta de arquitetura empresarial.
+
+301
+00:27:18,120 --> 00:27:25,120
+E depois, está dividido, tem internamente um meta modelo, ok?
+
+302
+00:27:25,120 --> 00:27:32,120
+Que nos permite mapear com todos os níveis de arquitetura, desde a estratégia da arquitetura, desde a camada...
+
+303
+00:27:32,120 --> 00:27:39,120
+Passando pela camada de negócio, a camada de negócio que inclui os processos, a camada aplicacional e as tecnologias.
+
+304
+00:27:39,120 --> 00:27:46,120
+inclusive, consegue mapear tudo o que são as tecnologias que nós temos cá no iSFES.
+
+305
+00:27:46,120 --> 00:27:47,120
+Ok.
+
+306
+00:27:47,120 --> 00:28:02,120
+Posso fornecer depois um descritivo sobre a aplicação Atlas, posso pedir isso e passar-te aí alguma informação, alguma documentação, peço isso aí nisso, está bem?
+
+307
+00:28:02,120 --> 00:28:03,120
+Ok.
+
+308
+00:28:03,120 --> 00:28:14,120
+Seria bom eu conseguir perceber quais as ferramentas estão integradas com esse processo, para perceber quais as funcionalidades já existem.
+
+309
+00:28:14,120 --> 00:28:26,120
+Mas, então, nós no nosso guião, para cada processo, e tu já tens acesso ao nosso SharePoint, e a Maria também já te mostrou, nós por cada processo, nós identificamos quais são as ferramentas,
+
+310
+00:28:26,120 --> 00:28:31,120
+tens um atributo do processo, que são as ferramentas, e que estão lá as ferramentas que são usadas.
+
+311
+00:28:31,120 --> 00:28:32,740
+Pode mostrar, Maria, se achar, por favor.
+
+312
+00:28:33,740 --> 00:28:34,580
+É bom.
+
+313
+00:28:36,120 --> 00:28:36,380
+Sim.
+
+314
+00:28:38,160 --> 00:28:39,160
+Se eu me aqui ligar.
+
+315
+00:28:46,720 --> 00:28:47,760
+Vou lá no lugar.
+
+316
+00:28:47,760 --> 00:28:47,860
+Vou lá no lugar.
+
+317
+00:28:51,700 --> 00:28:52,380
+Vão ver?
+
+318
+00:28:55,340 --> 00:28:57,760
+Tu não tens acesso a este site dos processos?
+
+319
+00:28:58,960 --> 00:28:59,720
+Sim, tenho acesso.
+
+320
+00:29:00,580 --> 00:29:02,020
+E já pesquisaste.
+
+321
+00:29:03,460 --> 00:29:04,300
+Já usaste.
+
+322
+00:29:04,340 --> 00:29:04,880
+Olha aqui, já.
+
+323
+00:29:08,740 --> 00:29:11,380
+Essas aqui até são mais gerais porque são dos tubis.
+
+324
+00:29:11,540 --> 00:29:12,680
+Mas se a gente for aqui...
+
+325
+00:29:12,680 --> 00:29:13,320
+Ah, pronto.
+
+326
+00:29:13,800 --> 00:29:14,460
+Tenho que ligar.
+
+327
+00:29:16,100 --> 00:29:18,380
+Deixa-me só ligar aqui a VPN, desculpa.
+
+328
+00:29:20,720 --> 00:29:21,700
+Senão isto não dá.
+
+329
+00:29:24,280 --> 00:29:29,020
+Mas tem sempre lá um atributo que se chama mesmo ferramentas.
+
+330
+00:29:29,560 --> 00:29:30,480
+É um estudo de qualidade.
+
+331
+00:29:46,360 --> 00:29:47,200
+Pronto, então.
+
+332
+00:29:47,500 --> 00:29:47,940
+Vamos lá.
+
+333
+00:29:48,080 --> 00:29:50,000
+Estes que depois são mais específicos.
+
+334
+00:29:50,100 --> 00:29:51,900
+Mas todos têm este atributo.
+
+335
+00:29:52,020 --> 00:29:54,600
+Vou só aqui este porque eles têm mais coisas em concreto.
+
+336
+00:29:55,200 --> 00:29:56,040
+Andem manager.
+
+337
+00:29:57,980 --> 00:29:58,960
+AD seria o quê?
+
+338
+00:30:00,600 --> 00:30:02,400
+É a mesma AD.
+
+339
+00:30:03,400 --> 00:30:04,200
+Archive directory.
+
+340
+00:30:05,200 --> 00:30:05,720
+Archive?
+
+341
+00:30:06,860 --> 00:30:07,980
+Archive directory.
+
+342
+00:30:07,980 --> 00:30:22,140
+mas até posso mandar outros exemplos aqui com o manager forte e manager este ano porque isto é
+
+343
+00:30:22,140 --> 00:30:27,640
+ferramentas tanto é pronto pode ser aplicações que pode ser tecnologias ok
+
+344
+00:30:30,960 --> 00:30:35,600
+e todos eles têm têm esses atributos todos preenchidos pronto lá está
+
+345
+00:30:35,600 --> 00:30:52,600
+o que é o outro caso é a sempre caro fundo e tudo aqui tínhamos outro outro da reunião Joakim para
+
+346
+00:30:52,600 --> 00:31:01,400
+não sei o que sugerir era que que te ficar de chegar aí então na aplicação e fizeste uma proposta qualquer
+
+347
+00:31:01,400 --> 00:31:07,080
+coisa que eu preciso pode continuar a recorrer aqui a o Nuno e a Maria ok mas eu precisava que
+
+348
+00:31:07,080 --> 00:31:16,400
+evoluíssemos aqui um pouco em termos daquilo que a gente tinha combinado pode ser sim sim
+
+349
+00:31:18,240 --> 00:31:27,240
+bom então só para perceber cada processo tem um ecossistema de ferramentas para gerir e então
+
+350
+00:31:28,620 --> 00:31:34,920
+e o atlas é o repositório de todos os processos e depois de ouvir tem informação sobre o atlas também
+
+351
+00:31:34,920 --> 00:31:44,220
+a descrição e o método dele tá bom seria ótimo ok eu vou ter que ter depois voltamos a falar tá bom
+
+352
+00:31:44,220 --> 00:31:45,220
+tá bom obrigado
+
+353
+00:31:50,380 --> 00:32:03,720
+eu queria então eu vou criar esse eu vou criar um terceiro protótipo só para visualização dos processos
+
+354
+00:32:03,720 --> 00:32:13,020
+mas hoje aqui se quiser mostre-nos o que o que já tem qual é que é o problema também é difícil fala de
+
+355
+00:32:13,020 --> 00:32:21,120
+pela minha parte é difícil nós também ajudá-lo sem conseguimos ver em que ponto isso é que está na
+
+356
+00:32:21,120 --> 00:32:27,120
+prática entendo se nós conseguimos ver qualquer coisa nós conseguimos dizer assim olha é mais eu
+
+357
+00:32:27,120 --> 00:32:32,280
+gostava que fosse mais para aqui ou mais para ali e o Joakim adequando com o que tem pensado para a tese
+
+358
+00:32:32,280 --> 00:32:40,980
+a sua proposta lá tá se eu aqui sugerir mais coisas que para além desse dessa consulta que o desse site ou
+
+359
+00:32:40,980 --> 00:32:46,260
+seja para além do que eu tava a dizer do site permitir apenas consulta nós também não vamos dizer que não
+
+360
+00:32:46,260 --> 00:32:55,080
+se forem coisas que sejam que a gente veja que são ai como é que eu ia dizer que são coisas úteis também para
+
+361
+00:32:55,080 --> 00:32:57,740
+do nosso lado, nós também não lhe vamos dizer que não.
+
+362
+00:32:57,740 --> 00:33:01,140
+É um pouco da sua iniciativa.
+
+363
+00:33:02,900 --> 00:33:05,740
+Eu até lhe estava a dizer uma coisa.
+
+364
+00:33:05,820 --> 00:33:11,560
+Por exemplo, qual é a limitação de funcionalidade?
+
+365
+00:33:11,740 --> 00:33:15,640
+Porque eu propus várias coisas ao Abel, tive uma reunião com ele,
+
+366
+00:33:16,120 --> 00:33:22,820
+e 90% do que eu tinha proposto já tinha uma ferramenta para fazer aquilo.
+
+367
+00:33:23,640 --> 00:33:29,100
+Aí eu fico meio frustrado porque eu não sei quais funcionalidades já existem.
+
+368
+00:33:29,240 --> 00:33:31,400
+Eu proponho coisas que já existem.
+
+369
+00:33:32,700 --> 00:33:35,920
+E aí eu fiquei nesse loop, por isso que está demorando tanto.
+
+370
+00:33:36,380 --> 00:33:40,120
+Eu preciso perceber, por exemplo, qual é o ecossistema de ferramentas.
+
+371
+00:33:40,540 --> 00:33:43,220
+Joakim, posso, por exemplo, dizer uma coisa?
+
+372
+00:33:45,000 --> 00:33:50,920
+Nós, o Atlas, lá está, nós tivemos que arranjar também soluções,
+
+373
+00:33:51,580 --> 00:33:54,160
+porque, entretanto, não ter nada não era uma hipótese,
+
+374
+00:33:54,320 --> 00:33:57,220
+portanto, nós tivemos que começar a arranjar soluções do nosso lado.
+
+375
+00:33:59,640 --> 00:34:02,080
+O Atlas é uma ferramenta de arquitetura.
+
+376
+00:34:02,860 --> 00:34:04,060
+É como se fosse o Archimate.
+
+377
+00:34:04,620 --> 00:34:09,800
+Aquilo tem, aquilo, tudo dentro do Atlas são objetos de diferentes tipos,
+
+378
+00:34:11,220 --> 00:34:17,940
+ou seja, são data objects, business objects, pronto, whatever, business tasks, não interessa.
+
+379
+00:34:18,600 --> 00:34:24,020
+E nós precisamos de uma ferramenta de arquitetura para fazer a ligação em, por exemplo, os processos,
+
+380
+00:34:24,380 --> 00:34:29,780
+à camada organizacional, aos objetivos da organização, os objetivos estratégicos,
+
+381
+00:34:30,000 --> 00:34:32,520
+portanto, à parte do governance, vou-lhe chamar assim,
+
+382
+00:34:32,560 --> 00:34:39,520
+e depois fazemos a ligação também ao que é as aplicações, ao que é os nossos serviços, ao que é as nossas tecnologias.
+
+383
+00:34:39,660 --> 00:34:42,140
+Portanto, o Atlas não invalida nada.
+
+384
+00:34:42,980 --> 00:34:46,160
+Isto é uma coisa quase que à parte.
+
+385
+00:34:46,340 --> 00:34:48,240
+Nós temos, efetivamente, os processos no Atlas.
+
+386
+00:34:48,680 --> 00:34:50,760
+Tínhamos que os ter para fazer esta ligação,
+
+387
+00:34:51,440 --> 00:34:56,060
+para termos toda a camada do que é uma arquitetura do ICFES.
+
+388
+00:34:57,560 --> 00:34:57,940
+Ok?
+
+389
+00:34:58,360 --> 00:35:01,480
+De alto nível, tanto que é o que eu lhe estava a dizer há pouco.
+
+390
+00:35:02,120 --> 00:35:06,400
+Dentro do Atlas, nós só temos os processos alto nível.
+
+391
+00:35:07,860 --> 00:35:08,160
+Ok?
+
+392
+00:35:08,520 --> 00:35:12,480
+Nós não temos, por exemplo, nós temos, o que é que são os processos alto nível?
+
+393
+00:35:12,600 --> 00:35:16,220
+Foi aqueles que nós lhe mandámos também, e que estão aqui no site.
+
+394
+00:35:17,560 --> 00:35:19,800
+Estes são os processos alto nível.
+
+395
+00:35:21,240 --> 00:35:26,380
+São os estão de pedidos de serviço, em que nós temos um processo global de estão de pedidos de serviço.
+
+396
+00:35:27,380 --> 00:35:35,240
+Depois, existem, existem depois alguns processos, algumas coisas mais descritivas embaixo.
+
+397
+00:35:37,060 --> 00:35:41,840
+Quem sabe, num site até podia estar toda a estrutura.
+
+398
+00:35:42,320 --> 00:35:44,180
+Ou seja, não se prenda por causa do Atlas.
+
+399
+00:35:44,680 --> 00:35:50,980
+Porque o Atlas é uma ferramenta de arquitetura para nós fazermos a ligação de umas coisas às outras.
+
+400
+00:35:51,160 --> 00:35:51,920
+De umas camadas.
+
+401
+00:35:52,300 --> 00:35:54,500
+A arquitetura é dividida em várias camadas, não é?
+
+402
+00:35:55,440 --> 00:35:59,900
+E nós tínhamos que fazer a ligação entre essas camadas e mostrar qual é a arquitetura do IKPEs.
+
+403
+00:36:00,460 --> 00:36:03,160
+E então, utilizámos aquela ferramenta para o fazer.
+
+404
+00:36:04,120 --> 00:36:05,240
+Pronto, o Abel depois vai-lhe mandar.
+
+405
+00:36:05,380 --> 00:36:09,100
+Aquilo produz mapas e as pessoas conseguem perceber.
+
+406
+00:36:09,780 --> 00:36:11,680
+Se esta, imaginemos, aquilo é para perceber o quê?
+
+407
+00:36:11,760 --> 00:36:15,260
+Se esta aplicação estiver embaixo, o que é que compromete?
+
+408
+00:36:15,360 --> 00:36:18,440
+Quais são as atividades ou quais são os processos que ficam parados?
+
+409
+00:36:18,540 --> 00:36:21,320
+Por exemplo, algo tão simples como isto.
+
+410
+00:36:23,300 --> 00:36:23,740
+Pronto.
+
+411
+00:36:23,880 --> 00:36:25,480
+Aquela ferramenta é para isso.
+
+412
+00:36:26,440 --> 00:36:29,300
+E claro que para ela poder fazer isso, não é?
+
+413
+00:36:29,380 --> 00:36:35,000
+Para nós vermos o que é que está interligado com o quê, os processos tinham que estar lá carregados.
+
+414
+00:36:35,420 --> 00:36:35,640
+Pronto.
+
+415
+00:36:36,100 --> 00:36:41,520
+Fora isso, nós gostávamos de ter algo específico dos processos.
+
+416
+00:36:43,640 --> 00:36:45,820
+Principalmente, aqui, pronto.
+
+417
+00:36:46,040 --> 00:36:49,460
+Primeira prioridade que nós queríamos era ter uma coisa como tínhamos.
+
+418
+00:36:50,240 --> 00:36:52,720
+Que, na verdade, aquilo servia para...
+
+419
+00:36:52,720 --> 00:36:55,380
+Era o nosso repositório, que servia para consulta, como está a ver.
+
+420
+00:36:55,560 --> 00:36:55,760
+Pronto.
+
+421
+00:36:55,840 --> 00:36:56,600
+Que é o que eu tenho aqui.
+
+422
+00:36:57,300 --> 00:36:58,160
+É o que nós tínhamos.
+
+423
+00:36:59,860 --> 00:37:01,560
+Agora, isto servia para consulta.
+
+424
+00:37:01,620 --> 00:37:01,860
+Ok.
+
+425
+00:37:02,380 --> 00:37:05,200
+Só tinha esta funcionalidade.
+
+426
+00:37:05,660 --> 00:37:06,920
+Mas pode ter mais.
+
+427
+00:37:07,360 --> 00:37:08,900
+Se eu já quis sugerir mais.
+
+428
+00:37:09,040 --> 00:37:11,640
+E achar, olha, e que tal se isto fizesse não sei o quê?
+
+429
+00:37:12,640 --> 00:37:14,800
+Nós provavelmente não lhe vamos dizer que não.
+
+430
+00:37:14,900 --> 00:37:16,340
+Claro que não vai fazer coisas repetidas.
+
+431
+00:37:16,480 --> 00:37:21,300
+Mas nós não temos, assim, tantas ferramentas aqui por detrás dos processos, como estava a dizer.
+
+432
+00:37:21,880 --> 00:37:25,860
+Eu não esqueci o que é que foi as outras sugestões que o Abel disse-lhe que já estavam...
+
+433
+00:37:27,480 --> 00:37:30,180
+Que já estavam a ser feitas noutras ferramentas.
+
+434
+00:37:30,260 --> 00:37:31,500
+Porque nós não temos aqui...
+
+435
+00:37:31,500 --> 00:37:33,100
+Lá está, o Abel, por exemplo, agora estava a falar.
+
+436
+00:37:33,600 --> 00:37:34,660
+Nós não temos nada.
+
+437
+00:37:36,480 --> 00:37:39,480
+Por exemplo, fazer a análise dos processos.
+
+438
+00:37:39,580 --> 00:37:41,380
+Uma análise mais concreta.
+
+439
+00:37:41,500 --> 00:37:42,480
+Porque os processos depois sofrem...
+
+440
+00:37:43,800 --> 00:37:47,440
+Deviam ter uma análise mais quantitativa.
+
+441
+00:37:48,020 --> 00:37:48,400
+E pronto.
+
+442
+00:37:48,900 --> 00:37:52,020
+E qualitativa nós até tentamos fazer.
+
+443
+00:37:53,520 --> 00:37:56,780
+Mas nós definimos métricas e depois devia haver uma análise, não é?
+
+444
+00:37:57,220 --> 00:38:00,000
+Nós não temos o que é o process...
+
+445
+00:38:00,000 --> 00:38:01,020
+O process mining.
+
+446
+00:38:01,120 --> 00:38:02,120
+Nós não temos nada disso.
+
+447
+00:38:02,220 --> 00:38:03,820
+Nós não temos uma ferramenta própria.
+
+448
+00:38:04,580 --> 00:38:05,680
+Depois, para esta...
+
+449
+00:38:05,680 --> 00:38:06,740
+Para todas as fases...
+
+450
+00:38:07,920 --> 00:38:10,740
+Do que é a análise e a...
+
+451
+00:38:11,680 --> 00:38:13,600
+A melhoria dos processos.
+
+452
+00:38:13,660 --> 00:38:14,860
+Não lhe vou chamar a reengenharia.
+
+453
+00:38:15,460 --> 00:38:15,900
+Enfim.
+
+454
+00:38:17,180 --> 00:38:18,840
+Mas nós não temos nada disso.
+
+455
+00:38:20,280 --> 00:38:25,580
+Eu não sei quais foram as outras funcionalidades que tinha sugerido, Abel.
+
+456
+00:38:25,580 --> 00:38:29,360
+A gente tinha falado sobre os problemas que...
+
+457
+00:38:31,140 --> 00:38:36,440
+Os problemas que a gente tem e que poderia resolver.
+
+458
+00:38:36,680 --> 00:38:38,460
+A gente foi um por um cada problema.
+
+459
+00:38:39,100 --> 00:38:42,180
+E a maior parte dos problemas já eram resolvidos por outra ferramenta.
+
+460
+00:38:43,300 --> 00:38:44,360
+Deixa compartilhar aqui.
+
+461
+00:38:44,360 --> 00:38:47,140
+Sim, mas aqueles problemas, se calhar, também estão...
+
+462
+00:38:47,140 --> 00:38:47,880
+Lá está.
+
+463
+00:38:48,020 --> 00:38:49,140
+Não estão aqui muito a incidir...
+
+464
+00:38:50,140 --> 00:38:52,020
+Se calhar tanto nesta parte dos processos.
+
+465
+00:38:52,120 --> 00:38:53,140
+Se calhar...
+
+466
+00:38:53,140 --> 00:38:56,360
+Enfim, mostro lá os problemas outra vez.
+
+467
+00:38:56,520 --> 00:38:56,880
+Mas eu...
+
+468
+00:38:56,880 --> 00:38:58,140
+Do que eu estava a ler há pouco...
+
+469
+00:38:58,140 --> 00:39:03,080
+Olha, se quiser eu posso dar exemplos de funcionalidade.
+
+470
+00:39:03,220 --> 00:39:04,140
+Eu poderia...
+
+471
+00:39:05,500 --> 00:39:07,380
+Sim, exato é isso.
+
+472
+00:39:07,780 --> 00:39:08,540
+Dê uma sugestão.
+
+473
+00:39:08,920 --> 00:39:11,140
+Ou seja, consulta tem que ser...
+
+474
+00:39:11,700 --> 00:39:11,900
+Pronto.
+
+475
+00:39:12,440 --> 00:39:14,140
+Ou seja, termos algo parecido ao que nós tínhamos...
+
+476
+00:39:14,780 --> 00:39:16,560
+Eu diria que é por onde tem que começar.
+
+477
+00:39:17,080 --> 00:39:18,840
+Depois, claro que vai ter que acrescentar coisas.
+
+478
+00:39:19,020 --> 00:39:20,000
+Porque isso é pouco para a tese.
+
+479
+00:39:20,260 --> 00:39:20,700
+Compreendo.
+
+480
+00:39:21,440 --> 00:39:22,140
+Faço sugestões.
+
+481
+00:39:23,220 --> 00:39:25,100
+E se tal, se fizesse isto também.
+
+482
+00:39:25,660 --> 00:39:26,140
+Olha, sugerir...
+
+483
+00:39:26,760 --> 00:39:28,120
+Quando vier com o protótipo, até para o que eu estou...
+
+484
+00:39:28,120 --> 00:39:30,120
+Ele pode vir já com alguma coisa...
+
+485
+00:39:30,120 --> 00:39:32,100
+Ou seja, o protótipo pode ir já além.
+
+486
+00:39:33,480 --> 00:39:35,320
+E nós também não lhe vamos dizer que não.
+
+487
+00:39:36,000 --> 00:39:38,280
+Se for uma coisa que nós achamos também útil.
+
+488
+00:39:38,460 --> 00:39:39,120
+E mesmo que...
+
+489
+00:39:40,160 --> 00:39:40,600
+Lá está.
+
+490
+00:39:41,000 --> 00:39:42,740
+Não se prenda ali por causa do Atlas.
+
+491
+00:39:42,880 --> 00:39:44,240
+Porque o Atlas, eu já lhe disse...
+
+492
+00:39:44,240 --> 00:39:45,660
+O propósito é aquele.
+
+493
+00:39:46,380 --> 00:39:48,620
+É fazer a ligação a tudo o resto...
+
+494
+00:39:48,620 --> 00:39:50,700
+A todas as outras camadas da arquitetura.
+
+495
+00:39:55,840 --> 00:39:56,200
+Pronto.
+
+496
+00:39:56,200 --> 00:39:58,100
+O problema é que se possui uma estrutura...
+
+497
+00:39:58,100 --> 00:40:00,100
+Extensão ao nível dos processos.
+
+498
+00:40:02,100 --> 00:40:04,320
+Eu confesso que não percebo muito bem qual é que é este problema.
+
+499
+00:40:04,420 --> 00:40:05,660
+Eu não acho que isto deixe um problema.
+
+500
+00:40:07,300 --> 00:40:13,300
+No caso, é uma quantidade enorme de processos.
+
+501
+00:40:13,300 --> 00:40:21,140
+E aí, por exemplo, existem 200 processos.
+
+502
+00:40:21,140 --> 00:40:25,620
+E aí, essa semana, 40 desses processos foram atualizados.
+
+503
+00:40:25,620 --> 00:40:32,360
+Não tem como as equipas acompanharem isso de forma granular, por exemplo.
+
+504
+00:40:32,580 --> 00:40:38,200
+que é o que eu estava falando da proposta de ver se é na... os processos.
+
+505
+00:40:38,580 --> 00:40:38,900
+Mostrar...
+
+506
+00:40:38,900 --> 00:40:40,900
+Os processos já estão conversões, claro.
+
+507
+00:40:40,900 --> 00:40:44,120
+Não, sim, mas mostrar no site, por exemplo.
+
+508
+00:40:44,120 --> 00:40:46,120
+se é uma equipe...
+
+509
+00:40:46,120 --> 00:40:46,120
+Mas lá está.
+
+510
+00:40:46,120 --> 00:40:46,120
+Mas lá está.
+
+511
+00:40:46,120 --> 00:40:47,120
+Mas lá está.
+
+512
+00:40:47,120 --> 00:40:48,120
+Pode fazer isso.
+
+513
+00:40:48,120 --> 00:40:50,120
+Mas isso era excelente.
+
+514
+00:40:50,120 --> 00:40:50,120
+Lá está.
+
+515
+00:40:50,120 --> 00:40:54,120
+Isso é uma funcionalidade que, se quiser, é ótima para nós.
+
+516
+00:40:54,120 --> 00:40:55,120
+Mostra o histórico.
+
+517
+00:40:55,120 --> 00:40:57,120
+Para nós tudo bem.
+
+518
+00:40:57,120 --> 00:40:59,120
+O Atlas também faz isso.
+
+519
+00:40:59,120 --> 00:41:00,120
+Ok.
+
+520
+00:41:00,120 --> 00:41:01,120
+Mas o site também pode fazer.
+
+521
+00:41:01,120 --> 00:41:02,120
+Não tem problema.
+
+522
+00:41:02,120 --> 00:41:10,120
+E aí, também, estava falando com ele sobre a falta de acompanhamento das equipes.
+
+523
+00:41:10,120 --> 00:41:19,120
+Para ver se os processos estão sendo implementados corretamente ou não.
+
+524
+00:41:19,120 --> 00:41:25,120
+Eu lembro que ele falou que já existe também uma ferramenta que ele já faz esse acompanhamento.
+
+525
+00:41:25,120 --> 00:41:41,120
+A minha ideia seria, por exemplo, ter uma ferramenta ali no BackOps, ter um responsável por equipa que pode acessar o BackOps e acompanhar, por exemplo, um KPI.
+
+526
+00:41:41,120 --> 00:41:49,120
+O que é que é que é que é que é que é que é um processo de implementação novo.
+
+527
+00:41:49,120 --> 00:41:51,120
+O que é que é que é um processo de implementação novo?
+
+528
+00:41:51,120 --> 00:41:52,120
+O que é que é um processo de implementação novo?
+
+529
+00:41:52,120 --> 00:41:53,120
+O que é que é um processo de implementação novo?
+
+530
+00:41:53,120 --> 00:41:54,120
+O que é que é um processo de implementação novo?
+
+531
+00:41:54,120 --> 00:41:55,120
+O que é que é um processo de implementação novo?
+
+532
+00:41:55,120 --> 00:41:56,120
+O que é que é um processo de implementação novo?
+
+533
+00:41:56,120 --> 00:41:57,120
+O que é que é um processo de implementação novo?
+
+534
+00:41:57,120 --> 00:41:58,120
+O que é um processo de implementação novo?
+
+535
+00:41:58,120 --> 00:41:59,120
+O que é um processo de implementação novo?
+
+536
+00:41:59,120 --> 00:42:00,120
+O que é um processo de implementação novo?
+
+537
+00:42:00,120 --> 00:42:02,120
+O que é um processo de implementação novo?
+
+538
+00:42:02,120 --> 00:42:04,120
+O que é um processo de implementação novo?
+
+539
+00:42:04,120 --> 00:42:05,120
+O que é um processo de implementação novo?
+
+540
+00:42:05,120 --> 00:42:06,120
+O que é um processo de implementação novo?
+
+541
+00:42:06,120 --> 00:42:07,120
+O que é um processo de implementação novo?
+
+542
+00:42:07,120 --> 00:42:08,120
+O que é um processo de implementação novo?
+
+543
+00:42:08,120 --> 00:42:09,120
+O que é um processo de implementação novo?
+
+544
+00:42:09,120 --> 00:42:10,120
+O que é um processo de implementação novo?
+
+545
+00:42:10,120 --> 00:42:11,120
+O que é um processo de implementação novo?
+
+546
+00:42:11,120 --> 00:42:12,120
+O que é um processo de implementação novo?
+
+547
+00:42:12,120 --> 00:42:13,120
+O que é um processo de implementação novo?
+
+548
+00:42:13,120 --> 00:42:14,120
+O que é um processo de implementação novo?
+
+549
+00:42:14,120 --> 00:42:15,120
+O que é um processo de implementação novo?
+
+550
+00:42:15,120 --> 00:42:16,120
+O que é um processo de implementação novo?
+
+551
+00:42:16,120 --> 00:42:17,120
+O que é um processo de implementação novo?
+
+552
+00:42:17,120 --> 00:42:18,120
+O que é um processo de implementação novo?
+
+553
+00:42:18,120 --> 00:42:19,120
+O que é um processo de implementação novo?
+
+554
+00:42:19,120 --> 00:42:20,120
+O que é um processo de implementação novo?
+
+555
+00:42:20,120 --> 00:42:21,120
+O que é um processo de implementação novo?
+
+556
+00:42:21,120 --> 00:42:22,120
+O que é um processo de implementação novo?
+
+557
+00:42:22,120 --> 00:42:23,120
+O que é um processo de implementação novo?
+
+558
+00:42:23,120 --> 00:42:24,120
+O que é um processo de implementação novo?
+
+559
+00:42:24,120 --> 00:42:25,120
+O que é um processo de implementação novo?
+
+560
+00:42:25,120 --> 00:42:26,120
+O que é um processo de implementação novo?
+
+561
+00:42:26,120 --> 00:42:27,120
+O que é um processo de implementação novo?
+
+562
+00:42:27,120 --> 00:42:28,120
+O que é um processo de implementação novo?
+
+563
+00:42:28,120 --> 00:42:29,120
+O que é um processo de implementação novo?
+
+564
+00:42:29,120 --> 00:42:30,120
+O que é um processo de implementação novo?
+
+565
+00:42:30,120 --> 00:42:31,120
+O que é um processo de implementação novo?
+
+566
+00:42:31,120 --> 00:42:32,120
+O que é um processo de implementação novo?
+
+567
+00:42:32,120 --> 00:42:33,120
+O que é um processo de implementação novo?
+
+568
+00:42:33,120 --> 00:42:34,120
+O que é um processo de implementação novo?
+
+569
+00:42:34,120 --> 00:42:35,120
+O que é um processo de implementação novo?
+
+570
+00:42:35,120 --> 00:42:36,120
+O que é um processo de implementação novo?
+
+571
+00:42:36,120 --> 00:42:37,120
+O que é um processo de implementação novo?
+
+572
+00:42:37,120 --> 00:42:38,120
+O que é um processo de implementação novo?
+
+573
+00:42:38,120 --> 00:42:39,120
+O que é um processo de implementação novo?
+
+574
+00:42:39,120 --> 00:42:40,120
+O que é um processo de implementação novo?
+
+575
+00:42:40,120 --> 00:42:41,120
+O que é um processo de implementação novo?
+
+576
+00:42:41,120 --> 00:42:42,120
+O que é um processo de implementação novo?
+
+577
+00:42:42,120 --> 00:42:43,120
+O que é um processo de implementação novo?
+
+578
+00:42:43,120 --> 00:42:46,120
+Mas, Joakim, não me parece mal o que está a dizer.
+
+579
+00:42:46,120 --> 00:42:52,120
+Em relação à percentagem de implementação do processo, isso já me parece um pouco estranho.
+
+580
+00:42:52,120 --> 00:42:55,120
+Porque é assim, quando nós implementamos um processo, eu não vou...
+
+581
+00:42:55,120 --> 00:42:58,120
+Eu não sei, posso estar a dizer algo mais, Nara, mas eu penso que não.
+
+582
+00:42:58,120 --> 00:43:02,120
+Quando nós implementamos um processo, vamos implementar do início ao fim, não é?
+
+583
+00:43:02,120 --> 00:43:03,120
+Não vou implementar partes do processo.
+
+584
+00:43:03,120 --> 00:43:11,120
+Agora, aquela questão que estava a dizer de início das métricas, isso aí já me parecia mais interessante.
+
+585
+00:43:11,120 --> 00:43:15,120
+Ou seja, as métricas que estão a ser cumpridas e as que não estão a ser cumpridas.
+
+586
+00:43:15,120 --> 00:43:16,120
+Sim.
+
+587
+00:43:16,120 --> 00:43:23,120
+E isso que está a dizer, os processos que já foram implementados, ou seja, que já estão a ser implementados na prática e os que ainda não estão, lá está.
+
+588
+00:43:23,120 --> 00:43:25,120
+Também não me parece mal isso ter isso.
+
+589
+00:43:25,120 --> 00:43:29,120
+Também pode ser, também pode considerar isso.
+
+590
+00:43:29,120 --> 00:43:31,120
+É, eu queria perceber.
+
+591
+00:43:31,120 --> 00:43:32,120
+Mas, lá está, tem que saber...
+
+592
+00:43:32,120 --> 00:43:33,120
+O que é mais importante?
+
+593
+00:43:33,120 --> 00:43:35,120
+O que ajudaria mais?
+
+594
+00:43:35,120 --> 00:43:37,120
+Porque...
+
+595
+00:43:37,120 --> 00:43:38,120
+Sabendo...
+
+596
+00:43:38,120 --> 00:43:39,120
+Sabendo...
+
+597
+00:43:39,120 --> 00:43:42,120
+Acho que estas que disse, estas que disse, pode considerar.
+
+598
+00:43:42,120 --> 00:43:43,120
+Tá.
+
+599
+00:43:43,120 --> 00:43:47,120
+Parece-me, parece-me ok, parece-me interessante.
+
+600
+00:43:47,120 --> 00:43:48,120
+E pronto, e...
+
+601
+00:43:48,120 --> 00:43:57,120
+A questão das versões também acho, acho, acho muito giro.
+
+602
+00:43:57,120 --> 00:44:02,120
+Nós, na altura, até lhe tínhamos falado que nós tínhamos os...
+
+603
+00:44:02,120 --> 00:44:11,120
+Vou-lhe chamar uns modelos que nós levantámos inicialmente, que chamámos de "e-a-ziz", não é?
+
+604
+00:44:11,120 --> 00:44:20,120
+Porque foi o que havia na casa e depois nós temos os "tubis", que foi o que nós propusemos a partir de uma... de uma framework.
+
+605
+00:44:21,120 --> 00:44:22,120
+Ok?
+
+606
+00:44:22,120 --> 00:44:23,120
+Que são outros modelos.
+
+607
+00:44:23,120 --> 00:44:30,120
+No fundo, isto não é mais do que está... não é mais do que o ciclo de vida, acaba por ser um bocadinho...
+
+608
+00:44:31,120 --> 00:44:37,120
+Quer dizer, havia um... o que existia na casa, não é? Isto era o que existia na casa.
+
+609
+00:44:37,120 --> 00:44:38,120
+Nós levantámos.
+
+610
+00:44:38,120 --> 00:44:39,120
+Como é que as pessoas faziam?
+
+611
+00:44:39,120 --> 00:44:44,120
+E depois fomos um bocadinho demasiado ao pormenor e pronto, não interessa. Mas levantámos como é que as pessoas faziam.
+
+612
+00:44:44,120 --> 00:44:47,120
+E agora propusemos que as pessoas fizessem...
+
+613
+00:44:48,120 --> 00:44:54,120
+Alguns melhoramos, outros... pronto, outros não foram mexidos, porque as pessoas fazem assim e vai-se continuar a fazer igual.
+
+614
+00:44:55,120 --> 00:45:02,120
+E outros nós propusemos um processo completamente diferente, ou não existia nenhum "e-a-ziz" e passou a existir...
+
+615
+00:45:03,120 --> 00:45:05,120
+Sugerimos um processo "to be".
+
+616
+00:45:06,120 --> 00:45:12,120
+Portanto, se houvesse esta linha cronológica no site, era excelente.
+
+617
+00:45:13,120 --> 00:45:14,120
+Porque as pessoas percebiam.
+
+618
+00:45:14,120 --> 00:45:15,120
+Era a primeira visão, não é?
+
+619
+00:45:16,120 --> 00:45:21,120
+Sim, as pessoas percebiam qual foi... lá está qual foi o ciclo de vida, não é?
+
+620
+00:45:21,120 --> 00:45:23,120
+Desde que a gente começou a trabalhar qual foi o ciclo de vida.
+
+621
+00:45:23,120 --> 00:45:28,120
+Portanto, começámos assim, levantámos o que existia na casa e agora, entretanto, estamos a avançar para aqui.
+
+622
+00:45:28,120 --> 00:45:30,120
+Estamos a fazer melhorias em alguns.
+
+623
+00:45:31,120 --> 00:45:34,120
+Nós transformámos completamente, ou seja, propusemos...
+
+624
+00:45:35,120 --> 00:45:38,120
+Fizemos uma proposta de um processo macro que não existia.
+
+625
+00:45:40,120 --> 00:45:45,120
+Porque quando nós fomos falar com as equipas, o que as equipas tinham é o que eu faço diariamente.
+
+626
+00:45:46,120 --> 00:45:50,120
+E foi isso que nós levantámos inicialmente, o que as pessoas faziam diariamente.
+
+627
+00:45:51,120 --> 00:45:56,120
+E não conseguíamos apelidar aquilo, por exemplo, de "estão de pedido de serviço", porque aquilo não era centralizado.
+
+628
+00:45:57,120 --> 00:46:03,120
+As pessoas só me conseguiam explicar: "olha, neste caso deste pedido eu faço assim, neste caso de outro pedido eu faço assado".
+
+629
+00:46:04,120 --> 00:46:05,120
+E o que é que nós propusemos?
+
+630
+00:46:05,120 --> 00:46:07,120
+Agarrámos nesses pedidos todos...
+
+631
+00:46:08,120 --> 00:46:12,120
+E propusemos que, de acordo com o framework, começam de pedido de serviço.
+
+632
+00:46:12,120 --> 00:46:16,120
+E lá dentro temos uma tabela em que depois tipificamos os pedidos.
+
+633
+00:46:17,120 --> 00:46:26,120
+"Prompo, ou seja, se houvesse essa linha cronológica no site, esta ideia...
+
+634
+00:46:27,120 --> 00:46:37,120
+Isto que eu lhe estou a explicar, foi a nossa metodologia, não é? E isto que eu lhe estou a dizer que havia um "ex easy" e agora há processos "to be",
+
+635
+00:46:38,120 --> 00:46:43,120
+Ficava clara para toda a gente que no fundo não é... é isso exatamente o que a gente quer.
+
+636
+00:46:43,120 --> 00:46:48,120
+É deixar isto claro para toda a gente. Era o que havia e o que nós sugerimos neste momento.
+
+637
+00:46:49,120 --> 00:46:54,120
+Por exemplo, também há uma coisa interessante que é isso que aí tem, é parecido com o que aí tem.
+
+638
+00:46:55,120 --> 00:47:02,120
+Nós temos os testes desenhados propostos, mas entretanto eles depois têm que ir para validação das equipas.
+
+639
+00:47:03,120 --> 00:47:07,120
+E as equipas têm que dar o "ok". E entretanto isto...
+
+640
+00:47:08,120 --> 00:47:14,120
+As equipas nunca dão, geralmente, o "ok" à primeira. Isto sofre não sei quantas alterações.
+
+641
+00:47:16,120 --> 00:47:21,120
+Nós mandamos para a equipa, ela valida, pede para nós fazermos alterações, volta para nós...
+
+642
+00:47:22,120 --> 00:47:25,120
+E ficamos nisto, às vezes, até demasiado tempo.
+
+643
+00:47:26,120 --> 00:47:28,120
+Podia haver aí qualquer coisa...
+
+644
+00:47:29,120 --> 00:47:36,120
+Que dissesse, por exemplo, o estado. Estou a inventar. Pode sugerir algo melhor.
+
+645
+00:47:37,120 --> 00:47:41,120
+Mas que nos mostrasse, por exemplo, em que estado é que está este processo.
+
+646
+00:47:42,120 --> 00:47:49,120
+Está proposto, está em valização. Porquê? Porque nós aqui também conseguimos tirar métricas do nosso próprio trabalho.
+
+647
+00:47:50,120 --> 00:47:56,120
+Ou seja, quanto tempo teve, por exemplo, o processo em fase de validação até estar finalizado?
+
+648
+00:47:57,120 --> 00:48:03,120
+Quantas versões houve nesta fase de validação? Quantas alterações...
+
+649
+00:48:04,120 --> 00:48:07,120
+alterações não diria, mas pronto, quantas novas versões existiram?
+
+650
+00:48:08,120 --> 00:48:12,120
+Para nós próprios, melhorarmos o nosso... Nós temos uma metodologia de trabalho, não é?
+
+651
+00:48:13,120 --> 00:48:19,120
+Nós próprios também temos que melhorar a nossa metodologia e perceber, olha, os processos estão a ficar muito tempo em validação.
+
+652
+00:48:20,120 --> 00:48:23,120
+Sei lá, ou outras coisas assim, outras métricas assim interessantes.
+
+653
+00:48:24,120 --> 00:48:27,120
+Talvez até outras mais interessantes do que esta que eu estou a dizer, mas...
+
+654
+00:48:27,120 --> 00:48:28,120
+Mas só para dar um exemplo.
+
+655
+00:48:29,120 --> 00:48:30,120
+Percebi. Ok.
+
+656
+00:48:31,120 --> 00:48:33,120
+É, então, eu queria...
+
+657
+00:48:34,120 --> 00:48:39,120
+É exatamente esse tipo de funcionalidade que eu estava tentando perceber se seria interessante ou não.
+
+658
+00:48:40,120 --> 00:48:40,120
+Por quê?
+
+659
+00:48:41,120 --> 00:48:46,120
+Eu preciso perceber, por exemplo, qual é...
+
+660
+00:48:47,120 --> 00:48:54,120
+Qual é o objetivo principal, ou seja, os problemas que a ferramenta vai resolver de fato.
+
+661
+00:48:55,120 --> 00:48:56,120
+E quais os objetivos principais.
+
+662
+00:48:56,120 --> 00:48:57,120
+E quais os objetivos principais.
+
+663
+00:48:57,120 --> 00:48:58,120
+Joakim, mas isso já tem.
+
+664
+00:48:58,120 --> 00:49:02,120
+Porque aí, com isso, eu consigo, por exemplo, pegar ali dois...
+
+665
+00:49:03,120 --> 00:49:04,120
+Um ou dois...
+
+666
+00:49:05,120 --> 00:49:06,120
+Um ou dois...
+
+667
+00:49:07,120 --> 00:49:08,120
+Um ou dois...
+
+668
+00:49:08,120 --> 00:49:09,120
+Joakim.
+
+669
+00:49:09,120 --> 00:49:10,120
+Para poder seguir as boas práticas.
+
+670
+00:49:11,120 --> 00:49:15,120
+Joakim, mas esses dois pontos, como falou, já têm os dois.
+
+671
+00:49:16,120 --> 00:49:18,120
+Os principais objetivos já têm.
+
+672
+00:49:18,120 --> 00:49:21,120
+A gente pode fazer um overview, só para ficar claro?
+
+673
+00:49:22,120 --> 00:49:24,120
+Sim, podemos.
+
+674
+00:49:25,120 --> 00:49:27,120
+Os principais objetivos, o Joakim já tem.
+
+675
+00:49:27,120 --> 00:49:29,120
+Foi o que nós acabámos de falar.
+
+676
+00:49:29,120 --> 00:49:38,120
+Nós precisamos de um sítio onde as pessoas possam consultar a nossa estrutura dos processos.
+
+677
+00:49:38,120 --> 00:49:39,120
+Ou seja, as pessoas...
+
+678
+00:49:40,120 --> 00:49:41,120
+Porquê?
+
+679
+00:49:41,120 --> 00:49:42,120
+Porque nós estamos a levantar...
+
+680
+00:49:42,120 --> 00:49:44,120
+A ver se eu me consigo fazer entender.
+
+681
+00:49:45,120 --> 00:49:47,120
+Nós estamos a levantar os processos com diferentes áreas.
+
+682
+00:49:49,120 --> 00:49:50,120
+Nós estamos agora em IT.
+
+683
+00:49:50,120 --> 00:49:55,120
+Mas depois, o nosso objetivo é avançar para outros departamentos.
+
+684
+00:49:55,120 --> 00:49:58,120
+Porque os processos são transversais, muitas vezes.
+
+685
+00:49:59,120 --> 00:50:00,120
+Alguns são transversais nisso.
+
+686
+00:50:01,120 --> 00:50:02,120
+Que é fazem parte só...
+
+687
+00:50:02,120 --> 00:50:05,120
+Não passam só por uma equipa, nem só por um departamento.
+
+688
+00:50:06,120 --> 00:50:07,120
+Pronto.
+
+689
+00:50:07,120 --> 00:50:08,120
+Portanto, nós agora estamos a levantar no IT.
+
+690
+00:50:08,120 --> 00:50:10,120
+Começámos onde nós estamos confortáveis.
+
+691
+00:50:10,120 --> 00:50:13,120
+E a seguir iremos avançar para outras áreas.
+
+692
+00:50:13,120 --> 00:50:16,120
+Vamos ajudar as pessoas a levantar os processos.
+
+693
+00:50:17,120 --> 00:50:18,120
+Processos.
+
+694
+00:50:19,120 --> 00:50:20,120
+Pronto.
+
+695
+00:50:21,120 --> 00:50:22,120
+E nós precisamos...
+
+696
+00:50:22,120 --> 00:50:26,120
+Se nós estamos a levantar, estamos a documentar, estamos a descrever...
+
+697
+00:50:27,120 --> 00:50:29,120
+Depois as pessoas, evidentemente, vão querer consultar.
+
+698
+00:50:30,120 --> 00:50:31,120
+Isto é para facilitar o trabalho delas.
+
+699
+00:50:31,120 --> 00:50:33,120
+Ou seja, é para elas conseguirem ter as coisas o quê?
+
+700
+00:50:34,120 --> 00:50:36,120
+Uniformes e centralizadas.
+
+701
+00:50:37,120 --> 00:50:39,120
+Ou seja, imaginemos...
+
+702
+00:50:40,120 --> 00:50:41,120
+Gosto de inventar um bocado.
+
+703
+00:50:41,120 --> 00:50:42,120
+Mas bem uma auditoria.
+
+704
+00:50:42,120 --> 00:50:43,120
+Nós temos as coisas...
+
+705
+00:50:43,120 --> 00:50:44,120
+Nós temos...
+
+706
+00:50:44,120 --> 00:50:45,120
+Quais são os processos da casa do WICFES?
+
+707
+00:50:45,120 --> 00:50:47,120
+Nós temos os processos todos num site.
+
+708
+00:50:48,120 --> 00:50:49,120
+Um site organizado.
+
+709
+00:50:49,120 --> 00:50:50,120
+E eles estão todos o quê?
+
+710
+00:50:51,120 --> 00:50:52,120
+Uniformizados.
+
+711
+00:50:53,120 --> 00:50:57,120
+As tarefas dentro dos próprios processos estão uniformizadas.
+
+712
+00:50:57,120 --> 00:51:01,120
+Eu não tenho tarefas com os mesmos nomes ou escritas de maneiras diferentes.
+
+713
+00:51:02,120 --> 00:51:03,120
+Ou...
+
+714
+00:51:04,120 --> 00:51:08,120
+Por exemplo, as tarefas estão associadas a tecnologias ou aplicações.
+
+715
+00:51:08,120 --> 00:51:11,120
+As aplicações e as tecnologias têm todas o mesmo nome.
+
+716
+00:51:11,120 --> 00:51:17,120
+Ou seja, nós queremos ter um repositório central para as coisas ficarem todas organizadas.
+
+717
+00:51:18,120 --> 00:51:19,120
+Porque senão...
+
+718
+00:51:20,120 --> 00:51:23,120
+Eu levanto o processo de uma maneira, o Nuno levanta o processo de outra maneira,
+
+719
+00:51:23,120 --> 00:51:25,120
+e nós até dizemos assim: "Ah, vamos seguir BPMN".
+
+720
+00:51:26,120 --> 00:51:31,120
+Mas a verdade é que eu posso desenhar de uma forma e o Nuno desenhar de outra forma completamente diferente.
+
+721
+00:51:32,120 --> 00:51:35,120
+Eu posso desenhar, por exemplo, na horizontal e o Nuno desenhar na vertical.
+
+722
+00:51:36,120 --> 00:51:39,120
+Ou eu posso chamar os layers, que é aqueles atores, não é?
+
+723
+00:51:40,120 --> 00:51:43,120
+quem executar as tarefas dentro de cada linha.
+
+724
+00:51:43,120 --> 00:51:45,120
+Não sei se o Joakim está familiarizado com o BPMN.
+
+725
+00:51:45,120 --> 00:51:46,120
+Sim, sim, estou.
+
+726
+00:51:46,120 --> 00:51:47,120
+Então...
+
+727
+00:51:47,120 --> 00:51:48,120
+Pronto.
+
+728
+00:51:48,120 --> 00:51:53,120
+Os layers, eu posso chamar equipas técnicas e vai outra pessoa e chama-lhe segunda e terceira linha.
+
+729
+00:51:53,120 --> 00:52:01,120
+Ou seja, um objetivo principal é: nós queremos ter as coisas uniformizadas e centralizadas.
+
+730
+00:52:02,120 --> 00:52:15,120
+ou seja, todas as pessoas desenham neste formato, os conceitos são iguais para toda a gente, as nomenclaturas, os nomes dos processos, está tudo uniformizado.
+
+731
+00:52:17,120 --> 00:52:17,120
+Ok?
+
+732
+00:52:17,120 --> 00:52:20,120
+Portanto, isso é o principal problema na casa.
+
+733
+00:52:20,120 --> 00:52:31,120
+Um problema que, por exemplo, não está aí e que existe é: cada departamento desenha neste momento, cada departamento está a desenhar com ferramentas diferentes.
+
+734
+00:52:32,120 --> 00:52:49,120
+Há quem desenha em Visio, há quem desenha em Bisagui, há quem... Lá está, os nomes das equipas também não estão uniformizados. Há quem chame equipas técnicas, há quem chame equipas de segunda linha, há quem chame equipas de apoio local.
+
+735
+00:52:49,120 --> 00:53:03,120
+ou seja, os nomes, pronto. Então, todos os levantamentos, os pequenos levantamentos que foram feitos no ICFES são todos... não estão uniformizados. Ok?
+
+736
+00:53:04,120 --> 00:53:09,120
+As pessoas até podem ter qualquer coisa, mas as coisas estão desenhadas de formas diferentes, com nomes diferentes.
+
+737
+00:53:10,120 --> 00:53:16,120
+As próprias, por exemplo, aplicações, eu chamo o portal de cliente, há outra pessoa que lhe chama não sei o quê. Pronto.
+
+738
+00:53:17,120 --> 00:53:26,120
+Nós ao fazermos este levantamento, estamos a conseguir perceber... está a bater na trave, não é? Portanto, quando as coisas vêm aqui nós começamos a ver, ok...
+
+739
+00:53:28,120 --> 00:53:35,120
+Começamos a uniformizar os nomes, começamos a uniformizar como as tarefas estão escritas e tudo mais.
+
+740
+00:53:36,120 --> 00:53:43,120
+Ou seja, isso por exemplo é um problema que existe, as coisas estão... não estão uniformizadas, os conceitos não são, não significam o mesmo para toda a gente.
+
+741
+00:53:44,120 --> 00:54:03,120
+Se nós tivermos um portal, esse portal resolve isso. Porque se nós tivermos um portal que as pessoas consultem, que ele até tenha uma introdução, que tenha lá um glossário, e que depois numa segunda página, parecido ao nosso site, numa segunda página, comece a ter a descrição dos processos da casa,
+
+742
+00:54:03,120 --> 00:54:21,120
+e estão todos escritos da mesma maneira, já resolvemos esse problema. Por exemplo. Outra coisa lá está, é qualquer pessoa dentro, obviamente, que pertence ao ICFES. Pelo menos, não sei, não sei se o nosso site estava público ou não. Mas pronto, qualquer pessoa...
+
+743
+00:54:22,120 --> 00:54:39,120
+Não estava pronto, ok. Qualquer pessoa que... Sim, é verdade, tenho que ligar ao VPN, portanto. Mas se não interessa, qualquer pessoa que pertença ao ICFES, não é? Consegue ter perceção quais são as atividades principais da casa.
+
+744
+00:54:40,120 --> 00:54:47,120
+Quando nós vemos os processos, quando nós vemos isto a longo prazo, é para nós não estarmos só focados no IT, estamos focados no global.
+
+745
+00:54:47,120 --> 00:55:05,120
+Quando nós chegamos a uma organização e vemos quais são os processos desta organização, nós conseguimos perceber lá, perceber qual é que é o propósito. Ou seja, o ICFES existe para quê? E isso tem que estar descrito nos vários processos, não é?
+
+746
+00:55:06,120 --> 00:55:31,120
+Pronto, nos vários processos de negócio e depois, pronto, existem os processos de suporte e etc. Mas este site vai ajudar muito, vai ajudar as pessoas a terem visão de quais são os processos da casa. Eu consigo ver quais são os processos, os meus processos da minha área, por exemplo, da IT. E quando eu estiver aqui do outro departamento, consigo ver os do outro departamento também.
+
+747
+00:55:31,120 --> 00:55:51,120
+Eu consigo perceber o que é que as pessoas fazem, porque é que fazem. E mais do que isso, porque o que é que é mais importante nos processos? Métricas. Ou seja, como se costuma dizer, eu não consigo medir, eu não consigo gerir o que não consigo medir.
+
+748
+00:55:51,120 --> 00:56:15,280
+Exato. Pronto. Se nós começarmos a identificar os ditos cujos KPIs que estava a falar dentro dos processos. Claro, e depois na prática, quando os processos começarem a ser implementados, é que se vai notar. Mas o facto de nós obrigarmos, salvo seja, entre aspas, que todos os processos tenham métricas e tenham o responsável, já é excelente.
+
+749
+00:56:16,120 --> 00:56:30,580
+Porque eu já estou a dizer, quando este processo for executado, isto tem um dono, não é? Isto tem... Isto tem uma pessoa que está... Que é responsável por fazer a atualização e por acompanhar que isto funcione.
+
+750
+00:56:31,120 --> 00:56:40,260
+Sim. E isto já tem métricas de avaliação, porque eu... Sei lá se o processo está a correr bem ou está a correr mal. Eu tenho é que ver se ele está a cumprir com as métricas ou não. Está a cima, está a baixo.
+
+751
+00:56:41,120 --> 00:56:55,720
+Isto hoje em dia é um problema também. Não existem métricas oficiais. Praticamente, as equipas criam as próprias... Há equipas que criam as próprias métricas. Ok? Para se gerirem dentro da própria equipa.
+
+752
+00:56:55,720 --> 00:57:10,240
+Mas não há métricas que estejam oficializadas. E tem que haver. Porque senão não dá para gerir. Pronto. E é isso isto também. Este site também resolve que as pessoas começam a ter noção. Pronto.
+
+753
+00:57:10,720 --> 00:57:17,920
+E as pessoas começam a ser obrigadas a... Quando desenham um processo, têm que preencher todos aqueles atributos que nós temos.
+
+754
+00:57:19,240 --> 00:57:26,540
+E está exposto para toda a gente com as suas métricas. E pronto. E por exemplo, a instanteção do processo.
+
+755
+00:57:27,260 --> 00:57:30,040
+Se o Joakim quiser ir mais além. Porque isto dá para ir muito além.
+
+756
+00:57:30,560 --> 00:57:40,560
+Sim, por exemplo. Nós temos um processo. Eu estava conversando com a Bel. E dá, por exemplo, para a gente unificar... Vamos dizer que a gente tem um responsável pela área...
+
+757
+00:57:42,560 --> 00:57:48,060
+Não vamos dizer que temos mesmo. Temos que ter. Temos que ter mesmo.
+
+758
+00:57:48,560 --> 00:57:53,740
+Sim. Então... Digamos que tem um processo que precisa ser enviado para o site. Certo?
+
+759
+00:57:54,480 --> 00:57:59,100
+E aí vamos dizer que tem um responsável da área X. Sei lá. Sim.
+
+760
+00:57:59,160 --> 00:58:08,560
+Um responsável tal da área de IT. E aí ele vai enviar esse processo. Quando ele for enviar o processo, poderia, por exemplo, ter uma telinha ali no...
+
+761
+00:58:08,560 --> 00:58:20,560
+No back office. Falando, por exemplo, tendo uma lista de requisitos que ele precisa atingir para poder subir esse processo. E aí, por exemplo...
+
+762
+00:58:20,560 --> 00:58:24,560
+Não sei se percebi. Desculpa, Joakim.
+
+763
+00:58:24,560 --> 00:58:27,560
+Digamos que... O negócio das linhas, por exemplo. Sim.
+
+764
+00:58:27,560 --> 00:58:33,560
+Você tem que ter uma lista simples de checkbox para a pessoa marcar. Por exemplo...
+
+765
+00:58:33,560 --> 00:58:42,560
+Esse processo aqui, ele atendeu... Não sei. 50% dos requisitos aqui. E depois vai para a revisão. Por exemplo...
+
+766
+00:58:42,560 --> 00:58:49,560
+As linhas. O arquivo... Um dos requisitos pode ser... Sei lá. Para ele marcar um checkbox. No envio do processo.
+
+767
+00:58:49,560 --> 00:58:58,560
+As linhas ali do BPMN. Estão horizontais. Aí ele marca assim. Sim. Aí, sei lá. Outro requisito. É...
+
+768
+00:58:58,560 --> 00:59:05,560
+Tem pelo menos um ficheiro BPMN. Sim. Aí... Ele pode enviar o processo. E, por exemplo...
+
+769
+00:59:05,560 --> 00:59:28,560
+Ou só em 1.0. Ou só em 1.0. E aí, quem for revisar esse processo depois, vai ver, ó... Quais requisitos foram atendidos. E pode editar aquele processo no próprio back office. Ele consegue editar o BPMN. Porque a gente tem uma biblioteca que permite você uniformizar a edição.
+
+770
+00:59:28,560 --> 00:59:53,560
+Então, você pode editar o BPMN no próprio navegador. E pode editar o processo. E aí, a gente pode mostrar, por exemplo... O que mudou de uma versão para outra? É... Aí... Ele marcou algum outro checkbox ali de... De requisito. Por exemplo... Ele consertou as linhas do BPMN. Algo que dá para... Ver... Mudar... Percebe?
+
+771
+00:59:53,560 --> 01:00:18,560
+Joakim... Joakim... Joakim, deixe-me só interrompê-lo. Exatamente como está a dizer... Não é bem. Mas eu vou... Vou... Vou sugerir outra coisa... Praticamente igual ao que está a dizer. Porque essa questão que estava a dizer de... Eu ter requisito só a nível, por exemplo, da modelação. Ou seja, isto vem horizontal... Ou está vertical...
+
+772
+01:00:18,560 --> 01:00:48,120
+Não sei o que das linhas. Pronto. Isso é um bocado o nosso trabalho. Ou seja... Quando alguém envia... Imaginemos... Nós geralmente vamos levantar os processos com as equipas. Depois as equipas podem ter subprocessos... Pronto. Eu não queria estar aqui um bocadinho para os procedimentos porque isso já é o detalhe de cada equipa. Mas pronto. Imaginemos que algumas equipas até já têm processos desenhados. E até já têm subprocessos. E haviam para nós. E nós vamos fazer isso que o Joakim estava a dizer.
+
+773
+01:00:48,120 --> 01:01:05,920
+Ou seja... Nós vamos agarrar-lhe... E vamos dizer... Ok. Onde é que este processo que as pessoas nos enviaram... Que a equipa de... Sei lá... Vou inventar. Que a equipa de aplicações internas nos enviou... Onde é que isto se encaixa dentro da nossa estrutura? Ou seja, dentro da dita cuja framework?
+
+774
+01:01:05,920 --> 01:01:29,700
+E ele está de acordo... Ele está uniformizado? Se não está... A gente vai uniformizado. Ok. Pronto. Isso é um bocado o nosso trabalho. No entanto... O que o Joakim estava a dizer... Pode ser utilizado... De forma ligeiramente diferente na minha opinião. Eu sugeria... Isto é apenas a minha opinião. Pois o Joakim faz como quiser.
+
+775
+01:01:29,920 --> 01:01:33,240
+Faz como achar melhor... Até pode sugerir outra coisa.
+
+776
+01:01:33,940 --> 01:01:43,980
+Mas nós realmente... Quando enviamos para as equipas... As equipas não fazem bem esse tipo de validação... Ao nível... Do modelo em si.
+
+777
+01:01:44,340 --> 01:01:51,860
+A ver se eu me faço entender. Ou seja... As equipas quando olham... Não estão bem a olhar... Imaginemos para as regras do BPMN.
+
+778
+01:01:51,860 --> 01:02:03,880
+Porquê? Porque às vezes também as desconhecem. Ou não estão tão familiarizados assim com elas. Mas no entanto... Estão a olhar para o quê? Estão a olhar se... A sequência de atividades que nós colocamos está correta.
+
+779
+01:02:04,080 --> 01:02:08,760
+Se é realmente assim que acontece. Ou se é de outra forma. Se é de outra ordem.
+
+780
+01:02:09,760 --> 01:02:29,020
+Se as atividades que nós colocamos... Se o nome... E a descrição que nós lhe demos... Não é? Está correta. Se faz sentido. Se falta informação. Se por exemplo... Nós dissemos... Registar pedido. E dissemos que no registar pedido... Nesta atividade... Nós levantamos os campos... Tal, tal, tal.
+
+781
+01:02:29,020 --> 01:02:31,000
+nome, idade, estou a inventar, não é?
+
+782
+01:02:31,480 --> 01:02:33,400
+E depois a equipa, eu mandei para a equipa
+
+783
+01:02:33,400 --> 01:02:34,900
+para ela validar e a equipa diz
+
+784
+01:02:34,900 --> 01:02:37,100
+não, desculpa, nós não levantamos nome e idade
+
+785
+01:02:37,100 --> 01:02:37,960
+isto está incorreto
+
+786
+01:02:37,960 --> 01:02:40,640
+na altura quando levantaste comigo percebeste mal
+
+787
+01:02:40,640 --> 01:02:42,020
+isto é nome
+
+788
+01:02:42,020 --> 01:02:45,200
+depois o utilizador, o e-mail
+
+789
+01:02:45,200 --> 01:02:45,680
+não sei o que, não sei o que
+
+790
+01:02:45,680 --> 01:02:49,200
+ou seja, as equipas validam mesmo
+
+791
+01:02:49,200 --> 01:02:49,880
+ao nível
+
+792
+01:02:49,880 --> 01:02:52,200
+percebe o que é que eu estou a dizer aqui?
+
+793
+01:02:52,200 --> 01:02:53,640
+Sim, percebo. Validam mesmo
+
+794
+01:02:53,640 --> 01:02:56,200
+se o fluxo
+
+795
+01:02:56,200 --> 01:02:57,700
+que eu descrevi
+
+796
+01:02:57,700 --> 01:03:00,080
+deles, não é? Porque o fluxo é deles
+
+797
+01:03:00,080 --> 01:03:02,480
+está correto, ou seja
+
+798
+01:03:02,480 --> 01:03:04,120
+isso que o Joakim estava a dizer
+
+799
+01:03:04,120 --> 01:03:05,480
+parece-me excelente
+
+800
+01:03:05,480 --> 01:03:08,280
+se fosse possível que as equipas
+
+801
+01:03:08,280 --> 01:03:10,300
+está a ver como acontece um bocadinho no Word
+
+802
+01:03:10,300 --> 01:03:12,440
+quando nós temos o Word dinâmica
+
+803
+01:03:12,440 --> 01:03:14,140
+que as pessoas podem deixar lá
+
+804
+01:03:14,140 --> 01:03:16,280
+sugestões de alterações
+
+805
+01:03:16,280 --> 01:03:18,520
+e depois a gente aceita ou recusa
+
+806
+01:03:18,520 --> 01:03:21,340
+está a ver isso no Word?
+
+807
+01:03:21,340 --> 01:03:23,500
+Sim. Ou seja, as pessoas, imaginemos
+
+808
+01:03:23,500 --> 01:03:25,380
+podiam logo, quando eu envio para a validação
+
+809
+01:03:26,020 --> 01:03:29,680
+as pessoas podiam logo fazer alterações
+
+810
+01:03:29,680 --> 01:03:32,300
+mas eu não quero ficar logo com as alterações guardadas delas
+
+811
+01:03:32,300 --> 01:03:34,860
+porque lá está, imagina que as pessoas depois trocam-me aquilo tudo
+
+812
+01:03:34,860 --> 01:03:36,960
+e que não pode ser bem assim, não é?
+
+813
+01:03:37,560 --> 01:03:40,600
+Mas aquilo podia ficar lá com as sugestões
+
+814
+01:03:40,600 --> 01:03:43,080
+ou vermelho, assim um bocado como acontece no Word
+
+815
+01:03:43,080 --> 01:03:47,580
+aquilo podia ficar lá com as sugestões no desenho
+
+816
+01:03:47,580 --> 01:03:49,460
+em caixas de texto
+
+817
+01:03:49,460 --> 01:03:51,920
+como achasse melhor
+
+818
+01:03:51,920 --> 01:03:52,700
+como achasse melhor
+
+819
+01:03:52,700 --> 01:03:56,960
+e depois eu aceitava as alterações
+
+820
+01:03:56,960 --> 01:03:59,780
+ou eu não aceito mas faço uma nova versão
+
+821
+01:03:59,780 --> 01:04:01,580
+a considerar aquelas alterações
+
+822
+01:04:01,580 --> 01:04:04,060
+ou seja, era muito parecido com o que o Joakim estava a dizer
+
+823
+01:04:04,060 --> 01:04:14,900
+só que não é bem para o modelo em si, não é bem... quer dizer... é para o modelo mas não é para como o modelo está desenhado
+
+824
+01:04:14,900 --> 01:04:22,340
+porque isso nós validamos, isso é a nossa parte. Agora, quando vai para as equipas, as equipas vêem as tarefas estão corretas
+
+825
+01:04:22,340 --> 01:04:52,180
+é isto que acontece... a ordem está correta, os layers estão corretos... porque as equipas... se eu... imaginemos o Joakim diz... qual é o processo que o Joakim faz... quando acorda? O Joakim diz... mãe eu acordo... tomo banho... tomo o pequeno almoço... não sei o quê... e eu quando fui levantar consigo o processo... percebi que o Joakim... acordava... tomava o pequeno almoço... depois ia tomar banho... ou seja, quando eu mando para validação do Joakim...
+
+826
+01:04:52,180 --> 01:05:22,020
+quem diz... não Maria, atenção que isto está com a ordem correta... tu enganaste... isto não está certo... e depois... se desse para fazer essa sugestão de alteração... mas aquilo não ficar logo guardado... ficar ali numa... não sei como é que queres chamar... tipo dummy... ou seja... fica ali uma... sim, exatamente... e depois isto voltava outra vez para a nossa equipa... e a nossa equipa então... ou aceitava a alteração... porque a pessoa até moveu aquilo bem... e já ficou...
+
+827
+01:05:22,020 --> 01:05:28,640
+ficou excepcional, ou então eu, pronto, não aceito a alteração, mas eu próprio faço a modificação e crio uma nova versão.
+
+828
+01:05:29,720 --> 01:05:30,980
+E parece-me excelente.
+
+829
+01:05:30,980 --> 01:05:32,140
+Tudo isso dá para fazer na plataforma.
+
+830
+01:05:32,340 --> 01:05:33,380
+Pronto, parece-me excelente.
+
+831
+01:05:33,400 --> 01:05:34,440
+Toda a palavra de comunicação e edição.
+
+832
+01:05:35,660 --> 01:05:37,200
+Pronto, isso parecia-me excelente.
+
+833
+01:05:37,720 --> 01:05:43,200
+Nós podemos fazer isto tudo a partir do que o site era extraordinário.
+
+834
+01:05:44,520 --> 01:06:11,720
+Porque acompanhava-se não só o nosso modelo proposto, como todo o ciclo de vida deste que foi proposto, até à validação, as várias fases de validação, as várias versões, não lhe vou chamar fases, as várias versões da validação, o que foi aceito, o que não foi aceito, o que foi alterado e o que não foi alterado, e depois gerar a versão final.
+
+835
+01:06:12,420 --> 01:06:14,500
+Sim, essa era a ideia inicial.
+
+836
+01:06:14,500 --> 01:06:22,740
+Eu não sei se eu percebi mal, mas ele tinha falado que não tem ferramentas para fazer isso.
+
+837
+01:06:23,280 --> 01:06:24,420
+Não, não temos.
+
+838
+01:06:25,920 --> 01:06:27,580
+Eu fiquei confuso.
+
+839
+01:06:28,440 --> 01:06:31,080
+Agora eu percebi muito melhor, agora está claro.
+
+840
+01:06:31,860 --> 01:06:34,600
+Nós não temos uma ferramenta para fazer essa comunicação direta.
+
+841
+01:06:34,720 --> 01:06:40,180
+Nós, neste momento, o que fazemos é enviamos os modelos, até lhe posso dizer como nós fazemos atualmente.
+
+842
+01:06:40,180 --> 01:06:47,740
+Nós, neste momento, enviamos os modelos por email para as pessoas ou marcamos uma reunião.
+
+843
+01:06:48,420 --> 01:06:54,060
+Eu também lhe vou ser sincera, isto é muito mais fácil quando a gente está frente a frente com as pessoas ou olhar para o modelo.
+
+844
+01:06:55,000 --> 01:06:55,400
+Pronto.
+
+845
+01:06:55,820 --> 01:06:56,600
+Mas o que é que acontece?
+
+846
+01:06:56,700 --> 01:07:02,860
+Nós, muitas vezes, mandamos o modelo uma semana antes ou uns dias antes para as pessoas.
+
+847
+01:07:03,440 --> 01:07:07,400
+As pessoas fazem logo as notas delas e depois vamos todos reunir.
+
+848
+01:07:07,780 --> 01:07:13,180
+Se essas notas pudessem ficar apontadas em algum lado, excelente.
+
+849
+01:07:13,300 --> 01:07:15,560
+Porque neste momento não ficam, ficam no email.
+
+850
+01:07:16,060 --> 01:07:27,620
+E eu depois tenho que andar, eu ou o Nuno, pronto, quem seja, tenho que andar à cata, digamos assim, dos modelos, dos modelos dos emails que têm as alterações que as pessoas pediram.
+
+851
+01:07:27,980 --> 01:07:28,840
+Ou de documentos.
+
+852
+01:07:28,980 --> 01:07:35,500
+Isto depois é, por exemplo, ali com a equipa de gestão de clientes e serviços.
+
+853
+01:07:35,700 --> 01:07:37,800
+Nós temos muitos processos que foram ali para eles.
+
+854
+01:07:39,800 --> 01:07:52,300
+Nós andámos, eles até que produziram eles um documento Word, que eles também tinham que produzir no âmbito do projeto deles, com as melhorias que eles sugeriam nos nossos modelos.
+
+855
+01:07:53,300 --> 01:08:03,200
+Se eles tivessem um sítio onde eles dinamicamente pudessem sugerir alterações e isso chegasse até a nós, excelente.
+
+856
+01:08:03,680 --> 01:08:05,740
+Porque neste momento isso está em email.
+
+857
+01:08:05,740 --> 01:08:11,620
+E email é fraco, porque nós não temos um histórico das alterações.
+
+858
+01:08:11,740 --> 01:08:14,320
+Quer dizer, nós apontamos porque vamos criando várias versões.
+
+859
+01:08:14,820 --> 01:08:18,740
+Mas eu, por exemplo, e eu sinto essa dificuldade, fala por mim.
+
+860
+01:08:19,140 --> 01:08:21,140
+Eu vou criando várias versões do modelo.
+
+861
+01:08:21,720 --> 01:08:29,300
+E se eu não apontar, na algum lado, nas minhas notas, geralmente, o que é que eu mudei de um modelo para o outro, eu hoje sei.
+
+862
+01:08:29,400 --> 01:08:31,240
+Mas daqui a três semanas já não vou lembrar.
+
+863
+01:08:31,700 --> 01:08:33,200
+Por que é que eu criei uma versão 2?
+
+864
+01:08:33,200 --> 01:08:38,240
+Às vezes são modificações que se nota logo, assim, à partida, não é? À cabeça.
+
+865
+01:08:39,040 --> 01:08:40,340
+Mas há outras que não.
+
+866
+01:08:40,700 --> 01:08:43,500
+Às vezes, às vezes alterações...
+
+867
+01:08:43,500 --> 01:08:44,780
+Por exemplo, fiz aquela alteração.
+
+868
+01:08:45,100 --> 01:08:46,600
+Mas por que é que eu mudei isto?
+
+869
+01:08:47,100 --> 01:08:47,300
+Não é?
+
+870
+01:08:48,320 --> 01:08:50,080
+Se eu tivesse isso apontado...
+
+871
+01:08:50,080 --> 01:08:52,940
+Ou seja, eu mudei daqui para aqui e eu sei porquê que mudei.
+
+872
+01:08:53,160 --> 01:08:56,520
+Porque houve alguém que me disse, olha, atenção que isto não é assim, é assado.
+
+873
+01:08:57,020 --> 01:08:57,980
+Ou eu própria.
+
+874
+01:08:57,980 --> 01:09:02,740
+Quando mudei a versão, posso ter uma caixa de comentários.
+
+875
+01:09:03,780 --> 01:09:05,720
+Eu estou a mudar isto para isto.
+
+876
+01:09:05,860 --> 01:09:07,840
+Estou a mudar a versão 1 para a versão 2.
+
+877
+01:09:08,240 --> 01:09:09,280
+O que é que eu alterei?
+
+878
+01:09:10,220 --> 01:09:11,760
+Isto é outra coisa que também pode colocar.
+
+879
+01:09:12,560 --> 01:09:14,640
+O que é que eu alterei de uma versão para a outra?
+
+880
+01:09:15,640 --> 01:09:16,580
+E porquê que alterei?
+
+881
+01:09:16,760 --> 01:09:23,520
+Ou seja, ter uma caixa que me diga, por exemplo, quais as alterações e o motivo dessas alterações.
+
+882
+01:09:23,960 --> 01:09:25,360
+Se forem alterações grandes, claro.
+
+883
+01:09:25,680 --> 01:09:26,780
+Estou a falar de alterações pequenas.
+
+884
+01:09:27,220 --> 01:09:31,200
+Mas podiam ser duas caixas que não tinham que ser preenchimento obrigatório, caixas de texto.
+
+885
+01:09:31,680 --> 01:09:32,560
+Até podiam ser...
+
+886
+01:09:32,560 --> 01:09:36,300
+Opa, um cabo de livre, vou-lhe dizer assim, não é?
+
+887
+01:09:38,000 --> 01:09:46,940
+Mas outra coisa qualquer que o Joakim acha interessante, mas algo deste ano, em que eu possa dizer, por exemplo, o que é que eu mudei de uma versão para a outra e porquê que eu mudei?
+
+888
+01:09:47,320 --> 01:09:48,600
+Porquê que eu estou a mudar isto?
+
+889
+01:09:49,100 --> 01:09:52,520
+Porque eu daqui a três semanas posso estar outra vez com a mesma dúvida.
+
+890
+01:09:52,820 --> 01:09:54,840
+E aí eu vou lá e digo, não, espera aí.
+
+891
+01:09:55,700 --> 01:10:00,560
+Isto não pode ser assim como eu tinha porque tal, tal, tal, já lá tenho explicado o que eu na altura escrevi.
+
+892
+01:10:01,220 --> 01:10:05,300
+Porque eu, honestamente, por exemplo, isto é um problema que eu sofro.
+
+893
+01:10:05,800 --> 01:10:11,460
+Às vezes eu, de umas versões para as outras, tenho umas dúvidas.
+
+894
+01:10:11,660 --> 01:10:12,420
+E entretanto mudei.
+
+895
+01:10:12,500 --> 01:10:13,520
+Na altura fez-me sentir.
+
+896
+01:10:13,680 --> 01:10:17,260
+Daí a um mês, quando eu volto a agarrar naquilo, de repente volto a olhar.
+
+897
+01:10:17,400 --> 01:10:19,060
+Opa, mas eu mudei isto assim porquê?
+
+898
+01:10:20,000 --> 01:10:24,100
+E às vezes até tenho tendência para voltar outra vez a pôr como estava ou não sei o quê.
+
+899
+01:10:24,100 --> 01:10:27,500
+E depois entretanto lembro-me outra vez porque é que não podia ser.
+
+900
+01:10:29,940 --> 01:10:35,920
+Se eu tiver um histórico de alterações e o motivo dessas alterações, não é?
+
+901
+01:10:36,240 --> 01:10:39,000
+Eu consigo perceber porque é que não podia ser como estava.
+
+902
+01:10:39,800 --> 01:10:43,860
+E atenção, a questão de guardar o histórico também é muito boa. Porquê?
+
+903
+01:10:44,840 --> 01:10:51,700
+Porque imaginemos, hoje, à data de hoje, o ICFES faz sentido nós adaptarmos o modelo assim.
+
+904
+01:10:52,420 --> 01:10:54,040
+Certo? O modelo está adaptado assim.
+
+905
+01:10:54,560 --> 01:10:56,700
+Mas amanhã o ICFES está mais evoluído.
+
+906
+01:10:58,440 --> 01:11:01,640
+E eu até, por exemplo, eu tinha uma sugestão inicial.
+
+907
+01:11:02,020 --> 01:11:05,640
+Entretanto, tive que adaptar um bocadinho ao ICFES e mudei não sei quantas coisas.
+
+908
+01:11:05,760 --> 01:11:06,920
+Tenho uma versão 2, não é?
+
+909
+01:11:07,180 --> 01:11:08,500
+Uma versão 1, uma versão 2.
+
+910
+01:11:09,020 --> 01:11:10,300
+A versão 2 foi a que ficou.
+
+911
+01:11:11,080 --> 01:11:13,740
+Mas hoje em dia o ICFES até já está mais atualizado.
+
+912
+01:11:14,620 --> 01:11:16,140
+E até já mudou uma série de coisas.
+
+913
+01:11:16,360 --> 01:11:22,080
+E eu, afinal, esta adaptação já não precisa de ser assim e eu até posso voltar ao modelo 1.
+
+914
+01:11:23,780 --> 01:11:25,300
+Fiz-me entender ou foi confuso?
+
+915
+01:11:25,360 --> 01:11:25,940
+Sim, pensa bem.
+
+916
+01:11:26,000 --> 01:11:34,140
+Às vezes, às vezes, não é muito comum, mas nós às vezes até podemos ir buscar modelos ao histórico.
+
+917
+01:11:34,260 --> 01:11:37,840
+Algumas coisas que nós tínhamos pensado inicialmente, que de início não foi viável.
+
+918
+01:11:38,480 --> 01:11:39,540
+Agora até já pode ser.
+
+919
+01:11:40,160 --> 01:11:40,860
+Coisas simples.
+
+920
+01:11:41,280 --> 01:11:42,520
+Estou a pensar num exemplo prático.
+
+921
+01:11:43,100 --> 01:11:46,500
+Nós, neste momento, nos modelos, falamos muito em...
+
+922
+01:11:46,500 --> 01:11:49,720
+Nós registramos o pedido e a seguir classificamos o pedido.
+
+923
+01:11:50,480 --> 01:11:53,840
+O que a framework diz, não é?
+
+924
+01:11:53,980 --> 01:11:59,140
+E o que diz as boas práticas, lá está, o que diz as boas práticas do ETIL, por exemplo, ou outras,
+
+925
+01:11:59,840 --> 01:12:04,660
+é que nós devemos classificar, categorizar, não é?
+
+926
+01:12:05,660 --> 01:12:09,980
+Nós devemos classificá-los e devemos priorizá-los.
+
+927
+01:12:10,900 --> 01:12:13,240
+Eles devem estar definidos também de acordo com uma prioridade.
+
+928
+01:12:14,020 --> 01:12:14,220
+Ok?
+
+929
+01:12:15,220 --> 01:12:23,140
+Neste momento, à data, o ICFES está a ignorar, vou-lhe chamar assim, não sei se é a palavra mais correta,
+
+930
+01:12:23,240 --> 01:12:24,580
+mas de momento a prioridade...
+
+931
+01:12:26,140 --> 01:12:32,160
+Eles metem, as pessoas escrevem uma prioridade, mas aquilo ainda não está a organizar de acordo com a prioridade.
+
+932
+01:12:32,320 --> 01:12:33,580
+Ou seja, aquilo ainda não estão...
+
+933
+01:12:34,720 --> 01:12:37,660
+A prioridade ainda não está a ser uma coisa levada muito a sério.
+
+934
+01:12:39,360 --> 01:12:40,040
+Lá está.
+
+935
+01:12:40,400 --> 01:12:41,480
+Agora não está.
+
+936
+01:12:42,660 --> 01:12:47,980
+E então a gente tem um modelo adaptado em que realmente não falamos muito da questão da prioridade.
+
+937
+01:12:49,640 --> 01:12:53,080
+Nas tarefas falamos só de resistir a pedido, classificar, não sei o quê.
+
+938
+01:12:54,680 --> 01:13:02,420
+Dois para amanhã, eles passam a dizer, não, a partir de agora a gente vai mesmo começar a prioridade.
+
+939
+01:13:02,560 --> 01:13:06,040
+Isto vai ser mesmo uma... vai ser levada a sério, pronto.
+
+940
+01:13:06,120 --> 01:13:12,340
+Isto vai ter uma escala de x a x e os técnicos reclassificam e não sei o quê.
+
+941
+01:13:12,520 --> 01:13:12,780
+Pronto.
+
+942
+01:13:13,900 --> 01:13:19,080
+Ou seja, dão a prioridade consoante isto, consoante estes critérios e está tudo bem definido.
+
+943
+01:13:19,500 --> 01:13:23,560
+Ou seja, dois para amanhã este modelo volta a ter o que nós sugerimos inicialmente,
+
+944
+01:13:24,300 --> 01:13:28,800
+que é ter a classificação e a parte da prioridade.
+
+945
+01:13:30,800 --> 01:13:32,060
+É um exemplo disto.
+
+946
+01:13:32,740 --> 01:13:34,040
+Classificação em que sentido?
+
+947
+01:13:36,300 --> 01:13:40,800
+Isto já são coisas muito específicas dos processos, mas nós quando temos um pedido...
+
+948
+01:13:42,800 --> 01:13:45,800
+Entra um ticket no...
+
+949
+01:13:46,520 --> 01:13:46,900
+Pronto.
+
+950
+01:13:47,220 --> 01:13:50,260
+É registrado um ticket ou é registrado um pedido, não é?
+
+951
+01:13:50,560 --> 01:13:53,980
+Que é o Joakim, liga para o EGFES a dizer, meu computador não funciona.
+
+952
+01:13:55,120 --> 01:13:56,280
+E registro esse pedido.
+
+953
+01:13:57,060 --> 01:13:58,540
+O meu computador não funciona.
+
+954
+01:13:58,840 --> 01:13:59,960
+Manda o E-mail para o EGFES.
+
+955
+01:14:00,760 --> 01:14:03,180
+E chega o apoio e eles têm que classificar-me.
+
+956
+01:14:03,360 --> 01:14:06,120
+Ou seja, eles vão dizer, isto é um pedido de serviço?
+
+957
+01:14:06,840 --> 01:14:11,380
+Ou seja, isto é um pedido das equipas técnicas para elas fazerem alguma coisa?
+
+958
+01:14:11,460 --> 01:14:12,380
+O que é que são pedidos?
+
+959
+01:14:12,800 --> 01:14:15,380
+Para dizer, por exemplo, eu preciso criar um utilizador.
+
+960
+01:14:15,720 --> 01:14:16,840
+Eu preciso de um utilizador.
+
+961
+01:14:17,580 --> 01:14:18,960
+Criação de uma conta de E-mail.
+
+962
+01:14:21,140 --> 01:14:22,580
+Sei lá, mais pedidos.
+
+963
+01:14:24,200 --> 01:14:26,220
+Pronto, pedidos é... São pedidos.
+
+964
+01:14:26,760 --> 01:14:27,960
+São pedidos que eu faço.
+
+965
+01:14:28,640 --> 01:14:31,280
+O que o Joakim reportou não é um pedido.
+
+966
+01:14:32,300 --> 01:14:35,140
+Porque o Joakim disse, o meu computador não está a funcionar.
+
+967
+01:14:35,520 --> 01:14:38,000
+Não sei se é bem um pedido, se é um incidente, não é?
+
+968
+01:14:38,000 --> 01:14:39,580
+Um incidente é quando já está...
+
+969
+01:14:40,140 --> 01:14:44,240
+Está comprometida a funcionalidade de alguma coisa, não é?
+
+970
+01:14:44,280 --> 01:14:45,920
+Alguma coisa não está em funcionamento.
+
+971
+01:14:46,420 --> 01:14:47,640
+Ou está com...
+
+972
+01:14:47,640 --> 01:14:51,140
+Pode às vezes até nem estar em funcionamento, está só com baixa...
+
+973
+01:14:51,960 --> 01:14:52,460
+Funcionamento.
+
+974
+01:14:52,800 --> 01:14:54,200
+Está funcionando em baixa e aumento.
+
+975
+01:14:56,800 --> 01:14:57,280
+Sim.
+
+976
+01:14:59,500 --> 01:15:00,820
+Imaginemos que está muito lento.
+
+977
+01:15:01,620 --> 01:15:02,300
+Pronto, enfim.
+
+978
+01:15:02,640 --> 01:15:04,060
+Também pode ser com alguma coisa desse jeito.
+
+979
+01:15:05,260 --> 01:15:07,260
+Pronto, e nós quando...
+
+980
+01:15:07,840 --> 01:15:09,960
+O que diz o fluxo, não é?
+
+981
+01:15:10,040 --> 01:15:10,260
+Segundo o...
+
+982
+01:15:11,560 --> 01:15:13,260
+O ITIL, o aconselhado, é que haja um registro.
+
+983
+01:15:15,360 --> 01:15:17,140
+Lá está, para as coisas estarem centralizadas.
+
+984
+01:15:17,240 --> 01:15:19,180
+E que haja uma classificação e uma prioridade.
+
+985
+01:15:19,320 --> 01:15:21,180
+Ou seja, eu recebo mil pedidos.
+
+986
+01:15:21,260 --> 01:15:23,220
+Eu preciso saber o que é que é prioritário e o que é que não é.
+
+987
+01:15:24,100 --> 01:15:24,260
+Não é?
+
+988
+01:15:24,420 --> 01:15:25,400
+Eu tenho que ter uma...
+
+989
+01:15:25,400 --> 01:15:27,180
+A lista tem que estar organizada.
+
+990
+01:15:27,460 --> 01:15:28,600
+Devia estar organizada.
+
+991
+01:15:29,120 --> 01:15:30,740
+Por tipo de pedido, lá está.
+
+992
+01:15:30,740 --> 01:15:35,740
+Ou seja, por pedidos, por incidentes, por eventos, por alterações, por...
+
+993
+01:15:35,740 --> 01:15:36,300
+Forever.
+
+994
+01:15:37,620 --> 01:15:39,380
+E por prioridade, pronto.
+
+995
+01:15:39,500 --> 01:15:41,300
+Mas isso já são coisas muito específicas do esporte.
+
+996
+01:15:41,480 --> 01:15:42,740
+Isso o Joakim, isso não...
+
+997
+01:15:43,640 --> 01:15:44,700
+Não se preocupe com isso.
+
+998
+01:15:44,940 --> 01:15:46,140
+Não...
+
+999
+01:15:46,140 --> 01:15:46,920
+Isso era só...
+
+1000
+01:15:46,920 --> 01:15:48,340
+Eu estava a dar só esse exemplo.
+
+1001
+01:15:49,200 --> 01:15:50,740
+Que era para se perceber que às vezes...
+
+1002
+01:15:51,280 --> 01:15:53,560
+O ter o histórico também é uma coisa importante.
+
+1003
+01:15:54,200 --> 01:15:56,740
+Porque às vezes a gente volta a olhar para os modelos...
+
+1004
+01:15:57,740 --> 01:15:59,180
+Para a versão anterior.
+
+1005
+01:15:59,180 --> 01:16:02,180
+Sim.
+
+1006
+01:16:02,500 --> 01:16:03,220
+E aí depois...
+
+1007
+01:16:03,220 --> 01:16:03,640
+E então?
+
+1008
+01:16:03,760 --> 01:16:04,940
+Foi bom para contexto.
+
+1009
+01:16:05,140 --> 01:16:10,440
+Porque aí, por exemplo, recebendo esses pedidos, as equipas vão ter que consultar os processos.
+
+1010
+01:16:10,560 --> 01:16:11,180
+Para seguir...
+
+1011
+01:16:12,000 --> 01:16:12,800
+Saber o que fazer.
+
+1012
+01:16:18,800 --> 01:16:19,320
+Sim.
+
+1013
+01:16:19,600 --> 01:16:20,360
+Os processos...
+
+1014
+01:16:20,360 --> 01:16:21,180
+Penso nos processos...
+
+1015
+01:16:21,180 --> 01:16:23,180
+Penso nos processos...
+
+1016
+01:16:23,180 --> 01:16:28,180
+Como algo mais para alto nível do que propriamente...
+
+1017
+01:16:28,180 --> 01:16:32,640
+Ah, sim.
+
+1018
+01:16:32,640 --> 01:16:34,260
+Eu estou falando de procedimento, não é?
+
+1019
+01:16:34,440 --> 01:16:34,640
+Sim.
+
+1020
+01:16:34,640 --> 01:16:35,360
+Eu percebi agora.
+
+1021
+01:16:35,360 --> 01:16:35,740
+Sim.
+
+1022
+01:16:36,240 --> 01:16:36,920
+Sim, sim.
+
+1023
+01:16:37,360 --> 01:16:39,180
+Porque eu no meu trabalho...
+
+1024
+01:16:39,180 --> 01:16:39,560
+Eu...
+
+1025
+01:16:39,560 --> 01:16:40,880
+Eu começo o trabalho.
+
+1026
+01:16:41,000 --> 01:16:41,880
+Hoje vou fazer assim.
+
+1027
+01:16:42,060 --> 01:16:42,560
+Clico aqui.
+
+1028
+01:16:42,700 --> 01:16:43,220
+Faço ali.
+
+1029
+01:16:43,980 --> 01:16:44,720
+Isso já é...
+
+1030
+01:16:44,720 --> 01:16:47,300
+São quase instruções de trabalho que eu tenho...
+
+1031
+01:16:47,300 --> 01:16:47,920
+Eu, não é?
+
+1032
+01:16:47,980 --> 01:16:49,940
+Eu se fosse do Helpdesk...
+
+1033
+01:16:49,940 --> 01:16:52,060
+Eu tenho lá uma lista de coisas que...
+
+1034
+01:16:52,060 --> 01:16:54,240
+Se a pessoa me ligar e disser não sei o quê...
+
+1035
+01:16:54,240 --> 01:16:55,620
+Eu faço tal, tal, tal, tal, tal, tal.
+
+1036
+01:16:56,180 --> 01:16:56,820
+Se...
+
+1037
+01:16:56,820 --> 01:16:58,300
+Ou seja, as pessoas depois...
+
+1038
+01:16:58,300 --> 01:16:59,980
+Para trabalharem diariamente, não é?
+
+1039
+01:17:00,340 --> 01:17:04,020
+Consoante a sua atividade também seja mais parametrizada ou não...
+
+1040
+01:17:04,020 --> 01:17:06,680
+Têm as suas instruções de trabalho.
+
+1041
+01:17:06,840 --> 01:17:08,560
+O processo é uma coisa mais...
+
+1042
+01:17:08,560 --> 01:17:09,180
+High level.
+
+1043
+01:17:10,720 --> 01:17:12,000
+Que é, por exemplo...
+
+1044
+01:17:12,000 --> 01:17:13,880
+Ali quem é o responsável...
+
+1045
+01:17:13,880 --> 01:17:15,180
+Desse...
+
+1046
+01:17:17,320 --> 01:17:17,660
+Pronto.
+
+1047
+01:17:17,820 --> 01:17:19,180
+Quem é o responsável deste processo...
+
+1048
+01:17:20,060 --> 01:17:21,180
+Consiga perceber...
+
+1049
+01:17:21,700 --> 01:17:24,280
+Em que ponto de situação é que nós estamos ao nível deste processo.
+
+1050
+01:17:24,280 --> 01:17:26,280
+Ou seja, eu não quero saber...
+
+1051
+01:17:26,280 --> 01:17:28,240
+De nenhum pedido específico.
+
+1052
+01:17:28,980 --> 01:17:29,680
+Quer dizer, eu quero.
+
+1053
+01:17:29,800 --> 01:17:30,100
+Mas pronto.
+
+1054
+01:17:30,440 --> 01:17:33,160
+Eu não quero saber como é que funciona este pedido específico.
+
+1055
+01:17:33,220 --> 01:17:34,300
+Nem aquele pedido específico.
+
+1056
+01:17:34,360 --> 01:17:35,440
+Nem o outro pedido específico.
+
+1057
+01:17:35,540 --> 01:17:36,640
+Isso também tem que estar descrito.
+
+1058
+01:17:37,060 --> 01:17:38,020
+Com certeza que sim.
+
+1059
+01:17:38,060 --> 01:17:40,100
+Porque as pessoas têm que saber como é que vão de...
+
+1060
+01:17:40,100 --> 01:17:41,520
+Agir perante esses pedidos.
+
+1061
+01:17:42,700 --> 01:17:43,480
+Mas eu...
+
+1062
+01:17:43,480 --> 01:17:45,280
+O que me interessa saber é...
+
+1063
+01:17:46,140 --> 01:17:47,280
+Quantos pedidos foram atendidos...
+
+1064
+01:17:47,900 --> 01:17:48,180
+Percebe?
+
+1065
+01:17:48,280 --> 01:17:49,280
+É métricas mais...
+
+1066
+01:17:50,120 --> 01:17:50,720
+High level.
+
+1067
+01:17:51,140 --> 01:17:52,940
+Ou seja, quantos pedidos foram atendidos...
+
+1068
+01:17:52,940 --> 01:17:54,260
+Quantos ficaram parados na trave...
+
+1069
+01:17:54,260 --> 01:17:56,260
+Quantos foram devolvidos...
+
+1070
+01:17:57,080 --> 01:17:58,480
+Quantos foram...
+
+1071
+01:17:58,480 --> 01:18:00,260
+Quantos foram resolvidos à primeira...
+
+1072
+01:18:01,000 --> 01:18:01,260
+Quantos...
+
+1073
+01:18:01,900 --> 01:18:05,100
+Quantos voltaram para trás porque não ficaram resolvidos à primeira...
+
+1074
+01:18:05,100 --> 01:18:07,260
+Ou seja, eu enquanto gestor deste processo...
+
+1075
+01:18:08,440 --> 01:18:11,260
+Eu não estou preocupada em saber que o computador do Joakim...
+
+1076
+01:18:12,140 --> 01:18:12,480
+Pronto.
+
+1077
+01:18:12,620 --> 01:18:13,380
+Salve seja, não é?
+
+1078
+01:18:13,680 --> 01:18:17,020
+Eu não estou preocupada em saber que o computador do Joakim ficou bem ou não ficou bem.
+
+1079
+01:18:17,300 --> 01:18:19,000
+Há de haver alguém que tem que se preocupar com isso.
+
+1080
+01:18:19,060 --> 01:18:20,340
+Que é quem está a resolver o seu pedido.
+
+1081
+01:18:20,340 --> 01:18:23,560
+Mas eu enquanto gestor deste processo global...
+
+1082
+01:18:23,560 --> 01:18:24,340
+Eu estou preocupada em saber...
+
+1083
+01:18:25,020 --> 01:18:27,340
+Quantos pedidos no global foram resolvidos?
+
+1084
+01:18:28,040 --> 01:18:30,040
+Quantos pedidos eu tenho deste tipo?
+
+1085
+01:18:31,100 --> 01:18:32,180
+Ou seja, quantos pedidos...
+
+1086
+01:18:32,180 --> 01:18:32,640
+Porquê?
+
+1087
+01:18:32,780 --> 01:18:34,340
+Porque é que eu quero saber quantos pedidos...
+
+1088
+01:18:34,340 --> 01:18:36,340
+Por exemplo, quantos pedidos eu tenho do tipo criação de utilizador...
+
+1089
+01:18:37,660 --> 01:18:38,340
+Ou reset password...
+
+1090
+01:18:39,740 --> 01:18:40,220
+Ou etc.
+
+1091
+01:18:42,220 --> 01:18:44,220
+Porque eu quero saber assim...
+
+1092
+01:18:45,040 --> 01:18:46,220
+Quais são os pedidos...
+
+1093
+01:18:47,220 --> 01:18:49,220
+Que o ocupam, por exemplo, mais tempo?
+
+1094
+01:18:51,000 --> 01:18:52,160
+Quais são os pedidos...
+
+1095
+01:18:52,160 --> 01:18:53,220
+As pessoas...
+
+1096
+01:18:53,880 --> 01:18:56,880
+A maior parte das chamadas que eu recebo são relativas a que pedido.
+
+1097
+01:18:57,120 --> 01:18:59,420
+Sempre é para fazer estas análises mais high level.
+
+1098
+01:19:01,720 --> 01:19:03,220
+Lá está mais uma vez...
+
+1099
+01:19:04,500 --> 01:19:06,500
+Se eu tiver um site...
+
+1100
+01:19:07,500 --> 01:19:09,500
+Onde eu tenha isto tudo espelhado...
+
+1101
+01:19:10,160 --> 01:19:11,320
+O que está na minha cabeça...
+
+1102
+01:19:11,320 --> 01:19:12,840
+O que está na cabeça do Nuno...
+
+1103
+01:19:12,840 --> 01:19:13,500
+E na cabeça do Abel...
+
+1104
+01:19:14,620 --> 01:19:16,300
+Fica claro para todos.
+
+1105
+01:19:18,260 --> 01:19:19,040
+Percebe, Joakim?
+
+1106
+01:19:19,340 --> 01:19:20,260
+Porque as pessoas...
+
+1107
+01:19:20,260 --> 01:19:21,500
+Como o Joakim agora estava a dizer também...
+
+1108
+01:19:22,320 --> 01:19:23,740
+Nós próprios...
+
+1109
+01:19:23,740 --> 01:19:24,780
+Porque não é...
+
+1110
+01:19:24,780 --> 01:19:25,500
+Não é uma linha...
+
+1111
+01:19:26,860 --> 01:19:27,500
+Ténua...
+
+1112
+01:19:28,040 --> 01:19:28,720
+Nós próprios...
+
+1113
+01:19:28,720 --> 01:19:31,040
+Às vezes temos dificuldade em distinguir...
+
+1114
+01:19:32,060 --> 01:19:33,040
+Um bocadinho...
+
+1115
+01:19:33,040 --> 01:19:34,140
+O que é que é um processo...
+
+1116
+01:19:34,140 --> 01:19:35,240
+Às vezes de alto nível...
+
+1117
+01:19:35,240 --> 01:19:36,260
+E o que é que já está a ser...
+
+1118
+01:19:36,260 --> 01:19:38,040
+Se calhar uma coisa muito detalhada...
+
+1119
+01:19:38,560 --> 01:19:40,040
+Às vezes não é assim tão fácil...
+
+1120
+01:19:41,280 --> 01:19:42,040
+Às vezes é claro...
+
+1121
+01:19:42,600 --> 01:19:43,040
+Pronto...
+
+1122
+01:19:43,520 --> 01:19:44,040
+Um processo...
+
+1123
+01:19:44,040 --> 01:19:45,120
+A gente preocupa-se é...
+
+1124
+01:19:45,120 --> 01:19:46,460
+O que é que está a ser feito?
+
+1125
+01:19:46,940 --> 01:19:48,300
+O que é que precisa de ser feito?
+
+1126
+01:19:48,460 --> 01:19:49,840
+É quase como se fosse uma norma.
+
+1127
+01:19:50,400 --> 01:19:52,560
+Quais são as fases que este processo precisa passar?
+
+1128
+01:19:53,420 --> 01:19:54,040
+Quando eu estou a descrever...
+
+1129
+01:19:54,040 --> 01:19:56,040
+Como é que eu faço exatamente...
+
+1130
+01:19:56,800 --> 01:19:59,080
+Eu já estou a ir uma linha abaixo...
+
+1131
+01:19:59,080 --> 01:19:59,960
+Que lá está...
+
+1132
+01:19:59,960 --> 01:20:01,940
+Também tem que estar escrito...
+
+1133
+01:20:01,940 --> 01:20:02,960
+Mas nós de momento...
+
+1134
+01:20:02,960 --> 01:20:04,600
+Nós estamos a pensar mais high level...
+
+1135
+01:20:04,600 --> 01:20:05,340
+Ou seja...
+
+1136
+01:20:05,340 --> 01:20:06,180
+Vamos começar...
+
+1137
+01:20:06,180 --> 01:20:08,300
+Vamos começar pelo mais simples...
+
+1138
+01:20:08,300 --> 01:20:08,440
+Não é?
+
+1139
+01:20:08,500 --> 01:20:10,600
+Que é o que é que precisa de ser feito...
+
+1140
+01:20:10,600 --> 01:20:13,440
+E nós temos que dar essa perceção às pessoas...
+
+1141
+01:20:13,440 --> 01:20:15,460
+Nós temos que vender isso...
+
+1142
+01:20:15,460 --> 01:20:18,300
+E é muito mais fácil nós vendermos isso...
+
+1143
+01:20:18,300 --> 01:20:20,960
+Se nós tivermos uma página que explique isso...
+
+1144
+01:20:20,960 --> 01:20:23,180
+Porque se eu agarrar...
+
+1145
+01:20:23,180 --> 01:20:25,000
+Quando nós tínhamos o nosso site...
+
+1146
+01:20:25,000 --> 01:20:26,760
+O Rui conseguiu vender isso a outras...
+
+1147
+01:20:26,760 --> 01:20:28,240
+A outras entidades...
+
+1148
+01:20:28,240 --> 01:20:29,700
+O Rui é o nosso diretor...
+
+1149
+01:20:29,700 --> 01:20:31,900
+Conseguiu vender isso a outras entidades...
+
+1150
+01:20:31,900 --> 01:20:32,920
+A outras entidades...
+
+1151
+01:20:32,920 --> 01:20:33,400
+Estupidez...
+
+1152
+01:20:33,400 --> 01:20:34,900
+A outros departamentos...
+
+1153
+01:20:36,040 --> 01:20:36,460
+Ou seja...
+
+1154
+01:20:36,460 --> 01:20:38,900
+Começámos a incutir...
+
+1155
+01:20:38,900 --> 01:20:39,900
+Nas pessoas...
+
+1156
+01:20:39,900 --> 01:20:41,960
+Esta ideia dos conceitos...
+
+1157
+01:20:41,960 --> 01:20:43,360
+Porque já esta parte dos conceitos...
+
+1158
+01:20:43,360 --> 01:20:44,900
+Já é complicada às vezes...
+
+1159
+01:20:44,900 --> 01:20:45,900
+As pessoas entenderem...
+
+1160
+01:20:46,620 --> 01:20:49,100
+Se nós tivermos um site...
+
+1161
+01:20:49,100 --> 01:20:49,760
+Que tenha...
+
+1162
+01:20:49,760 --> 01:20:51,760
+Um glossário...
+
+1163
+01:20:51,760 --> 01:20:52,760
+Que nos explique...
+
+1164
+01:20:52,760 --> 01:20:54,900
+Nós temos esses conceitos...
+
+1165
+01:20:54,900 --> 01:20:55,660
+Todos no guião...
+
+1166
+01:20:55,660 --> 01:20:57,760
+O Joakim pode agarrar e tirar de lá...
+
+1167
+01:20:57,760 --> 01:20:59,440
+Se nós tivermos um...
+
+1168
+01:20:59,440 --> 01:21:00,100
+Um...
+
+1169
+01:21:00,100 --> 01:21:01,040
+Um site...
+
+1170
+01:21:01,040 --> 01:21:01,360
+Que nos...
+
+1171
+01:21:01,360 --> 01:21:01,760
+Que nos...
+
+1172
+01:21:02,900 --> 01:21:03,440
+Explique...
+
+1173
+01:21:03,440 --> 01:21:04,180
+Que tenha um glossário...
+
+1174
+01:21:04,180 --> 01:21:04,700
+Que nos explique...
+
+1175
+01:21:04,700 --> 01:21:06,040
+O que é que é um processo...
+
+1176
+01:21:06,040 --> 01:21:07,280
+O que é que é um procedimento...
+
+1177
+01:21:07,280 --> 01:21:08,480
+E que depois nos mostra...
+
+1178
+01:21:08,480 --> 01:21:10,240
+Exemplos em concreto...
+
+1179
+01:21:10,240 --> 01:21:10,960
+É excelente...
+
+1180
+01:21:10,960 --> 01:21:11,640
+Porque as pessoas...
+
+1181
+01:21:11,640 --> 01:21:12,560
+Ao visualizarem...
+
+1182
+01:21:12,560 --> 01:21:14,900
+Já conseguem perceber...
+
+1183
+01:21:14,900 --> 01:21:16,180
+Porque é muito mais fácil...
+
+1184
+01:21:16,180 --> 01:21:17,280
+A gente perceber com exemplos...
+
+1185
+01:21:18,500 --> 01:21:19,140
+E as pessoas aí...
+
+1186
+01:21:19,140 --> 01:21:20,140
+Já conseguem entender...
+
+1187
+01:21:20,140 --> 01:21:20,460
+Ok...
+
+1188
+01:21:20,460 --> 01:21:21,300
+Estas métricas...
+
+1189
+01:21:21,300 --> 01:21:22,560
+São métricas de alto nível...
+
+1190
+01:21:22,560 --> 01:21:23,280
+Já conseguem perceber...
+
+1191
+01:21:24,940 --> 01:21:26,820
+Se nós...
+
+1192
+01:21:26,820 --> 01:21:27,580
+Nós depois também...
+
+1193
+01:21:27,580 --> 01:21:28,320
+Instanciamos...
+
+1194
+01:21:28,320 --> 01:21:30,280
+Instanciamos o processo...
+
+1195
+01:21:32,540 --> 01:21:33,920
+Percebem este conceito...
+
+1196
+01:21:33,920 --> 01:21:34,640
+Ou nem por isso...
+
+1197
+01:21:34,640 --> 01:21:35,600
+Não...
+
+1198
+01:21:35,600 --> 01:21:36,280
+Como assim...
+
+1199
+01:21:36,280 --> 01:21:38,000
+Ou seja...
+
+1200
+01:21:38,000 --> 01:21:38,840
+Nós temos um...
+
+1201
+01:21:38,840 --> 01:21:40,380
+Um macro processo...
+
+1202
+01:21:40,380 --> 01:21:41,180
+De gestão de peritos...
+
+1203
+01:21:41,180 --> 01:21:41,720
+De serviço...
+
+1204
+01:21:41,720 --> 01:21:41,860
+Não é?
+
+1205
+01:21:43,620 --> 01:21:44,600
+Eu te vou mostrar...
+
+1206
+01:21:44,600 --> 01:21:45,620
+Porque é mais fácil...
+
+1207
+01:21:45,620 --> 01:21:46,660
+Isto já está em muito além...
+
+1208
+01:21:46,660 --> 01:21:47,560
+Mas é só para os Joakim...
+
+1209
+01:21:47,560 --> 01:21:48,200
+Perceber...
+
+1210
+01:21:48,200 --> 01:21:49,420
+Que pode fazer muito...
+
+1211
+01:21:49,420 --> 01:21:50,700
+Desse site...
+
+1212
+01:21:50,700 --> 01:21:51,260
+Precisa...
+
+1213
+01:21:51,260 --> 01:21:52,440
+Nós precisamos...
+
+1214
+01:21:52,440 --> 01:21:53,360
+É de ver qualquer coisa...
+
+1215
+01:21:53,360 --> 01:21:54,320
+Porque se nós não mostramos...
+
+1216
+01:21:54,320 --> 01:21:55,860
+Nada às pessoas...
+
+1217
+01:21:55,860 --> 01:21:56,820
+É muito difícil...
+
+1218
+01:21:56,820 --> 01:21:57,720
+Nós também vendemos...
+
+1219
+01:21:57,720 --> 01:21:59,260
+A ideia do nosso lado...
+
+1220
+01:21:59,260 --> 01:21:59,760
+Assim...
+
+1221
+01:21:59,760 --> 01:22:01,360
+Torna-se muito complicado...
+
+1222
+01:22:01,360 --> 01:22:02,080
+Sim...
+
+1223
+01:22:02,080 --> 01:22:03,080
+Sim...
+
+1224
+01:22:03,080 --> 01:22:05,160
+Quer saber agora...
+
+1225
+01:22:05,160 --> 01:22:06,160
+Ah...
+
+1226
+01:22:06,160 --> 01:22:06,880
+Ah...
+
+1227
+01:22:06,880 --> 01:22:07,720
+Ah...
+
+1228
+01:22:07,720 --> 01:22:08,200
+Ah...
+
+1229
+01:22:08,200 --> 01:22:10,100
+A ver se eu consigo mostrar...
+
+1230
+01:22:10,100 --> 01:22:11,600
+Ah...
+
+1231
+01:22:11,600 --> 01:22:14,100
+Onde é que isto está...
+
+1232
+01:22:14,100 --> 01:22:15,880
+Pronto...
+
+1233
+01:22:15,880 --> 01:22:17,340
+Vou só mostrar isto por último...
+
+1234
+01:22:17,340 --> 01:22:19,100
+E depois vamos embora...
+
+1235
+01:22:19,100 --> 01:22:20,100
+Ah...
+
+1236
+01:22:20,100 --> 01:22:20,740
+Fala Inésio...
+
+1237
+01:22:20,740 --> 01:22:21,980
+Muito obrigado por acontecer...
+
+1238
+01:22:21,980 --> 01:22:22,320
+Maria...
+
+1239
+01:22:22,320 --> 01:22:23,540
+Agora que eu estou...
+
+1240
+01:22:23,540 --> 01:22:24,040
+Percebendo...
+
+1241
+01:22:25,360 --> 01:22:25,560
+Mas...
+
+1242
+01:22:25,560 --> 01:22:26,840
+Agora também ficou gravado...
+
+1243
+01:22:26,840 --> 01:22:27,780
+Qualquer coisa...
+
+1244
+01:22:27,780 --> 01:22:28,420
+Está...
+
+1245
+01:22:28,420 --> 01:22:30,220
+Ainda está a gravar...
+
+1246
+01:22:30,220 --> 01:22:30,920
+Pronto...
+
+1247
+01:22:30,920 --> 01:22:31,680
+Então...
+
+1248
+01:22:31,680 --> 01:22:33,260
+Nós temos este processo...
+
+1249
+01:22:33,260 --> 01:22:34,040
+Macro...
+
+1250
+01:22:34,040 --> 01:22:34,200
+Não é?
+
+1251
+01:22:34,320 --> 01:22:35,140
+Eu chego aqui...
+
+1252
+01:22:35,140 --> 01:22:35,380
+E digo...
+
+1253
+01:22:35,380 --> 01:22:36,740
+Posso receber pedidos...
+
+1254
+01:22:36,740 --> 01:22:37,960
+De todos os tipos...
+
+1255
+01:22:37,960 --> 01:22:38,880
+Ou seja...
+
+1256
+01:22:38,880 --> 01:22:40,040
+As pessoas vão...
+
+1257
+01:22:40,040 --> 01:22:42,040
+Ao nosso...
+
+1258
+01:22:42,040 --> 01:22:43,040
+ITSM...
+
+1259
+01:22:44,300 --> 01:22:44,980
+Que é...
+
+1260
+01:22:44,980 --> 01:22:45,900
+Pronto...
+
+1261
+01:22:45,900 --> 01:22:47,360
+Que é para fazer gestão de tickets...
+
+1262
+01:22:47,360 --> 01:22:47,480
+Não é?
+
+1263
+01:22:48,600 --> 01:22:49,680
+E abrem um pedido...
+
+1264
+01:22:49,680 --> 01:22:51,160
+Ou as pessoas ligam para o LTS...
+
+1265
+01:22:51,160 --> 01:22:52,940
+Ou as pessoas mandam o email para o LTS...
+
+1266
+01:22:52,940 --> 01:22:54,040
+Ou as pessoas...
+
+1267
+01:22:54,040 --> 01:22:55,100
+Chegam ali...
+
+1268
+01:22:55,100 --> 01:22:56,040
+Ou pedem o senhor...
+
+1269
+01:22:56,040 --> 01:22:57,040
+Que trabalha no LTS...
+
+1270
+01:22:57,040 --> 01:22:58,040
+E pedem alguma coisa...
+
+1271
+01:22:58,740 --> 01:22:59,100
+Pronto...
+
+1272
+01:22:59,100 --> 01:23:00,620
+E isto depois vai para a primeira linha...
+
+1273
+01:23:00,620 --> 01:23:01,040
+E eles analisam...
+
+1274
+01:23:02,560 --> 01:23:03,960
+E depois vão registar...
+
+1275
+01:23:03,960 --> 01:23:05,040
+E depois vão fazer...
+
+1276
+01:23:05,840 --> 01:23:07,280
+A categorização...
+
+1277
+01:23:07,280 --> 01:23:08,380
+E depois vão priorizar...
+
+1278
+01:23:08,380 --> 01:23:08,820
+Blá blá blá...
+
+1279
+01:23:08,820 --> 01:23:10,700
+Aquilo que a gente estávamos a falar...
+
+1280
+01:23:10,700 --> 01:23:13,200
+Por acaso...
+
+1281
+01:23:13,200 --> 01:23:13,640
+Eu tenho falta...
+
+1282
+01:23:13,640 --> 01:23:14,620
+Falta aqui a...
+
+1283
+01:23:14,620 --> 01:23:15,740
+A classificação...
+
+1284
+01:23:15,740 --> 01:23:16,860
+Não sei porquê...
+
+1285
+01:23:16,860 --> 01:23:17,960
+Se calhar uma versão anterior...
+
+1286
+01:23:17,960 --> 01:23:18,700
+Nem interessa...
+
+1287
+01:23:19,500 --> 01:23:20,700
+Desculpem...
+
+1288
+01:23:21,500 --> 01:23:23,000
+Isto para dizer...
+
+1289
+01:23:23,000 --> 01:23:23,700
+Isto é um caso...
+
+1290
+01:23:24,540 --> 01:23:25,700
+Isto é o caso geral...
+
+1291
+01:23:25,700 --> 01:23:25,900
+Não é?
+
+1292
+01:23:26,900 --> 01:23:27,460
+Ou seja...
+
+1293
+01:23:27,460 --> 01:23:28,700
+Eu aqui não estou a explicar...
+
+1294
+01:23:29,480 --> 01:23:30,380
+Qual é que é o pedido...
+
+1295
+01:23:30,380 --> 01:23:31,400
+Mas este pedido é do quê?
+
+1296
+01:23:32,180 --> 01:23:34,080
+É um pedido de criação do utilizador...
+
+1297
+01:23:34,080 --> 01:23:34,700
+É um pedido de criação...
+
+1298
+01:23:34,700 --> 01:23:36,600
+Criação de...
+
+1299
+01:23:36,600 --> 01:23:38,260
+De reset password...
+
+1300
+01:23:38,260 --> 01:23:39,760
+É um pedido de...
+
+1301
+01:23:39,760 --> 01:23:40,580
+É um pedido de quê?
+
+1302
+01:23:40,680 --> 01:23:41,560
+Criação de email...
+
+1303
+01:23:41,560 --> 01:23:43,940
+Eu não estou aqui a especificar nada disso...
+
+1304
+01:23:43,940 --> 01:23:44,300
+Certo?
+
+1305
+01:23:44,700 --> 01:23:45,300
+Lá está...
+
+1306
+01:23:45,300 --> 01:23:46,300
+Isto é para ser um...
+
+1307
+01:23:46,300 --> 01:23:47,560
+High level...
+
+1308
+01:23:47,560 --> 01:23:48,160
+Mas depois...
+
+1309
+01:23:48,160 --> 01:23:49,520
+Nós vamos instanciar...
+
+1310
+01:23:49,520 --> 01:23:50,560
+O que é que é instanciar?
+
+1311
+01:23:50,980 --> 01:23:53,160
+Então agora vamos supor...
+
+1312
+01:23:53,160 --> 01:23:55,440
+Que isto era um pedido de reset password...
+
+1313
+01:23:56,640 --> 01:23:56,880
+Né?
+
+1314
+01:23:57,980 --> 01:23:59,560
+E eu chegava aqui...
+
+1315
+01:23:59,560 --> 01:24:00,720
+Recebia o pedido...
+
+1316
+01:24:00,720 --> 01:24:01,220
+Na mesma...
+
+1317
+01:24:01,220 --> 01:24:02,440
+Por qualquer uma destas vias...
+
+1318
+01:24:03,120 --> 01:24:03,660
+E a seguir...
+
+1319
+01:24:03,660 --> 01:24:04,280
+O que é que acontecia?
+
+1320
+01:24:04,340 --> 01:24:05,020
+Analisar pedido...
+
+1321
+01:24:05,020 --> 01:24:06,460
+Mas o que é que é um analisar pedido...
+
+1322
+01:24:06,460 --> 01:24:07,800
+No caso do reset password?
+
+1323
+01:24:07,960 --> 01:24:08,780
+O que é que eles fazem?
+
+1324
+01:24:09,300 --> 01:24:10,400
+O que é que eles verificam?
+
+1325
+01:24:11,720 --> 01:24:12,160
+Ou seja...
+
+1326
+01:24:12,160 --> 01:24:14,140
+Eu vou passar por estas fases...
+
+1327
+01:24:14,140 --> 01:24:16,140
+Mas vou detalhar em concreto...
+
+1328
+01:24:16,140 --> 01:24:17,520
+O que é que é feito neste caso?
+
+1329
+01:24:18,300 --> 01:24:18,720
+Ah...
+
+1330
+01:24:18,720 --> 01:24:19,200
+Entendi...
+
+1331
+01:24:19,200 --> 01:24:19,880
+Então...
+
+1332
+01:24:19,880 --> 01:24:21,320
+Colocar esse...
+
+1333
+01:24:21,320 --> 01:24:23,380
+Btmn no domínio...
+
+1334
+01:24:23,380 --> 01:24:23,820
+De...
+
+1335
+01:24:23,820 --> 01:24:25,320
+Resetar password...
+
+1336
+01:24:25,320 --> 01:24:26,580
+Perceberam?
+
+1337
+01:24:27,880 --> 01:24:28,400
+Sim...
+
+1338
+01:24:28,400 --> 01:24:28,500
+Sim...
+
+1339
+01:24:28,500 --> 01:24:28,560
+Sim...
+
+1340
+01:24:28,560 --> 01:24:30,000
+Pronto...
+
+1341
+01:24:30,000 --> 01:24:31,000
+Se quiser...
+
+1342
+01:24:31,000 --> 01:24:31,920
+Aqui não sei...
+
+1343
+01:24:31,920 --> 01:24:33,760
+Depois se é viável ou não...
+
+1344
+01:24:33,760 --> 01:24:35,000
+Depois fazer isso também...
+
+1345
+01:24:35,000 --> 01:24:35,700
+Por exemplo...
+
+1346
+01:24:35,700 --> 01:24:36,860
+É outro exemplo...
+
+1347
+01:24:36,860 --> 01:24:37,560
+Dá o conceito...
+
+1348
+01:24:37,560 --> 01:24:38,940
+Também pode dar...
+
+1349
+01:24:38,940 --> 01:24:41,560
+O que é que acha?
+
+1350
+01:24:41,560 --> 01:24:42,320
+Sim...
+
+1351
+01:24:42,320 --> 01:24:43,120
+Sim...
+
+1352
+01:24:43,120 --> 01:24:44,240
+Interessante...
+
+1353
+01:24:44,240 --> 01:24:45,320
+Dá para fazer...
+
+1354
+01:24:45,320 --> 01:24:46,980
+Acha que sim?
+
+1355
+01:24:47,060 --> 01:24:47,860
+Mas em que sentido?
+
+1356
+01:24:48,220 --> 01:24:48,980
+Como é que ficaria?
+
+1357
+01:24:49,060 --> 01:24:50,120
+Por exemplo...
+
+1358
+01:24:50,120 --> 01:24:51,620
+Vou equiparar para o tempo...
+
+1359
+01:24:51,620 --> 01:24:52,100
+Então...
+
+1360
+01:24:52,100 --> 01:24:53,180
+Dá para criar...
+
+1361
+01:24:53,180 --> 01:24:53,680
+Por exemplo...
+
+1362
+01:24:53,680 --> 01:24:54,800
+Uma tela...
+
+1363
+01:24:54,800 --> 01:24:56,060
+Em que a gente tem...
+
+1364
+01:24:56,060 --> 01:24:58,160
+Processo High Level...
+
+1365
+01:24:58,160 --> 01:24:58,720
+E...
+
+1366
+01:24:58,720 --> 01:25:01,080
+Todos os processos...
+
+1367
+01:25:01,080 --> 01:25:02,040
+Que foram instanciados...
+
+1368
+01:25:02,040 --> 01:25:03,020
+E categorizados...
+
+1369
+01:25:03,020 --> 01:25:03,500
+Por exemplo...
+
+1370
+01:25:03,500 --> 01:25:05,380
+A gente tem esse processo...
+
+1371
+01:25:05,380 --> 01:25:07,140
+Quais deles foram instanciados?
+
+1372
+01:25:07,280 --> 01:25:07,580
+Esse...
+
+1373
+01:25:07,580 --> 01:25:07,780
+Esse...
+
+1374
+01:25:07,780 --> 01:25:08,340
+Esse...
+
+1375
+01:25:08,340 --> 01:25:08,760
+Ok...
+
+1376
+01:25:08,760 --> 01:25:09,880
+Eu quero...
+
+1377
+01:25:09,880 --> 01:25:11,440
+Criar uma nova instância...
+
+1378
+01:25:11,440 --> 01:25:13,000
+Eu consigo criar diretamente...
+
+1379
+01:25:13,000 --> 01:25:14,340
+Na plataforma...
+
+1380
+01:25:14,340 --> 01:25:15,540
+E aí cria...
+
+1381
+01:25:15,540 --> 01:25:17,140
+Você pode...
+
+1382
+01:25:17,140 --> 01:25:18,040
+Por exemplo...
+
+1383
+01:25:18,040 --> 01:25:18,500
+Ó...
+
+1384
+01:25:18,500 --> 01:25:19,500
+Editar...
+
+1385
+01:25:19,500 --> 01:25:20,620
+O próprio modelo...
+
+1386
+01:25:20,620 --> 01:25:21,440
+E salvar ele...
+
+1387
+01:25:21,440 --> 01:25:22,440
+Como uma instância...
+
+1388
+01:25:22,440 --> 01:25:24,200
+Daquele processo...
+
+1389
+01:25:24,200 --> 01:25:25,060
+Aí dá para...
+
+1390
+01:25:25,060 --> 01:25:25,980
+Ter uma tela...
+
+1391
+01:25:25,980 --> 01:25:26,920
+Só...
+
+1392
+01:25:26,920 --> 01:25:27,500
+Por exemplo...
+
+1393
+01:25:27,500 --> 01:25:28,360
+Para visualizar...
+
+1394
+01:25:28,360 --> 01:25:29,900
+E editar...
+
+1395
+01:25:29,900 --> 01:25:30,720
+As instâncias...
+
+1396
+01:25:30,720 --> 01:25:31,500
+Dá para...
+
+1397
+01:25:31,500 --> 01:25:33,840
+Não dá para fazer isso...
+
+1398
+01:25:33,840 --> 01:25:35,480
+E ter as instâncias...
+
+1399
+01:25:35,480 --> 01:25:36,300
+É a instância...
+
+1400
+01:25:36,300 --> 01:25:36,640
+Sim...
+
+1401
+01:25:36,640 --> 01:25:37,820
+Ter todas as instâncias...
+
+1402
+01:25:37,820 --> 01:25:38,480
+Existe já não...
+
+1403
+01:25:38,480 --> 01:25:39,040
+Porque eles ficam...
+
+1404
+01:25:39,040 --> 01:25:40,160
+Complicados...
+
+1405
+01:25:40,160 --> 01:25:43,100
+Mas...
+
+1406
+01:25:43,100 --> 01:25:43,580
+Mas...
+
+1407
+01:25:43,580 --> 01:25:44,160
+Mas...
+
+1408
+01:25:44,160 --> 01:25:44,720
+Mas...
+
+1409
+01:25:44,720 --> 01:25:44,780
+Se esse...
+
+1410
+01:25:44,780 --> 01:25:45,680
+Desse para fazer isso...
+
+1411
+01:25:45,680 --> 01:25:46,380
+É uma sugestão...
+
+1412
+01:25:46,380 --> 01:25:47,840
+Que também pode dar...
+
+1413
+01:25:47,840 --> 01:25:48,820
+Pronto...
+
+1414
+01:25:48,820 --> 01:25:49,260
+É outra...
+
+1415
+01:25:49,260 --> 01:25:49,820
+Possionalidade...
+
+1416
+01:25:49,820 --> 01:25:50,860
+Também pode ter...
+
+1417
+01:25:50,860 --> 01:25:51,260
+Já temos a instância...
+
+1418
+01:25:51,260 --> 01:25:52,260
+Temos a instância...
+
+1419
+01:25:52,260 --> 01:25:54,200
+Temos que nos manter realistas...
+
+1420
+01:25:54,200 --> 01:25:55,020
+Com os tempos...
+
+1421
+01:25:55,020 --> 01:25:56,080
+E etc...
+
+1422
+01:25:56,080 --> 01:25:56,940
+Funcionalidades...
+
+1423
+01:25:56,940 --> 01:25:58,020
+Muito complexas...
+
+1424
+01:25:58,020 --> 01:25:59,820
+É melhor a gente não se comprometer...
+
+1425
+01:25:59,820 --> 01:26:01,940
+Mas pronto...
+
+1426
+01:26:01,940 --> 01:26:03,060
+Já quem é que sabe...
+
+1427
+01:26:03,060 --> 01:26:03,720
+Mas eu pensei...
+
+1428
+01:26:03,720 --> 01:26:04,400
+Estava só...
+
+1429
+01:26:04,400 --> 01:26:04,400
+Estava só a dar...
+
+1430
+01:26:04,400 --> 01:26:04,720
+Estava a pedir...
+
+1431
+01:26:04,720 --> 01:26:06,400
+Estava a pedir...
+
+1432
+01:26:06,400 --> 01:26:06,880
+Pode falar...
+
+1433
+01:26:06,880 --> 01:26:07,400
+Mariana...
+
+1434
+01:26:07,400 --> 01:26:09,400
+Sim...
+
+1435
+01:26:09,400 --> 01:26:10,160
+Estava só a dizer...
+
+1436
+01:26:10,160 --> 01:26:10,660
+A Abel...
+
+1437
+01:26:10,660 --> 01:26:11,040
+Que nós...
+
+1438
+01:26:11,040 --> 01:26:12,000
+Nós estávamos a pensar...
+
+1439
+01:26:12,000 --> 01:26:12,280
+Aqui em...
+
+1440
+01:26:12,280 --> 01:26:12,860
+Afortunidades...
+
+1441
+01:26:12,860 --> 01:26:14,240
+Joguinho estava a pedir...
+
+1442
+01:26:14,240 --> 01:26:16,240
+Estava um pouco limitado...
+
+1443
+01:26:16,240 --> 01:26:16,740
+E...
+
+1444
+01:26:16,740 --> 01:26:17,740
+Estava a pedir...
+
+1445
+01:26:17,740 --> 01:26:18,520
+Por exemplo...
+
+1446
+01:26:18,520 --> 01:26:19,300
+Funcionalidades...
+
+1447
+01:26:19,300 --> 01:26:20,100
+Que podemos ter...
+
+1448
+01:26:20,100 --> 01:26:20,740
+E eu pensei...
+
+1449
+01:26:20,740 --> 01:26:21,240
+Em vários...
+
+1450
+01:26:21,240 --> 01:26:23,060
+Temos estado a pensar...
+
+1451
+01:26:23,060 --> 01:26:24,340
+O tempo que aqui ficámos...
+
+1452
+01:26:24,340 --> 01:26:25,020
+Temos estado a pensar...
+
+1453
+01:26:25,020 --> 01:26:25,780
+Em várias coisas...
+
+1454
+01:26:25,780 --> 01:26:26,500
+Pode ser feita...
+
+1455
+01:26:26,500 --> 01:26:27,180
+A história...
+
+1456
+01:26:27,180 --> 01:26:27,540
+Se quiser...
+
+1457
+01:26:27,540 --> 01:26:28,240
+Pode explicar...
+
+1458
+01:26:28,240 --> 01:26:50,940
+aqui. A gente pensou, por exemplo, em... Eu percebi que qual é o objetivo do site, se quiser ver a gravação também, mas basicamente a gente tem que documentar os processos para que tenha um padrão.
+
+1459
+01:26:51,800 --> 01:27:01,880
+Então, estabelecer os padrões e a comunicação também entre as equipes, porque atualmente o que a Maria falou é feito por e-mail.
+
+1460
+01:27:03,160 --> 01:27:17,320
+A primeira versão eu já posso mostrar para todos quinta-feira. Eu já consigo criar para quinta-feira uma terceira versão aqui, só para visualização dos processos.
+
+1461
+01:27:17,360 --> 01:27:30,440
+E aí a gente pode, por exemplo, alterar um pouco como é que é organizada essa informação e depois a gente cria um back-office e expande as funcionalidades.
+
+1462
+01:27:30,440 --> 01:27:44,140
+Não precisas comprometer com prazos. Assim que estejas, falas com a Maria, Maria marca aí a agenda da sua reunião. Está bem? Eu vou estar de férias, mas venho especificamente para apresentares aí a tua aplicação, o protótipo. Está bem?
+
+1463
+01:27:44,140 --> 01:27:58,840
+Mas eu já percebi agora. A Maria me explicou muito detalhadamente o contexto, objetivos, problemas, como é feito, possíveis funcionalidades. Então está muito claro agora. Não tem como é.
+
+1464
+01:27:58,840 --> 01:28:18,460
+Então seria interessante a gente seguir, voltar agora com força total e seguir nessa dinâmica. Por exemplo, toda reunião eu mostro uma demo de como está.
+
+1465
+01:28:18,460 --> 01:28:35,760
+Ou eu posso ir atualizando também, eu posso compartilhar vídeo de uma demo, da demo lá no canal, ou o que preferirem. E aí a gente, aí por exemplo, toda demo eu mostro como é que está, a gente discute e eu proponho alguma coisa em seguida.
+
+1466
+01:28:35,760 --> 01:29:03,040
+Mas podes fazer mais simples, tu colocas o código no repositório, devops como eu te mostrei, criamos uma build e tu corre, está sempre a correr, corre diariamente, gera a build, atualiza os binários, atualiza o site e nós conseguimos consultar e temos um portal onde a gente consegue aceder diretamente à aplicação que estás a desenvolver.
+
+1467
+01:29:03,880 --> 01:29:09,260
+Quem é que eu consigo falar para integrar isso no ambiente de teste?
+
+1468
+01:29:10,940 --> 01:29:17,100
+Eu depois apresento, pode ser com o Tito ou com o Tiago, mas primeiro tens que apresentar essa pod, porque eu apresento eles também.
+
+1469
+01:29:17,180 --> 01:29:20,640
+Sim, eu vou apresentar a pod e ele integra.
+
+1470
+01:29:21,280 --> 01:29:24,400
+Já faz isso em Docker, depois a gente incorpora isso no Banshift, está bem?
+
+1471
+01:29:24,960 --> 01:29:31,540
+Tá, está ótimo. Então, é um plano, então. Vou fazer essa demo.
+
+1472
+01:29:32,000 --> 01:29:41,880
+Eu vou tentar fazer para quinta-feira, porque eu quero resolver logo isso e a gente expande daí, integra e tudo mais.
+
+1473
+01:29:42,560 --> 01:29:42,880
+Tá bom.
+
+1474
+01:29:43,700 --> 01:29:44,040
+Tá bom?
+
+1475
+01:29:44,600 --> 01:29:45,780
+Tá, terminado.
+
+1476
+01:29:45,840 --> 01:29:46,100
+Obrigado.
+
+1477
+01:29:46,100 --> 01:29:47,060
+Quer dizer alguma coisa, então?
+
+1478
+01:29:47,300 --> 01:29:49,300
+Vou aqui parar de gravar um tipo de pergunta que está te falando.
+
+1479
+01:29:49,560 --> 01:29:49,880
+Boa tarde.
+
+1480
+01:29:54,380 --> 01:29:56,120
+Muito obrigado.
+
+1481
+01:29:56,120 --> 01:29:56,180
+Muito obrigado.
+
+1482
+01:29:56,280 --> 01:29:56,400
+Tá?
+
+1483
+01:29:56,900 --> 01:29:57,120
+Tá.
+
+1484
+01:29:57,540 --> 01:30:00,060
+Então, tá. Força. Bom trabalho de aqui.
+
+1485
+01:30:01,340 --> 01:30:01,740
+Não.
+
+1486
+01:30:02,240 --> 01:30:03,560
+No Númeria a gente fica, tá bem.
+
+1487
+01:30:04,080 --> 01:30:04,600
+Ah, tá bem.
+
+1488
+01:30:05,060 --> 01:30:05,840
+Obrigado. Até mais.
+
+1489
+01:30:06,800 --> 01:30:07,040
+Tchau.
+
+1490
+01:30:07,220 --> 01:30:07,520
+Tchau.
+
+1491
+01:30:07,520 --> 01:30:07,640
+Tchau.
+
+1492
+01:30:07,640 --> 01:30:08,020
+Tchau.
+
+1493
+01:30:08,020 --> 01:30:08,420
+Tchau.
+
+1494
+01:30:08,420 --> 01:30:09,420
+Tchau.
+
+1495
+01:30:09,420 --> 01:30:10,420
+Tchau.
+
+1496
+01:30:10,420 --> 01:30:11,420
+Tchau.
+
+1497
+01:30:11,420 --> 01:30:11,920
+E aí
+
+1498
+01:30:11,920 --> 01:30:12,920
+Obrigado.
+
+1499
+01:30:12,920 --> 01:30:14,920
+Obrigado.
+
+1500
+01:30:14,920 --> 01:30:15,920
+Obrigado.

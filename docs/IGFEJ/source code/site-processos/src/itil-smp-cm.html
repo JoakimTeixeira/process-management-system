@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.57">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>5&nbsp; Gestão de Alterações – IGFEJ</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./itil-smp-cfm.html" rel="next">
+<link href="./itil-smp-am.html" rel="prev">
+<link href="./cover.png" rel="icon" type="image/png">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Nenhum resultado",
+    "search-matching-documents-text": "documentos correspondentes",
+    "search-copy-link-title": "Copiar link para a busca",
+    "search-hide-matches-text": "Esconder correspondências adicionais",
+    "search-more-match-text": "mais correspondência neste documento",
+    "search-more-matches-text": "mais correspondências neste documento",
+    "search-clear-button-title": "Limpar",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancelar",
+    "search-submit-button-title": "Enviar",
+    "search-label": "Procurar"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+
+
+</head>
+
+<body class="nav-sidebar docked slimcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./itil-smp-srm.html">Gestão de Serviço</a></li><li class="breadcrumb-item"><a href="./itil-smp-cm.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Gestão de Alterações</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Procurar" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header sidebar-header-stacked">
+      <a href="./index.html" class="sidebar-logo-link">
+      <img src="./cover.png" alt="" class="sidebar-logo py-0 d-lg-inline d-none">
+      </a>
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">IGFEJ</a> 
+        <div class="sidebar-tools-main">
+    <a href="./IGFEJ.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Alternar modo escuro"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Procurar"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Introdução</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./methodology.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Metodologia</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true">
+ <span class="menu-text">Gestão Global</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Alternar seção">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./itil-gmp-hr.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Gestão de Recursos Humanos</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true">
+ <span class="menu-text">Gestão de Serviço</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Alternar seção">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./itil-smp-srm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Gestão de Pedidos de Serviço</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./itil-smp-im.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Gestão de Incidentes</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./itil-smp-am.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Gestão de Ativos</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./itil-smp-cm.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Gestão de Alterações</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./itil-smp-cfm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Gestão de Configurações</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a class="sidebar-item-text sidebar-link text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true">
+ <span class="menu-text">Gestão de Serviço (TOBE)</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Alternar seção">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./itil-smp-im-tobe.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Gestão de Serviços de Suporte</span></span></a>
+  </div>
+</li>
+      </ul>
+  </li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active" data-toc-expanded="1">
+    <h2 id="toc-title">Índice</h2>
+   
+  <ul class="collapse">
+  <li><a href="#sec-proc-21" id="toc-sec-proc-21" class="nav-link active" data-scroll-target="#sec-proc-21"><span class="header-section-number">5.1</span> Alteração de utilizador na AD (OU)</a></li>
+  <li><a href="#sec-proc-62" id="toc-sec-proc-62" class="nav-link" data-scroll-target="#sec-proc-62"><span class="header-section-number">5.2</span> Ativação de VoIP</a></li>
+  <li><a href="#sec-proc-700" id="toc-sec-proc-700" class="nav-link" data-scroll-target="#sec-proc-700"><span class="header-section-number">5.3</span> Gestão de Alterações</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content page-columns page-full" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="./itil-smp-srm.html">Gestão de Serviço</a></li><li class="breadcrumb-item"><a href="./itil-smp-cm.html"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Gestão de Alterações</span></a></li></ol></nav>
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Gestão de Alterações</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>A gestão de alterações de TI é um processo estruturado dentro da gestão de serviços de tecnologia da informação (TI), que visa garantir que todas as mudanças nos sistemas e serviços de TI são introduzidas de forma controlada e coordenada, minimizando o impacto negativo nas operações e melhorando a eficiência geral. Em português de Portugal, a definição pode ser descrita como:</p>
+<p>A <strong>gestão de alterações de TI</strong> envolve várias atividades e objetivos essenciais:</p>
+<ol type="1">
+<li><p><strong>Proposta de Alteração:</strong> Qualquer solicitação de alteração (RCA - Requisição de Alteração) deve ser documentada, incluindo a descrição da alteração proposta, razões para a mudança, impacto esperado e recursos necessários.</p></li>
+<li><p><strong>Avaliação e Aprovação:</strong> As propostas de alteração são avaliadas quanto ao seu impacto, risco e benefício. Este processo pode envolver uma avaliação técnica, financeira e de negócio, e deve ser realizada por um comité de gestão de alterações (CAB - Change Advisory Board), que decide se a alteração deve ser aprovada, rejeitada ou modificada.</p></li>
+<li><p><strong>Planeamento da Alteração:</strong> Uma vez aprovada, a alteração deve ser planeada em detalhe, incluindo a identificação dos passos necessários, definição do cronograma, atribuição de responsabilidades e preparação de um plano de comunicação.</p></li>
+<li><p><strong>Implementação da Alteração:</strong> A alteração é implementada de acordo com o plano aprovado. Isto inclui a execução das tarefas, monitorização do progresso e comunicação com as partes interessadas.</p></li>
+<li><p><strong>Teste e Validação:</strong> Após a implementação, a alteração deve ser testada para garantir que funciona conforme esperado e que não introduz novos problemas ou vulnerabilidades. Este processo pode incluir testes de integração, testes de aceitação pelo utilizador e validação de desempenho.</p></li>
+<li><p><strong>Revisão Pós-Implementação:</strong> Uma revisão pós-implementação (PIR - Post Implementation Review) é conduzida para avaliar o sucesso da alteração, identificar lições aprendidas e determinar se foram alcançados os objetivos iniciais. Esta revisão pode resultar em ações corretivas ou ajustes adicionais.</p></li>
+<li><p><strong>Documentação e Atualização de Registos:</strong> Toda a documentação relacionada com a alteração, incluindo planos, testes e resultados, deve ser atualizada nos sistemas de gestão de configuração e outras bases de dados relevantes para garantir que a informação está completa e precisa.</p></li>
+<li><p><strong>Comunicação:</strong> Manter todas as partes interessadas informadas ao longo do ciclo de vida da alteração é crucial. Isto inclui comunicar as alterações planeadas, progressos durante a implementação, resultados dos testes e qualquer impacto residual após a conclusão.</p></li>
+</ol>
+<p>A gestão de alterações de TI é fundamental para assegurar que as alterações são feitas de forma organizada e controlada, minimizando o impacto negativo nos serviços e melhorando a qualidade e fiabilidade dos sistemas de TI. Este processo ajuda a garantir que as alterações são alinhadas com os objetivos estratégicos da organização, mantendo a integridade e a continuidade das operações.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><br><br><br><br><br><br><br><br><br></p>
+<div id="fig-21-1" class="quarto-float quarto-figure quarto-figure-center anchored" target="_blank" width="95%" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-21-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="viewers/model.html?url=0021-00-igfej-alteracao-utilizador-ad.bpmn" target="_blank" title="Click para abrir o modelo (BPMN/DMN)"><img src="models/0021-00-igfej-alteracao-utilizador-ad.svg" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:95.0%"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-21-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;5.1: Modelo do processo de alteração de utilizador na AD.
+</figcaption>
+</figure>
+</div>
+</div></div><div style="page-break-after: always;"></div>
+<section id="sec-proc-21" class="level2 numbered page-columns page-full" data-number="5.1">
+<h2 class="numbered anchored" data-number="5.1" data-anchor-id="sec-proc-21"><span class="header-section-number">5.1</span> Alteração de utilizador na AD (OU)</h2>
+<section id="entidade" class="level3 numbered" data-number="5.1.1">
+<h3 class="numbered anchored" data-number="5.1.1" data-anchor-id="entidade"><span class="header-section-number">5.1.1</span> Entidade</h3>
+<ul>
+<li>Instituto de Gestão Financeira e Equipamentos da Justiça (IGFEJ)</li>
+</ul>
+</section>
+<section id="responsável" class="level3 numbered" data-number="5.1.2">
+<h3 class="numbered anchored" data-number="5.1.2" data-anchor-id="responsável"><span class="header-section-number">5.1.2</span> Responsável</h3>
+<ul>
+<li>Não identificado.</li>
+</ul>
+</section>
+<section id="descrição" class="level3 numbered" data-number="5.1.3">
+<h3 class="numbered anchored" data-number="5.1.3" data-anchor-id="descrição"><span class="header-section-number">5.1.3</span> Descrição</h3>
+<p>A Active Directory (AD) é uma plataforma de serviços de diretório. Funciona como um sistema de gestão de identidade e autenticação em ambientes Windows e é amplamente utilizado em redes corporativas para gerir recursos de rede, como computadores, utilizadores, grupos, impressoras e muito mais. A Active Directory funciona da seguinte forma:</p>
+<ol type="1">
+<li><strong>Armazenamento de Dados do Diretório:</strong>
+<ul>
+<li>A Active Directory é uma base de dados hierárquica que armazena informações sobre objetos de rede, como computadores, utilizadores, grupos, servidores e recursos partilhados.</li>
+</ul></li>
+<li><strong>Hierarquia de Objetos:</strong>
+<ul>
+<li>Os objetos na AD são organizados numa estrutura hierárquica, semelhante a uma árvore. A unidade básica de dados é o “objeto,” e esses objetos podem ser organizados em “unidades organizacionais” (UOs) para facilitar a gestão.</li>
+</ul></li>
+<li><strong>Identidade e Autenticação:</strong>
+<ul>
+<li>A AD gere a identidade dos utilizadores e recursos na rede. Cada objeto na AD possui atributos que descrevem as suas propriedades, como nome, endereço de e-mail, número de telefone, entre outros.</li>
+</ul></li>
+<li><strong>Autenticação e Autorização:</strong>
+<ul>
+<li>A AD é fundamental para autenticação e autorização nas redes Windows. Permite que os utilizadores se autentiquem em computadores e recursos da rede usando as suas credenciais de login.</li>
+</ul></li>
+<li><strong>Políticas de Grupo:</strong>
+<ul>
+<li>A AD também suporta a aplicação de políticas de grupo. Isso permite que os administradores definam configurações específicas para grupos de utilizadores ou computadores em toda a rede.</li>
+</ul></li>
+<li><strong>Gestão de Recursos:</strong>
+<ul>
+<li>A AD facilita a gestão de recursos partilhados, como impressoras, servidores de arquivos e aplicações, por meio da associação desses recursos aos objetos de utilizador ou computador corretos.</li>
+</ul></li>
+<li><strong>Replicação:</strong>
+<ul>
+<li>Em ambientes de rede distribuídos, a AD permite a replicação de informações em vários controladores de domínio para garantir a disponibilidade e a redundância.</li>
+</ul></li>
+<li><strong>Segurança:</strong>
+<ul>
+<li>A AD implementa recursos de segurança, como criptografia, autenticação de dois fatores e controle de acesso para proteger informações confidenciais e garantir a conformidade com políticas de segurança.</li>
+</ul></li>
+<li><strong>Integração com Aplicações:</strong>
+<ul>
+<li>A AD é amplamente suportada por aplicações e serviços, facilitando a integração com sistemas de gestão de identidade e outros serviços.</li>
+</ul></li>
+<li><strong>Gestão Centralizada:</strong>
+<ul>
+<li>Permite a gestão centralizada de contas de utilizador, recursos e configurações em toda a rede, simplificando a administração e manutenção.</li>
+</ul></li>
+</ol>
+<p>A AD é uma parte fundamental da infraestrutura de TI no IGFEJ (assim como na generalidade das organizações) e desempenha um papel crítico na segurança, gestão e operação eficiente de redes corporativas. É essencial para garantir a integridade e a disponibilidade de recursos de rede, bem como para controlar o acesso dos utilizadores aos sistemas e informações.</p>
+<p>A criação de um utilizador na AD, é efectuada pela equipa de sistemas/servidores de uma de duas formas: - i) via a ferramenta AD Manager ou - ii) de forma manual por utilizado as ferramentas da AD (dsa.msc) e do Office 365.</p>
+<p>Se a criação for efectuada pelo ferramenta AD Manager, o endereço de email é também automaticamente criado. Caso contrário, terá que ser criado de forma autónoma.</p>
+</section>
+<section id="palavras-chave" class="level3 numbered" data-number="5.1.4">
+<h3 class="numbered anchored" data-number="5.1.4" data-anchor-id="palavras-chave"><span class="header-section-number">5.1.4</span> Palavras Chave</h3>
+<p><strong>Active Directory (AD), AD Manager, Office 365</strong></p>
+</section>
+<section id="objetivos" class="level3 numbered" data-number="5.1.5">
+<h3 class="numbered anchored" data-number="5.1.5" data-anchor-id="objetivos"><span class="header-section-number">5.1.5</span> Objetivos</h3>
+<ul>
+<li>Reorganização de utilizadores para outras entidades (OU) dentro de algum domínio gerido pelo IGFEJ.</li>
+<li>Facilidade na autenticação e acesso aos recursos tecnológicos da nova entidade.</li>
+<li>Gestão de acesso e segurança aos recursos tecnológicos da nova entidade.</li>
+</ul>
+</section>
+<section id="inputs" class="level3 numbered" data-number="5.1.6">
+<h3 class="numbered anchored" data-number="5.1.6" data-anchor-id="inputs"><span class="header-section-number">5.1.6</span> Inputs</h3>
+<ul>
+<li>Detalhes do utilizador</li>
+</ul>
+</section>
+<section id="actividades" class="level3 numbered" data-number="5.1.7">
+<h3 class="numbered anchored" data-number="5.1.7" data-anchor-id="actividades"><span class="header-section-number">5.1.7</span> Actividades</h3>
+<p>Para alterar as definições de um utilizador na AD, são executadas as seguintes atividades:</p>
+<ol type="1">
+<li><strong>Pedido de Reset via Help-Desk:</strong>
+<ul>
+<li>O processo pode iniciar-se através de um pedido que chega normalmente via Help-Desk (via email também é possivel mas é indesejável no futuro).</li>
+</ul></li>
+<li><strong>Alterar utilizador na AD:</strong>
+<ul>
+<li>Utilizando o AD Manager, e com os detalhes do utilizador, o técnico de sistemas, faz as alterações pretendidas e descritas no incidente que se mantém gerido pelo Help Desk.</li>
+</ul></li>
+<li><strong>Notificar utilizador e Help-Desk:</strong>
+<ul>
+<li>O utilizador é notificado de que as alterações foram efectuadas e o Help Desk é informado de que o ticket foi resolvido.</li>
+</ul></li>
+<li><strong>Conclusão:</strong>
+<ul>
+<li>Após rever e confirmar as informações, o processo termina.</li>
+</ul></li>
+</ol>
+</section>
+<section id="entregáveis" class="level3 numbered" data-number="5.1.8">
+<h3 class="numbered anchored" data-number="5.1.8" data-anchor-id="entregáveis"><span class="header-section-number">5.1.8</span> Entregáveis</h3>
+<ul>
+<li>Utilizador criado no Active Directory</li>
+<li>Utilizador com endereço de email Office 365 criado</li>
+</ul>
+</section>
+<section id="fornecedores" class="level3 numbered" data-number="5.1.9">
+<h3 class="numbered anchored" data-number="5.1.9" data-anchor-id="fornecedores"><span class="header-section-number">5.1.9</span> Fornecedores</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+</section>
+<section id="participantes" class="level3 numbered" data-number="5.1.10">
+<h3 class="numbered anchored" data-number="5.1.10" data-anchor-id="participantes"><span class="header-section-number">5.1.10</span> Participantes</h3>
+<ul>
+<li>Equipa de Sistemas</li>
+<li>Equipa de Segurança</li>
+</ul>
+</section>
+<section id="clientes" class="level3 numbered" data-number="5.1.11">
+<h3 class="numbered anchored" data-number="5.1.11" data-anchor-id="clientes"><span class="header-section-number">5.1.11</span> Clientes</h3>
+<ul>
+<li>Todos os organismos a quem o IGFEJ presta serviços</li>
+</ul>
+</section>
+<section id="metodologias" class="level3 numbered" data-number="5.1.12">
+<h3 class="numbered anchored" data-number="5.1.12" data-anchor-id="metodologias"><span class="header-section-number">5.1.12</span> Metodologias</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+</section>
+<section id="ferramentas" class="level3 numbered" data-number="5.1.13">
+<h3 class="numbered anchored" data-number="5.1.13" data-anchor-id="ferramentas"><span class="header-section-number">5.1.13</span> Ferramentas</h3>
+<ul>
+<li>AD Manager</li>
+<li>dsa.msc</li>
+<li>Office 365</li>
+</ul>
+</section>
+<section id="métricas" class="level3 numbered" data-number="5.1.14">
+<h3 class="numbered anchored" data-number="5.1.14" data-anchor-id="métricas"><span class="header-section-number">5.1.14</span> Métricas</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+</section>
+<section id="maturidade" class="level3 numbered" data-number="5.1.15">
+<h3 class="numbered anchored" data-number="5.1.15" data-anchor-id="maturidade"><span class="header-section-number">5.1.15</span> Maturidade</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+</section>
+<section id="pedido-itsm" class="level3 numbered" data-number="5.1.16">
+<h3 class="numbered anchored" data-number="5.1.16" data-anchor-id="pedido-itsm"><span class="header-section-number">5.1.16</span> Pedido (ITSM)</h3>
+<ul>
+<li><strong>Alteração de utilizador na AD (OU)</strong></li>
+</ul>
+</section>
+<section id="serviço-cmdb" class="level3 numbered" data-number="5.1.17">
+<h3 class="numbered anchored" data-number="5.1.17" data-anchor-id="serviço-cmdb"><span class="header-section-number">5.1.17</span> Serviço (CMDB)</h3>
+<ul>
+<li><strong>Alteração de utilizador na AD (OU)</strong></li>
+</ul>
+</section>
+<section id="sugestões" class="level3 numbered" data-number="5.1.18">
+<h3 class="numbered anchored" data-number="5.1.18" data-anchor-id="sugestões"><span class="header-section-number">5.1.18</span> Sugestões</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+</section>
+<section id="suporte-legal-legislação" class="level3 numbered" data-number="5.1.19">
+<h3 class="numbered anchored" data-number="5.1.19" data-anchor-id="suporte-legal-legislação"><span class="header-section-number">5.1.19</span> Suporte Legal / Legislação</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+</section>
+<section id="classificação-da-informação" class="level3 numbered" data-number="5.1.20">
+<h3 class="numbered anchored" data-number="5.1.20" data-anchor-id="classificação-da-informação"><span class="header-section-number">5.1.20</span> Classificação da informação</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+<p><strong>Ex: Confidencial, Restrito, Interno, Público</strong></p>
+</section>
+<section id="metadados" class="level3 numbered page-columns page-full" data-number="5.1.21">
+<h3 class="numbered anchored" data-number="5.1.21" data-anchor-id="metadados"><span class="header-section-number">5.1.21</span> Metadados</h3>
+<ul>
+<li><strong>Entrevistador:</strong> João Caldeira</li>
+<li><strong>Entrevistados:</strong> Rui Fernandes (06/11/2023)</li>
+</ul>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><br><br><br><br><br><br><br><br><br></p>
+<div id="fig-62-1" class="quarto-float quarto-figure quarto-figure-center anchored" target="_blank" width="95%" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-62-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="viewers/model.html?url=0062-00-instalacao-voip.bpmn" target="_blank" title="Click para abrir o modelo (BPMN/DMN)"><img src="models/0062-00-instalacao-voip.svg" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:95.0%"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-62-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;5.2: Instalação de VOIP.
+</figcaption>
+</figure>
+</div>
+</div></div><div style="page-break-after: always;"></div>
+</section>
+</section>
+<section id="sec-proc-62" class="level2 numbered page-columns page-full" data-number="5.2">
+<h2 class="numbered anchored" data-number="5.2" data-anchor-id="sec-proc-62"><span class="header-section-number">5.2</span> Ativação de VoIP</h2>
+<section id="entidade-1" class="level3 numbered" data-number="5.2.1">
+<h3 class="numbered anchored" data-number="5.2.1" data-anchor-id="entidade-1"><span class="header-section-number">5.2.1</span> Entidade</h3>
+<ul>
+<li>Instituto de Gestão Financeira e Equipamentos da Justiça (IGFEJ)</li>
+</ul>
+</section>
+<section id="responsável-1" class="level3 numbered" data-number="5.2.2">
+<h3 class="numbered anchored" data-number="5.2.2" data-anchor-id="responsável-1"><span class="header-section-number">5.2.2</span> Responsável</h3>
+<ul>
+<li>Não identificado.</li>
+</ul>
+</section>
+<section id="descrição-1" class="level3 numbered" data-number="5.2.3">
+<h3 class="numbered anchored" data-number="5.2.3" data-anchor-id="descrição-1"><span class="header-section-number">5.2.3</span> Descrição</h3>
+<p>O serviço VoIP (Voice over Internet Protocol), ou Voz sobre IP, é uma tecnologia que permite a realização de chamadas telefónicas através da internet, ao invés de usar as linhas telefónicas tradicionais. O VoIP converte a voz em pacotes de dados que são transmitidos pela internet. Quando se faz uma chamada VoIP, o som da voz é digitalizado e dividido em pequenos pacotes. Esses pacotes são então enviados pela rede e, ao chegarem ao destinatário, são reagrupados e convertidos novamente em áudio.</p>
+<ol type="1">
+<li><strong>Softphones:</strong>
+<ul>
+<li>Aplicativos que permitem realizar chamadas diretamente do computador ou smartphone.</li>
+</ul></li>
+<li><strong>ATA (Adaptador de Telefone Analógico)</strong>
+<ul>
+<li>Dispositivo que conecta telefones tradicionais à rede VoIP.</li>
+</ul></li>
+<li><strong>Telefones IP:</strong>
+<ul>
+<li>Telefones especializados que se conectam diretamente à rede de internet, sem necessidade de adaptadores.</li>
+</ul></li>
+</ol>
+</section>
+<section id="palavras-chave-1" class="level3 numbered" data-number="5.2.4">
+<h3 class="numbered anchored" data-number="5.2.4" data-anchor-id="palavras-chave-1"><span class="header-section-number">5.2.4</span> Palavras Chave</h3>
+<p><strong>VoIP</strong></p>
+</section>
+<section id="objetivos-1" class="level3 numbered" data-number="5.2.5">
+<h3 class="numbered anchored" data-number="5.2.5" data-anchor-id="objetivos-1"><span class="header-section-number">5.2.5</span> Objetivos</h3>
+<ul>
+<li>Obter reduções significativas dos custos com chamadas de longa distância e internacionais.</li>
+<li>Reduzir os custos de manutenção e infraestrutura em comparação com os sistemas telefónicos tradicionais.</li>
+<li>Garantir recursos como correio de voz, identificação de chamadas, chamadas em espera, encaminhamento de chamadas e conferências.</li>
+</ul>
+</section>
+<section id="inputs-1" class="level3 numbered" data-number="5.2.6">
+<h3 class="numbered anchored" data-number="5.2.6" data-anchor-id="inputs-1"><span class="header-section-number">5.2.6</span> Inputs</h3>
+<ul>
+<li>Detalhes do utilizador</li>
+<li>Informação do operador</li>
+</ul>
+</section>
+<section id="actividades-1" class="level3 numbered" data-number="5.2.7">
+<h3 class="numbered anchored" data-number="5.2.7" data-anchor-id="actividades-1"><span class="header-section-number">5.2.7</span> Actividades</h3>
+<p>Para implementar um sistema VoIP, são executadas as seguintes atividades:</p>
+<ol type="1">
+<li><strong>Solicitar portabilidade:</strong>
+<ul>
+<li>O processo pode iniciar-se através de um pedido de portabilidade feito por um determinado organismo ao operador de telecomunicações. O operador verificas as condições de portabilidade e devolverá uma data prevista para a mesma se efectuar.</li>
+</ul></li>
+<li><strong>Verificar condições VLAN:</strong>
+<ul>
+<li>São verificadas as condições técnicas VLAN para suportar a mudança por parte do núcleo de sistemas e redes.</li>
+</ul></li>
+<li><strong>Configurar Call Manager:</strong>
+<ul>
+<li>É configurado o Call Manager de acordo com os detalhes da operação.</li>
+</ul></li>
+<li><strong>Configurar Switching e Routing:</strong>
+<ul>
+<li>O núcleo de sistemas e redes efectua as configurações básicas de routing e switching, caso seja necessário, utilizando ferramentas para o efeito, tais como scripting, FortiManager e SDWAN.</li>
+</ul></li>
+<li><strong>Configurar VLAN:</strong>
+<ul>
+<li>O núcleo de sistemas e redes efectua as configurações básicas de configuração de VLAN em caso de necessidade.</li>
+</ul></li>
+<li><strong>Conclusão:</strong>
+<ul>
+<li>Na data prevista,após um período de potencial indisponibilidade, o sistema está ativado e o processo termina.</li>
+</ul></li>
+</ol>
+</section>
+<section id="entregáveis-1" class="level3 numbered" data-number="5.2.8">
+<h3 class="numbered anchored" data-number="5.2.8" data-anchor-id="entregáveis-1"><span class="header-section-number">5.2.8</span> Entregáveis</h3>
+<ul>
+<li>Portabilidade efectuada</li>
+<li>Utilizador com acesso telefónico via VoIP</li>
+</ul>
+</section>
+<section id="fornecedores-1" class="level3 numbered" data-number="5.2.9">
+<h3 class="numbered anchored" data-number="5.2.9" data-anchor-id="fornecedores-1"><span class="header-section-number">5.2.9</span> Fornecedores</h3>
+<ul>
+<li>Operadores de telecomunicações.</li>
+</ul>
+</section>
+<section id="participantes-1" class="level3 numbered" data-number="5.2.10">
+<h3 class="numbered anchored" data-number="5.2.10" data-anchor-id="participantes-1"><span class="header-section-number">5.2.10</span> Participantes</h3>
+<ul>
+<li>Equipa de Sistemas e Redes</li>
+<li>Organismos (DGAJ, IRN, etc)</li>
+<li>Operadores de Telecomunicações</li>
+</ul>
+</section>
+<section id="clientes-1" class="level3 numbered" data-number="5.2.11">
+<h3 class="numbered anchored" data-number="5.2.11" data-anchor-id="clientes-1"><span class="header-section-number">5.2.11</span> Clientes</h3>
+<ul>
+<li>Todos os organismos a quem o IGFEJ presta serviços</li>
+</ul>
+</section>
+<section id="metodologias-1" class="level3 numbered" data-number="5.2.12">
+<h3 class="numbered anchored" data-number="5.2.12" data-anchor-id="metodologias-1"><span class="header-section-number">5.2.12</span> Metodologias</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+</section>
+<section id="ferramentas-1" class="level3 numbered" data-number="5.2.13">
+<h3 class="numbered anchored" data-number="5.2.13" data-anchor-id="ferramentas-1"><span class="header-section-number">5.2.13</span> Ferramentas</h3>
+<ul>
+<li>Call Manager</li>
+<li>Scripting</li>
+<li>FortiManager</li>
+<li>SDWAN</li>
+</ul>
+</section>
+<section id="métricas-1" class="level3 numbered" data-number="5.2.14">
+<h3 class="numbered anchored" data-number="5.2.14" data-anchor-id="métricas-1"><span class="header-section-number">5.2.14</span> Métricas</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+</section>
+<section id="maturidade-1" class="level3 numbered" data-number="5.2.15">
+<h3 class="numbered anchored" data-number="5.2.15" data-anchor-id="maturidade-1"><span class="header-section-number">5.2.15</span> Maturidade</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+</section>
+<section id="pedido-itsm-1" class="level3 numbered" data-number="5.2.16">
+<h3 class="numbered anchored" data-number="5.2.16" data-anchor-id="pedido-itsm-1"><span class="header-section-number">5.2.16</span> Pedido (ITSM)</h3>
+<ul>
+<li><strong>Ativação de VoIP</strong></li>
+</ul>
+</section>
+<section id="serviço-cmdb-1" class="level3 numbered" data-number="5.2.17">
+<h3 class="numbered anchored" data-number="5.2.17" data-anchor-id="serviço-cmdb-1"><span class="header-section-number">5.2.17</span> Serviço (CMDB)</h3>
+<ul>
+<li><strong>Ativação de VoIP</strong></li>
+</ul>
+</section>
+<section id="sugestões-1" class="level3 numbered" data-number="5.2.18">
+<h3 class="numbered anchored" data-number="5.2.18" data-anchor-id="sugestões-1"><span class="header-section-number">5.2.18</span> Sugestões</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+</section>
+<section id="suporte-legal-legislação-1" class="level3 numbered" data-number="5.2.19">
+<h3 class="numbered anchored" data-number="5.2.19" data-anchor-id="suporte-legal-legislação-1"><span class="header-section-number">5.2.19</span> Suporte Legal / Legislação</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+</section>
+<section id="classificação-da-informação-1" class="level3 numbered" data-number="5.2.20">
+<h3 class="numbered anchored" data-number="5.2.20" data-anchor-id="classificação-da-informação-1"><span class="header-section-number">5.2.20</span> Classificação da informação</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+<p><strong>Ex: Confidencial, Restrito, Interno, Público</strong></p>
+</section>
+<section id="metadados-1" class="level3 numbered page-columns page-full" data-number="5.2.21">
+<h3 class="numbered anchored" data-number="5.2.21" data-anchor-id="metadados-1"><span class="header-section-number">5.2.21</span> Metadados</h3>
+<ul>
+<li><strong>Entrevistador:</strong> João Caldeira, Maria Estibeiro, Manuel Graça</li>
+<li><strong>Entrevistados:</strong> Maria do Céu Oliveira (09/05/2024)</li>
+</ul>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<p><br><br><br><br><br><br><br><br><br></p>
+<div id="fig-700-1" class="quarto-float quarto-figure quarto-figure-center anchored" target="_blank" width="95%" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-700-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="viewers/model.html?url=0700-00-igfej-gestao-alteracoes.bpmn" target="_blank" title="Click para abrir o modelo (BPMN/DMN)"><img src="models/0700-00-igfej-gestao-alteracoes.svg" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:95.0%"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-700-1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;5.3: Modelo do Processo de Gestão de Alterações
+</figcaption>
+</figure>
+</div>
+</div></div><div style="page-break-after: always;"></div>
+</section>
+</section>
+<section id="sec-proc-700" class="level2 numbered" data-number="5.3">
+<h2 class="numbered anchored" data-number="5.3" data-anchor-id="sec-proc-700"><span class="header-section-number">5.3</span> Gestão de Alterações</h2>
+<section id="entidade-2" class="level3 numbered" data-number="5.3.1">
+<h3 class="numbered anchored" data-number="5.3.1" data-anchor-id="entidade-2"><span class="header-section-number">5.3.1</span> Entidade</h3>
+<ul>
+<li>Instituto de Gestão Financeira e Equipamentos da Justiça (IGFEJ)</li>
+</ul>
+</section>
+<section id="responsável-2" class="level3 numbered" data-number="5.3.2">
+<h3 class="numbered anchored" data-number="5.3.2" data-anchor-id="responsável-2"><span class="header-section-number">5.3.2</span> Responsável</h3>
+<ul>
+<li>Não identificado.</li>
+</ul>
+</section>
+<section id="descrição-2" class="level3 numbered" data-number="5.3.3">
+<h3 class="numbered anchored" data-number="5.3.3" data-anchor-id="descrição-2"><span class="header-section-number">5.3.3</span> Descrição</h3>
+<p>Uma <strong>alteração</strong> é definida como a adição, modificação ou remoção de qualquer coisa que possa ter um efeito direto ou indireto em serviços TI. A <strong>gestão de alterações</strong> tem como objetivo maximizar o número de alterações bem-sucedidas em serviços TI, garantindo que os riscos sejam devidamente avaliados, autorizando as alterações a prosseguir e gerindo eficazmente o cronograma de alterações.</p>
+<p><strong>Tipos de Alterações </strong></p>
+<p>As alterações são classificadas em três tipos principais:</p>
+<ol type="1">
+<li><strong>Alterações Padrão</strong>: São alterações de baixo risco, repetitivas e pré-aprovadas. Estas alterações seguem um processo e fluxo de trabalho bem documentado e aprovado. Estas alterações são normalmente alterações de rotina e não requerem uma autorização formal antes de serem implementadas. Geralmente este tipo de alterações são boas candidatas para aplicar automação.</li>
+</ol>
+<p>Exemplos: - <strong>Atualização de Software</strong>: Instalar atualizações de segurança mensais em todos os computadores da organização. - <strong>Ajuste de Configuração</strong>: Modificar as configurações de rede para adicionar um novo dispositivo de impressão.</p>
+<ol start="2" type="1">
+<li><strong>Alterações Normais</strong>: Estas alterações não são pré-aprovadas e requerem uma avaliação formal de risco e impacto antes de serem implementadas. Elas passam por um processo de aprovação por um comité de análise de alterações (CAB – Change Advisory Board). A nível de risco podem variar de risco baixo a risco alto. Exemplos:
+<ul>
+<li><strong>Implementação de um novo serviço</strong>: Lançar um novo portal para os funcionários.</li>
+<li><strong>Grande Atualização de Sistema</strong>: Atualizar o sistema de gestão de relacionamento com o cliente (CRM) para uma nova versão com funcionalidades adicionais.</li>
+</ul></li>
+<li><strong>Alterações de Emergência</strong>: São alterações que precisam de ser implementadas rapidamente para resolver uma interrupção crítica ou prevenir uma falha iminente. Devido à urgência, elas seguem um processo acelerado de autorização (que pode ser feito pelo gestor de alterações ou por um comité de emergência convocado pelo gestor de alterações), mas ainda assim este tipo de alterações devem ser documentadas e revistas posteriormente. Exemplos:
+<ul>
+<li><strong>Correção de Segurança Crítica</strong>: Aplicar um patch de segurança imediatamente para corrigir uma vulnerabilidade que está a ser explorada ativamente.</li>
+<li><strong>Reparação de uma Falha Grave</strong>: Substituir um servidor que falhou e está a causar uma interrupção significativa no serviço.</li>
+</ul></li>
+</ol>
+<p><strong>Benefícios da Gestão de Alterações</strong></p>
+<ol type="1">
+<li><p><strong>Redução de Riscos</strong>: Um processo estruturado de gestão de alterações ajuda a identificar e mitigar riscos antes que eles causem problemas significativos.</p></li>
+<li><p><strong>Melhoria na Qualidade dos Serviços</strong>: Alterações bem geridas resultam em melhorias contínuas na qualidade dos serviços de TI, aumentando a satisfação dos utilizadores clientes.</p></li>
+<li><p><strong>Maior Agilidade</strong>: Com uma boa gestão de alterações, as organizações podem responder mais rapidamente às necessidades do mercado e aos pedidos dos clientes, mantendo a competitividade.</p></li>
+<li><p><strong>Minimização de Interrupções</strong>: Planear e implementar alterações de forma controlada ajuda a minimizar interrupções nos serviços, garantindo a continuidade do negócio.</p></li>
+<li><p><strong>Melhor Alinhamento com os Objetivos de Negócio</strong>: As alterações são alinhadas com os objetivos estratégicos da organização, garantindo que os recursos sejam utilizados de forma eficaz e eficiente.</p></li>
+<li><p><strong>Aumento da Transparência e Comunicação</strong>: Um processo claro de gestão de alterações melhora a comunicação entre as partes interessadas, garantindo que todos estejam cientes das alterações e os seus impactos.</p></li>
+<li><p><strong>Maior Controle e Governança</strong>: Uma boa gestão de alteraçoes proporciona maior controlo sobre o ambiente de TI, ajudando a garantir conformidade com as políticas internas e regulamentos externos.</p></li>
+</ol>
+<p>Em resumo, a Gestão de Alterações é crucial para que as organizações possam gerir alterações de forma eficaz, garantindo a continuidade dos serviços e promovendo a inovação e a melhoria contínua.</p>
+</section>
+<section id="palavras-chave-2" class="level3 numbered" data-number="5.3.4">
+<h3 class="numbered anchored" data-number="5.3.4" data-anchor-id="palavras-chave-2"><span class="header-section-number">5.3.4</span> Palavras Chave</h3>
+<p><strong>igfej, gestão de alterações</strong></p>
+</section>
+<section id="objetivos-2" class="level3 numbered" data-number="5.3.5">
+<h3 class="numbered anchored" data-number="5.3.5" data-anchor-id="objetivos-2"><span class="header-section-number">5.3.5</span> Objetivos</h3>
+<ul>
+<li><p>Maximizar o número de alterações bem-sucedidas: Garantir que as alterações nos serviços e produtos sejam realizadas com sucesso, minimizando falhas.</p></li>
+<li><p>Avaliar e gerir riscos: Assegurar que os riscos associados às alterações sejam devidamente avaliados e mitigados antes da implementação.</p></li>
+<li><p>Autorizar alterações: Garantir que todas as alterações sejam aprovadas por autoridades competentes antes de serem executadas.</p></li>
+<li><p>Gerir o cronograma de alterações: Coordenar o agendamento das alterações para minimizar impactos negativos nos serviços e operações.</p></li>
+<li><p>Apoiar a agilidade e flexibilidade: Facilitar a adaptação rápida às necessidades do negócio, permitindo alterações ágeis e controladas.</p></li>
+</ul>
+</section>
+<section id="inputs-2" class="level3 numbered" data-number="5.3.6">
+<h3 class="numbered anchored" data-number="5.3.6" data-anchor-id="inputs-2"><span class="header-section-number">5.3.6</span> Inputs</h3>
+<p>Vários processos da organização poderão dar origem a um pedido de alteração (RFC). Alguns dos principais processos que podem gerar um pedido de alteração (RFC) incluem: 1. <strong>Gestão de Incidentes</strong>: Quando um incidente requer uma alteração para ser resolvido permanentemente. 2. <strong>Gestão de Problemas</strong>: Quando a análise de um problema identifica a necessidade de uma alteração para eliminar a causa raiz. 3. <strong>Gestão de Pedidos de Serviço</strong>: Quando um pedido de serviço envolve uma alteração na infraestrutura ou nos serviços. 4. <strong>Gestão de Ativos de TI</strong>: Quando há necessidade de atualizar ou substituir ativos de TI. 5. <strong>Gestão de Configuração e Ativos de Serviço</strong>: Quando alterações são necessárias para manter a precisão dos itens de configuração. 6. <strong>Gestão de Releases</strong>: Quando uma nova versão de um serviço ou componente precisa ser implementada. 7. <strong>Gestão de Continuidade de Serviço</strong>: Quando alterações são necessárias para garantir a continuidade dos serviços em situações de desastre. 8. <strong>Gestão de Segurança da Informação</strong>: Quando alterações são necessárias para mitigar riscos de segurança.</p>
+<ul>
+<li><p>Todos os processos acima colaboram entre si para garantir que as alterações são bem planeadas, avaliadas e implementadas de forma controlada, minimizando riscos e impactos negativos nos serviços de TI.</p></li>
+<li><p>Os processos acima enviam informação com detalhes sobre a alteração pretendida, materializada num documento de nome RFC (Request for Change) que tem templates associados (em formato .docx) que devem ser utilizados para solicitar os vários tipos de pedidos de alteração.</p></li>
+</ul>
+<p><strong>Definição de RFC (Request for Change)</strong> Um pedido de alteração (RFC - Request for Change) normal deve promover transparência, responsabilidade e eficiência nos processos de alteração relacionados. O propósito do RFC inclui: 1. <strong>Documentação</strong>: Fornece um formato estruturado para documentar detalhes sobre a alteração proposta, como a sua descrição, justificação, impacto, riscos, plano de implementação e quaisquer aprovações necessárias.</p>
+<ol start="2" type="1">
+<li><p><strong>Comunicação</strong>: O RFC serve como um meio de comunicação entre as partes interessadas envolvidas ou que exigem conhecimento da implementação da alteração. As partes envolvidas são o requerente, equipas técnicas ou comerciais relevantes, equipas TI, terceiros e quaisquer outras partes relevantes.</p></li>
+<li><p><strong>Gestão de Risco</strong>: Ao exigir informações detalhadas sobre a alteração proposta, um documento RFC ajuda a avaliar os riscos potenciais associados à implementação da alteração e permite que as partes interessadas tomem decisões informadas sobre como proceder.</p></li>
+<li><p><strong>Controlo</strong>: Estabelece um processo formal para enviar e avaliar solicitações de alterações, garantindo que as alterações sejam cuidadosamente analisadas, autorizadas, programadas e implementadas de forma controlada para minimizar a interrupção das operações da organização.</p></li>
+<li><p><strong>Conformidade</strong>: Em ambientes regulamentados com requisitos de conformidade rigorosos, os documento RFCs ajudam as organizações a demonstrar conformidade documentando a justificação, as autorizações e os detalhes de implementação de alterações feitas em serviços, sistemas ou processos.</p></li>
+</ol>
+</section>
+<section id="actividades-2" class="level3 numbered" data-number="5.3.7">
+<h3 class="numbered anchored" data-number="5.3.7" data-anchor-id="actividades-2"><span class="header-section-number">5.3.7</span> Actividades</h3>
+<p>Para fazer um pedido de alteração, são executadas as seguintes atividades:</p>
+<ol type="1">
+<li><strong>Registar Pedido de Alteração</strong>
+<ul>
+<li>O Service Desk é responsável por registar todos os pedidos de alteração (RFC - Request for Change) enviados pelos requerentes. Isso inclui recolher todas as informações necessárias sobre a alteração proposta, como a descrição, o motivo, o impacto esperado, os recursos necessários, entre outras constantes no documento RFC (.docx) e registar toda essa informação na plataforma de ITSM.</li>
+</ul></li>
+<li><strong>Avaliar Pedido de Alteração</strong>
+<ul>
+<li>O Gestor de Alterações avalia o pedido de alteração para determinar a sua viabilidade, impacto, risco e urgência. Esta avaliação inicial ajuda a decidir se a alteração deve prosseguir para autorização ou não.</li>
+<li>Caso o pedido de alteração não seja válido, o processo encerra aqui devido a rejeição do pedido.</li>
+<li>Caso o pedido de alteração seja válido, e o gestor de alterações irá avaliar qual é o tipo da alteração que está a ser pedida.</li>
+</ul></li>
+</ol>
+<ul>
+<li>Caso a alteração seja do tipo <strong>Alteração Padrão</strong>, como é uma alteração de baixo risco, bem compreendida e totalmente documentada, considera-se que é pré-autorizada e o gestor de alterações envia diretamente o documento RFC (Pedido de Alteração Padrão.docx) para as equipas técnicas para ser implementada, sem que seja preciso autorização adicional.</li>
+<li>Caso a alteração seja do tipo <strong>Alteração Normal</strong>, normalmente envolve alterações desconhecidas, de médio ou alto risco que exigem autorização oficial para planeamento e controlo, pelo que o gestor de alterações envia o documento RFC (Pedido de Alteração Normal.docx) para o Comité de Análise de Alterações (do qual ele também faz parte), de modo a que a alteração seja analisada e aprovada ou não.</li>
+<li>Caso a alteração seja do tipo <strong>Alteração de Emergência</strong>, deverá ser implementada rapidamente de modo para resolver algo que poderá ter um grande impacto nos serviços TI, como por exemplo, uma interrupção crítica ou prevenir uma falha iminente. Este tipo de alterações têm um risco muito alto e que podem exigir ou não autorização oficial, pelo que o gestor de alterações decidirá se a alteração necessita de aprovação do Comité de Análise de Alterações ou se a decisão será dele próprio ou ainda poderá convocar um Comité de Emergência para decisão conjunta. Para todos os casos anteriormente descritos deverá ser sempre enviado o documento RFC (Pedido de Alteração de Emergência.docx) para que a aprovação da alteração seja rápida de modo a acelerar substancialmente o processo.</li>
+</ul>
+<ol start="3" type="1">
+<li><strong>Autorizar Pedido de Alteração</strong>
+<ul>
+<li>o Comité de Análise de Alterações (CAB - Change Advisory Board) revê o pedido e autoriza ou não o pedido de alteração. O CAB pode incluir representantes de várias áreas da organização para garantir uma visão abrangente. A boa prática será a realização de reuniões regulares do CAB com documentar de todas as decisões e justificações para manter a transparência e o histórico de decisões. Para isso deverá ser usado o respetivo template (Reunião do Comité de Análise de Alterações.docx)</li>
+<li>Também o gestor de alterações poderá fazer esta atividade a solo e sem o comité de análise de alterações, caso assim o entenda e para o caso em que a alteração é do tipo emergência.</li>
+</ul></li>
+<li><strong>Solicitar Planeamento da Alteração</strong>
+<ul>
+<li>Após a autorização da alteração, o comité de análise de alterações solicita a um gestor de projeto o planeamento detalhado da alteração, incluindo cronograma, recursos e plano de comunicação, informando todas as partes interessadas.</li>
+</ul></li>
+<li><strong>Solicitar Implementação da Alteração</strong>
+<ul>
+<li>O Gestor de alterações solicita às equipas técnicas a implementação da alteração de urgência.</li>
+</ul></li>
+<li><strong>Planear Implementação da Alteração</strong>
+<ul>
+<li>O Gestor de Projeto desenvolve um plano detalhado para a implementação da alteração, incluindo tarefas específicas, cronograma e alocação de recursos, garantindo que o plano seja exequível e que todos os riscos sejam mitigados.</li>
+</ul></li>
+<li><strong>Implementar Alteração</strong>
+<ul>
+<li>As equipas técnicas executam a implementação da alteração conforme o plano (caso exista plano) e o que está definido no RFC. Isso poderá incluir desenvolvimento, configuração, testes e deploy da solução.</li>
+<li>Caso seja uma alteração padrão a equipa deverá seguir ainda os procedimentos bem documentados no sistema de gestão de conhecimento (knowledge base).</li>
+</ul></li>
+<li><strong>Monitorizar Implementação da Alteração</strong>
+<ul>
+<li>O Gestor de Projeto monitoriza a implementação para garantir que está tudo a ocorrer conforme o plano e também para identificar e resolver quaisquer problemas que surjam ao longo da implementação. Mantem também uma comunicação eficaz com todas as partes interessadas de modo a estas estarem informadas informadas sobre o progresso de implementação da alteração.</li>
+</ul></li>
+<li><strong>Rever Pós-Implementação da Alteração</strong>
+<ul>
+<li>Após a implementação, o Gestor de Projeto e o Gestor de Alterações realizam uma revisão pós-implementação para avaliar o sucesso da alteração e identificação de lições aprendidas. Deverão ser documentados os resultados da revisão e as lições aprendidas no sistema de gestão de conhecimento (knowledge base) de modo a melhorar futuros processos de alteração.</li>
+</ul></li>
+<li><strong>Encerrar Pedido de Alteração</strong>
+<ul>
+<li>O Service Desk encerra o pedido de alteração após a confirmação de que a alteração foi implementada com sucesso e que todos os documentos e registos foram atualizados. Também é garantido que todas as partes interessadas estejam cientes do encerramento da alteração e que qualquer documentação necessária seja arquivada corretamente no sistema de gestão do conhecimento (knowledge base).</li>
+</ul></li>
+<li><strong>Conclusão:</strong></li>
+</ol>
+<ul>
+<li>Após a notificação ao requerente (se houver justificação para isso) o processo termina.</li>
+</ul>
+</section>
+<section id="entregáveis-2" class="level3 numbered" data-number="5.3.8">
+<h3 class="numbered anchored" data-number="5.3.8" data-anchor-id="entregáveis-2"><span class="header-section-number">5.3.8</span> Entregáveis</h3>
+<ul>
+<li>Solução para a alteração solicitada</li>
+</ul>
+</section>
+<section id="fornecedores-2" class="level3 numbered" data-number="5.3.9">
+<h3 class="numbered anchored" data-number="5.3.9" data-anchor-id="fornecedores-2"><span class="header-section-number">5.3.9</span> Fornecedores</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+</section>
+<section id="participantes-2" class="level3 numbered" data-number="5.3.10">
+<h3 class="numbered anchored" data-number="5.3.10" data-anchor-id="participantes-2"><span class="header-section-number">5.3.10</span> Participantes</h3>
+<ul>
+<li>Utilizadores finais, clientes, fornecedores, equipas técnicas do IGFEJ, gestor de alterações, comité de análise de alterações, service desk, gestão de projeto</li>
+</ul>
+<p><strong>Gestor de Alterações</strong> O Gestor de Alterações desempenha um papel crucial no processo de gestão de alterações, de modo a que o processo seja conduzido de maneira organizada, eficiente e alinhada com os objetivos do negócio e garantindo que todas as alterações sejam geridas de forma eficaz e eficiente.</p>
+<p><strong>Comité de Análise de Alterações</strong> O Comité de Análise de Alterações (em inglês CAB - Change Advisory Board) desempenha um papel fundamental no processo de gestão de alterações, garantindo que todas as alterações sejam cuidadosamente revistas e autorizadas antes da sua implementação. Este comité é composto pelo gestor de alterações e por outros membros de várias áreas da organização.</p>
+</section>
+<section id="clientes-2" class="level3 numbered" data-number="5.3.11">
+<h3 class="numbered anchored" data-number="5.3.11" data-anchor-id="clientes-2"><span class="header-section-number">5.3.11</span> Clientes</h3>
+<ul>
+<li>Utilizadores finais, clientes e fornecedores</li>
+</ul>
+</section>
+<section id="metodologias-2" class="level3 numbered" data-number="5.3.12">
+<h3 class="numbered anchored" data-number="5.3.12" data-anchor-id="metodologias-2"><span class="header-section-number">5.3.12</span> Metodologias</h3>
+<ul>
+<li>ITIL</li>
+<li>Gestão de Alterações</li>
+</ul>
+</section>
+<section id="ferramentas-2" class="level3 numbered" data-number="5.3.13">
+<h3 class="numbered anchored" data-number="5.3.13" data-anchor-id="ferramentas-2"><span class="header-section-number">5.3.13</span> Ferramentas</h3>
+<ul>
+<li>Ferramenta de ITSM</li>
+<li>Ferramenta de Knowledge Base</li>
+</ul>
+</section>
+<section id="métricas-2" class="level3 numbered" data-number="5.3.14">
+<h3 class="numbered anchored" data-number="5.3.14" data-anchor-id="métricas-2"><span class="header-section-number">5.3.14</span> Métricas</h3>
+<p>O uso de métricas é crucial para monitorizar e avaliar a eficácia das alterações implementadas. As métricas fornecem dados objetivos que ajudam a identificar áreas de melhoria, garantir a conformidade com os processos e minimizar os riscos.</p>
+<p>As métricas permitem: - Avaliar o Desempenho: Medir o sucesso das alterações e identificar tendências ao longo do tempo. - Gerir Riscos: Identificar e mitigar riscos associados às alterações antes que causem impactos negativos. - Aumentar a Transparência: Fornecer visibilidade sobre o progresso e os resultados das alterações a todas as partes interessadas. - Apoiar a Tomada de Decisões: Basear decisões em dados concretos, melhorando a qualidade e a eficácia das alterações. - Promover a Melhoria Contínua: Identificar áreas de melhoria e implementar ações corretivas para otimizar os processos de alterações.</p>
+<p>Abaixo indicam-se algumas das métricas mais importantes usadas na gestão de alterações:</p>
+<ol type="1">
+<li><strong>Taxa de Sucesso das Alterações</strong>:
+<ul>
+<li><strong>Descrição</strong>: Percentagem de alterações que foram implementadas com sucesso sem causar incidentes ou problemas.</li>
+<li><strong>Importância</strong>: Ajuda a avaliar a eficácia do processo de alterações e a identificar áreas que necessitam de melhorias.</li>
+</ul></li>
+<li><strong>Tempo Médio para Implementação de Alterações (MTTC)</strong>:
+<ul>
+<li><strong>Descrição</strong>: Tempo médio necessário para implementar uma alteração desde a sua aprovação até ao seu fecho.</li>
+<li><strong>Importância</strong>: Mede a eficiência do processo de alterações e ajuda a identificar gargalos que podem atrasar a implementação.</li>
+</ul></li>
+<li><strong>Número de Alterações de Emergência</strong>:
+<ul>
+<li><strong>Descrição</strong>: Quantidade de alterações que foram implementadas em modo de emergência.</li>
+<li><strong>Importância</strong>: Indica a estabilidade dos ambientes de TI e a eficácia do planeamento de alterações. Um alto número de alterações de emergência pode sugerir problemas subjacentes.</li>
+</ul></li>
+<li><strong>Taxa de Reversão de Alterações</strong>:
+<ul>
+<li><strong>Descrição</strong>: Percentagem de alterações que precisaram de ser revertidas devido a falhas ou problemas.</li>
+<li><strong>Importância</strong>: Ajuda a avaliar a qualidade do planeamento e da execução da implementação das alterações, além de identificar áreas de risco.</li>
+</ul></li>
+<li><strong>Impacto das Alterações nos Serviços</strong>:
+<ul>
+<li><strong>Descrição</strong>: Medida do impacto das alterações nos serviços de TI, incluindo tempo de inatividade e degradação do desempenho.</li>
+<li><strong>Importância</strong>: Avalia o efeito das alterações na qualidade do serviço e na satisfação do cliente.</li>
+</ul></li>
+</ol>
+<p>As métricas acima são fundamentais para garantir que as alteraçõe sejam geridas de forma eficaz, minimizando riscos e promovendo a melhoria contínua dos serviços de TI.</p>
+</section>
+<section id="maturidade-2" class="level3 numbered" data-number="5.3.15">
+<h3 class="numbered anchored" data-number="5.3.15" data-anchor-id="maturidade-2"><span class="header-section-number">5.3.15</span> Maturidade</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+</section>
+<section id="pedido-itsm-2" class="level3 numbered" data-number="5.3.16">
+<h3 class="numbered anchored" data-number="5.3.16" data-anchor-id="pedido-itsm-2"><span class="header-section-number">5.3.16</span> Pedido (ITSM)</h3>
+<ul>
+<li><strong>Gestão de Alterações</strong></li>
+</ul>
+</section>
+<section id="serviço-cmdb-2" class="level3 numbered" data-number="5.3.17">
+<h3 class="numbered anchored" data-number="5.3.17" data-anchor-id="serviço-cmdb-2"><span class="header-section-number">5.3.17</span> Serviço (CMDB)</h3>
+<ul>
+<li><strong>Gestão de Alterações</strong></li>
+</ul>
+</section>
+<section id="sugestões-2" class="level3 numbered" data-number="5.3.18">
+<h3 class="numbered anchored" data-number="5.3.18" data-anchor-id="sugestões-2"><span class="header-section-number">5.3.18</span> Sugestões</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+</section>
+<section id="suporte-legal-legislação-2" class="level3 numbered" data-number="5.3.19">
+<h3 class="numbered anchored" data-number="5.3.19" data-anchor-id="suporte-legal-legislação-2"><span class="header-section-number">5.3.19</span> Suporte Legal / Legislação</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+</section>
+<section id="classificação-da-informação-2" class="level3 numbered" data-number="5.3.20">
+<h3 class="numbered anchored" data-number="5.3.20" data-anchor-id="classificação-da-informação-2"><span class="header-section-number">5.3.20</span> Classificação da informação</h3>
+<ul>
+<li>Nada a referir.</li>
+</ul>
+<p><strong>Ex: Confidencial, Restrito, Interno, Público</strong></p>
+</section>
+<section id="metadados-2" class="level3 numbered" data-number="5.3.21">
+<h3 class="numbered anchored" data-number="5.3.21" data-anchor-id="metadados-2"><span class="header-section-number">5.3.21</span> Metadados</h3>
+<ul>
+<li><strong>Entrevistador:</strong> Nuno Ferreira</li>
+<li><strong>Entrevistados:</strong> NA</li>
+</ul>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copiada");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copiada");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+          // target, if specified
+          link.setAttribute("target", "_blank");
+          if (link.getAttribute("rel") === null) {
+            link.setAttribute("rel", "noopener");
+          }
+          // default icon
+          link.classList.add("external");
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="./itil-smp-am.html" class="pagination-link" aria-label="Gestão de Ativos">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Gestão de Ativos</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./itil-smp-cfm.html" class="pagination-link" aria-label="Gestão de Configurações">
+        <span class="nav-page-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Gestão de Configurações</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Copyright 2024, IGFEJ. Todos os Direitos Reservados.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+<p><a href="https://igfej.justica.gov.pt/">IGFEJ</a>.</p>
+</div>
+  </div>
+</footer>
+
+
+
+
+<script src="site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

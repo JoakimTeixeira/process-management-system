@@ -1,0 +1,30 @@
+[
+  {
+    "id": "gestao-global",
+    "title": "Gestão Global",
+    "description": "Processos de gestão global da organização",
+    "icon": "briefcase",
+    "author_id": "user-001",
+    "updated_by": "user-001",
+    "created_at": "2026-01-05T10:00:00Z",
+    "updated_at": "2026-01-05T10:00:00Z",
+    "metrics": {
+      "total_processes": 1,
+      "total_subprocesses": 3
+    }
+  },
+  {
+    "id": "gestao-servico",
+    "title": "Gerir Pedidos de Serviço",
+    "description": "Processos operacionais de pedidos de serviço (criação de utilizadores, VPN, redefinição de passwords, mudanças de local, etc.)",
+    "icon": "clipboard-list",
+    "author_id": "user-001",
+    "updated_by": "user-001",
+    "created_at": "2026-01-05T10:00:00Z",
+    "updated_at": "2026-02-01T09:30:00Z",
+    "metrics": {
+      "total_processes": 3,
+      "total_subprocesses": 4
+    }
+  }
+]
