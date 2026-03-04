@@ -1,0 +1,2242 @@
+<!doctype html>
+<html lang="pt-PT">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>IGFEJ - Sistema de Gestão de Processos</title>
+    <meta
+      name="description"
+      content="Portal público de consulta de processos e procedimentos do Ministério da Justiça"
+    />
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons@4.29.0/dist/feather.min.js"></script>
+
+    <!-- BPMN.js Modeler -->
+    <script src="https://unpkg.com/bpmn-js@17.11.1/dist/bpmn-modeler.production.min.js"></script>
+
+    <!-- Fuse.js for search -->
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@7.0.0"></script>
+
+    <!-- Custom Tailwind Configuration -->
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              "govpt-primary": "#0055A4",
+              "govpt-secondary": "#003366",
+              "govpt-accent": "#FF6B35",
+              "govpt-success": "#28A745",
+              "govpt-success-soft": "#D4EDDA",
+              "govpt-success-text": "#155724",
+              "govpt-warning": "#FFC107",
+              "govpt-warning-soft": "#FFF3CD",
+              "govpt-warning-text": "#856404",
+              "govpt-light": "#F8F9FA",
+              "govpt-gray": "#6C757D",
+              "govpt-dark": "#2C3E50",
+              "govpt-text": "#495057",
+              "govpt-heading": "#212529",
+              "govpt-border": "#DEE2E6",
+              "govpt-blue-light": "#E3F2FD",
+              "govpt-orange": "#FD7E14",
+              "igfej-light": "#f8f9fa",
+              "igfej-blue": "#0055a4",
+            },
+            fontFamily: {
+              "govpt": ["Source Sans Pro", "Helvetica Neue", "Helvetica", "Arial", "sans-serif"],
+              "govpt-heading": ["Source Sans Pro", "Helvetica Neue", "Helvetica", "Arial", "sans-serif"],
+            },
+            fontSize: {
+              "govpt-xs": ["12px", "1.4"],
+              "govpt-sm": ["14px", "1.4"],
+              "govpt-base": ["16px", "1.5"],
+              "govpt-lg": ["18px", "1.5"],
+              "govpt-xl": ["20px", "1.5"],
+              "govpt-2xl": ["24px", "1.5"],
+              "govpt-3xl": ["30px", "1.5"],
+              "govpt-4xl": ["36px", "1.5"],
+            },
+            spacing: {
+              "govpt-header": "80px",
+              "govpt-section": "60px",
+              "govpt-container": "1200px",
+            },
+            borderRadius: {
+              "govpt": "4px",
+              "govpt-lg": "8px",
+            },
+                      },
+        },
+      };
+    </script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom Styles -->
+    <style>
+      /* gov.pt inspired styling */
+      * {
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-size: 16px;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #F8F9FA;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+      
+      h1, h2, h3, h4, h5, h6 {
+        font-family: 'Source Sans Pro', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-weight: 600;
+        color: #212529;
+        line-height: 1.3;
+      }
+      
+      h1 { font-size: 2.5rem; font-weight: 700; }
+      h2 { font-size: 2rem; }
+      h3 { font-size: 1.75rem; }
+      h4 { font-size: 1.5rem; }
+      h5 { font-size: 1.25rem; }
+      h6 { font-size: 1.125rem; }
+      
+      /* gov.pt button styling */
+      .govpt-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.625rem 1.25rem;
+        font-family: 'Source Sans Pro', sans-serif;
+        font-weight: 600;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        border-radius: 4px;
+        border: 2px solid transparent;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s ease-in-out;
+        min-height: 44px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      
+      .govpt-btn-primary {
+        background-color: #0055A4;
+        color: white;
+        border-color: #0055A4;
+      }
+      
+      .govpt-btn-primary:hover {
+        background-color: #003366;
+        border-color: #003366;
+      }
+      
+      .govpt-btn-secondary {
+        background-color: white;
+        color: #0055A4;
+        border-color: #0055A4;
+      }
+      
+      .govpt-btn-secondary:hover {
+        background-color: #0055A4;
+        color: white;
+      }
+      
+      .govpt-btn-outline {
+        background-color: transparent;
+        color: #0055A4;
+        border-color: #0055A4;
+      }
+      
+      .govpt-btn-outline:hover {
+        background-color: #0055A4;
+        color: white;
+      }
+      
+      /* gov.pt card styling */
+      .govpt-card {
+        background: white;
+        border: 1px solid #DEE2E6;
+        border-radius: 4px;
+        transition: all 0.2s ease-in-out;
+        overflow: hidden;
+      }
+      
+            
+      .govpt-card-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #DEE2E6;
+        background: linear-gradient(135deg, #F8F9FA 0%, #E9ECEF 100%);
+      }
+      
+      .govpt-card-body {
+        padding: 1.5rem;
+      }
+      
+      .govpt-card-footer {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid #DEE2E6;
+        background: #F8F9FA;
+      }
+      
+      /* gov.pt service card styling */
+      .govpt-service-card {
+        background: white;
+        border: 1px solid #DEE2E6;
+        border-radius: 4px;
+        padding: 1.5rem;
+        text-decoration: none;
+        color: inherit;
+        transition: all 0.2s ease-in-out;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+      
+            
+      .govpt-service-card .icon {
+        width: 48px;
+        height: 48px;
+        background-color: #E3F2FD;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 1rem;
+      }
+      
+      .govpt-service-card .icon i {
+        color: #0055A4;
+        font-size: 24px;
+      }
+      
+      .govpt-service-card h3 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #212529;
+      }
+      
+      .govpt-service-card p {
+        font-size: 0.875rem;
+        color: #6C757D;
+        line-height: 1.5;
+        flex-grow: 1;
+      }
+      
+      /* govpt form styling */
+      .govpt-input {
+        display: block;
+        width: 100%;
+        padding: 0.75rem 1rem;
+        font-family: 'Source Sans Pro', sans-serif;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        color: #495057;
+        background-color: white;
+        border: 1px solid #CED4DA;
+        border-radius: 4px;
+        transition: border-color 0.2s ease-in-out;
+      }
+      
+      .govpt-input:focus {
+        outline: none;
+        border-color: #0055A4;
+              }
+      
+      .govpt-input::placeholder {
+        color: #6C757D;
+      }
+      
+      /* govpt search styling */
+      .govpt-search {
+        position: relative;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      
+      .govpt-search-input {
+        width: 100%;
+        padding: 1rem 3rem 1rem 1rem;
+        font-family: 'Source Sans Pro', sans-serif;
+        font-size: 1rem;
+        background-color: white;
+        border: 2px solid #0055A4;
+        border-radius: 4px;
+        color: #495057;
+        transition: all 0.2s ease-in-out;
+      }
+      
+      .govpt-search-input:focus {
+        outline: none;
+        border-color: #003366;
+              }
+      
+      .govpt-search-button {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #0055A4;
+        cursor: pointer;
+        padding: 0.5rem;
+      }
+      
+      .govpt-search-button:hover {
+        color: #003366;
+      }
+      
+      /* govpt badge styling */
+      .govpt-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.5rem;
+        font-family: 'Source Sans Pro', sans-serif;
+        font-size: 0.75rem;
+        font-weight: 600;
+        border-radius: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      
+      .govpt-badge-primary {
+        background-color: #0055A4;
+        color: white;
+      }
+      
+      .govpt-badge-success {
+        background-color: #28A745;
+        color: white;
+      }
+      
+      .govpt-badge-warning {
+        background-color: #FF6B35;
+        color: white;
+      }
+      
+      .govpt-badge-info {
+        background-color: #17A2B8;
+        color: white;
+      }
+      
+      /* Professional header styling */
+      .gov-header {
+        background: linear-gradient(135deg, #002D72 0%, #004B87 100%);
+        border-bottom: 3px solid #0066CC;
+              }
+      
+      .gov-header-title {
+        font-family: 'Roboto', 'Inter', sans-serif;
+        font-weight: 700;
+        font-size: 1.875rem;
+        color: white;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      }
+      
+      .gov-header-subtitle {
+        font-family: 'Inter', system-ui, sans-serif;
+        font-weight: 400;
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.9);
+      }
+      
+      .gov-nav-tab {
+        position: relative;
+        padding: 0.75rem 1.5rem;
+        font-family: 'Inter', system-ui, sans-serif;
+        font-weight: 500;
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        border-radius: 6px;
+        transition: all 0.2s ease-in-out;
+        border: 2px solid transparent;
+      }
+      
+            
+      .gov-nav-tab.active {
+        color: white;
+        background-color: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.3);
+        font-weight: 600;
+      }
+      
+      .gov-search-container {
+        position: relative;
+        max-width: 400px;
+      }
+      
+      .gov-search-input {
+        width: 100%;
+        padding: 0.75rem 1rem 0.75rem 3rem;
+        font-family: 'Inter', system-ui, sans-serif;
+        font-size: 0.875rem;
+        background-color: rgba(255, 255, 255, 0.95);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 24px;
+        color: #1A1A1A;
+        backdrop-filter: blur(10px);
+        transition: all 0.2s ease-in-out;
+      }
+      
+      .gov-search-input:focus {
+        outline: none;
+        background-color: white;
+        border-color: #0066CC;
+              }
+      
+      .gov-search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #5F6368;
+        pointer-events: none;
+      }
+      
+      .content-section {
+        margin-top: 0px !important;
+      }
+
+      .bpmn-container {
+        height: 600px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+      }
+
+      .sidebar-collapsed {
+        transform: translateX(-100%);
+      }
+
+      @media (min-width: 768px) {
+        .sidebar-collapsed {
+          transform: translateX(0);
+        }
+      }
+
+      /* Fix sidebar positioning */
+      .sidebar-fixed {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        width: 16rem;
+        background: white;
+        border-right: 1px solid #e5e7eb;
+        z-index: 40;
+        transition: transform 0.3s ease;
+        overflow-y: auto;
+      }
+
+      @media (max-width: 767px) {
+        .sidebar-fixed {
+          position: fixed;
+          top: 4rem;
+          left: 0;
+          bottom: 0;
+          width: 16rem;
+          z-index: 40;
+        }
+      }
+
+      /* Navigation tab styles */
+      .nav-tab {
+        position: relative;
+        border-radius: 4px;
+      }
+      
+      .nav-tab.active {
+        background-color: rgba(255, 255, 255, 0.15) !important;
+        border-color: rgba(255, 255, 255, 0.3) !important;
+      }
+      
+      .nav-tab:hover {
+        background-color: #003366;
+      }
+      
+      /* Mobile nav tabs specific styling */
+      .sidebar .nav-tab.active {
+        background-color: #F8F9FA !important;
+        color: #0055A4 !important;
+        font-weight: 600;
+      }
+
+      /* Dropdown button styling */
+      #macroprocess-dropdown-btn {
+        border-radius: 4px;
+      }
+
+      #macroprocess-dropdown-btn:hover {
+        background-color: #003366;
+      }
+
+      #macroprocess-dropdown-btn.active {
+        background-color: rgba(255, 255, 255, 0.15) !important;
+        border-color: rgba(255, 255, 255, 0.3) !important;
+      }
+
+      /* Dropdown item highlight state */
+      .macro-dropdown-item.bg-igfej-light {
+        background-color: #e6f2ff;
+        color: #0066cc;
+        font-weight: 500;
+      }
+
+      .macro-dropdown-item.bg-igfej-light:hover {
+        background-color: #d4e9ff;
+      }
+
+      /* Ensure sidebar doesn't overlap footer */
+      .sidebar-container {
+        display: flex;
+        flex: 1;
+        position: relative;
+      }
+
+      /* Ensure footer is always at bottom */
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      .content-wrapper {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      footer {
+        margin-top: auto;
+        flex-shrink: 0;
+      }
+
+      /* Breadcrumb positioning */
+      #breadcrumb {
+        position: relative;
+        z-index: 40;
+        background: transparent;
+        margin: 0 0 0.375rem 0;
+        padding: 0 0 0.375rem 0;
+        border-bottom: none;
+      }
+
+      #breadcrumb .flex {
+        align-items: center;
+        gap: 0.125rem;
+        justify-content: flex-start;
+        font-style: italic;
+      }
+
+      #breadcrumb a {
+        color: #6b7280;
+        text-decoration: none;
+        transition: color 0.15s ease;
+        font-style: italic;
+        font-size: 0.75rem;
+        line-height: 1;
+      }
+
+      #breadcrumb a:hover {
+        color: #374151;
+      }
+
+      #breadcrumb span.text-gray-400 {
+        color: #9ca3af;
+        padding: 0 0.25rem;
+        font-style: italic;
+        display: inline-block;
+        line-height: 1;
+      }
+
+      #breadcrumb .breadcrumb-slash {
+        color: #9ca3af;
+        padding: 0 0.25rem;
+        font-style: italic;
+        display: inline-block;
+      }
+
+      #breadcrumb span.text-gray-900 {
+        color: #1f2937;
+        font-weight: 500;
+        font-style: italic;
+        font-size: 0.75rem;
+        line-height: 1;
+      }
+
+      /* Header navigation adjustments */
+      @media (max-width: 768px) {
+        .navigation-options {
+          justify-content: center;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
+        
+        .navigation-options .nav-tab {
+          font-size: 14px;
+          padding: 0.5rem 1rem;
+        }
+
+        .navigation-options button {
+          font-size: 14px;
+          padding: 0.5rem 1rem;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .navigation-options .nav-tab {
+          font-size: 13px;
+          padding: 0.4rem 0.8rem;
+        }
+
+        .navigation-options button {
+          font-size: 13px;
+          padding: 0.4rem 0.8rem;
+        }
+      }
+
+      /* Dropdown positioning adjustments */
+      #macroprocess-dropdown {
+        min-width: 200px;
+      }
+
+      .process-card:hover {
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Ensure equal height cards in grids */
+      .grid > div {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+      }
+
+      .grid > div > div {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .tab-content {
+        display: none;
+      }
+
+      .tab-content.active {
+        display: block;
+      }
+
+      .search-highlight {
+        background-color: #dbeafe;
+        padding: 2px 4px;
+        border-radius: 3px;
+      }
+
+      .rotate-180 {
+        transform: rotate(180deg);
+      }
+
+      @keyframes loading {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+
+      /* Print styles using Tailwind classes */
+      @media print {
+        .no-print,
+        .print-hidden,
+        header,
+        footer,
+        aside {
+          display: none !important;
+        }
+
+        main {
+          margin: 0 !important;
+          padding: 1rem !important;
+        }
+
+        .bpmn-container {
+          height: auto !important;
+          min-height: 500px !important;
+          max-height: 800px !important;
+          page-break-inside: avoid;
+        }
+
+        /* Hide BPMN overlays and outlines */
+        .bpmn-container .djs-outline,
+        .bpmn-container .layer-overlays {
+          display: none !important;
+          visibility: hidden !important;
+        }
+
+        .bpmn-container .djs-outline *,
+        .bpmn-container .layer-overlays * {
+          display: none !important;
+          visibility: hidden !important;
+        }
+
+        .process-card {
+          break-inside: avoid;
+          border: 1px solid #000 !important;
+        }
+      }
+
+      /* Remove hover outline */
+      .djs-outline {
+        display: none !important;
+      }
+
+      /* Remove hover visual effect */
+      .djs-visual:hover {
+        filter: none !important;
+      }
+
+      /* Remove overlays layer (tooltips / markers) */
+      .layer-overlays {
+        display: none !important;
+      }
+
+      /* Remove context pad (if appearing) */
+      .djs-context-pad {
+        display: none !important;
+      }
+
+      .bjs-container {
+        background-color: white;
+        display: flex !important;
+        justify-content: center !important;
+        align-items: center !important;
+        width: 100% !important;
+        height: 100vh !important;
+      }
+
+      /* Hide browser default clear buttons for search inputs */
+      input[type="search"]::-webkit-search-cancel-button,
+      input[type="search"]::-webkit-search-decoration,
+      input[type="search"]::-webkit-search-results-button,
+      input[type="search"]::-webkit-search-results-decoration {
+        display: none;
+      }
+      
+      input[type="search"]::-ms-clear,
+      input[type="search"]::-ms-reveal {
+        display: none;
+      }
+
+      /* Make sort icons larger and more visible */
+      .sort-icon {
+        color: #6c757d !important;
+        opacity: 1 !important;
+        display: inline-block !important;
+        width: 20px !important;
+        height: 20px !important;
+        font-size: 20px !important;
+      }
+      
+      .sort-icon[data-feather="chevron-up"],
+      .sort-icon[data-feather="chevron-down"] {
+        color: #6c757d !important;
+      }
+
+      /* Make pagination arrows larger and more prominent */
+      .feather-chevron-left,
+      .feather-chevron-right {
+        color: #4b5563 !important;
+        width: 20px !important;
+        height: 20px !important;
+        font-size: 20px !important;
+      }
+    </style>
+  </head>
+  <body class="bg-govpt-light text-govpt-text">
+    <!-- IGFEJ Header -->
+    <header class="bg-white border-b border-govpt-border">
+      <div class="max-w-govpt-container mx-auto px-4">
+        <div class="flex justify-between items-center py-4">
+          <!-- Title -->
+          <div>
+            <h1 class="text-2xl font-bold text-govpt-heading">IGFEJ</h1>
+            <p class="text-sm text-govpt-gray">Inspeção-Geral dos Serviços de Justiça</p>
+          </div>
+
+          <!-- Search Icon -->
+          <div class="relative">
+            <button 
+              id="header-search-btn" 
+              class="flex items-center gap-2 p-2 rounded-lg text-govpt-gray hover:bg-govpt-light transition-colors"
+              aria-label="Pesquisar processos"
+              aria-expanded="false"
+              aria-controls="header-search-expand"
+            >
+              <i data-feather="search" class="h-5 w-5" aria-hidden="true"></i>
+              <span class="text-sm font-medium">Pesquisar</span>
+            </button>
+            <!-- Expandable Search -->
+            <div 
+              id="header-search-expand" 
+              class="absolute top-full right-0 mt-2 w-96 bg-white border border-govpt-border rounded-lg hidden z-50"
+              role="search"
+              aria-hidden="true"
+            >
+              <div class="p-3">
+                <label for="header-search-input" class="sr-only">Pesquisar processos</label>
+                <div class="relative">
+                  <input
+                    id="header-search-input"
+                    type="search"
+                    placeholder="Pesquisar processos..."
+                    aria-label="Pesquisar processos"
+                    class="govpt-input w-full pr-10"
+                  />
+                  <!-- Clear button -->
+                  <button 
+                    id="header-search-clear"
+                    onclick="clearSearch('header-search-input')"
+                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 hidden"
+                    aria-label="Limpar pesquisa"
+                  >
+                    <i data-feather="x" class="h-4 w-4"></i>
+                  </button>
+                </div>
+                <!-- Header Search Results Container -->
+                <div id="header-search-results" class="hidden mt-2 bg-white border border-govpt-border rounded-lg shadow-lg z-50 max-h-80 overflow-y-auto"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mobile Menu -->
+          <button
+            id="mobile-menu-button"
+            class="md:hidden p-2 rounded-lg text-govpt-gray hover:bg-govpt-light transition-colors"
+          >
+            <i data-feather="menu" class="h-6 w-6"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+    
+    <!-- IGFEJ Navigation -->
+    <nav class="bg-govpt-primary text-white">
+      <div class="max-w-govpt-container mx-auto px-4">
+        <div class="hidden md:flex items-center space-x-1">
+          <a
+            href="#welcome"
+            onclick="navigateToSection('welcome'); return false;"
+            id="nav-welcome"
+            class="nav-tab block px-4 py-3 text-white hover:bg-govpt-secondary transition-colors font-medium"
+          >
+            Início
+          </a>
+          <a
+            href="#introduction"
+            onclick="navigateToSection('introduction'); return false;"
+            id="nav-introduction"
+            class="nav-tab block px-4 py-3 text-white hover:bg-govpt-secondary transition-colors font-medium"
+          >
+            Introdução
+          </a>
+          <a
+            href="#homepage"
+            onclick="navigateToSection('homepage'); return false;"
+            id="nav-homepage"
+            class="nav-tab block px-4 py-3 text-white hover:bg-govpt-secondary transition-colors font-medium"
+          >
+            Dashboard
+          </a>
+          <div class="relative">
+            <button
+              id="macroprocess-dropdown-btn"
+              class="flex items-center px-4 py-3 text-white hover:bg-govpt-secondary transition-colors font-medium"
+              onclick="toggleMacroprocessDropdown()"
+            >
+              <span>Processos</span>
+              <i data-feather="chevron-down" class="h-4 w-4 ml-1 transition-transform duration-200"></i>
+            </button>
+            
+            <div
+              id="macroprocess-dropdown"
+              class="absolute top-full left-0 mt-1 w-64 bg-white border border-govpt-border rounded-lg hidden z-50"
+            >
+              <div class="py-2">
+                <div id="desktop-macroprocess-nav" class="space-y-1">
+                  <!-- Desktop navigation will be populated by JavaScript -->
+                </div>
+              </div>
+            </div>
+          </div>
+          <a
+            href="#methodology"
+            onclick="navigateToSection('methodology'); return false;"
+            id="nav-methodology"
+            class="nav-tab block px-4 py-3 text-white hover:bg-govpt-secondary transition-colors font-medium"
+          >
+            Metodologia
+          </a>
+          <a
+            href="#faq"
+            onclick="navigateToSection('faq'); return false;"
+            id="nav-faq"
+            class="nav-tab block px-4 py-3 text-white hover:bg-govpt-secondary transition-colors font-medium"
+          >
+            FAQ
+          </a>
+        </div>
+      </div>
+    </nav>
+
+    <div class="content-wrapper">
+      <div class="max-w-6xl mx-auto w-full">
+        <div class="sidebar-container">
+        <!-- Mobile Sidebar Navigation -->
+        <aside
+          id="sidebar"
+          class="sidebar-fixed md:hidden bg-white border-r border-gov-gray-300 w-64 h-full z-30 sidebar-collapsed"
+        >
+          <nav class="p-4 space-y-6">
+            <div>
+              <h3 class="text-xs font-semibold text-govpt-gray uppercase tracking-wider mb-3">
+                Macroprocessos
+              </h3>
+              <div id="macroprocess-nav" class="space-y-1">
+                <!-- Mobile navigation will be populated by JavaScript -->
+              </div>
+            </div>
+
+            <div>
+              <h3 class="text-xs font-semibold text-govpt-gray uppercase tracking-wider mb-3">
+                Navegação Rápida
+              </h3>
+              <div class="space-y-1">
+                <a
+                  href="#introduction"
+                  onclick="navigateToSection('introduction'); return false;"
+                  class="nav-tab flex items-center px-3 py-2 text-sm text-gov-gray-700 hover:bg-gov-light hover:text-gov-primary rounded-md transition-colors"
+                >
+                  <i data-feather="info" class="mr-3 h-4 w-4"></i>
+                  Introdução
+                </a>
+                <a
+                  href="#homepage"
+                  onclick="navigateToSection('homepage'); return false;"
+                  class="nav-tab flex items-center px-3 py-2 text-sm text-gov-gray-700 hover:bg-gov-light hover:text-gov-primary rounded-md transition-colors"
+                >
+                  <i data-feather="help-circle" class="mr-3 h-4 w-4"></i>
+                  Dashboard
+                </a>
+                <a
+                  href="#methodology"
+                  onclick="navigateToSection('methodology'); return false;"
+                  class="nav-tab flex items-center px-3 py-2 text-sm text-gov-gray-700 hover:bg-gov-light hover:text-gov-primary rounded-md transition-colors"
+                >
+                  <i data-feather="layout" class="mr-3 h-4 w-4"></i>
+                  Metodologia
+                </a>
+                <a
+                  href="#faq"
+                  onclick="navigateToSection('faq'); return false;"
+                  class="nav-tab flex items-center px-3 py-2 text-sm text-gov-gray-700 hover:bg-gov-light hover:text-gov-primary rounded-md transition-colors"
+                >
+                  <i data-feather="book-open" class="mr-3 h-4 w-4"></i>
+                  FAQ
+                </a>
+              </div>
+            </div>
+          </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main
+          id="main-content"
+          class="flex-1 p-8 lg:p-12 print:p-4 transition-all duration-300"
+        >
+          <!-- Content Sections -->
+          <div id="content-area">
+            <!-- Breadcrumb Navigation -->
+            <div class="max-w-govpt-container mx-auto px-4">
+              <nav
+                id="breadcrumb"
+                class="hidden"
+              >
+                <div class="flex items-center text-sm">
+                  <a href="#" onclick="showHomepage()" class="hover:text-igfej-blue">
+                    Início
+                  </a>
+                  <span class="text-gray-400">/</span>
+                </div>
+              </nav>
+            </div>
+          <div id="content-area">
+            <!-- Welcome Section -->
+            <section id="welcome" class="content-section">
+              <div class="max-w-govpt-container mx-auto px-4 py-8">
+                <!-- Hero Section -->
+                <div class="text-center mb-8">
+                  <h1 class="text-govpt-3xl font-bold text-govpt-heading mb-4">
+                    Sistema de Gestão de Processos
+                  </h1>
+                  <p class="text-govpt-lg text-govpt-gray leading-relaxed mb-6">Plataforma para análise e gestão de processos de negócio e TI da IGFEJ.</p>
+                  <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a
+                      href="#homepage"
+                      onclick="navigateToSection('homepage'); return false;"
+                      class="govpt-btn govpt-btn-primary"
+                    >
+                      <i data-feather="bar-chart-2" class="h-4 w-4 mr-2"></i>
+                      Dashboard
+                    </a>
+                    <a
+                      href="#methodology"
+                      onclick="navigateToSection('methodology'); return false;"
+                      class="govpt-btn govpt-secondary"
+                    >
+                      <i data-feather="book-open" class="h-4 w-4 mr-2"></i>
+                      Metodologia
+                    </a>
+                  </div>
+                </div>
+
+                <!-- Search Section -->
+                <div class="bg-white rounded-lg border border-govpt-border p-6 mb-8">
+                  <h2 class="text-govpt-2xl font-semibold text-govpt-heading mb-6 text-center">
+                    Encontre o serviço que procura
+                  </h2>
+                  <div class="govpt-search max-w-xl mx-auto relative">
+                    <input
+                      type="text"
+                      id="welcome-search"
+                      placeholder="Pesquisar processos, macroprocessos..."
+                      class="govpt-search-input pr-10"
+                    />
+                    <button class="govpt-search-button">
+                      <i data-feather="search" class="h-5 w-5"></i>
+                    </button>
+                    <!-- Clear button -->
+                    <button 
+                      id="welcome-search-clear"
+                      onclick="clearSearch('welcome-search')"
+                      class="absolute right-10 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 hidden"
+                      aria-label="Limpar pesquisa"
+                    >
+                      <i data-feather="x" class="h-4 w-4"></i>
+                    </button>
+                    <!-- Search Results Container -->
+                    <div id="search-results" class="hidden absolute top-full left-0 right-0 mt-2 bg-white border border-govpt-border rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto"></div>
+                  </div>
+                </div>
+
+                <!-- Process Management Services -->
+                <div class="mb-8">
+                  <h2 class="text-govpt-2xl font-semibold text-govpt-heading mb-6 text-center">
+                    Serviços Disponíveis
+                  </h2>
+                  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Introdução Card -->
+                    <a href="#introduction" onclick="navigateToSection('introduction'); return false;" class="govpt-service-card">
+                      <div class="icon">
+                        <i data-feather="info" class="h-6 w-6"></i>
+                      </div>
+                      <h3>Introdução</h3>
+                      <p>Saiba mais sobre a importância da análise de processos e metodologias utilizadas.</p>
+                    </a>
+
+                    <!-- Dashboard Card -->
+                    <a href="#homepage" onclick="navigateToSection('homepage'); return false;" class="govpt-service-card">
+                      <div class="icon">
+                        <i data-feather="bar-chart-2" class="h-6 w-6"></i>
+                      </div>
+                      <h3>Dashboard</h3>
+                      <p>Estatísticas e métricas dos processos em tempo real.</p>
+                    </a>
+
+                    <!-- Macroprocessos Card -->
+                    <a href="#macroprocessos" onclick="navigateToSection('macroprocessos'); return false;" class="govpt-service-card">
+                      <div class="icon">
+                        <i data-feather="layers" class="h-6 w-6"></i>
+                      </div>
+                      <h3>Macroprocessos</h3>
+                      <p>Visualize e analise os macroprocessos organizacionais.</p>
+                    </a>
+
+                    <!-- Processos Card -->
+                    <a href="#processos" onclick="navigateToSection('processos'); return false;" class="govpt-service-card">
+                      <div class="icon">
+                        <i data-feather="git-branch" class="h-6 w-6"></i>
+                      </div>
+                      <h3>Processos</h3>
+                      <p>Gestão detalhada de todos os processos organizacionais.</p>
+                    </a>
+
+                    <!-- Subprocessos Card -->
+                    <a href="#subprocessos" onclick="navigateToSection('subprocessos'); return false;" class="govpt-service-card">
+                      <div class="icon">
+                        <i data-feather="settings" class="h-6 w-6"></i>
+                      </div>
+                      <h3>Subprocessos</h3>
+                      <p>Explore todos os subprocessos organizacionais com detalhes completos.</p>
+                    </a>
+
+                    <!-- Diagramas Card -->
+                    <a href="#diagrams" onclick="navigateToSection('diagrams'); return false;" class="govpt-service-card">
+                      <div class="icon">
+                        <i data-feather="grid" class="h-6 w-6"></i>
+                      </div>
+                      <h3>Diagramas</h3>
+                      <p>Visualize todos os diagramas dos processos organizacionais.</p>
+                    </a>
+
+                    <!-- FAQ Card -->
+                    <a href="#faq" onclick="navigateToSection('faq'); return false;" class="govpt-service-card">
+                      <div class="icon">
+                        <i data-feather="help-circle" class="h-6 w-6"></i>
+                      </div>
+                      <h3>FAQ</h3>
+                      <p>Tire suas dúvidas sobre o sistema de gestão de processos.</p>
+                    </a>
+
+                    <!-- Contactos Card -->
+                    <a href="#contactos" onclick="navigateToSection('contactos'); return false;" class="govpt-service-card">
+                      <div class="icon">
+                        <i data-feather="mail" class="h-6 w-6"></i>
+                      </div>
+                      <h3>Contactos</h3>
+                      <p>Entre em contato com a equipa do IGFEJ para suporte e informações.</p>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Introduction Section -->
+            <section id="introduction" class="content-section hidden">
+              <div class="max-w-govpt-container mx-auto px-4 py-8">
+                <div class="space-y-8">
+                  <!-- Header -->
+                  <div class="text-left mb-8">
+                    <h1 class="text-govpt-4xl font-bold text-govpt-heading mb-4">Introdução</h1>
+                    <p class="text-govpt-lg text-govpt-gray leading-relaxed max-w-3xl">
+                      Saiba mais sobre a importância da análise de processos e metodologias utilizadas para otimizar as operações da IGFEJ.
+                    </p>
+                  </div>
+
+                  <!-- Hero Section with Image and Text -->
+                  <div class="bg-white rounded-lg border border-govpt-border p-6 mb-8">
+                    <div class="flex flex-col lg:flex-row items-center gap-8">
+                      <!-- Book Image -->
+                      <div class="flex-shrink-0">
+                        <img src="assets/images/cover.png" alt="IGFEJ - Sistema de Gestão de Processos" class="w-48 h-auto rounded-lg shadow-md">
+                      </div>
+                      
+                      <!-- Introduction Text -->
+                      <div class="flex-1 text-center lg:text-left">
+                        <h2 class="text-govpt-2xl font-semibold text-govpt-heading mb-4">Por que analisar processos de negócio e TI?</h2>
+                        <p class="text-govpt-base text-govpt-text leading-relaxed mb-4">
+                          Analisar processos de Negócio e/ou Tecnologia da Informação (TI) é fundamental para entender, otimizar e aprimorar a eficiência, segurança e desempenho das operações e sistemas dentro de uma organização.
+                        </p>
+                        <p class="text-govpt-base text-govpt-text leading-relaxed">
+                          Essa análise permite identificar falhas, riscos de segurança, ineficiências e oportunidades de melhoria tanto no negócio quanto nas TI.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                    <!-- Benefits Section -->
+                    <div class="space-y-8">
+                      <div class="text-center">
+                        <h2 class="text-govpt-3xl font-bold text-govpt-heading mb-2">Benefícios da Análise de Processos</h2>
+                        <p class="text-govpt-lg text-govpt-gray max-w-2xl mx-auto">Descubra como a análise sistemática de processos pode transformar a eficiência e segurança da sua organização.</p>
+                      </div>
+                      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white border border-govpt-border rounded-lg p-6 hover:shadow-md transition-shadow">
+                          <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0 mt-1">
+                              <div class="w-12 h-12 bg-govpt-primary/10 rounded-full flex items-center justify-center">
+                                <i data-feather="zap" class="h-6 w-6 text-govpt-primary"></i>
+                              </div>
+                            </div>
+                            <div class="flex-1">
+                              <h3 class="text-govpt-xl font-semibold text-govpt-heading mb-3">Identificar oportunidades de automação</h3>
+                              <p class="text-govpt-base text-govpt-text leading-relaxed">
+                                Permite encontrar tarefas repetitivas e passíveis de automação, libertando tempo e recursos para atividades mais estratégicas.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="bg-white border border-govpt-border rounded-lg p-6 hover:shadow-md transition-shadow">
+                          <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0 mt-1">
+                              <div class="w-12 h-12 bg-govpt-primary/10 rounded-full flex items-center justify-center">
+                                <i data-feather="shield" class="h-6 w-6 text-govpt-primary"></i>
+                              </div>
+                            </div>
+                            <div class="flex-1">
+                              <h3 class="text-govpt-xl font-semibold text-govpt-heading mb-3">Garantir a conformidade e segurança</h3>
+                              <p class="text-govpt-base text-govpt-text leading-relaxed">
+                                Ajuda a assegurar que os processos estão alinhados com regulamentos, padrões de segurança e políticas internas, minimizando riscos.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="bg-white border border-govpt-border rounded-lg p-6 hover:shadow-md transition-shadow">
+                          <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0 mt-1">
+                              <div class="w-12 h-12 bg-govpt-primary/10 rounded-full flex items-center justify-center">
+                                <i data-feather="trending-up" class="h-6 w-6 text-govpt-primary"></i>
+                              </div>
+                            </div>
+                            <div class="flex-1">
+                              <h3 class="text-govpt-xl font-semibold text-govpt-heading mb-3">Melhorar a eficiência operacional</h3>
+                              <p class="text-govpt-base text-govpt-text leading-relaxed">
+                                Ao identificar e corrigir ineficiências nos processos, a organização pode reduzir custos, tempo e recursos despendidos.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="bg-white border border-govpt-border rounded-lg p-6 hover:shadow-md transition-shadow">
+                          <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0 mt-1">
+                              <div class="w-12 h-12 bg-govpt-primary/10 rounded-full flex items-center justify-center">
+                                <i data-feather="users" class="h-6 w-6 text-govpt-primary"></i>
+                              </div>
+                            </div>
+                            <div class="flex-1">
+                              <h3 class="text-govpt-xl font-semibold text-govpt-heading mb-3">Aumentar a produtividade</h3>
+                              <p class="text-govpt-base text-govpt-text leading-relaxed">
+                                Otimiza os processos, o que resulta em equipas mais produtivas, reduzindo tempo de inatividade e problemas recorrentes.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="bg-white border border-govpt-border rounded-lg p-6 hover:shadow-md transition-shadow md:col-span-2">
+                          <div class="flex items-start gap-4">
+                            <div class="flex-shrink-0 mt-1">
+                              <div class="w-12 h-12 bg-govpt-primary/10 rounded-full flex items-center justify-center">
+                                <i data-feather="refresh-cw" class="h-6 w-6 text-govpt-primary"></i>
+                              </div>
+                            </div>
+                            <div class="flex-1">
+                              <h3 class="text-govpt-xl font-semibold text-govpt-heading mb-3">Adaptar-se a mudanças</h3>
+                              <p class="text-govpt-base text-govpt-text leading-relaxed">
+                                Permite ajustar os processos de acordo com as mudanças tecnológicas, de negócio e das necessidades da organização.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Summary Section -->
+                    <div class="bg-white border-2 border-govpt-primary rounded-lg p-6">
+                      <h2 class="text-govpt-2xl font-semibold text-govpt-heading mb-4">Resumo</h2>
+                      <p class="text-govpt-base text-govpt-text leading-relaxed">
+                        Em resumo, a análise de processos de negócio/TI é essencial para garantir que a infraestrutura de TI de uma organização opere de maneira eficaz, segura e eficiente, apoiando as operações e metas empresariais. Este documento reflete a análise de processos de negócio e TI feita no <strong>IGFEJ</strong> no âmbito acima descrito.
+                      </p>
+                    </div>
+
+                    <!-- Target Audience Section -->
+                    <div class="bg-white rounded-lg p-6">
+                      <h2 class="text-govpt-2xl font-semibold text-govpt-heading mb-4">Destinatários</h2>
+                      <p class="text-govpt-base text-govpt-text leading-relaxed">
+                        <span class="font-semibold text-govpt-heading">Público-alvo:</span> Gestores de Negócio, de IT e Diretores de médio e alto nível dentro da organização.
+                      </p>
+                    </div>
+
+                    <!-- Call to Action -->
+                    <div class="bg-white border border-gray-200 rounded-lg p-8">
+                      <div class="text-center">
+                        <h2 class="text-govpt-3xl font-bold text-govpt-heading mb-4">Pronto para começar?</h2>
+                        <p class="text-govpt-lg text-govpt-gray mb-6">Explore o sistema de gestão de processos do IGFEJ</p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                          <a
+                            href="#homepage"
+                            onclick="navigateToSection('homepage'); return false;"
+                            class="bg-govpt-primary text-white hover:bg-govpt-secondary focus:ring-2 focus:ring-govpt-primary focus:ring-offset-2 font-semibold py-3 px-6 rounded-lg transition-colors inline-flex items-center justify-center"
+                          >
+                            <i data-feather="arrow-right" class="h-5 w-5 mr-2"></i>
+                            Aceder Dashboard
+                          </a>
+                          <a
+                            href="#methodology"
+                            onclick="navigateToSection('methodology'); return false;"
+                            class="border-2 border-govpt-primary text-govpt-primary hover:bg-govpt-primary hover:text-white focus:ring-2 focus:ring-govpt-primary focus:ring-offset-2 font-semibold py-3 px-6 rounded-lg transition-colors inline-flex items-center justify-center"
+                          >
+                            <i data-feather="book-open" class="h-5 w-5 mr-2"></i>
+                            Conhecer Metodologia
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Project Info -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      <div class="bg-white border border-gray-200 rounded-lg p-6">
+                        <h2 class="text-govpt-xl font-semibold text-govpt-heading mb-4">Sobre o Projeto</h2>
+                        <div class="space-y-4">
+                          <div>
+                            <h3 class="text-govpt-lg font-semibold text-govpt-heading mb-2">Autores</h3>
+                            <p class="text-govpt-base text-govpt-text">
+                              Departamento de Serviços de Suporte Tecnológico (DSST)
+                            </p>
+                          </div>
+                          <div>
+                            <h3 class="text-govpt-lg font-semibold text-govpt-heading mb-2">Licença</h3>
+                            <div class="bg-gray-50 rounded-lg p-4">
+                              <p class="text-govpt-base text-govpt-text mb-3">
+                                Este trabalho é propriedade do <strong>IGFEJ</strong> protegido sob o licenciamento Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License.
+                              </p>
+                              <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center text-govpt-primary hover:text-govpt-secondary focus:text-govpt-secondary focus:outline-none focus:underline transition-colors font-medium">
+                                <i data-feather="external-link" class="h-4 w-4 mr-2"></i>
+                                Ver Licença Completa
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="bg-white border border-gray-200 rounded-lg p-6">
+                        <h2 class="text-govpt-xl font-semibold text-govpt-heading mb-4">Contacto</h2>
+                        <div class="space-y-3">
+                          <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                              <i data-feather="mail" class="h-5 w-5 text-govpt-primary"></i>
+                            </div>
+                            <div>
+                              <p class="text-govpt-base font-medium text-govpt-heading">Email</p>
+                              <p class="text-govpt-sm text-govpt-text">apoio@igfej.justica.gov.pt</p>
+                            </div>
+                          </div>
+                          <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                              <i data-feather="phone" class="h-5 w-5 text-govpt-primary"></i>
+                            </div>
+                            <div>
+                              <p class="text-govpt-base font-medium text-govpt-heading">Telefone</p>
+                              <p class="text-govpt-sm text-govpt-text">(+351) 302 000 000</p>
+                            </div>
+                          </div>
+                          <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
+                              <i data-feather="clock" class="h-5 w-5 text-govpt-primary"></i>
+                            </div>
+                            <div>
+                              <p class="text-govpt-base font-medium text-govpt-heading">Horário de Atendimento</p>
+                              <p class="text-govpt-sm text-govpt-text">Dias úteis das 8h00 às 20h00 e sábados das 8h00 às 16h00</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Homepage Content (now Dashboard) -->
+            <section id="homepage" class="content-section">
+              <div class="max-w-govpt-container mx-auto px-4 py-8">
+                <div class="space-y-12">
+                  <!-- Dashboard Header -->
+                  <div class="mb-4">
+                    <h1 class="text-govpt-3xl font-bold text-govpt-heading mb-4">
+                      Dashboard de Processos
+                    </h1>
+                    <p class="text-govpt-lg text-govpt-gray leading-relaxed mb-6">
+                      Painel de controle completo para análise e gestão de processos de negócio e TI. Visualize estatísticas, processos recentes e métricas de desempenho em tempo real.
+                    </p>
+                  </div>
+
+                <!-- Statistics Section -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div class="govpt-card">
+                    <div class="govpt-card-body text-center">
+                      <div class="text-3xl font-bold text-govpt-primary mb-2" id="stat-macroprocesses">2</div>
+                      <div class="text-sm font-medium text-govpt-gray">Macroprocessos</div>
+                    </div>
+                  </div>
+                  <div class="govpt-card">
+                    <div class="govpt-card-body text-center">
+                      <div class="text-3xl font-bold text-govpt-primary mb-2" id="stat-processes">3</div>
+                      <div class="text-sm font-medium text-govpt-gray">Processos</div>
+                    </div>
+                  </div>
+                  <div class="govpt-card">
+                    <div class="govpt-card-body text-center">
+                      <div class="text-3xl font-bold text-govpt-primary mb-2" id="stat-subprocesses">3</div>
+                      <div class="text-sm font-medium text-govpt-gray">Subprocessos</div>
+                    </div>
+                  </div>
+                  <div class="govpt-card">
+                    <div class="govpt-card-body text-center">
+                      <div class="text-3xl font-bold text-govpt-primary mb-2" id="stat-diagrams">9</div>
+                      <div class="text-sm font-medium text-govpt-gray">Diagramas</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Featured Processes -->
+                <div>
+                  <h3 class="text-govpt-2xl font-semibold text-govpt-heading mb-6">Atualizados recentemente</h3>
+                  <div id="featured-processes" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      
+                      <div class="govpt-card cursor-pointer" onclick="showProcessDetail('3b9aef06-9a7a-4e2f-8e57-6db6c3b7c9d1')">
+                        <div class="govpt-card-body">
+                          <!-- Header Section -->
+                          <div class="flex items-start justify-between mb-4">
+                            <div class="flex-1">
+                              <div class="flex items-center mb-2">
+                                <span class="govpt-badge govpt-badge-warning">
+                                  Processo
+                                </span>
+                              </div>
+                              <h4 class="font-semibold text-govpt-heading mb-2 text-lg">4.0: Mudança de Local do Utilizador</h4>
+                              <p class="text-sm text-govpt-text line-clamp-2 flex-grow">Mudança de Local do Utilizador</p>
+                              
+                            </div>
+                            <i data-feather="chevron-right" class="h-5 w-5 text-govpt-gray mt-1"></i>
+                          </div>
+                          
+                          <!-- Bottom Section with Divider -->
+                          <div class="pt-4 border-t border-govpt-border">
+                            <div class="flex items-center justify-between text-xs text-govpt-gray">
+                              <span class="font-medium text-govpt-heading">Gerir Pedidos de Serviço</span>
+                              <span class="flex items-center">
+                                <i data-feather="clock" class="h-4 w-4 mr-1"></i>
+                                4 semanas atrás
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    
+                      <div class="govpt-card cursor-pointer" onclick="showProcessDetail('c6cb6f1f-96a9-4b63-85a8-827a63b8f76f')">
+                        <div class="govpt-card-body">
+                          <!-- Header Section -->
+                          <div class="flex items-start justify-between mb-4">
+                            <div class="flex-1">
+                              <div class="flex items-center mb-2">
+                                <span class="govpt-badge govpt-badge-warning">
+                                  Processo
+                                </span>
+                              </div>
+                              <h4 class="font-semibold text-govpt-heading mb-2 text-lg">5.0: Gestão de Acessos e Utilizadores</h4>
+                              <p class="text-sm text-govpt-text line-clamp-2 flex-grow">Processo com 2 subprocessos</p>
+                              
+                                <div class="mt-3 text-xs text-govpt-gray">
+                                  <div class="flex items-center">
+                                    <i data-feather="layers" class="h-4 w-4 mr-1"></i>
+                                    2 subprocessos
+                                  </div>
+                                </div>
+                              
+                            </div>
+                            <i data-feather="chevron-right" class="h-5 w-5 text-govpt-gray mt-1"></i>
+                          </div>
+                          
+                          <!-- Bottom Section with Divider -->
+                          <div class="pt-4 border-t border-govpt-border">
+                            <div class="flex items-center justify-between text-xs text-govpt-gray">
+                              <span class="font-medium text-govpt-heading">Gerir Pedidos de Serviço</span>
+                              <span class="flex items-center">
+                                <i data-feather="clock" class="h-4 w-4 mr-1"></i>
+                                4 semanas atrás
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    
+                      <div class="govpt-card cursor-pointer" onclick="showSubprocessDetail('1b6aa1c4-7f40-4c3e-bbb8-6c6d4f4be0d5')">
+                        <div class="govpt-card-body">
+                          <!-- Header Section -->
+                          <div class="flex items-start justify-between mb-4">
+                            <div class="flex-1">
+                              <div class="flex items-center mb-2">
+                                <span class="govpt-badge govpt-badge-info">
+                                  Subprocesso
+                                </span>
+                              </div>
+                              <h4 class="font-semibold text-govpt-heading mb-2 text-lg">5.1: Criação de Utilizador</h4>
+                              <p class="text-sm text-govpt-text line-clamp-2 flex-grow">Criação de conta de utilizador em diretório (ex.: AD) e disponibilização de credenciais e acessos base.</p>
+                              <div class="mt-3 text-xs text-govpt-gray">
+                                <div class="flex items-center">
+                                  <i data-feather="file-text" class="h-4 w-4 mr-1"></i>
+                                  Pai: 5.0
+                                </div>
+                              </div>
+                            </div>
+                            <i data-feather="chevron-right" class="h-5 w-5 text-govpt-gray mt-1"></i>
+                          </div>
+                          
+                          <!-- Bottom Section with Divider -->
+                          <div class="pt-4 border-t border-govpt-border">
+                            <div class="flex items-center justify-between text-xs text-govpt-gray">
+                              <span class="font-medium text-govpt-heading">Gerir Pedidos de Serviço</span>
+                              <span class="flex items-center">
+                                <i data-feather="clock" class="h-4 w-4 mr-1"></i>
+                                4 semanas atrás
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Macroprocessos Card -->
+                <div>
+                  <h3 class="text-govpt-2xl font-semibold text-govpt-heading mb-6">Todos os Macroprocessos</h3>
+                  <div class="govpt-card">
+                    <div class="govpt-card-body">
+                      <!-- Search and Filter Controls -->
+                      <div class="flex flex-col md:flex-row gap-4 mb-6">
+                        <div class="flex-1">
+                          <div class="relative">
+                            <input
+                              type="text"
+                              id="macroprocess-search"
+                              placeholder="Pesquisar macroprocessos..."
+                              class="govpt-input pl-10"
+                            />
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3">
+                              <i data-feather="search" class="h-5 w-5 text-govpt-gray"></i>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="flex gap-2">
+                          <select id="macroprocess-status-filter" class="govpt-input">
+                            <option value="">Todos os Status</option>
+                            <option value="ativo">Ativo</option>
+                            <option value="em-desenvolvimento">Em Desenvolvimento</option>
+                            <option value="planejado">Planejado</option>
+                          </select>
+                          <select id="macroprocess-sort-filter" class="govpt-input">
+                            <option value="">Filtrar por</option>
+                            <option value="nome">Nome</option>
+                            <option value="processos">Processos</option>
+                            <option value="subprocessos">Subprocessos</option>
+                          </select>
+                        </div>
+                      </div>
+                      
+                      <!-- Macroprocesses Table -->
+                      <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white border border-govpt-border rounded-lg">
+                          <thead class="bg-govpt-light">
+                            <tr>
+                              <th class="px-6 py-4 text-left text-xs font-semibold text-govpt-heading uppercase tracking-wider cursor-pointer hover:bg-govpt-blue-light transition-colors" onclick="sortMacroprocessTable('name')">
+                                <div class="flex items-center">
+                                  <i data-feather="folder" class="mr-2 h-4 w-4 text-govpt-primary"></i>
+                                  <span>Macroprocesso</span>
+                                  <i data-feather="chevron-up" class="ml-2 h-2 w-2 text-govpt-gray-400 sort-icon sort-name"></i>
+                                </div>
+                              </th>
+                              <th class="px-6 py-4 text-left text-xs font-semibold text-govpt-heading uppercase tracking-wider cursor-pointer hover:bg-govpt-blue-light transition-colors" onclick="sortMacroprocessTable('description')">
+                                <div class="flex items-center">
+                                  <i data-feather="file-text" class="mr-2 h-4 w-4 text-govpt-primary"></i>
+                                  <span>Descrição</span>
+                                  <i data-feather="chevron-up" class="ml-2 h-2 w-2 text-govpt-gray-400 sort-icon sort-description"></i>
+                                </div>
+                              </th>
+                              <th class="px-6 py-4 text-left text-xs font-semibold text-govpt-heading uppercase tracking-wider cursor-pointer hover:bg-govpt-blue-light transition-colors" onclick="sortMacroprocessTable('processes')">
+                                <div class="flex items-center">
+                                  <i data-feather="package" class="mr-2 h-4 w-4 text-govpt-primary"></i>
+                                  <span>Processos</span>
+                                  <i data-feather="chevron-up" class="ml-2 h-2 w-2 text-govpt-gray-400 sort-icon sort-processes"></i>
+                                </div>
+                              </th>
+                              <th class="px-6 py-4 text-left text-xs font-semibold text-govpt-heading uppercase tracking-wider cursor-pointer hover:bg-govpt-blue-light transition-colors" onclick="sortMacroprocessTable('subprocesses')">
+                                <div class="flex items-center">
+                                  <i data-feather="git-branch" class="mr-2 h-4 w-4 text-govpt-primary"></i>
+                                  <span>Subprocessos</span>
+                                  <i data-feather="chevron-up" class="ml-2 h-2 w-2 text-govpt-gray-400 sort-icon sort-subprocesses"></i>
+                                </div>
+                              </th>
+                              <th class="px-6 py-4 text-left text-xs font-semibold text-govpt-heading uppercase tracking-wider">
+                                <div class="flex items-center">
+                                  <i data-feather="settings" class="mr-2 h-4 w-4 text-govpt-primary"></i>
+                                  <span>Ações</span>
+                                </div>
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody id="macroprocesses-table-body" class="bg-white divide-y divide-govpt-border">
+                            <!-- Macroprocess Data -->
+                            <tr class="hover:bg-govpt-light transition-colors">
+                              <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-semibold text-govpt-heading">Gestão Global</div>
+                              </td>
+                              <td class="px-6 py-4">
+                                <div class="text-sm text-govpt-text max-w-xs">Processos de gestão global da organização</div>
+                              </td>
+                              <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-govpt-blue-light text-govpt-primary">1</span>
+                              </td>
+                              <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-govpt-light text-govpt-text">3</span>
+                              </td>
+                              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button class="text-blue-600 hover:text-blue-800 text-xs font-medium transition-colors">
+                                  Ver Detalhes
+                                </button>
+                              </td>
+                            </tr>
+                            <tr class="hover:bg-govpt-light transition-colors">
+                              <td class="px-6 py-4 whitespace-nowrap">
+                                <div class="text-sm font-semibold text-govpt-heading">Gerir Pedidos de Serviço</div>
+                              </td>
+                              <td class="px-6 py-4">
+                                <div class="text-sm text-govpt-text max-w-xs">Processos operacionais de pedidos de serviço (criação de utilizadores, VPN, redefinição de passwords, mudanças de local, etc.)</div>
+                              </td>
+                              <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-govpt-blue-light text-govpt-primary">3</span>
+                              </td>
+                              <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-govpt-light text-govpt-text">4</span>
+                              </td>
+                              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                <button class="text-blue-600 hover:text-blue-800 text-xs font-medium transition-colors">
+                                  Ver Detalhes
+                                </button>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      
+                      <!-- Pagination -->
+                      <div class="flex items-center justify-between mt-6 pt-4 border-t border-govpt-border">
+                        <div class="text-sm text-govpt-text">
+                          Mostrando <span id="macroprocesses-showing" class="font-medium text-govpt-heading">2</span> de <span id="macroprocesses-total" class="font-medium text-govpt-heading">2</span> macroprocessos
+                        </div>
+                        <div class="flex gap-2">
+                          <button id="macroprocesses-prev" class="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            <i data-feather="chevron-left" class="h-3 w-3"></i>
+                          </button>
+                          <button id="macroprocesses-next" class="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                            <i data-feather="chevron-right" class="h-3 w-3"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Processos Card -->
+                <div>
+                  <h3 class="text-govpt-2xl font-semibold text-govpt-heading mb-6">Todos os Processos</h3>
+                  <div class="govpt-card">
+                    <div class="govpt-card-body">
+                      <!-- Search and Filter Controls -->
+                      <div class="flex flex-col md:flex-row gap-4 mb-6">
+                        <div class="flex-1">
+                          <div class="relative">
+                            <input
+                              type="text"
+                              id="process-search"
+                              placeholder="Pesquisar processos..."
+                              class="govpt-input pl-10"
+                            />
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3">
+                              <i data-feather="search" class="h-5 w-5 text-govpt-gray"></i>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="flex gap-2">
+                          <select id="process-status-filter" class="govpt-input">
+                            <option value="">Todos os Status</option>
+                            <option value="as-is">AS-IS</option>
+                            <option value="to-be">TO-BE</option>
+                          </select>
+                          <select id="process-macro-filter" class="govpt-input">
+                            <option value="">Todos os Macroprocessos</option>
+                            <option value="gestao-global">Gestão Global</option>
+                            <option value="gerir-pedidos-de-servico">Gerir Pedidos de Serviço</option>
+                          </select>
+                        </div>
+                      </div>
+                    
+                    <!-- Processes Table -->
+                    <div class="overflow-x-auto">
+                      <table class="min-w-full bg-white border border-govpt-border rounded-lg">
+                        <thead class="bg-govpt-light">
+                          <tr>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-govpt-heading uppercase tracking-wider cursor-pointer hover:bg-govpt-blue-light transition-colors" onclick="sortProcessTable('code')">
+                              <div class="flex items-center">
+                                <i data-feather="hash" class="mr-2 h-4 w-4 text-govpt-primary"></i>
+                                <span>Código</span>
+                                <i data-feather="chevron-up" class="ml-2 h-2 w-2 text-govpt-gray-400 sort-icon sort-code"></i>
+                              </div>
+                            </th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-govpt-heading uppercase tracking-wider cursor-pointer hover:bg-govpt-blue-light transition-colors" onclick="sortProcessTable('name')">
+                              <div class="flex items-center">
+                                <i data-feather="file" class="mr-2 h-4 w-4 text-govpt-primary"></i>
+                                <span>Processo</span>
+                                <i data-feather="chevron-up" class="ml-2 h-2 w-2 text-govpt-gray-400 sort-icon sort-name"></i>
+                              </div>
+                            </th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-govpt-heading uppercase tracking-wider cursor-pointer hover:bg-govpt-blue-light transition-colors" onclick="sortProcessTable('macroprocess')">
+                              <div class="flex items-center">
+                                <i data-feather="layers" class="mr-2 h-4 w-4 text-govpt-primary"></i>
+                                <span>Macroprocesso</span>
+                                <i data-feather="chevron-up" class="ml-2 h-2 w-2 text-govpt-gray-400 sort-icon sort-macroprocess"></i>
+                              </div>
+                            </th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-govpt-heading uppercase tracking-wider cursor-pointer hover:bg-govpt-blue-light transition-colors" onclick="sortProcessTable('status')">
+                              <div class="flex items-center">
+                                <i data-feather="check-circle" class="mr-2 h-4 w-4 text-govpt-primary"></i>
+                                <span>Status</span>
+                                <i data-feather="chevron-up" class="ml-2 h-2 w-2 text-govpt-gray-400 sort-icon sort-status"></i>
+                              </div>
+                            </th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-govpt-heading uppercase tracking-wider">
+                              <div class="flex items-center">
+                                <i data-feather="settings" class="mr-2 h-4 w-4 text-govpt-primary"></i>
+                                <span>Ações</span>
+                              </div>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody id="processes-table-body" class="bg-white divide-y divide-govpt-border">
+                          <!-- Process Data -->
+                          <tr class="hover:bg-govpt-light transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                              <div class="text-sm font-semibold text-govpt-heading">4.0</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                              <div class="text-sm text-govpt-heading">Mudança de Local do Utilizador</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                              <div class="text-sm text-govpt-text">Gerir Pedidos de Serviço</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-govpt-success-soft text-govpt-success-text">AS-IS</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                              <button class="text-blue-600 hover:text-blue-800 text-xs font-medium transition-colors">
+                                Ver Detalhes
+                              </button>
+                            </td>
+                          </tr>
+                          <tr class="hover:bg-govpt-light transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                              <div class="text-sm font-semibold text-govpt-heading">5.0</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                              <div class="text-sm text-govpt-heading">Gestão de Acessos e Utilizadores</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                              <div class="text-sm text-govpt-text">Gerir Pedidos de Serviço</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-govpt-success-soft text-govpt-success-text">AS-IS</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                              <button class="text-blue-600 hover:text-blue-800 text-xs font-medium transition-colors">
+                                Ver Detalhes
+                              </button>
+                            </td>
+                          </tr>
+                          <tr class="hover:bg-govpt-light transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                              <div class="text-sm font-semibold text-govpt-heading">9.0</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                              <div class="text-sm text-govpt-heading">Redefinição de Password</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                              <div class="text-sm text-govpt-text">Gerir Pedidos de Serviço</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-govpt-success-soft text-govpt-success-text">AS-IS</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                              <button class="text-blue-600 hover:text-blue-800 text-xs font-medium transition-colors">
+                                Ver Detalhes
+                              </button>
+                            </td>
+                          </tr>
+                          <tr class="hover:bg-govpt-light transition-colors">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                              <div class="text-sm font-semibold text-govpt-heading">10.0</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                              <div class="text-sm text-govpt-heading">Gestão de Incidentes</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                              <div class="text-sm text-govpt-text">Gestão Global</div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-govpt-warning-soft text-govpt-warning-text">TO-BE</span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                              <button class="text-blue-600 hover:text-blue-800 text-xs font-medium transition-colors">
+                                Ver Detalhes
+                              </button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <div class="flex items-center justify-between mt-6 pt-4 border-t border-govpt-border">
+                      <div class="text-sm text-govpt-text">
+                        Mostrando <span id="processes-showing" class="font-medium text-govpt-heading">4</span> de <span id="processes-total" class="font-medium text-govpt-heading">4</span> processos
+                      </div>
+                      <div class="flex gap-2">
+                        <button id="processes-prev" class="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                          <i data-feather="chevron-left" class="h-3 w-3"></i>
+                        </button>
+                        <button id="processes-next" class="p-1 text-gray-400 hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                          <i data-feather="chevron-right" class="h-3 w-3"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- FAQ Section -->
+            <section id="faq" class="content-section hidden">
+              <div class="max-w-govpt-container mx-auto px-4 py-8">
+                <div class="space-y-8">
+                  <div class="mb-6">
+                    <h1 class="text-govpt-3xl font-bold text-govpt-heading mb-4">
+                      Perguntas Frequentes
+                    </h1>
+                    <p class="text-govpt-lg text-govpt-gray leading-relaxed mb-4">Tire suas dúvidas sobre o sistema de gestão de processos.</p>
+                  </div>
+
+                  <div id="faq-content" class="space-y-3">
+                    <!-- FAQ items will be populated by JavaScript -->
+                  </div>
+                  </div>
+                </div>
+            </section>
+
+            <!-- Methodology Section -->
+            <section id="methodology" class="content-section hidden">
+              <div class="max-w-govpt-container mx-auto px-4 py-8">
+                <div class="space-y-8">
+                  <div class="mb-6">
+                    <h1 class="text-govpt-3xl font-bold text-govpt-heading mb-4">Metodologia</h1>
+                    <p class="text-govpt-lg text-govpt-gray leading-relaxed mb-4">Metodologia BPM utilizada para análise e gestão de processos organizacionais.</p>
+                  </div>
+
+                  <div class="prose max-w-none space-y-6">
+                      <div id="methodology-content">
+                        <div class="bg-white rounded-lg border border-govpt-border p-4 mb-3">
+                          <button onclick="toggleMethodologySection('methodology-enquadramento')" class="flex items-center w-full text-left py-2 rounded transition-colors">
+                            <span class="text-lg font-medium text-govpt-heading flex-1 pr-4">Enquadramento</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down h-4 w-4 text-govpt-gray ml-1 transition-transform duration-200" id="icon-methodology-enquadramento"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                          </button>
+                          <div id="methodology-enquadramento" class="hidden mt-4 text-govpt-text max-w-full">
+                           
+                            <p class="text-govpt-base text-govpt-text leading-relaxed">
+                              Uma metodologia de análise de processos é essencial em vários contextos por diversos motivos:
+                          </p>
+                          <ul class="list-disc list-inside space-y-1 text-gov-base text-gray-700 mt-3">
+                            <li><strong>Eficiência e Optimização:</strong> Permite identificar estrangulamentos, ineficiências e áreas de melhoria nos processos, o que possibilita optimizá-los para aumentar a produtividade e reduzir custos.</li>
+                            <li><strong>Padronização:</strong> Estabelece padrões e diretrizes para a execução de tarefas, garantindo consistência e qualidade nos resultados.</li>
+                            <li><strong>Entendimento dos Processos:</strong> Ajuda a compreender a sequência de atividades, recursos envolvidos e interações entre diferentes estágios, permitindo uma visão holística dos processos.</li>
+                            <li><strong>Identificação de Problemas:</strong> Facilita a identificação de problemas ou obstáculos nos processos, permitindo sua resolução de maneira estruturada.</li>
+                            <li><strong>Tomada de Decisão:</strong> Fornece dados e informações para suportar decisões estratégicas, baseadas em métricas e análises concretas.</li>
+                            <li><strong>Inovação e Mudança:</strong> Facilita a implementação de mudanças e inovações nos processos, permitindo uma abordagem mais ágil e controlada.</li>
+                            <li><strong>Compreensão do Ciclo de Vida do Processo:</strong> Ajuda a entender a dinâmica e evolução dos processos ao longo do tempo, permitindo ajustes conforme necessário.</li>
+                            <li><strong>Controle e Gestão:</strong> Permite um controle mais efetivo e uma gestão mais eficiente dos processos organizacionais.</li>
+                            <li><strong>Documentação:</strong> Permite documentar os processos de forma estruturada, facilitando a comunicação e o entendimento entre as partes interessadas.</li>
+                          </ul>
+                          <p class="text-govpt-base text-govpt-text leading-relaxed mt-3">
+                            Uma metodologia de análise de processos pode variar de acordo com a natureza e o objetivo do processo em questão, e existem várias abordagens disponíveis, como o BPM (Business Process Management), Six Sigma, Lean, entre outras. A escolha da metodologia depende das necessidades específicas da organização e dos processos a serem analisados.
+                          </p>
+                          <p class="text-govpt-base text-govpt-text leading-relaxed mt-3">
+                            Neste estudo, é seguida uma abordagem BPM. De entre a informação recolhida, e que se apresenta no relatório de cada processo com uma estrutura bem definida, encontram-se um número significativo de atributos sobre os quais convém fazer uma descrição mais detalhada:
+                          </p>
+                        
+                        </div>
+                      </div>
+                      
+                      <div class="bg-white rounded-lg border border-govpt-border p-4 mb-3">
+                        <button onclick="toggleMethodologySection('methodology-glossario')" class="flex items-center w-full text-left py-2 rounded transition-colors">
+                          <span class="text-lg font-medium text-govpt-heading flex-1 pr-4">Glossário</span>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-down h-4 w-4 text-govpt-gray ml-1 transition-transform duration-200" id="icon-methodology-glossario"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </button>
+                        <div id="methodology-glossario" class="hidden mt-4 text-govpt-text max-w-full">
+                          
+                          <div class="space-y-4">
+                            <div class="flex">
+                              <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">1.</span>
+                              <div>
+                                <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Entidade</h4>
+                                <p class="text-govpt-base text-govpt-text">Descreve a entidade onde o processo é executado e que tem interesse na sua documentação. Pode ser uma entidade pública, privada ou outra.</p>
+                              </div>
+                            </div>
+                            <div class="flex">
+                              <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">2.</span>
+                              <div>
+                                <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Responsável</h4>
+                                <p class="text-govpt-base text-govpt-text">Descreve a pessoa ou entidade responsável pelo processo. Pode ser uma pessoa, um departamento ou uma entidade. Normalmente é uma pessoa. Quando tal não for possível identificar, deve ser identificado o departamento ou entidade responsável. Em último caso, este atributo ficará vazio.</p>
+                              </div>
+                            </div>
+                            <div class="flex">
+                              <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">3.</span>
+                              <div>
+                                <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Descrição</h4>
+                                <p class="text-govpt-base text-govpt-text">Descreve o processo de forma sucinta, mas completa. Deve ser suficientemente detalhada para que qualquer pessoa possa compreender o processo.</p>
+                              </div>
+                            </div>
+                            <div class="flex">
+                              <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">4.</span>
+                              <div>
+                                <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Palavras-Chave</h4>
+                                <p class="text-govpt-base text-govpt-text">Descreve as palavras-chave que melhor caracterizam o processo. Deve ser uma lista de palavras-chave separadas por vírgulas. Este mecanismo permitirá fazer buscas optimizadas por palavras-chave.</p>
+                              </div>
+                            </div>
+                            <div class="flex">
+                              <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">5.</span>
+                              <div>
+                                <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Objetivos</h4>
+                                <p class="text-govpt-base text-govpt-text">Descreve os objetivos do processo. Deve ser uma lista de objetivos separados por vírgulas. Este mecanismo permitirá saber de forma rápida quer o contexto, quer os objectivos, o que de certa forma deve justificar a razão da existência do processo.</p>
+                              </div>
+                            </div>
+                            <div class="flex">
+                              <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">6.</span>
+                              <div>
+                                <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Inputs</h4>
+                                <p class="text-govpt-base text-govpt-text">Descreve os inputs do processo. Este mecanismo permitirá saber quais os inputs que o processo poderá ter e aferir da sua necessidade e/ou qualidade no contributo para enriquecer o processo.</p>
+                              </div>
+                            </div>
+                            <div class="flex">
+                              <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">7.</span>
+                              <div>
+                                <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Atividades</h4>
+                                <p class="text-govpt-base text-govpt-text">Descreve as atividades do processo de forma detalhada. Este mecanismo permitirá saber quais as atividades que o processo tem, e ainda, descrever bem as interações entre os vários intervenientes no processo.</p>
+                              </div>
+                            </div>
+                            <div class="flex">
+                              <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">8.</span>
+                              <div>
+                                <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Entregáveis</h4>
+                                <p class="text-govpt-base text-govpt-text">Descreve os entregáveis do processo. No fundo, esta informação representa qual o output esperado do processo quando e se este executar de forma adequada e sistemática.</p>
+                              </div>
+                            </div>
+                            <div class="flex">
+                              <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">9.</span>
+                              <div>
+                                <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Fornecedores</h4>
+                                <p class="text-govpt-base text-govpt-text">Descreve de forma detalhada os intervenientes fornecedores de inputs ao processo e a suas interações. No fundo, esta informação representa quais os fornecedores que contribuem para o processo.</p>
+                              </div>
+                            </div>
+                            <div class="flex">
+                              <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">10.</span>
+                              <div>
+                                <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Participantes</h4>
+                                <p class="text-govpt-base text-govpt-text">Descreve de forma detalhada os participantes nas atividades do processo e a suas interações. Esta informação é relevante para identificar responsabilidades nas atividades, os momentos dessa sua intervenção e, em fase de execução, qual a sua duração e eventual custo. É ainda, uma componente fundamental para desenhar os modelos de processo.</p>
+                              </div>
+                            </div>
+                            <div class="flex">
+                              <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">11.</span>
+                              <div>
+                                <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Clientes</h4>
+                                <p class="text-govpt-base text-govpt-text">Descreve de forma detalhada os consumidores do processo e a suas interações. No fundo, esta informação representa quem beneficia dos resultados da execução do processo.</p>
+                              </div>
+                            </div>
+                            <div class="flex">
+                              <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">12.</span>
+                              <div>
+                                <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Metodologias</h4>
+                                <p class="text-govpt-base text-govpt-text">Descreve as metodologias que são utilizadas para executar o processo de forma adequada.</p>
+                              </div>
+                            </div>
+                            <div class="flex">
+                              <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">13.</span>
+                              <div>
+                                <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Ferramentas</h4>
+                                <p class="text-govpt-base text-govpt-text">Descreve as ferramentas envolvidas e que suportam o processo em momento de execução.</p>
+                              </div>
+                            </div>
+                            <div class="flex">
+                              <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">14.</span>
+                              <div>
+                                <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Métricas</h4>
+                                <p class="text-govpt-base text-govpt-text">Descreve as métricas que são utilizadas para medir a eficácia e eficiência do processo.</p>
+                              </div>
+                            </div>
+                            <div class="flex">
+                              <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">15.</span>
+                              <div>
+                                <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Sugestões</h4>
+                                <p class="text-govpt-base text-govpt-text">Descreve as sugestões que são feitas para melhorar o processo.</p>
+                              </div>
+                            </div>
+                            <div class="flex">
+                              <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">16.</span>
+                              <div>
+                                <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Maturidade</h4>
+                                <p class="text-govpt-base text-govpt-text">Descreve o nível de maturidade do processo. Este atributo é importante para aferir da qualidade do processo e da sua capacidade de evolução. Está baseado no modelo de maturidade de processos CMMI.</p>
+                              </div>
+                            </div>
+                            <div class="flex">
+                              <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">17.</span>
+                              <div>
+                                <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Diagramas</h4>
+                                <p class="text-govpt-base text-govpt-text">Apresentam os diagramas que são utilizados para descrever o processo. Neste caso, são sumarizadas informações sobre os diagramas de contexto, de atividades e de fluxo de dados.</p>
+                              </div>
+                            </div>
+                            <div class="flex">
+                              <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">18.</span>
+                              <div>
+                                <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Suporte Legal / Legislação</h4>
+                                <p class="text-govpt-base text-govpt-text">Identifica e descreve qual o suporte legal do processo. Várias das decisões e/ou atividades podem ser justificadas por esta legislação.</p>
+                              </div>
+                            </div>
+                            <div class="flex">
+                              <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">19.</span>
+                              <div>
+                                <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Classificação da informação</h4>
+                                <p class="text-govpt-base text-govpt-text">Identifica e descreve qual a classificação do processo em relação à sua confidencialidade e segurança da informação.</p>
+                              </div>
+                            </div>
+                            <div class="flex">
+                              <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">20.</span>
+                              <div>
+                                <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Metadados</h4>
+                                <p class="text-govpt-base text-govpt-text">Descreve e apresenta os metadados do processo.</p>
+                              </div>
+                            </div>
+                          </div>
+                        
+                        </div>
+                      </div>
+                      
+                      <div class="bg-igfej-light border border-igfej-blue rounded-lg p-6" style="
+                          border: 1px solid blue;
+                      ">
+                        <h3 class="text-lg font-semibold text-igfej-blue mb-2">Nota</h3>
+                        <p class="text-igfej-blue">Informação adicional pode ser apresentada no restante relatório sem que o seu significado tenha sido detalhado nesta secção.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </main>
+        </div>
+      </div>
+    </div>
+
+    <!-- IGFEJ Footer -->
+    <footer class="bg-govpt-dark text-white mt-auto">
+      <div class="w-full px-4 py-6">
+        <div class="max-w-govpt-container mx-auto flex flex-col md:flex-row justify-between items-center">
+          <div class="mb-4 md:mb-0">
+            <p class="text-sm text-gray-300">
+              &copy; 2026 IGFEJ - Inspeção-Geral dos Serviços de Justiça
+            </p>
+            <p class="text-xs text-gray-400 mt-1">
+              Sistema de Gestão de Processos
+            </p>
+          </div>
+          <div class="flex items-center space-x-6 text-sm">
+            <a href="#" class="text-gray-300 hover:text-white transition-colors">FAQ</a>
+            <a href="#" class="text-gray-300 hover:text-white transition-colors">Ajuda</a>
+            <a href="#" class="text-gray-300 hover:text-white transition-colors">Privacidade</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Header Search Script -->
+    <script>
+      // Header search functionality - simplified to avoid conflicts with search.js
+      document.addEventListener('DOMContentLoaded', function() {
+        const headerSearchBtn = document.getElementById('header-search-btn');
+        const headerSearchExpand = document.getElementById('header-search-expand');
+        const headerSearchInput = document.getElementById('header-search-input');
+
+        if (headerSearchBtn && headerSearchExpand) {
+          // Toggle search expand
+          headerSearchBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const isHidden = headerSearchExpand.classList.contains('hidden');
+
+            // Toggle visibility
+            headerSearchExpand.classList.toggle('hidden');
+
+            // Update ARIA attributes
+            headerSearchBtn.setAttribute('aria-expanded', isHidden ? 'true' : 'false');
+            headerSearchExpand.setAttribute('aria-hidden', isHidden ? 'false' : 'true');
+
+            if (!headerSearchExpand.classList.contains('hidden')) {
+              headerSearchInput.focus();
+            }
+          });
+
+          // Close search when clicking outside (but don't close if clicking on results)
+          document.addEventListener('click', function(e) {
+            if (!headerSearchExpand.contains(e.target) && !headerSearchBtn.contains(e.target)) {
+              headerSearchExpand.classList.add('hidden');
+              headerSearchBtn.setAttribute('aria-expanded', 'false');
+              headerSearchExpand.setAttribute('aria-hidden', 'true');
+              // Clear search input and results when closing
+              if (window.clearSearch) {
+                window.clearSearch('header-search-input');
+              }
+            }
+          });
+
+          // Handle search input - delegate to search.js
+          if (headerSearchInput) {
+            headerSearchInput.addEventListener('input', function(e) {
+              // Call search.js handleSearch function
+              if (window.handleSearch) {
+                window.handleSearch(e);
+              }
+            });
+
+            // Handle Escape key to close search
+            headerSearchInput.addEventListener('keydown', function(e) {
+              if (e.key === 'Escape') {
+                headerSearchExpand.classList.add('hidden');
+                headerSearchBtn.setAttribute('aria-expanded', 'false');
+                headerSearchExpand.setAttribute('aria-hidden', 'true');
+                headerSearchBtn.focus();
+                // Clear search input and results when closing
+                if (window.clearSearch) {
+                  window.clearSearch('header-search-input');
+                }
+              }
+            });
+          }
+        }
+      });
+    </script>
+
+    <!-- Main JavaScript Files -->
+    <script src="assets/js/search.js"></script>
+    <script src="assets/js/bpmn.js"></script>
+    <script src="assets/js/chevron.js"></script>
+    <script src="assets/js/main.js"></script>
+    
+    <!-- Ensure Welcome Page is Selected on Startup -->
+    <script>
+      // Force welcome page to be selected immediately
+      document.addEventListener('DOMContentLoaded', function() {
+        
+        
+        // Hide all sections first
+        const allSections = document.querySelectorAll('.content-section');
+        allSections.forEach(section => {
+          section.classList.add('hidden');
+        });
+        
+        // Show welcome section
+        const welcomeSection = document.getElementById('welcome');
+        if (welcomeSection) {
+          welcomeSection.classList.remove('hidden');
+          
+          
+          // Scroll to top when showing welcome page
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          console.error('Welcome section not found');
+        }
+        
+        // Update navigation state
+        const allNavTabs = document.querySelectorAll('.nav-tab');
+        allNavTabs.forEach(tab => tab.classList.remove('active'));
+        
+        const welcomeNavTab = document.getElementById('nav-welcome');
+        if (welcomeNavTab) {
+          welcomeNavTab.classList.add('active');
+        }
+        
+        // Initialize Feather icons
+        if (typeof feather !== 'undefined') {
+          feather.replace();
+        }
+      });
+      
+      // Also ensure scroll to top when clicking welcome navigation
+      document.addEventListener('click', function(e) {
+        if (e.target.closest('a[href="#welcome"]') || 
+            e.target.closest('button[onclick*="welcome"]') ||
+            e.target.closest('#nav-welcome')) {
+          setTimeout(() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }, 100);
+        }
+      });
+    </script>
+    
+    <!-- Force Table Initialization Script -->
+    <script>
+      // Multiple attempts to initialize tables
+      function initializeTablesWhenReady() {
+        
+        
+        // Check if all required elements exist
+        const macroTableBody = document.getElementById('macroprocesses-table-body');
+        const processTableBody = document.getElementById('processes-table-body');
+        const hasAppState = window.AppState && window.AppState.macroprocesses && window.AppState.processes;
+        
+        if (macroTableBody && processTableBody && hasAppState) {
+          
+          if (window.initializeTables) {
+            window.initializeTables();
+          } else {
+            console.error('❌ initializeTables function not available');
+          }
+        } else {
+          
+          setTimeout(initializeTablesWhenReady, 500);
+        }
+      }
+      
+      // Start initialization after DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeTablesWhenReady);
+      } else {
+        initializeTablesWhenReady();
+      }
+      
+      // Also try after window load as backup
+      window.addEventListener('load', function() {
+        
+        setTimeout(initializeTablesWhenReady, 1000);
+      });
+      
+      // Force populate with test data if real data doesn't work
+      setTimeout(() => {
+        if (!window.macroprocessTableManager || !window.processTableManager) {
+          
+          if (window.testPopulateTables) {
+            window.testPopulateTables();
+          }
+        }
+      }, 3000);
+    </script>
+  </body>
+</html>

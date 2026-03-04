@@ -97,6 +97,22 @@ window.navigateToSection = function (sectionId) {
   const section = document.getElementById(sectionId);
   if (!section) return;
 
+  // Close header search when navigating
+  if (window.closeHeaderSearchOnNavigation) {
+    window.closeHeaderSearchOnNavigation();
+  }
+
+  // If navigating to welcome section, also clear welcome search results
+  if (sectionId === "welcome") {
+    const welcomeSearchResults = document.getElementById("search-results");
+    if (
+      welcomeSearchResults &&
+      !welcomeSearchResults.classList.contains("hidden")
+    ) {
+      welcomeSearchResults.classList.add("hidden");
+    }
+  }
+
   // Hide all sections
   const allSections = document.querySelectorAll(".content-section");
   allSections.forEach((s) => s.classList.add("hidden"));
@@ -136,13 +152,7 @@ window.navigateToSection = function (sectionId) {
 
   // Show/hide breadcrumb based on section
   const breadcrumb = document.getElementById("breadcrumb");
-  const mainPages = [
-    "welcome",
-    "homepage",
-    "methodology",
-    "faq",
-    "introduction",
-  ];
+  const mainPages = ["welcome"];
 
   if (mainPages.includes(sectionId)) {
     breadcrumb.classList.add("hidden");
@@ -172,13 +182,13 @@ function getBreadcrumbForSection(sectionId) {
     case "welcome":
       return ["Início"];
     case "homepage":
-      return ["Início", "Dashboard"];
+      return ["Início", "Dashboard de Processos"];
     case "introduction":
-      return ["Início"];
+      return ["Início", "Introdução"];
     case "methodology":
-      return ["Enquadramento", "Glossário"];
+      return ["Início", "Metodologia"];
     case "faq":
-      return ["Início", "FAQ"];
+      return ["Início", "Perguntas Frequentes"];
     case "process-list":
       return ["Início", "Processos"];
     case "process-detail":
@@ -255,10 +265,10 @@ function renderMethodology() {
     {
       title: "Enquadramento",
       content: `
-        <p class="text-gov-base text-gray-700 leading-relaxed">
+        <p class="text-govpt-base text-govpt-text leading-relaxed">
           Uma metodologia de análise de processos é essencial em vários contextos por diversos motivos:
         </p>
-        <ul class="list-disc list-inside space-y-1 text-gov-base text-gray-700 mt-3">
+        <ul class="list-disc list-inside space-y-1 text-govpt-base text-govpt-text mt-3">
           <li><strong>Eficiência e Optimização:</strong> Permite identificar estrangulamentos, ineficiências e áreas de melhoria nos processos, o que possibilita optimizá-los para aumentar a produtividade e reduzir custos.</li>
           <li><strong>Padronização:</strong> Estabelece padrões e diretrizes para a execução de tarefas, garantindo consistência e qualidade nos resultados.</li>
           <li><strong>Entendimento dos Processos:</strong> Ajuda a compreender a sequência de atividades, recursos envolvidos e interações entre diferentes estágios, permitindo uma visão holística dos processos.</li>
@@ -269,10 +279,10 @@ function renderMethodology() {
           <li><strong>Controle e Gestão:</strong> Permite um controle mais efetivo e uma gestão mais eficiente dos processos organizacionais.</li>
           <li><strong>Documentação:</strong> Permite documentar os processos de forma estruturada, facilitando a comunicação e o entendimento entre as partes interessadas.</li>
         </ul>
-        <p class="text-gov-base text-gray-700 leading-relaxed mt-3">
+        <p class="text-govpt-base text-govpt-text leading-relaxed mt-3">
           Uma metodologia de análise de processos pode variar de acordo com a natureza e o objetivo do processo em questão, e existem várias abordagens disponíveis, como o BPM (Business Process Management), Six Sigma, Lean, entre outras. A escolha da metodologia depende das necessidades específicas da organização e dos processos a serem analisados.
         </p>
-        <p class="text-gov-base text-gray-700 leading-relaxed mt-3">
+        <p class="text-govpt-base text-govpt-text leading-relaxed mt-3">
           Neste estudo, é seguida uma abordagem BPM. De entre a informação recolhida, e que se apresenta no relatório de cada processo com uma estrutura bem definida, encontram-se um número significativo de atributos sobre os quais convém fazer uma descrição mais detalhada:
         </p>
       `,
@@ -284,143 +294,143 @@ function renderMethodology() {
       content: `
         <div class="space-y-4">
           <div class="flex">
-            <span class="text-gov-base font-bold text-igfej-blue mr-4 min-w-8">1.</span>
+            <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">1.</span>
             <div>
-              <h4 class="text-gov-base font-semibold text-gray-900 mb-2">Entidade</h4>
-              <p class="text-gov-base text-gray-700">Descreve a entidade onde o processo é executado e que tem interesse na sua documentação. Pode ser uma entidade pública, privada ou outra.</p>
+              <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Entidade</h4>
+              <p class="text-govpt-base text-govpt-text">Descreve a entidade onde o processo é executado e que tem interesse na sua documentação. Pode ser uma entidade pública, privada ou outra.</p>
             </div>
           </div>
           <div class="flex">
-            <span class="text-gov-base font-bold text-igfej-blue mr-4 min-w-8">2.</span>
+            <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">2.</span>
             <div>
-              <h4 class="text-gov-base font-semibold text-gray-900 mb-2">Responsável</h4>
-              <p class="text-gov-base text-gray-700">Descreve a pessoa ou entidade responsável pelo processo. Pode ser uma pessoa, um departamento ou uma entidade. Normalmente é uma pessoa. Quando tal não for possível identificar, deve ser identificado o departamento ou entidade responsável. Em último caso, este atributo ficará vazio.</p>
+              <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Responsável</h4>
+              <p class="text-govpt-base text-govpt-text">Descreve a pessoa ou entidade responsável pelo processo. Pode ser uma pessoa, um departamento ou uma entidade. Normalmente é uma pessoa. Quando tal não for possível identificar, deve ser identificado o departamento ou entidade responsável. Em último caso, este atributo ficará vazio.</p>
             </div>
           </div>
           <div class="flex">
-            <span class="text-gov-base font-bold text-igfej-blue mr-4 min-w-8">3.</span>
+            <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">3.</span>
             <div>
-              <h4 class="text-gov-base font-semibold text-gray-900 mb-2">Descrição</h4>
-              <p class="text-gov-base text-gray-700">Descreve o processo de forma sucinta, mas completa. Deve ser suficientemente detalhada para que qualquer pessoa possa compreender o processo.</p>
+              <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Descrição</h4>
+              <p class="text-govpt-base text-govpt-text">Descreve o processo de forma sucinta, mas completa. Deve ser suficientemente detalhada para que qualquer pessoa possa compreender o processo.</p>
             </div>
           </div>
           <div class="flex">
-            <span class="text-gov-base font-bold text-igfej-blue mr-4 min-w-8">4.</span>
+            <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">4.</span>
             <div>
-              <h4 class="text-gov-base font-semibold text-gray-900 mb-2">Palavras-Chave</h4>
-              <p class="text-gov-base text-gray-700">Descreve as palavras-chave que melhor caracterizam o processo. Deve ser uma lista de palavras-chave separadas por vírgulas. Este mecanismo permitirá fazer buscas optimizadas por palavras-chave.</p>
+              <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Palavras-Chave</h4>
+              <p class="text-govpt-base text-govpt-text">Descreve as palavras-chave que melhor caracterizam o processo. Deve ser uma lista de palavras-chave separadas por vírgulas. Este mecanismo permitirá fazer buscas optimizadas por palavras-chave.</p>
             </div>
           </div>
           <div class="flex">
-            <span class="text-gov-base font-bold text-igfej-blue mr-4 min-w-8">5.</span>
+            <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">5.</span>
             <div>
-              <h4 class="text-gov-base font-semibold text-gray-900 mb-2">Objetivos</h4>
-              <p class="text-gov-base text-gray-700">Descreve os objetivos do processo. Deve ser uma lista de objetivos separados por vírgulas. Este mecanismo permitirá saber de forma rápida quer o contexto, quer os objectivos, o que de certa forma deve justificar a razão da existência do processo.</p>
+              <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Objetivos</h4>
+              <p class="text-govpt-base text-govpt-text">Descreve os objetivos do processo. Deve ser uma lista de objetivos separados por vírgulas. Este mecanismo permitirá saber de forma rápida quer o contexto, quer os objectivos, o que de certa forma deve justificar a razão da existência do processo.</p>
             </div>
           </div>
           <div class="flex">
-            <span class="text-gov-base font-bold text-igfej-blue mr-4 min-w-8">6.</span>
+            <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">6.</span>
             <div>
-              <h4 class="text-gov-base font-semibold text-gray-900 mb-2">Inputs</h4>
-              <p class="text-gov-base text-gray-700">Descreve os inputs do processo. Este mecanismo permitirá saber quais os inputs que o processo poderá ter e aferir da sua necessidade e/ou qualidade no contributo para enriquecer o processo.</p>
+              <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Inputs</h4>
+              <p class="text-govpt-base text-govpt-text">Descreve os inputs do processo. Este mecanismo permitirá saber quais os inputs que o processo poderá ter e aferir da sua necessidade e/ou qualidade no contributo para enriquecer o processo.</p>
             </div>
           </div>
           <div class="flex">
-            <span class="text-gov-base font-bold text-igfej-blue mr-4 min-w-8">7.</span>
+            <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">7.</span>
             <div>
-              <h4 class="text-gov-base font-semibold text-gray-900 mb-2">Atividades</h4>
-              <p class="text-gov-base text-gray-700">Descreve as atividades do processo de forma detalhada. Este mecanismo permitirá saber quais as atividades que o processo tem, e ainda, descrever bem as interações entre os vários intervenientes no processo.</p>
+              <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Atividades</h4>
+              <p class="text-govpt-base text-govpt-text">Descreve as atividades do processo de forma detalhada. Este mecanismo permitirá saber quais as atividades que o processo tem, e ainda, descrever bem as interações entre os vários intervenientes no processo.</p>
             </div>
           </div>
           <div class="flex">
-            <span class="text-gov-base font-bold text-igfej-blue mr-4 min-w-8">8.</span>
+            <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">8.</span>
             <div>
-              <h4 class="text-gov-base font-semibold text-gray-900 mb-2">Entregáveis</h4>
-              <p class="text-gov-base text-gray-700">Descreve os entregáveis do processo. No fundo, esta informação representa qual o output esperado do processo quando e se este executar de forma adequada e sistemática.</p>
+              <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Entregáveis</h4>
+              <p class="text-govpt-base text-govpt-text">Descreve os entregáveis do processo. No fundo, esta informação representa qual o output esperado do processo quando e se este executar de forma adequada e sistemática.</p>
             </div>
           </div>
           <div class="flex">
-            <span class="text-gov-base font-bold text-igfej-blue mr-4 min-w-8">9.</span>
+            <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">9.</span>
             <div>
-              <h4 class="text-gov-base font-semibold text-gray-900 mb-2">Fornecedores</h4>
-              <p class="text-gov-base text-gray-700">Descreve de forma detalhada os intervenientes fornecedores de inputs ao processo e a suas interações. No fundo, esta informação representa quais os fornecedores que contribuem para o processo.</p>
+              <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Fornecedores</h4>
+              <p class="text-govpt-base text-govpt-text">Descreve de forma detalhada os intervenientes fornecedores de inputs ao processo e a suas interações. No fundo, esta informação representa quais os fornecedores que contribuem para o processo.</p>
             </div>
           </div>
           <div class="flex">
-            <span class="text-gov-base font-bold text-igfej-blue mr-4 min-w-8">10.</span>
+            <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">10.</span>
             <div>
-              <h4 class="text-gov-base font-semibold text-gray-900 mb-2">Participantes</h4>
-              <p class="text-gov-base text-gray-700">Descreve de forma detalhada os participantes nas atividades do processo e a suas interações. Esta informação é relevante para identificar responsabilidades nas atividades, os momentos dessa sua intervenção e, em fase de execução, qual a sua duração e eventual custo. É ainda, uma componente fundamental para desenhar os modelos de processo.</p>
+              <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Participantes</h4>
+              <p class="text-govpt-base text-govpt-text">Descreve de forma detalhada os participantes nas atividades do processo e a suas interações. Esta informação é relevante para identificar responsabilidades nas atividades, os momentos dessa sua intervenção e, em fase de execução, qual a sua duração e eventual custo. É ainda, uma componente fundamental para desenhar os modelos de processo.</p>
             </div>
           </div>
           <div class="flex">
-            <span class="text-gov-base font-bold text-igfej-blue mr-4 min-w-8">11.</span>
+            <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">11.</span>
             <div>
-              <h4 class="text-gov-base font-semibold text-gray-900 mb-2">Clientes</h4>
-              <p class="text-gov-base text-gray-700">Descreve de forma detalhada os consumidores do processo e a suas interações. No fundo, esta informação representa quem beneficia dos resultados da execução do processo.</p>
+              <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Clientes</h4>
+              <p class="text-govpt-base text-govpt-text">Descreve de forma detalhada os consumidores do processo e a suas interações. No fundo, esta informação representa quem beneficia dos resultados da execução do processo.</p>
             </div>
           </div>
           <div class="flex">
-            <span class="text-gov-base font-bold text-igfej-blue mr-4 min-w-8">12.</span>
+            <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">12.</span>
             <div>
-              <h4 class="text-gov-base font-semibold text-gray-900 mb-2">Metodologias</h4>
-              <p class="text-gov-base text-gray-700">Descreve as metodologias que são utilizadas para executar o processo de forma adequada.</p>
+              <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Metodologias</h4>
+              <p class="text-govpt-base text-govpt-text">Descreve as metodologias que são utilizadas para executar o processo de forma adequada.</p>
             </div>
           </div>
           <div class="flex">
-            <span class="text-gov-base font-bold text-igfej-blue mr-4 min-w-8">13.</span>
+            <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">13.</span>
             <div>
-              <h4 class="text-gov-base font-semibold text-gray-900 mb-2">Ferramentas</h4>
-              <p class="text-gov-base text-gray-700">Descreve as ferramentas envolvidas e que suportam o processo em momento de execução.</p>
+              <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Ferramentas</h4>
+              <p class="text-govpt-base text-govpt-text">Descreve as ferramentas envolvidas e que suportam o processo em momento de execução.</p>
             </div>
           </div>
           <div class="flex">
-            <span class="text-gov-base font-bold text-igfej-blue mr-4 min-w-8">14.</span>
+            <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">14.</span>
             <div>
-              <h4 class="text-gov-base font-semibold text-gray-900 mb-2">Métricas</h4>
-              <p class="text-gov-base text-gray-700">Descreve as métricas que são utilizadas para medir a eficácia e eficiência do processo.</p>
+              <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Métricas</h4>
+              <p class="text-govpt-base text-govpt-text">Descreve as métricas que são utilizadas para medir a eficácia e eficiência do processo.</p>
             </div>
           </div>
           <div class="flex">
-            <span class="text-gov-base font-bold text-igfej-blue mr-4 min-w-8">15.</span>
+            <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">15.</span>
             <div>
-              <h4 class="text-gov-base font-semibold text-gray-900 mb-2">Sugestões</h4>
-              <p class="text-gov-base text-gray-700">Descreve as sugestões que são feitas para melhorar o processo.</p>
+              <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Sugestões</h4>
+              <p class="text-govpt-base text-govpt-text">Descreve as sugestões que são feitas para melhorar o processo.</p>
             </div>
           </div>
           <div class="flex">
-            <span class="text-gov-base font-bold text-igfej-blue mr-4 min-w-8">16.</span>
+            <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">16.</span>
             <div>
-              <h4 class="text-gov-base font-semibold text-gray-900 mb-2">Maturidade</h4>
-              <p class="text-gov-base text-gray-700">Descreve o nível de maturidade do processo. Este atributo é importante para aferir da qualidade do processo e da sua capacidade de evolução. Está baseado no modelo de maturidade de processos CMMI.</p>
+              <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Maturidade</h4>
+              <p class="text-govpt-base text-govpt-text">Descreve o nível de maturidade do processo. Este atributo é importante para aferir da qualidade do processo e da sua capacidade de evolução. Está baseado no modelo de maturidade de processos CMMI.</p>
             </div>
           </div>
           <div class="flex">
-            <span class="text-gov-base font-bold text-igfej-blue mr-4 min-w-8">17.</span>
+            <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">17.</span>
             <div>
-              <h4 class="text-gov-base font-semibold text-gray-900 mb-2">Diagramas</h4>
-              <p class="text-gov-base text-gray-700">Apresentam os diagramas que são utilizados para descrever o processo. Neste caso, são sumarizadas informações sobre os diagramas de contexto, de atividades e de fluxo de dados.</p>
+              <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Diagramas</h4>
+              <p class="text-govpt-base text-govpt-text">Apresentam os diagramas que são utilizados para descrever o processo. Neste caso, são sumarizadas informações sobre os diagramas de contexto, de atividades e de fluxo de dados.</p>
             </div>
           </div>
           <div class="flex">
-            <span class="text-gov-base font-bold text-igfej-blue mr-4 min-w-8">18.</span>
+            <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">18.</span>
             <div>
-              <h4 class="text-gov-base font-semibold text-gray-900 mb-2">Suporte Legal / Legislação</h4>
-              <p class="text-gov-base text-gray-700">Identifica e descreve qual o suporte legal do processo. Várias das decisões e/ou atividades podem ser justificadas por esta legislação.</p>
+              <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Suporte Legal / Legislação</h4>
+              <p class="text-govpt-base text-govpt-text">Identifica e descreve qual o suporte legal do processo. Várias das decisões e/ou atividades podem ser justificadas por esta legislação.</p>
             </div>
           </div>
           <div class="flex">
-            <span class="text-gov-base font-bold text-igfej-blue mr-4 min-w-8">19.</span>
+            <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">19.</span>
             <div>
-              <h4 class="text-gov-base font-semibold text-gray-900 mb-2">Classificação da informação</h4>
-              <p class="text-gov-base text-gray-700">Identifica e descreve qual a classificação do processo em relação à sua confidencialidade e segurança da informação.</p>
+              <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Classificação da informação</h4>
+              <p class="text-govpt-base text-govpt-text">Identifica e descreve qual a classificação do processo em relação à sua confidencialidade e segurança da informação.</p>
             </div>
           </div>
           <div class="flex">
-            <span class="text-gov-base font-bold text-igfej-blue mr-4 min-w-8">20.</span>
+            <span class="text-govpt-base font-bold text-govpt-primary mr-4 min-w-8">20.</span>
             <div>
-              <h4 class="text-gov-base font-semibold text-gray-900 mb-2">Metadados</h4>
-              <p class="text-gov-base text-gray-700">Descreve e apresenta os metadados do processo.</p>
+              <h4 class="text-govpt-base font-semibold text-govpt-heading mb-2">Metadados</h4>
+              <p class="text-govpt-base text-govpt-text">Descreve e apresenta os metadados do processo.</p>
             </div>
           </div>
         </div>
@@ -457,9 +467,6 @@ function renderMethodology() {
 
 // Initialize application
 document.addEventListener("DOMContentLoaded", async function () {
-  // Setup search functionality
-  setupTableSearch();
-
   try {
     // Load JSON data first
     await loadJSONData();
@@ -713,7 +720,7 @@ function createRecentItemCard(item) {
 
   if (item.type === "subprocess") {
     return `
-      <div class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all cursor-pointer hover:border-igfej-blue" onclick="showSubprocessDetail('${item.id}')">
+      <div class="bg-white border border-gray-200 rounded-lg p-4   cursor-pointer hover:border-igfej-blue" onclick="showSubprocessDetail('${item.id}')">
         <div class="flex flex-col h-full">
           <!-- Header Section -->
           <div class="flex items-start justify-between mb-2">
@@ -750,7 +757,7 @@ function createRecentItemCard(item) {
     `;
   } else {
     return `
-      <div class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all cursor-pointer hover:border-igfej-blue" onclick="showProcessDetail('${item.id}')">
+      <div class="bg-white border border-gray-200 rounded-lg p-4   cursor-pointer hover:border-igfej-blue" onclick="showProcessDetail('${item.id}')">
         <div class="flex flex-col h-full">
           <!-- Header Section -->
           <div class="flex items-start justify-between mb-2">
@@ -834,7 +841,7 @@ function createProcessCard(process) {
       : process.title || "Processo";
 
   return `
-        <div class="process-card bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all cursor-pointer" onclick="showProcessDetail('${process.id}')">
+        <div class="process-card bg-white border border-gray-200 rounded-lg p-4   cursor-pointer" onclick="showProcessDetail('${process.id}')">
             <div class="flex items-start justify-between mb-2">
                 <div class="flex-1">
                     <div class="flex items-center mb-1">
@@ -896,12 +903,7 @@ function updateStatistics() {
     window.statisticsChart = new Chart(ctx, {
       type: "bar",
       data: {
-        labels: [
-          "Diagramas BPMN",
-          "Macroprocessos",
-          "Processos",
-          "Subprocessos",
-        ],
+        labels: ["Diagramas", "Macroprocessos", "Processos", "Subprocessos"],
         datasets: [
           {
             label: "Quantidade",
@@ -954,26 +956,58 @@ function renderFAQ() {
 
   const faqItems = [
     {
-      question: "Como aceder aos processos?",
+      question:
+        "Qual é a diferença entre macroprocesso, processo e subprocesso?",
       answer:
-        "Pode navegar pela estrutura hierárquica na barra lateral ou utilizar a barra de pesquisa para encontrar processos específicos.",
+        "O sistema utiliza uma estrutura hierárquica com três níveis: Macroprocesso (nível superior, representa áreas funcionais da organização), Processo (nível intermédio, representa processos específicos de negócio) e Subprocesso (nível inferior, representa atividades detalhadas dentro de um processo). Esta estrutura permite uma navegação organizada desde funções organizacionais de alto nível até atividades operacionais detalhadas.",
     },
     {
-      question: "O que são diagramas BPMN?",
+      question:
+        'Quais são os critérios para classificar um processo como "AS-IS" ou "TO-BE"?',
       answer:
-        "BPMN (Business Process Model and Notation) é uma notação gráfica para modelar processos de negócio, permitindo visualizar o fluxo de atividades.",
+        'Um processo é classificado como "AS-IS" quando representa o estado atual de execução na organização, com todas as suas ineficiências e particularidades. Já "TO-BE" representa o estado futuro desejado após optimizações e melhorias identificadas durante a análise.',
     },
     {
-      question: "Como pesquisar processos?",
+      question: "O que significa o nível de maturidade de um processo?",
       answer:
-        "Use a barra de pesquisa na página inicial para encontrar processos por nome, código ou palavras-chave.",
+        "O nível de maturidade indica o grau de desenvolvimento e implementação do processo na organização, baseado no modelo CMMI (Capability Maturity Model Integration). Níveis mais altos indicam processos mais estruturados, mensuráveis e optimizados.",
+    },
+    {
+      question: "Como posso aceder aos diagramas dos processos?",
+      answer:
+        'Os diagramas estão disponíveis na secção "Diagramas" da plataforma. Navegue até ao processo desejado e aceda à visualização interactiva dos diagramas, que incluem elementos como actividades, gateways, eventos e fluxos de sequência.',
+    },
+    {
+      question: "Como posso identificar os intervenientes de um processo?",
+      answer:
+        "Cada processo documentado inclui secções específicas para participantes, fornecedores e clientes. Estas secções identificam todas as entidades e pessoas envolvidas, incluindo suas responsabilidades, papéis e interações no processo.",
+    },
+    {
+      question: "Como posso pesquisar e filtrar processos específicos?",
+      answer:
+        "O sistema oferece várias opções de pesquisa e filtragem. Use a barra de pesquisa principal para buscar por nome, código ou palavras-chave. Nos macroprocessos, utilize os filtros por status e tipo de processo. A navegação lateral permite explorar a estrutura hierárquica por macroprocessos e processos relacionados.",
+    },
+    {
+      question: "Quais são os padrões de segurança aplicados aos processos?",
+      answer:
+        "Todos os processos seguem os padrões de segurança da informação definidos pela legislação portuguesa e normas internacionais. Cada processo inclui uma classificação de segurança que determina os níveis de acesso e proteção aplicáveis.",
+    },
+    {
+      question: "Como posso navegar entre diferentes versões de um processo?",
+      answer:
+        "Na página de detalhes de um processo, utilize o seletor de versões localizado no cabeçalho. Cada processo pode ter múltiplas versões, permitindo comparar estados anteriores e atuais do processo.",
+    },
+    {
+      question: "Como interpretar as métricas e indicadores de um processo?",
+      answer:
+        "As métricas de processo estão disponíveis na secção dedicada de cada processo. Estas incluem indicadores de desempenho, tempos de execução, taxas de sucesso e outros dados quantitativos que ajudam a avaliar a eficiência e eficácia do processo.",
     },
   ];
 
   container.innerHTML = faqItems
     .map(
       (item, index) => `
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-3">
+        <div class="bg-white rounded-lg  border border-gray-200 p-4 mb-3">
             <button 
                 onclick="toggleFAQ(${index})"
                 class="flex items-center w-full text-left py-2 rounded transition-colors"
@@ -1149,71 +1183,80 @@ function showProcessList(macroprocess, processes) {
   }, 0);
 
   const processListHTML = `
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-            <div class="mb-6">
-                <h2 class="text-2xl font-bold text-gray-900 mb-2">${macroprocess.title}</h2>
-                <p class="text-gray-600">${macroprocess.description || ""}</p>
+        <div class="max-w-govpt-container mx-auto px-4 pt-8">
+            <!-- Breadcrumb -->
+            <nav id="breadcrumb" class="mb-12"></nav>
+
+            <!-- Macroprocess Header -->
+            <div class="text-left mb-8">
+                <h1 class="text-govpt-3xl font-bold text-govpt-heading mb-4">${macroprocess.title}</h1>
+                <p class="text-govpt-lg text-govpt-gray leading-relaxed mb-6">${macroprocess.description || ""}</p>
+            </div>
+
+            <div class="bg-white rounded-lg  border border-gray-200 p-6">
+                <div class="mb-4">
+                    ${
+                      totalProcesses > 0 || totalSubprocesses > 0
+                        ? `
+                        <div class="mt-4 grid grid-cols-2 gap-4">
+                            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                                <div class="text-2xl font-semibold text-igfej-blue">${totalProcesses}</div>
+                                <div class="text-sm text-gray-600">Processos</div>
+                            </div>
+                            <div class="text-center p-3 bg-gray-50 rounded-lg">
+                                <div class="text-2xl font-semibold text-igfej-blue">${totalSubprocesses}</div>
+                                <div class="text-sm text-gray-600">Subprocessos</div>
+                            </div>
+                        </div>
+                        `
+                        : `
+                        <div class="mt-4 text-center p-8 bg-gray-50 rounded-lg">
+                            <div class="text-gray-400 mb-2">
+                                <svg class="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                            </div>
+                            <div class="text-lg font-medium text-gray-900 mb-1">Nenhum processo encontrado</div>
+                            <div class="text-sm text-gray-600">Esta macroprocesso ainda não tem processos ou subprocessos cadastrados.</div>
+                        </div>
+                        `
+                    }
+                </div>
+                
                 ${
                   totalProcesses > 0 || totalSubprocesses > 0
                     ? `
-                    <div class="mt-4 grid grid-cols-2 gap-4">
-                        <div class="text-center p-3 bg-gray-50 rounded-lg">
-                            <div class="text-lg font-semibold text-igfej-blue">${totalProcesses}</div>
-                            <div class="text-xs text-gray-600">Processos</div>
+                    <div class="mb-6">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-lg font-semibold text-gray-900">Processos e Subprocessos</h3>
+                            <div class="flex items-center space-x-2">
+                                <input 
+                                    type="text" 
+                                    placeholder="Filtrar..."
+                                    class="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-igfej-blue"
+                                    onkeyup="filterProcessListItems(this.value)"
+                                    id="process-filter-input"
+                                >
+                                <select 
+                                    class="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-igfej-blue"
+                                    id="process-type-filter"
+                                    onchange="filterProcessListItems()"
+                                >
+                                    <option value="all">Todos (${allItems.length})</option>
+                                    <option value="process">Processos (${allItems.filter((item) => item.type === "process").length})</option>
+                                    <option value="subprocess">Subprocessos (${allItems.filter((item) => item.type === "subprocess").length})</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="text-center p-3 bg-gray-50 rounded-lg">
-                            <div class="text-lg font-semibold text-igfej-blue">${totalSubprocesses}</div>
-                            <div class="text-xs text-gray-600">Subprocessos</div>
+                        
+                        <div id="process-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            ${allItems.map((item) => createProcessListItem(item)).join("")}
                         </div>
                     </div>
                     `
-                    : `
-                    <div class="mt-4 text-center p-8 bg-gray-50 rounded-lg">
-                        <div class="text-gray-400 mb-2">
-                            <svg class="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                            </svg>
-                        </div>
-                        <div class="text-lg font-medium text-gray-900 mb-1">Nenhum processo encontrado</div>
-                        <div class="text-sm text-gray-600">Esta macroprocesso ainda não tem processos ou subprocessos cadastrados.</div>
-                    </div>
-                    `
+                    : ""
                 }
             </div>
-            
-            ${
-              totalProcesses > 0 || totalSubprocesses > 0
-                ? `
-                <div class="mb-6">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-semibold text-gray-900">Processos e Subprocessos</h3>
-                        <div class="flex items-center space-x-2">
-                            <input 
-                                type="text" 
-                                placeholder="Filtrar..."
-                                class="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-igfej-blue"
-                                onkeyup="filterProcessListItems(this.value)"
-                                id="process-filter-input"
-                            >
-                            <select 
-                                class="px-3 py-1 border border-gray-300 rounded-md text-sm focus:outline-none focus:border-igfej-blue"
-                                id="process-type-filter"
-                                onchange="filterProcessListItems()"
-                            >
-                                <option value="all">Todos (${allItems.length})</option>
-                                <option value="process">Processos (${allItems.filter((item) => item.type === "process").length})</option>
-                                <option value="subprocess">Subprocessos (${allItems.filter((item) => item.type === "subprocess").length})</option>
-                            </select>
-                        </div>
-                    </div>
-                    
-                    <div id="process-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        ${allItems.map((item) => createProcessListItem(item)).join("")}
-                    </div>
-                </div>
-                `
-                : ""
-            }
         </div>
     `;
 
@@ -1252,6 +1295,11 @@ function showProcessDetail(processId) {
     return;
   }
 
+  // Close header search when navigating to process detail
+  if (window.closeHeaderSearchOnNavigation) {
+    window.closeHeaderSearchOnNavigation();
+  }
+
   AppState.currentProcess = process;
   const currentVersion =
     process.versions?.find((v) => v.id === process.current_version_id) ||
@@ -1283,7 +1331,7 @@ function showProcessDetail(processId) {
   ]);
 
   const detailHTML = `
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div class="bg-white rounded-lg  border border-gray-200">
             <!-- Process Header -->
             <div class="border-b border-gray-200 p-4">
                 <div class="flex items-center justify-between mb-4">
@@ -1391,12 +1439,12 @@ function showProcessDetail(processId) {
                 <div id="process-bpmn-tab" class="tab-content">
                     <div class="space-y-6">
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Diagrama BPMN do Processo</h3>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Diagrama do Processo</h3>
                             <div class="bpmn-container" id="process-bpmn-container">
                                 <div class="flex items-center justify-center h-full text-gray-500">
                                     <div class="text-center">
                                         <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-igfej-blue"></div>
-                                        <p class="text-sm text-gray-500 mt-2">Carregando diagrama BPMN do processo...</p>
+                                        <p class="text-sm text-gray-500 mt-2">Carregando Diagrama do processo...</p>
                                     </div>
                                 </div>
                             </div>
@@ -1412,7 +1460,7 @@ function showProcessDetail(processId) {
                             <div class="lg:col-span-1">
                                 <div class="bg-white border border-gray-200 rounded-lg p-4">
                                     <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                                        Diagramas BPMN
+                                        Diagramas
                                     </h3>
                                     <div class="space-y-2 max-h-full overflow-y-auto">
                                         ${renderAssets(currentVersion?.assets || [])}
@@ -1432,7 +1480,7 @@ function showProcessDetail(processId) {
                                             </div>
                                             <div class="flex items-center space-x-3">
                                                 <!-- All Controls Group -->
-                                                <div class="flex items-center space-x-2 bg-white border border-gray-300 rounded-lg p-2 shadow-sm">
+                                                <div class="flex items-center space-x-2 bg-white border border-gray-300 rounded-lg p-2 ">
                                                     <!-- Zoom Controls -->
                                                     <div class="flex items-center space-x-1">
                                                         <button onclick="zoomInBPMN()" class="px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-md text-sm transition-colors" title="Zoom In">
@@ -1460,9 +1508,9 @@ function showProcessDetail(processId) {
                                                             <option value="svg">SVG</option>
                                                             <option value="dmn">DMN</option>
                                                         </select>
-                                                        <button onclick="downloadSelectedFormat()" class="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-md text-sm font-medium transition-colors flex items-center space-x-2">
+                                                        <button onclick="downloadSelectedFormat()" class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-govpt-primary hover:bg-govpt-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-govpt-primary transition-colors">
                                                             <span>${getIcon("download", 14)}</span>
-                                                            <span>Download</span>
+                                                            <span class="ml-2">Download</span>
                                                         </button>
                                                     </div>
                                                 </div>
@@ -1481,7 +1529,7 @@ function showProcessDetail(processId) {
                                                         </svg>
                                                         <h3 class="mt-4 text-sm font-medium text-gray-900">Selecione um Diagrama</h3>
                                                         <p class="mt-1 text-sm text-gray-600">
-                                                            Clique em um diagrama BPMN da lista à esquerda<br>
+                                                            Clique em um Diagrama da lista à esquerda<br>
                                                             para visualizar e editar o processo.
                                                         </p>
                                                     </div>
@@ -1630,7 +1678,7 @@ function renderSubprocesses(subprocesses) {
         ${subprocesses
           .map(
             (subprocess) => `
-          <div class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-all cursor-pointer hover:border-igfej-blue" onclick="showSubprocessDetail('${subprocess.id}')">
+          <div class="bg-white border border-gray-200 rounded-lg p-6   cursor-pointer hover:border-igfej-blue" onclick="showSubprocessDetail('${subprocess.id}')">
             <div class="flex flex-col h-full">
               <div class="flex items-start justify-between mb-2">
                 <div class="flex-1">
@@ -1717,12 +1765,12 @@ function renderAssets(assets) {
             fileTypes.push("DMN");
 
           return `
-        <div class="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-sm transition-all cursor-pointer hover:border-gray-300 asset-list-item ${index === 0 ? "selected bg-blue-50 border-blue-300" : ""}" onclick="loadBPMNDiagramFromList('${asset.id}')">
+        <div class="bg-white border border-gray-200 rounded-lg p-4 hover:  cursor-pointer hover:border-gray-300 asset-list-item ${index === 0 ? "selected bg-blue-50 border-blue-300" : ""}" onclick="loadBPMNDiagramFromList('${asset.id}')">
           <div class="flex items-center justify-between">
             <div class="flex-1">
               <h4 class="font-medium text-gray-900 mb-2">${asset.code}: Modelo BPMN ${asset.subtitle}</h4>
               <div class="flex items-center space-x-2">
-                ${fileTypes.map((type) => `<span class="text-xs font-medium px-2 py-1 bg-blue-100 text-blue-800 rounded">${type}</span>`).join("")}
+                ${fileTypes.map((type) => `<span class="text-xs font-medium px-2 py-1 bg-govpt-blue-light text-govpt-primary rounded">${type}</span>`).join("")}
               </div>
             </div>
             ${getIcon("chevron-right", 20)}
@@ -1733,6 +1781,15 @@ function renderAssets(assets) {
         .join("")}
     </div>
   `;
+}
+
+// Helper function to get status badge classes
+function getStatusBadgeClasses(status) {
+  if (status === "TO-BE") {
+    return "bg-govpt-warning-soft text-govpt-warning-text";
+  } else {
+    return "bg-govpt-success-soft text-govpt-success-text";
+  }
 }
 
 // Create function to get subprocess assets
@@ -1759,6 +1816,11 @@ function getSubprocessAssets(subprocess) {
 }
 
 function showSubprocessDetail(subprocessId) {
+  // Close header search when navigating to subprocess detail
+  if (window.closeHeaderSearchOnNavigation) {
+    window.closeHeaderSearchOnNavigation();
+  }
+
   // Always search through all processes since subprocesses can be displayed in lists
   // across multiple processes (e.g., in macroprocess overviews)
   let parentProcess = AppState.processes.find((process) => {
@@ -1815,7 +1877,7 @@ function showSubprocessDetail(subprocessId) {
   allSections.forEach((section) => section.classList.add("hidden"));
 
   const subprocessDetailHTML = `
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+    <div class="bg-white rounded-lg  border border-gray-200">
       <!-- Subprocess Header -->
       <div class="border-b border-gray-200 p-6">
         <div class="flex items-center justify-between mb-4">
@@ -1838,7 +1900,7 @@ function showSubprocessDetail(subprocessId) {
             Visão Geral
           </button>
           <button onclick="switchSubprocessTab('bpmn', event)" class="tab-button py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
-            Diagrama BPMN
+            Diagrama
           </button>
           <button onclick="switchSubprocessTab('details', event)" class="tab-button py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
             Detalhes
@@ -1884,7 +1946,7 @@ function showSubprocessDetail(subprocessId) {
               <div>
                 <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">${getDisplayCode(subprocess)}.3 Palavras-chave</h3>
                 <div class="flex flex-wrap gap-2">
-                  ${subprocess.keywords.map((keyword) => `<span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-blue-100 text-blue-800">${keyword}</span>`).join("")}
+                  ${subprocess.keywords.map((keyword) => `<span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-govpt-blue-light text-govpt-primary">${keyword}</span>`).join("")}
                 </div>
               </div>
               `
@@ -1964,7 +2026,7 @@ function showSubprocessDetail(subprocessId) {
               <div class="lg:col-span-1">
                 <div class="bg-white border border-gray-200 rounded-lg p-4">
                   <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                    Diagramas BPMN
+                    Diagramas
                   </h3>
                   <div class="space-y-2 max-h-full overflow-y-auto">
                     ${renderAssets(getSubprocessAssets(subprocess))}
@@ -1984,7 +2046,7 @@ function showSubprocessDetail(subprocessId) {
                       </div>
                       <div class="flex items-center space-x-3">
                         <!-- All Controls Group -->
-                        <div class="flex items-center space-x-2 bg-white border border-gray-300 rounded-lg p-2 shadow-sm">
+                        <div class="flex items-center space-x-2 bg-white border border-gray-300 rounded-lg p-2 ">
                           <!-- Zoom Controls -->
                           <div class="flex items-center space-x-1">
                             <button onclick="zoomInBPMN()" class="px-3 py-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-md text-sm transition-colors" title="Zoom In">
@@ -2012,9 +2074,9 @@ function showSubprocessDetail(subprocessId) {
                               <option value="svg">SVG</option>
                               <option value="dmn">DMN</option>
                             </select>
-                            <button onclick="downloadSelectedFormat()" class="px-4 py-2 bg-blue-600 text-white hover:bg-blue-700 rounded-md text-sm font-medium transition-colors flex items-center space-x-2">
+                            <button onclick="downloadSelectedFormat()" class="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-govpt-primary hover:bg-govpt-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-govpt-primary transition-colors">
                               <span>${getIcon("download", 14)}</span>
-                              <span>Download</span>
+                              <span class="ml-2">Download</span>
                             </button>
                           </div>
                         </div>
@@ -2033,7 +2095,7 @@ function showSubprocessDetail(subprocessId) {
                             </svg>
                             <h3 class="mt-4 text-sm font-medium text-gray-900">Selecione um Diagrama</h3>
                             <p class="mt-1 text-sm text-gray-600">
-                              Clique em um diagrama BPMN da lista à esquerda<br>
+                              Clique em um Diagrama da lista à esquerda<br>
                               para visualizar e editar o processo.
                             </p>
                           </div>
@@ -2140,9 +2202,9 @@ function loadSubprocessBpmn(subprocessId) {
             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
             </svg>
-            <h3 class="mt-2 text-sm font-medium text-gray-900">Diagrama BPMN Indisponível</h3>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">Diagrama Indisponível</h3>
             <p class="mt-1 text-sm text-gray-500">
-              Este subprocesso não tem diagramas BPMN diretos.<br>
+              Este subprocesso não tem diagramas diretos.<br>
               Verifique se há arquivos BPMN associados.
             </p>
           </div>
@@ -2194,7 +2256,7 @@ function loadSubprocessBpmn(subprocessId) {
               <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
               </svg>
-              <h3 class="mt-2 text-sm font-medium text-gray-900">Erro no diagrama BPMN</h3>
+              <h3 class="mt-2 text-sm font-medium text-gray-900">Erro no Diagrama</h3>
               <p class="mt-1 text-sm text-gray-600">
                 Este arquivo BPMN contém erros de estrutura.<br>
                 Tente recarregar a página.
@@ -2212,7 +2274,7 @@ function loadSubprocessBpmn(subprocessId) {
       container.innerHTML = `
         <div class="flex items-center justify-center h-full text-gray-500">
           <div class="text-center">
-            <p class="text-sm text-gray-500">Erro ao carregar diagrama BPMN</p>
+            <p class="text-sm text-gray-500">Erro ao carregar Diagrama</p>
             <p class="text-xs text-gray-400 mt-1">Função de carregamento não disponível.</p>
           </div>
         </div>
@@ -2264,13 +2326,13 @@ function showAssetDetail(assetId) {
   allSections.forEach((section) => section.classList.add("hidden"));
 
   const assetDetailHTML = `
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200">
+    <div class="bg-white rounded-lg  border border-gray-200">
       <!-- Asset Header -->
       <div class="border-b border-gray-200 p-6">
         <div class="flex items-center justify-between mb-4">
           <div>
             <div class="flex items-center mb-2">
-              <span class="text-sm font-medium px-3 py-1 rounded-full bg-purple-100 text-purple-800">
+              <span class="text-sm font-medium px-3 py-1 rounded-full bg-govpt-blue-light text-govpt-primary">
                 Modelo BPMN
               </span>
               <span class="ml-3 text-sm text-gray-500">${asset.code}</span>
@@ -2519,9 +2581,9 @@ function loadProcessBpmn(processId) {
             <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
             </svg>
-            <h3 class="mt-2 text-sm font-medium text-gray-900">Diagrama BPMN Indisponível</h3>
+            <h3 class="mt-2 text-sm font-medium text-gray-900">Diagrama Indisponível</h3>
             <p class="mt-1 text-sm text-gray-500">
-              Este processo não tem diagramas BPMN diretos.<br>
+              Este processo não tem diagramas diretos.<br>
               <a href="#" onclick="switchTab('assets')" class="text-igfej-blue hover:text-igfej-dark underline">
                 Ver diagramas na aba Diagramas →
               </a>
@@ -2572,7 +2634,7 @@ function loadProcessBpmn(processId) {
               <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
               </svg>
-              <h3 class="mt-2 text-sm font-medium text-gray-900">Erro no diagrama BPMN</h3>
+              <h3 class="mt-2 text-sm font-medium text-gray-900">Erro no Diagrama</h3>
               <p class="mt-1 text-sm text-gray-600">
                 Este arquivo BPMN contém erros de estrutura e não pode ser exibido.<br>
                 <a href="#" onclick="switchTab('assets')" class="text-igfej-blue hover:text-igfej-dark underline">
@@ -2592,7 +2654,7 @@ function loadProcessBpmn(processId) {
       container.innerHTML = `
         <div class="flex items-center justify-center h-full text-gray-500">
           <div class="text-center">
-            <p class="text-sm text-gray-500">Erro ao carregar diagrama BPMN</p>
+            <p class="text-sm text-gray-500">Erro ao carregar Diagrama</p>
             <p class="text-xs text-gray-400 mt-1">Função de carregamento não disponível.</p>
           </div>
         </div>
@@ -2824,7 +2886,7 @@ function createCollapsibleItem(
   isHidden = true,
 ) {
   return `
-    <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-4 mb-3">
+    <div class="bg-white rounded-lg  border border-gray-200 p-4 mb-3">
       <button onclick="${toggleFunction}('${sectionId}')" class="flex items-center w-full text-left py-2 rounded transition-colors">
         <span class="text-lg font-medium text-gray-900 flex-1 pr-4">${title}</span>
         ${createChevron("down", "", "icon-" + sectionId)}
@@ -2841,7 +2903,7 @@ function createProcessListItem(item) {
 
   if (item.type === "subprocess") {
     return `
-      <div class="process-card bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-all cursor-pointer hover:border-igfej-blue" onclick="showSubprocessDetail('${item.id}')">
+      <div class="process-card bg-white border border-gray-200 rounded-lg p-6   cursor-pointer hover:border-igfej-blue" onclick="showSubprocessDetail('${item.id}')">
         <div class="flex flex-col h-full">
           <!-- Header Section -->
           <div class="flex items-start justify-between mb-2">
@@ -2874,7 +2936,7 @@ function createProcessListItem(item) {
     `;
   } else {
     return `
-      <div class="process-card bg-white border border-gray-200 rounded-lg p-6 hover:shadow-md transition-all cursor-pointer hover:border-igfej-blue" onclick="showProcessDetail('${item.id}')">
+      <div class="process-card bg-white border border-gray-200 rounded-lg p-6   cursor-pointer hover:border-igfej-blue" onclick="showProcessDetail('${item.id}')">
         <div class="flex flex-col h-full">
           <!-- Header Section -->
           <div class="flex items-start justify-between mb-2">
@@ -3330,13 +3392,13 @@ class MacroprocessTableManager extends TableManager {
           <div class="text-sm text-gray-900">${macro.description}</div>
         </td>
         <td class="px-6 py-4 whitespace-nowrap">
-          <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">${macro.processCount}</span>
+          <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-govpt-blue-light text-govpt-primary">${macro.processCount}</span>
         </td>
         <td class="px-6 py-4 whitespace-nowrap">
-          <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">${macro.subprocessCount}</span>
+          <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-govpt-blue-light text-govpt-primary">${macro.subprocessCount}</span>
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-          <button class="text-igfej-blue hover:text-igfej-dark mr-3" onclick="navigateToMacroprocess('${macro.id}')">Ver Detalhes</button>
+          <button class="text-blue-600 hover:text-blue-800 mr-3" onclick="navigateToMacroprocess('${macro.id}')">Ver Detalhes</button>
         </td>
       </tr>
     `,
@@ -3434,10 +3496,10 @@ class ProcessTableManager extends TableManager {
           <div class="text-sm text-gray-900">${process.macroprocessTitle}</div>
         </td>
         <td class="px-6 py-4 whitespace-nowrap">
-          <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">${process.status}</span>
+          <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClasses(process.status)}">${process.status}</span>
         </td>
         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
-          <button class="text-igfej-blue hover:text-igfej-dark mr-3" onclick="showProcessDetail('${process.id}')">Ver Detalhes</button>
+          <button class="text-blue-600 hover:text-blue-800 mr-3" onclick="showProcessDetail('${process.id}')">Ver Detalhes</button>
         </td>
       </tr>
     `,
@@ -3485,7 +3547,7 @@ function initializeTables() {
       code: process.code,
       title: process.title,
       macroprocessTitle: macro ? macro.title : "N/A",
-      status: "AS-IS", // Default status, can be dynamic
+      status: process.status === "TO-BE" ? "TO-BE" : "AS-IS", // Use status from data or default
     };
   });
   processTableManager.setData(processData);

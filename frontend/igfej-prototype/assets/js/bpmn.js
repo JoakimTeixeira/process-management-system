@@ -193,7 +193,13 @@ async function loadBPMDiagram(url, containerId = "bpmn-container") {
       window.updateDownloadOptions();
     }
 
-    // ✅ Fit once after import, and keep fitting on resize/fullscreen
+    // Additional automatic fit viewport with delay to ensure proper sizing
+    setTimeout(() => {
+      if (window.fitBPMN && typeof window.fitBPMN === "function") {
+        window.fitBPMN();
+      }
+    }, 500); // Increased to 500ms for better compatibility with search navigation
+
     removeUnwantedElements(container);
     fitViewportSafely();
     setupResizeAutoFit(container);
@@ -217,7 +223,7 @@ function showBPMNFallback(containerId = "bpmn-container") {
             d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
           </path>
         </svg>
-        <h3 class="text-lg font-medium text-gray-900 mb-2">Diagrama BPMN</h3>
+        <h3 class="text-lg font-medium text-gray-900 mb-2">Diagrama</h3>
         <p class="text-sm text-gray-600 mb-2">Visualização do processo em formato BPMN</p>
         <p class="text-xs text-gray-500">Arquivo não disponível</p>
         <p class="text-xs text-red-500 mt-2">Não foi possível carregar o diagrama</p>
@@ -310,7 +316,7 @@ window.downloadBPMN = async function downloadBPMN() {
 
 window.downloadSVG = async function downloadSVG() {
   if (!bpmnInstance) {
-    alert("Diagrama BPMN não está carregado. Carregue um diagrama primeiro.");
+    alert("Diagrama não está carregado. Carregue um diagrama primeiro.");
     console.error("No bpmnInstance available");
     return;
   }
