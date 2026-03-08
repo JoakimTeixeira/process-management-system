@@ -212,6 +212,15 @@ try {
     if (Test-Path $mcpConfigPath) {
         $existingConfig = Get-Content $mcpConfigPath -Raw | ConvertFrom-Json
         Write-Host "Loading existing MCP configuration..." -ForegroundColor White
+        
+        # Show existing servers before modification
+        if ($existingConfig.mcpServers) {
+            $existingServers = $existingConfig.mcpServers.PSObject.Properties.Name
+            Write-Host "Existing MCP servers found: $($existingServers.Count)" -ForegroundColor Cyan
+            foreach ($server in $existingServers) {
+                Write-Host "  - $server" -ForegroundColor Gray
+            }
+        }
     } else {
         $existingConfig = @{
             mcpServers = @{}

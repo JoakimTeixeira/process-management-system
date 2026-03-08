@@ -125,20 +125,42 @@ The script handles all steps automatically with error handling and verification.
 1. **Python not found in PATH**
    - Use full paths as shown in steps
    - Add Python to PATH manually if needed
+   - Check with: `python --version` and `pip --version`
 
 2. **Authentication fails**
    - Ensure Chrome is installed
    - Check that you're logged into Google in Chrome
    - Try running `nlm login` again
+   - Close existing Chrome processes before retrying
 
 3. **MCP server not working in Windsurf**
    - Restart Windsurf after configuration
    - Verify the JSON syntax in `mcp_config.json`
    - Check that the executable path is correct
+   - Ensure UTF-8 encoding without BOM in config file
 
 4. **Permission issues**
    - Run PowerShell as Administrator
    - Check antivirus isn't blocking the installation
+
+5. **Unicode encoding errors in verification**
+   - The script now handles Unicode issues automatically
+   - If errors persist, run `nlm doctor` manually
+   - Use `[Console]::OutputEncoding = [System.Text.Encoding]::UTF8` in PowerShell
+
+6. **Only one MCP shows in Windsurf**
+   - Check if other MCP configurations were overwritten
+   - Verify all MCP servers are in `mcp_config.json`
+   - Re-run setup scripts to restore missing configurations
+
+7. **Chrome authentication issues**
+   - Close all Chrome processes before running `nlm login`
+   - Ensure Chrome is your default browser
+   - Check that Google cookies are enabled
+
+8. **PATH issues after installation**
+   - Restart PowerShell to refresh PATH
+   - Manually add Python Scripts to PATH: `$env:Path += ";$env:USERPROFILE\AppData\Local\Programs\Python\Python312\Scripts"`
 
 ## Usage in Windsurf
 

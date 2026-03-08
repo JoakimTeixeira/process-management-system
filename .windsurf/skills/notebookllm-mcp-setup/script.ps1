@@ -98,10 +98,25 @@ if (-not $SkipAuth) {
 # Step 6: Verification
 Write-Host "Step 6: Verifying installation..." -ForegroundColor Yellow
 try {
-    nlm doctor
-    Write-Host "Verification completed." -ForegroundColor Green
+    # Handle Unicode output issues by setting console encoding
+    [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+    $output = & nlm doctor 2>&1
+    
+    # Check if verification was successful by looking for key indicators
+    if ($output -match "All checks passed" -or $output -match "configured" -or $LASTEXITCODE -eq 0) {
+        Write-Host "Verification completed successfully." -ForegroundColor Green
+    } else {
+        Write-Host "Verification completed with warnings." -ForegroundColor Yellow
+        # Show simplified output without Unicode characters
+        $output | ForEach-Object {
+            if ($_ -match "configured|installed|present") {
+                Write-Host "  $($_ -replace '[^\x00-\x7F]', '')" -ForegroundColor Gray
+            }
+        }
+    }
 } catch {
     Write-Host "Verification failed. Check the error messages above." -ForegroundColor Yellow
+    Write-Host "Try running 'nlm doctor' manually to check status." -ForegroundColor Cyan
 }
 
 Write-Host ""
