@@ -29,18 +29,26 @@ This file serves as a comprehensive index for the Cascade agent to navigate and 
 
 **Purpose**: Frontend interfaces and user-facing components
 
-- `frontend/prototypes/` - Frontend prototype files and mockups
+- `frontend/IGFEJ_Style_Guide.md` - IGFEJ project style guide and documentation
+- `frontend/igfej-prototype/` - IGFEJ frontend prototype files and mockups
 
 ### `docs/`
 
 **Purpose**: Thesis documentation, academic research materials, and project resources
 
 - `docs/IGFEJ/` - IGFEJ project documentation and source code
+  - `IGFEJ - Macro Processes and Procedures - Macro Processos ITIL 4.csv` - Macro processes and procedures in CSV format
+  - `Process Management and Modeling for the Ministry of Justice - Best Practices Guide v00.07.pdf` - Best practices guide for process management
+  - `Proposal for a CMS System for IGFEJ.md` - Content management system proposal
   - `images/` - IGFEJ project diagrams, charts, and screenshots including organizational charts, process diagrams, enterprise architecture overviews, and ITIL practices
+  - `meetings/` - Meeting documentation and notes
+  - `prototypes/` - IGFEJ project prototypes and mockups
+  - `scope-analysis/` - Scope analysis documentation
   - `source code/` - IGFEJ project source code including BPMN processes and website files
 - `docs/thesis/` - Thesis-related documentation and materials
-  - `examples/` - Examples and reference papers
-  - `literature/` - Bibliography research documents
+  - `examples/` - Examples and reference papers (contains both PDF and markdown versions - prioritize markdown for easier reading)
+  - `how-to/` - How-to guides and methodology documentation for thesis work
+  - `literature/` - Bibliography research documents and academic references
   - `overleaf-templates/` - LaTeX templates for submission
 
 ### `.windsurf/`
@@ -48,10 +56,13 @@ This file serves as a comprehensive index for the Cascade agent to navigate and 
 **Purpose**: Windsurf IDE-specific configurations and extensions
 
 - `.windsurf/rules/` - Conditional rules for automated repository management
+  - `auto-update-folder-structure-agents.md` - Auto-update AGENTS.md when repository structure changes
+  - `ensure-mcp-config-utf8.md` - Keep MCP config UTF-8 without BOM to avoid loading errors
 - `.windsurf/skills/` - MCP skill configurations
   - `google-docs-mcp-setup/` - Google Docs integration
   - `notebookllm-mcp-setup/` - NotebookLM integration
 - `.windsurf/workflows/` - Defined workflows and processes for Windsurf IDE
+  - `review.md` - Code review workflow for bugs, security issues, and improvements
 
 ## Agent Guidelines
 
