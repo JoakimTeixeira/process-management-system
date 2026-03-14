@@ -1735,6 +1735,449 @@ function renderSubprocesses(subprocesses) {
   `;
 }
 
+function normalizeBlocks(blocks) {
+  if (!blocks || !Array.isArray(blocks)) {
+    return "";
+  }
+  
+  return blocks.map(block => {
+    if (block.type === "text") {
+      return block.text || "";
+    } else if (block.type === "list" && Array.isArray(block.items)) {
+      return block.items.map(item => {
+        const text = item.text || "";
+        const description = item.description ? `: ${item.description}` : "";
+        return `${text}${description}`;
+      }).join("\n");
+      // Note: children are not rendered in this simple version
+    }
+    return "";
+  }).join("\n\n");
+}
+
+function normalizeStructuredField(field) {
+  if (!field) return [];
+  
+  // Handle new structured blocks format
+  if (field.blocks && Array.isArray(field.blocks)) {
+    return normalizeBlocks(field.blocks).split('\n').filter(line => line.trim());
+  }
+  
+  // Handle legacy array format
+  if (Array.isArray(field)) {
+    return field;
+  }
+  
+  // Handle legacy string format
+  if (typeof field === "string") {
+    return [field];
+  }
+  
+  return [];
+}
+
+function normalizeBlocks(blocks) {
+  if (!blocks || !Array.isArray(blocks)) {
+    return "";
+  }
+  
+  return blocks.map(block => {
+    if (block.type === "text") {
+      return block.text || "";
+    } else if (block.type === "list" && Array.isArray(block.items)) {
+      return block.items.map(item => {
+        const text = item.text || "";
+        const description = item.description ? `: ${item.description}` : "";
+        return `${text}${description}`;
+      }).join("\n");
+      // Note: children are not rendered in this simple version
+    }
+    return "";
+  }).join("\n\n");
+}
+
+function normalizeDescription(description) {
+  if (!description) return "";
+  
+  // Handle new structured blocks format
+  if (description.blocks && Array.isArray(description.blocks)) {
+    return normalizeBlocks(description.blocks);
+  }
+  
+  // Handle legacy string format
+  if (typeof description === "string") {
+    return description;
+  }
+  
+  return "";
+}
+
+function normalizeActivities(activities) {
+  if (!activities) {
+    return { description: "", items: [] };
+  }
+
+  // Handle new structured blocks format
+  if (activities.blocks && Array.isArray(activities.blocks)) {
+    const blocks = activities.blocks;
+    let description = "";
+    let items = [];
+    
+    blocks.forEach(block => {
+      if (block.type === "text") {
+        description += (description ? "\n\n" : "") + (block.text || "");
+      } else if (block.type === "list" && Array.isArray(block.items)) {
+        items = items.concat(block.items.map(item => {
+          const text = item.text || "";
+          const description = item.description ? `: ${item.description}` : "";
+          return `${text}${description}`;
+        }));
+      }
+    });
+    
+    return { description, items };
+  }
+
+  if (Array.isArray(activities)) {
+    return {
+      description: "",
+      items: activities.flatMap((activity) => {
+        const title = activity?.title ? `${activity.title}: ` : "";
+        const bullets = Array.isArray(activity?.bullets) ? activity.bullets : [];
+
+        if (bullets.length > 0) {
+          return bullets.map((bullet) => `${title}${bullet}`);
+        }
+
+        return activity?.title ? [activity.title] : [];
+      }),
+    };
+  }
+
+  return {
+    description: activities.description || "",
+    items: Array.isArray(activities.items) ? activities.items : [],
+  };
+}
+
+function renderSubprocessSection(sectionNumber, sectionTitle, content) {
+  if (!content) {
+    return "";
+  }
+
+  return `
+    <div>
+      <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">${sectionNumber} ${sectionTitle}</h3>
+      ${content}
+    </div>
+  `;
+}
+
+function getSubprocessSectionSpan(sectionTitle) {
+  const wideSections = new Set(["Exemplos", "Metadados"]);
+
+  return wideSections.has(sectionTitle) ? "lg:col-span-2" : "";
+}
+
+function wrapSubprocessSection(sectionTitle, sectionMarkup) {
+  if (!sectionMarkup) {
+    return "";
+  }
+
+  return `
+    <div class="${getSubprocessSectionSpan(sectionTitle)}">
+      ${sectionMarkup}
+    </div>
+  `;
+}
+
+function renderSubprocessOverviewColumns(sections) {
+  const rows = [];
+
+  // Create rows of 2 sections each: 0-1, 2-3, 4-5, etc.
+  for (let i = 0; i < sections.length; i += 2) {
+    const leftSection = sections[i];
+    const rightSection = sections[i + 1];
+
+    rows.push(`
+      <div class="grid grid-cols-2 gap-6">
+        <div class="space-y-0">
+          ${leftSection || ''}
+        </div>
+        <div class="space-y-0">
+          ${rightSection || ''}
+        </div>
+      </div>
+    `);
+  }
+
+  return `
+    <div class="space-y-4">
+      ${rows.join('')}
+    </div>
+  `;
+}
+
+function renderSubprocessArraySection(
+  sectionNumber,
+  sectionTitle,
+  items,
+  options = {},
+) {
+  const safeItems = Array.isArray(items) ? items : [];
+
+  if (options.variant === "tags") {
+    return renderSubprocessSection(
+      sectionNumber,
+      sectionTitle,
+      `
+        ${
+          safeItems.length > 0
+            ? `
+          <div class="flex flex-wrap gap-2">
+            ${safeItems.map((item) => `<span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-govpt-blue-light text-govpt-primary">${item}</span>`).join("")}
+          </div>
+        `
+            : `<p class="text-sm text-gray-500">N/A</p>`
+        }
+      `,
+    );
+  }
+
+  return renderSubprocessSection(
+    sectionNumber,
+    sectionTitle,
+    `
+      ${
+        safeItems.length > 0
+          ? `
+        <ul class="space-y-2 ml-6">
+          ${safeItems.map((item) => `<li class="text-sm text-gray-700 list-disc">${item}</li>`).join("")}
+        </ul>
+      `
+          : `<p class="text-sm text-gray-500">N/A</p>`
+      }
+    `,
+  );
+}
+
+function renderSubprocessTextSection(sectionNumber, sectionTitle, text) {
+  if (!text) {
+    return renderSubprocessSection(
+      sectionNumber,
+      sectionTitle,
+      `<p class="text-sm text-gray-500">N/A</p>`
+    );
+  }
+
+  return renderSubprocessSection(
+    sectionNumber,
+    sectionTitle,
+    `
+      ${text
+        .split('\n\n')
+        .map(paragraph => {
+          // Check if paragraph contains list items (looking for "Title: Description" pattern)
+          const lines = paragraph.split('\n').filter(line => line.trim());
+          const hasListItems = lines.some(line => line.includes(':') && line.split(':').length >= 2);
+          
+          if (hasListItems) {
+            const listItems = lines
+              .map(line => {
+                const parts = line.split(':');
+                if (parts.length >= 2) {
+                  const title = parts[0].trim();
+                  const description = parts.slice(1).join(':').trim();
+                  return `<li class="text-sm text-gray-700"><span class="font-medium">${title}</span>: ${description}</li>`;
+                }
+                return `<li class="text-sm text-gray-700">${line.trim()}</li>`;
+              })
+              .join('');
+            
+            return `<ul class="space-y-1 ml-6 mb-4 list-disc">${listItems}</ul>`;
+          } else {
+            return `<p class="text-gray-700 leading-relaxed mb-4">${paragraph}</p>`;
+          }
+        })
+        .join('')}
+    `
+  );
+}
+
+function renderSubprocessActivitiesSection(sectionNumber, subprocess) {
+  const activities = normalizeActivities(subprocess.activities);
+
+  return renderSubprocessSection(
+    sectionNumber,
+    "Actividades",
+    `
+      <div class="space-y-4">
+        ${
+          activities.description
+            ? `<p class="text-sm text-gray-700 leading-relaxed">${activities.description}</p>`
+            : ""
+        }
+        ${
+          activities.items.length > 0
+            ? `
+          <div class="bg-gray-50 rounded p-4">
+            <ul class="space-y-2 ml-6">
+              ${activities.items.map((item, index) => `<li class="text-sm text-gray-600 list-disc"><span class="font-semibold text-gray-900">${index + 1}. ${item.split(':')[0]}</span>: ${item.split(':').slice(1).join(':')}</li>`).join("")}
+            </ul>
+          </div>
+        ` : `<p class="text-sm text-gray-500">N/A</p>`
+        }
+      </div>
+    `,
+  );
+}
+
+function renderSubprocessInformationClassificationSection(
+  sectionNumber,
+  informationClassification,
+) {
+  const values = Array.isArray(informationClassification?.values)
+    ? informationClassification.values
+    : [];
+  const note = informationClassification?.note || "";
+
+  return renderSubprocessSection(
+    sectionNumber,
+    "Classificação da informação",
+    `
+      <div class="space-y-3">
+        ${
+          values.length > 0
+            ? `
+          <div class="flex flex-wrap gap-2">
+            ${values.map((value) => `<span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-govpt-blue-light text-govpt-primary">${value}</span>`).join("")}
+          </div>
+        `
+            : ""
+        }
+        ${note ? `<p class="text-sm text-gray-700 leading-relaxed">${note}</p>` : ""}
+        ${values.length === 0 && !note ? `<p class="text-sm text-gray-500">N/A</p>` : ""}
+      </div>
+    `,
+  );
+}
+
+function renderSubprocessMetadataSection(sectionNumber, metadata) {
+  const interviewer = metadata?.interviewer || "";
+  const interviewed = Array.isArray(metadata?.interviewed)
+    ? metadata.interviewed
+    : [];
+
+  return renderSubprocessSection(
+    sectionNumber,
+    "Metadados",
+    `
+      <dl class="space-y-3">
+        ${
+          interviewer
+            ? `
+          <div>
+            <dt class="text-sm font-medium text-gray-600">Entrevistador</dt>
+            <dd class="mt-1 text-sm text-gray-900">${interviewer}</dd>
+          </div>
+        ` : ""
+        }
+        ${
+          interviewed.length > 0
+            ? `
+          <div>
+            <dt class="text-sm font-medium text-gray-600">Entrevistados</dt>
+            <dd class="mt-1 text-sm text-gray-900">${interviewed.join(", ")}</dd>
+          </div>
+        ` : interviewed.length === 0 ? `<p class="text-sm text-gray-500">N/A</p>` : ""
+        }
+        ${
+          !interviewer && interviewed.length === 0
+            ? ""
+            : ""
+        }
+      </dl>
+    `,
+  );
+}
+
+function renderSubprocessOverview(subprocess) {
+  const code = getDisplayCode(subprocess);
+
+  // Group sections with bordered cards
+  const groups = [
+    {
+      title: "INFORMAÇÕES GERAIS",
+      sections: [
+        wrapSubprocessSection("Entidade", renderSubprocessArraySection(`${code}.1`, "Entidade", subprocess.entity)),
+        wrapSubprocessSection("Responsável", renderSubprocessArraySection(`${code}.2`, "Responsável", subprocess.responsible)),
+        wrapSubprocessSection("Descrição", renderSubprocessTextSection(`${code}.3`, "Descrição", normalizeDescription(subprocess.description))),
+        wrapSubprocessSection("Palavras Chave", renderSubprocessArraySection(`${code}.4`, "Palavras Chave", subprocess.keywords, { variant: "tags" })),
+      ]
+    },
+    {
+      title: "COMO FUNCIONA",
+      sections: [
+        wrapSubprocessSection("Objetivos", renderSubprocessArraySection(`${code}.5`, "Objetivos", subprocess.objectives)),
+        wrapSubprocessSection("Inputs", renderSubprocessArraySection(`${code}.6`, "Inputs", subprocess.inputs)),
+        wrapSubprocessSection("Actividades", renderSubprocessActivitiesSection(`${code}.7`, subprocess)),
+        wrapSubprocessSection("Entregáveis", renderSubprocessArraySection(`${code}.8`, "Entregáveis", subprocess.deliverables)),
+      ]
+    },
+    {
+      title: "QUEM PARTICIPA",
+      sections: [
+        wrapSubprocessSection("Fornecedores", renderSubprocessArraySection(`${code}.9`, "Fornecedores", subprocess.suppliers)),
+        wrapSubprocessSection("Participantes", renderSubprocessArraySection(`${code}.10`, "Participantes", subprocess.participants)),
+        wrapSubprocessSection("Clientes", renderSubprocessArraySection(`${code}.11`, "Clientes", subprocess.clients)),
+      ]
+    },
+    {
+      title: "RECURSOS UTILIZADOS",
+      sections: [
+        wrapSubprocessSection("Metodologias", renderSubprocessArraySection(`${code}.12`, "Metodologias", subprocess.methodologies)),
+        wrapSubprocessSection("Ferramentas", renderSubprocessArraySection(`${code}.13`, "Ferramentas", subprocess.tools)),
+      ]
+    },
+    {
+      title: "CONTROLO DE QUALIDADE",
+      sections: [
+        wrapSubprocessSection("Métricas", renderSubprocessArraySection(`${code}.14`, "Métricas", normalizeStructuredField(subprocess.metrics))),
+        wrapSubprocessSection("Maturidade", renderSubprocessArraySection(`${code}.15`, "Maturidade", subprocess.maturity)),
+        wrapSubprocessSection("Pedido (ITSM)", renderSubprocessArraySection(`${code}.16`, "Pedido (ITSM)", subprocess.itsm_request)),
+        wrapSubprocessSection("Serviço (CMDB)", renderSubprocessArraySection(`${code}.17`, "Serviço (CMDB)", subprocess.cmdb_service)),
+      ]
+    },
+    {
+      title: "INFORMAÇÕES COMPLEMENTARES",
+      sections: [
+        wrapSubprocessSection("Sugestões", renderSubprocessArraySection(`${code}.18`, "Sugestões", normalizeStructuredField(subprocess.suggestions))),
+        wrapSubprocessSection("Suporte Legal / Legislação", renderSubprocessArraySection(`${code}.19`, "Suporte Legal / Legislação", normalizeStructuredField(subprocess.legal_support))),
+        wrapSubprocessSection("Classificação da informação", renderSubprocessInformationClassificationSection(`${code}.20`, subprocess.information_classification)),
+        wrapSubprocessSection("Metadados", renderSubprocessMetadataSection(`${code}.21`, subprocess.metadata)),
+      ]
+    }
+  ].filter(group => group.sections.some(section => section));
+
+  return `
+    <div class="space-y-6">
+      ${groups.map(group => `
+        <div class="bg-white rounded-lg border border-gray-200 overflow-hidden mb-6">
+          <!-- Group Header -->
+          <div class="bg-gray-50 px-3 py-2 border-b border-gray-200">
+            <h3 class="text-xs font-medium text-gray-600 uppercase tracking-wider">${group.title}</h3>
+          </div>
+
+          <!-- Group Content -->
+          <div class="p-4">
+            ${renderSubprocessOverviewColumns(group.sections.filter(Boolean))}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
 function renderAssets(assets) {
   if (!assets || assets.length === 0) {
     return `
@@ -1902,120 +2345,13 @@ function showSubprocessDetail(subprocessId) {
           <button onclick="switchSubprocessTab('bpmn', event)" class="tab-button py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
             Diagrama
           </button>
-          <button onclick="switchSubprocessTab('details', event)" class="tab-button py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">
-            Detalhes
-          </button>
         </nav>
       </div>
       
       <!-- Tab Content -->
       <div class="p-6">
         <div id="subprocess-overview-tab" class="tab-content active">
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <!-- Left Column - Sections 1, 2, 3 -->
-            <div class="space-y-6">
-              <!-- 9.1.1 Informações Básicas -->
-              <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">${getDisplayCode(subprocess)}.1 Informações Básicas</h3>
-                <dl class="space-y-3">
-                  <div>
-                    <dt class="text-sm font-medium text-gray-600">Processo Pai</dt>
-                    <dd class="mt-1 text-sm text-gray-900">${parentProcess.code}: ${parentProcess.title}</dd>
-                  </div>
-                  <div>
-                    <dt class="text-sm font-medium text-gray-600">Responsáveis</dt>
-                    <dd class="mt-1 text-sm text-gray-900">${subprocess.responsible?.join(", ") || "N/A"}</dd>
-                  </div>
-                  <div>
-                    <dt class="text-sm font-medium text-gray-600">Entidade</dt>
-                    <dd class="mt-1 text-sm text-gray-900">${subprocess.entity?.join(", ") || "N/A"}</dd>
-                  </div>
-                </dl>
-              </div>
-
-              <!-- 9.1.2 Descrição -->
-              <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">${getDisplayCode(subprocess)}.2 Descrição</h3>
-                <p class="text-gray-700 leading-relaxed">${subprocess.description || "Sem descrição disponível"}</p>
-              </div>
-
-              <!-- 9.1.3 Palavras-chave -->
-              ${
-                subprocess.keywords && subprocess.keywords.length > 0
-                  ? `
-              <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">${getDisplayCode(subprocess)}.3 Palavras-chave</h3>
-                <div class="flex flex-wrap gap-2">
-                  ${subprocess.keywords.map((keyword) => `<span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-govpt-blue-light text-govpt-primary">${keyword}</span>`).join("")}
-                </div>
-              </div>
-              `
-                  : ""
-              }
-            </div>
-
-            <!-- Right Column - Sections 4, 5, 6 -->
-            <div class="space-y-6">
-              <!-- 9.1.4 Objetivos -->
-              ${
-                subprocess.objectives && subprocess.objectives.length > 0
-                  ? `
-              <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">${getDisplayCode(subprocess)}.4 Objetivos</h3>
-                <ul class="space-y-2">
-                  ${subprocess.objectives.map((obj) => `<li class="text-sm text-gray-700 list-disc ml-4">${obj}</li>`).join("")}
-                </ul>
-              </div>
-              `
-                  : ""
-              }
-
-              <!-- 9.1.5 Inputs -->
-              ${
-                subprocess.inputs && subprocess.inputs.length > 0
-                  ? `
-              <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">${getDisplayCode(subprocess)}.5 Inputs</h3>
-                <div class="space-y-2">
-                  ${subprocess.inputs.map((input) => `<div class="text-sm text-gray-700 ml-4 list-disc">${input}</div>`).join("")}
-                </div>
-              </div>
-              `
-                  : ""
-              }
-
-              <!-- 9.1.6 Atividades -->
-              ${
-                subprocess.activities && subprocess.activities.length > 0
-                  ? `
-              <div>
-                <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">${getDisplayCode(subprocess)}.6 Atividades</h3>
-                <div class="space-y-4">
-                  ${subprocess.activities
-                    .map(
-                      (activity, index) => `
-                  <div class="bg-gray-50 rounded p-4">
-                    <h4 class="font-medium text-gray-900 mb-2">${getDisplayCode(subprocess)}.6.${index + 1} ${activity.title}</h4>
-                    ${
-                      activity.bullets && activity.bullets.length > 0
-                        ? `
-                    <ul class="space-y-1 ml-6">
-                      ${activity.bullets.map((bullet) => `<li class="text-sm text-gray-600 list-disc">${bullet}</li>`).join("")}
-                    </ul>
-                    `
-                        : ""
-                    }
-                  </div>
-                  `,
-                    )
-                    .join("")}
-                </div>
-              </div>
-              `
-                  : ""
-              }
-            </div>
-          </div>
+          ${renderSubprocessOverview(subprocess)}
         </div>
         
         <div id="subprocess-bpmn-tab" class="tab-content">

@@ -1,0 +1,269 @@
+{
+  "macroprocess": {
+    "id": "734e174f-92f9-483c-8597-c8f09c7b3f7d",
+    "title": "Gerir Pedidos de Serviço",
+    "objectives": {
+      "title": "A gestão de serviços de TI envolve múltiplos processos e atividades essenciais:",
+      "items": [
+        "Gestão de Portfólio de Serviços: Definir e gerenciar o catálogo de serviços, garantindo alinhamento estratégico com as necessidades do negócio e otimização do valor entregue.",
+        "Design de Serviços: Projetar novos serviços ou modificar existentes, incluindo processos, políticas, arquitecturas e métricas para garantir qualidade e eficiência operacional.",
+        "Transição de Serviços: Gerenciar mudanças, lançamentos e implantações de forma controlada, minimizando riscos e interrupções enquanto garante a entrega de valor aos clientes.",
+        "Operação de Serviços: Entregar e gerenciar serviços em produção, incluindo gestão de incidentes, problemas, acessos, eventos e requisições para manter a estabilidade operacional.",
+        "Melhoria Contínua de Serviços: Implementar ciclo PDCA (Plan-Do-Check-Act) para otimizar processos, serviços e capacidades, garantindo melhoria contínua e alinhamento com objetivos estratégicos."
+      ],
+      "note": "A gestão de serviços de TI é fundamental para garantir que os serviços de tecnologia da informação suportem eficazmente as necessidades do negócio, proporcionando valor, qualidade e continuidade operacional."
+    },
+    "icon": "clipboard-list",
+    "author_id": "user-001",
+    "updated_by": "user-001",
+    "created_at": "2026-01-05T10:00:00Z",
+    "updated_at": "2026-02-01T09:30:00Z",
+    "metrics": {
+      "total_processes": 3,
+      "total_subprocesses": 4
+    }
+  },
+  "process": {
+    "id": "7f1a42f9-3d7b-4ef2-8d28-1a4f3c9c7b11",
+    "code": 7.0,
+    "title": "Gestão de Incidentes",
+    "macroprocess_id": "734e174f-92f9-483c-8597-c8f09c7b3f7d",
+    "state": "as_is",
+    "current_version_id": "f3c78c4a-8d8d-4df2-bf8e-4b0df3a8a901",
+    "author_id": "user-001",
+    "updated_by": "user-001",
+    "created_at": "2026-01-10T10:00:00Z",
+    "updated_at": "2026-03-14T10:00:00Z",
+    "versions": [
+      {
+        "id": "f3c78c4a-8d8d-4df2-bf8e-4b0df3a8a901",
+        "process_id": "7f1a42f9-3d7b-4ef2-8d28-1a4f3c9c7b11",
+        "version": "1.0",
+        "code": "7.0",
+        "author_id": "user-001",
+        "updated_by": "user-001",
+        "change_description": "Versão inicial (AS-IS) com subprocesso principal de gestão de incidentes.",
+        "created_at": "2026-01-10T10:00:00Z",
+        "updated_at": "2026-03-14T10:00:00Z",
+        "subprocesses": [
+          {
+            "id": "d9e6c2f4-14d2-4db3-8b73-5742d4fd5e10",
+            "code": "7.1",
+            "title": "Gestão de Incidentes",
+            "entity": [
+              "Instituto de Gestão Financeira e Equipamentos da Justiça (IGFEJ)"
+            ],
+            "responsible": ["Não identificado"],
+            "description": {
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "A gestão de incidentes é uma prática essencial do ITIL (Information Technology Infrastructure Library) que visa restaurar a operação normal de um serviço de TI o mais rapidamente possível e minimizar o impacto negativo no negócio."
+                }
+              ]
+            },
+            "keywords": ["igfej", "gestão de incidentes"],
+            "objectives": [
+              "Restaurar o serviço rapidamente: o principal objetivo é restabelecer a operação normal do serviço o mais rapidamente possível.",
+              "Minimizar impacto: Reduzir o impacto negativo no negócio causado por interrupções no serviço.",
+              "Garantir a qualidade do serviço: Manter a qualidade e disponibilidade do serviço de TI."
+            ],
+            "inputs": [
+              "Informação/Detalhes sobre a situação manifestada no incidente"
+            ],
+            "activities": {
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "Para fazer a abertura de um incidente, são executadas as seguintes atividades:"
+                },
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "text": "Validar ocorrência",
+                      "description": "O Service Desk valida a ocorrência reportada por utilizadores, entidades externas, equipas de suporte ou sistemas de monitorização automática e decide se reúne os dados necessários para registo.",
+                      "children": []
+                    },
+                    {
+                      "text": "Registar detalhes da ocorrência",
+                      "description": "O incidente é registado na ferramenta de gestão de incidentes com data, hora, descrição, utilizador afetado, aplicações e sistemas envolvidos.",
+                      "children": []
+                    },
+                    {
+                      "text": "Classificar incidente",
+                      "description": "O incidente é classificado quanto a urgência e impacto para determinar a prioridade de resposta.",
+                      "children": []
+                    },
+                    {
+                      "text": "Triagem inicial",
+                      "description": "A equipa de suporte realiza um diagnóstico inicial e pesquisa na Knowledge Base para identificar uma solução rápida.",
+                      "children": []
+                    },
+                    {
+                      "text": "Obter solução da KB",
+                      "description": "Quando existe solução conhecida, esta é comunicada ao utilizador ou aplicada pela equipa; caso contrário, o incidente segue para investigação.",
+                      "children": []
+                    },
+                    {
+                      "text": "Assignar incidente",
+                      "description": "O incidente é encaminhado para a equipa ou linha de suporte adequada de acordo com regras de decisão previamente definidas.",
+                      "children": []
+                    },
+                    {
+                      "text": "Investigar e diagnosticar (L1)",
+                      "description": "A primeira linha de suporte analisa logs, executa testes e procura uma solução viável para restabelecer o serviço.",
+                      "children": []
+                    },
+                    {
+                      "text": "Gestão de problemas (L2)",
+                      "description": "Quando necessário, o incidente é aprofundado por equipas especializadas e programadores para identificação da causa raiz e solução técnica.",
+                      "children": []
+                    },
+                    {
+                      "text": "Resolver e recuperar",
+                      "description": "A solução é implementada, o serviço é restaurado e são realizados testes de validação do funcionamento normal.",
+                      "children": []
+                    },
+                    {
+                      "text": "Fechar incidente",
+                      "description": "O registo é atualizado com os detalhes da resolução, confirmação do restabelecimento e eventuais ações futuras.",
+                      "children": []
+                    },
+                    {
+                      "text": "Conclusão",
+                      "description": "Após notificação ao utilizador, quando aplicável, o processo é concluído.",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            "deliverables": [
+              "Solução implementada para o incidente",
+              "Identificação da causa provável ou causa raiz",
+              "Registo atualizado com evidências de tratamento e resolução"
+            ],
+            "suppliers": ["Nada a referir"],
+            "participants": [
+              "Utilizadores finais",
+              "Fornecedores",
+              "Equipas técnicas do IGFEJ",
+              "Service Desk",
+              "Equipas de suporte L1 e L2"
+            ],
+            "clients": ["Utilizadores finais", "Fornecedores"],
+            "methodologies": ["ITIL", "Gestão de Incidentes"],
+            "tools": [
+              "Ferramenta de ITSM",
+              "Knowledge Base (KB)",
+              "Ferramentas de monitorização",
+              "Sistemas de logging"
+            ],
+            "metrics": {
+              "blocks": [
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "text": "Tempo de resolução de incidentes (MTTR - Mean Time to Resolve)",
+                      "description": "Média de tempo para resolver incidentes",
+                      "children": []
+                    },
+                    {
+                      "text": "Taxa de reabertura de incidentes",
+                      "description": "Percentagem de incidentes reabertos",
+                      "children": []
+                    },
+                    {
+                      "text": "Número de incidentes por categoria",
+                      "description": "Contagem de incidentes por tipo",
+                      "children": []
+                    },
+                    {
+                      "text": "Tempo médio de resposta (Mean Time to Respond)",
+                      "description": "Média de tempo para primeira resposta",
+                      "children": []
+                    },
+                    {
+                      "text": "Satisfação do utilizador (CSAT)",
+                      "description": "Índice de satisfação do cliente",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            "maturity": ["Nada a referir"],
+            "itsm_request": ["Gestão de Incidentes"],
+            "cmdb_service": ["Gestão de Incidentes"],
+            "suggestions": {
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "Nada a referir"
+                }
+              ]
+            },
+            "legal_support": {
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "Nada a referir"
+                }
+              ]
+            },
+            "information_classification": {
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "Nada a referir. Ex.: Confidencial, Restrito, Interno, Público."
+                }
+              ]
+            },
+            "metadata": {
+              "interviewer": "João Caldeira (08/07/2024)",
+              "interviewed": ["NA"]
+            }
+          }
+        ],
+        "assets": []
+      }
+    ]
+  },
+  "search_index": [
+     {
+      "objectID": "process-7.0",
+      "href": "#process-7.0",
+      "title": "Gestão de Incidentes",
+      "section": "Gerir Pedidos de Serviço",
+      "text": "A gestão de incidentes é uma prática essencial do ITIL que visa restaurar a operação normal de um serviço de TI o mais rapidamente possível e minimizar o impacto negativo no negócio.",
+      "crumbs": [
+        "Início",
+        "Gerir Pedidos de Serviço",
+        "Gestão de Incidentes"
+      ],
+      "type": "process",
+      "category": "Gerir Pedidos de Serviço",
+      "keywords": ["incidentes", "itil", "gestão", "restauração", "igfej"],
+      "code": "7.0"
+    },
+    {
+      "objectID": "subprocess-7.1",
+      "href": "#subprocess-7.1",
+      "title": "Gestão de Incidentes",
+      "section": "Gerir Pedidos de Serviço",
+      "text": "Subprocesso de gestão de incidentes do IGFEJ - validação, registo, classificação, triagem, investigação e resolução de incidentes de TI.",
+      "crumbs": [
+        "Início",
+        "Gerir Pedidos de Serviço",
+        "Gestão de Incidentes",
+        "Gestão de Incidentes"
+      ],
+      "type": "subprocess",
+      "category": "Gerir Pedidos de Serviço",
+      "keywords": ["incidentes", "igfej", "service desk", "resolução", "itil"],
+      "code": "7.1"
+    }
+  ]
+}

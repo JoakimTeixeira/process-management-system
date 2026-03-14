@@ -19,18 +19,30 @@ This file serves as a comprehensive index for the Cascade agent to navigate and 
 - `README.md` - Project overview, setup instructions, and getting started guide
 - `LICENSE` - Project licensing information
 - `.gitignore` - Git ignore patterns for the repository
+- `.env.example` - Environment variables template
+- `docker-compose.yml` - Docker compose configuration
 - `AGENTS.md` - This agent directory index (you are here)
 
-### `src/`
+### `api/`
 
-**Purpose**: Main source code directory containing all application components
+**Purpose**: API backend services
 
-- `src/frontend/` - Frontend interfaces and user-facing components
-  - `src/frontend/IGFEJ_Style_Guide.md` - IGFEJ project style guide and documentation
-  - `src/frontend/igfej-prototype/` - IGFEJ prototype implementation files
-- `src/backoffice/` - Backoffice management system
-- `src/database/` - Database schemas and configurations
-- `src/server/` - Backend services, APIs, and server-side components
+- `api/Dockerfile` - Docker configuration for API
+- `api/migrations/` - Database migrations
+- `api/seeds/` - Database seeds
+- `api/src/` - API source code
+
+### `web/`
+
+**Purpose**: Web frontend applications
+
+- `web/backoffice/` - Backoffice management interface
+  - `web/backoffice/Dockerfile` - Docker config for backoffice
+  - `web/backoffice/src/` - Backoffice source code
+- `web/public/` - Public website
+  - `web/public/Dockerfile` - Docker config for public
+  - `web/public/src/` - Public source code
+  - `web/public/IGFEJ_Style_Guide.md` - IGFEJ style guide
 
 ### `docs/`
 

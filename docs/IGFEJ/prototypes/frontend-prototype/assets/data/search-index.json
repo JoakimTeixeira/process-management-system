@@ -70,5 +70,38 @@
       "onboarding"
     ],
     "code": "5.1"
+  },
+  {
+    "objectID": "process-7.0",
+    "href": "#process-7.0",
+    "title": "Gestão de Incidentes",
+    "section": "Gerir Pedidos de Serviço",
+    "text": "A gestão de incidentes é uma prática essencial do ITIL que visa restaurar a operação normal de um serviço de TI o mais rapidamente possível e minimizar o impacto negativo no negócio.",
+    "crumbs": [
+      "Início",
+      "Gerir Pedidos de Serviço",
+      "Gestão de Incidentes"
+    ],
+    "type": "process",
+    "category": "Gerir Pedidos de Serviço",
+    "keywords": ["incidentes", "itil", "gestão", "restauração", "igfej"],
+    "code": "7.0"
+  },
+  {
+    "objectID": "subprocess-7.1",
+    "href": "#subprocess-7.1",
+    "title": "Gestão de Incidentes",
+    "section": "Gerir Pedidos de Serviço",
+    "text": "Subprocesso de gestão de incidentes do IGFEJ - validação, registo, classificação, triagem, investigação e resolução de incidentes de TI.",
+    "crumbs": [
+      "Início",
+      "Gerir Pedidos de Serviço",
+      "Gestão de Incidentes",
+      "Gestão de Incidentes"
+    ],
+    "type": "subprocess",
+    "category": "Gerir Pedidos de Serviço",
+    "keywords": ["incidentes", "igfej", "service desk", "resolução", "itil"],
+    "code": "7.1"
   }
 ]

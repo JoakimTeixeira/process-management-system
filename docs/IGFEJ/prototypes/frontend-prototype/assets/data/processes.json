@@ -60,19 +60,15 @@
               "Garantir que o sistema reflete a localização atual do utilizador"
             ],
             "inputs": ["Pedido de mudança", "Nova localização"],
-            "activities": [
-              {
-                "title": "Validar mudança",
-                "bullets": ["Confirmar aprovação", "Verificar nova localização"]
-              },
-              {
-                "title": "Atualizar sistema",
-                "bullets": [
-                  "Modificar dados no diretório",
-                  "Atualizar permissões se necessário"
-                ]
-              }
-            ],
+            "activities": {
+              "description": "Principais atividades necessárias para validar a mudança e refletir a nova localização do utilizador nos sistemas.",
+              "items": [
+                "Validar mudança: Confirmar aprovação",
+                "Validar mudança: Verificar nova localização",
+                "Atualizar sistema: Modificar dados no diretório",
+                "Atualizar sistema: Atualizar permissões se necessário"
+              ]
+            },
             "deliverables": ["Localização atualizada no sistema"],
             "suppliers": ["RH", "Gestor"],
             "participants": ["Service Desk"],
@@ -82,12 +78,15 @@
             "metrics": ["Tempo de atualização"],
             "maturity": ["Definido"],
             "suggestions": ["Automatizar atualização"],
-            "legal_support_or_legislation": ["Políticas internas"],
+            "legal_support": ["Políticas internas"],
             "information_classification": {
               "values": ["Interno"],
               "note": "Dados administrativos"
             },
-            "metadata": ["source=mock", "version=2.0"]
+            "metadata": {
+              "interviewer": "Equipa de Projeto",
+              "interviewed": ["Equipa de Suporte"]
+            }
           }
         ],
         "assets": [
@@ -155,29 +154,17 @@
               "Dados do utilizador (nome, email, unidade, perfil)"
             ],
 
-            "activities": [
-              {
-                "title": "Registar e validar o pedido",
-                "bullets": [
-                  "Confirmar identidade do solicitante e dados do novo utilizador",
-                  "Verificar se já existe conta (evitar duplicados)"
-                ]
-              },
-              {
-                "title": "Criar utilizador e aplicar permissões base",
-                "bullets": [
-                  "Criar conta no diretório",
-                  "Atribuir grupos/perfis base conforme função e unidade"
-                ]
-              },
-              {
-                "title": "Comunicar credenciais e fechar pedido",
-                "bullets": [
-                  "Enviar instruções de primeiro acesso",
-                  "Registar evidências e encerrar no ITSM"
-                ]
-              }
-            ],
+            "activities": {
+              "description": "Sequência de atividades para registar o pedido, criar a conta e concluir o pedido com evidências.",
+              "items": [
+                "Registar e validar o pedido: Confirmar identidade do solicitante e dados do novo utilizador",
+                "Registar e validar o pedido: Verificar se já existe conta (evitar duplicados)",
+                "Criar utilizador e aplicar permissões base: Criar conta no diretório",
+                "Criar utilizador e aplicar permissões base: Atribuir grupos/perfis base conforme função e unidade",
+                "Comunicar credenciais e fechar pedido: Enviar instruções de primeiro acesso",
+                "Comunicar credenciais e fechar pedido: Registar evidências e encerrar no ITSM"
+              ]
+            },
 
             "deliverables": [
               "Conta criada",
@@ -203,7 +190,7 @@
             "suggestions": [
               "Automatizar via workflow com aprovação e templates de grupos."
             ],
-            "legal_support_or_legislation": [
+            "legal_support": [
               "Políticas internas de segurança",
               "RGPD (quando aplicável)"
             ],
@@ -211,7 +198,10 @@
               "values": ["Confidencial"],
               "note": "Pode conter dados pessoais e credenciais temporárias."
             },
-            "metadata": ["source=mock", "domain=service_requests"]
+            "metadata": {
+              "interviewer": "Equipa de Projeto",
+              "interviewed": ["Service Desk", "Equipa de sistemas"]
+            }
           },
 
           {
@@ -233,29 +223,17 @@
               "Identificação do utilizador"
             ],
 
-            "activities": [
-              {
-                "title": "Validar autorização e necessidade",
-                "bullets": [
-                  "Confirmar aprovação do responsável",
-                  "Verificar perfil e âmbito (sistemas/segmentos)"
-                ]
-              },
-              {
-                "title": "Provisionar VPN e políticas",
-                "bullets": [
-                  "Criar/associar perfil VPN ao utilizador",
-                  "Aplicar regras de acesso (least privilege)"
-                ]
-              },
-              {
-                "title": "Testar e comunicar",
-                "bullets": [
-                  "Validar login e conectividade",
-                  "Enviar instruções e requisitos de cliente VPN"
-                ]
-              }
-            ],
+            "activities": {
+              "description": "Atividades para validar a autorização, configurar o acesso VPN e confirmar a disponibilização ao utilizador.",
+              "items": [
+                "Validar autorização e necessidade: Confirmar aprovação do responsável",
+                "Validar autorização e necessidade: Verificar perfil e âmbito (sistemas/segmentos)",
+                "Provisionar VPN e políticas: Criar/associar perfil VPN ao utilizador",
+                "Provisionar VPN e políticas: Aplicar regras de acesso (least privilege)",
+                "Testar e comunicar: Validar login e conectividade",
+                "Testar e comunicar: Enviar instruções e requisitos de cliente VPN"
+              ]
+            },
 
             "deliverables": [
               "Acesso VPN ativo",
@@ -281,7 +259,7 @@
             "suggestions": [
               "Adicionar DMN de elegibilidade (perfil, função, aprovação, risco)."
             ],
-            "legal_support_or_legislation": [
+            "legal_support": [
               "Políticas internas de segurança",
               "RGPD (quando aplicável)"
             ],
@@ -289,7 +267,10 @@
               "values": ["Restrito"],
               "note": "Acesso remoto a sistemas internos."
             },
-            "metadata": ["source=mock", "requires_approval=true"]
+            "metadata": {
+              "interviewer": "Equipa de Projeto",
+              "interviewed": ["Equipa de Redes / Segurança", "Service Desk"]
+            }
           }
         ],
 
@@ -331,6 +312,248 @@
             ]
           }
         ]
+      }
+    ]
+  },
+
+  {
+    "id": "7f1a42f9-3d7b-4ef2-8d28-1a4f3c9c7b11",
+    "code": "7.0",
+    "title": "Gestão de Incidentes",
+    "macroprocess_id": "gestao-servico",
+    "state": "as_is",
+    "current_version_id": "f3c78c4a-8d8d-4df2-bf8e-4b0df3a8a901",
+    "author_id": "user-001",
+    "updated_by": "user-001",
+    "created_at": "2026-01-10T10:00:00Z",
+    "updated_at": "2026-03-14T10:00:00Z",
+    "versions": [
+      {
+        "id": "f3c78c4a-8d8d-4df2-bf8e-4b0df3a8a901",
+        "process_id": "7f1a42f9-3d7b-4ef2-8d28-1a4f3c9c7b11",
+        "version": "1.0",
+        "code": "7.0",
+        "author_id": "user-001",
+        "updated_by": "user-001",
+        "change_description": "Versão inicial (AS-IS) com subprocesso principal de gestão de incidentes.",
+        "created_at": "2026-01-10T10:00:00Z",
+        "updated_at": "2026-03-14T10:00:00Z",
+        "subprocesses": [
+          {
+            "id": "d9e6c2f4-14d2-4db3-8b73-5742d4fd5e10",
+            "code": "7.1",
+            "title": "Gestão de Incidentes",
+            "entity": [
+              "Instituto de Gestão Financeira e Equipamentos da Justiça (IGFEJ)"
+            ],
+            "responsible": ["Não identificado"],
+            "description": {
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "A gestão de incidentes é uma prática essencial do ITIL (Information Technology Infrastructure Library) que visa restaurar a operação normal de um serviço de TI o mais rapidamente possível e minimizar o impacto negativo no negócio."
+                },
+                {
+                  "type": "text",
+                  "text": "Benefícios da Gestão de Incidentes"
+                },
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "text": "Melhoria da Satisfação do Cliente",
+                      "description": "Rápida resolução de problemas aumenta a satisfação dos utilizadores.",
+                      "children": []
+                    },
+                    {
+                      "text": "Redução de Impacto no Negócio",
+                      "description": "Minimiza interrupções e perdas financeiras associadas a incidentes.",
+                      "children": []
+                    },
+                    {
+                      "text": "Melhoria da Eficiência Operacional",
+                      "description": "Processos padronizados e bem definidos aumentam a eficiência da equipa de suporte.",
+                      "children": []
+                    },
+                    {
+                      "text": "Base para Melhoria Contínua",
+                      "description": "Lições aprendidas ajudam a prevenir futuros incidentes e a melhorar os processos de gestão.",
+                      "children": []
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "text": "A gestão eficaz de incidentes é crucial para a operação de TI e contribui significativamente para a continuidade e qualidade dos serviços prestados."
+                }
+              ]
+            },
+            "keywords": ["igfej", "gestão de incidentes"],
+            "objectives": [
+              "Restaurar o serviço rapidamente: o principal objetivo é restabelecer a operação normal do serviço o mais rapidamente possível.",
+              "Minimizar impacto: Reduzir o impacto negativo no negócio causado por interrupções no serviço.",
+              "Garantir a qualidade do serviço: Manter a qualidade e disponibilidade do serviço de TI."
+            ],
+            "inputs": [
+              "Informação/Detalhes sobre a situação manifestada no incidente"
+            ],
+            "activities": {
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "Para fazer a abertura de um incidente, são executadas as seguintes atividades:"
+                },
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "text": "Validar ocorrência",
+                      "description": "O Service Desk valida a ocorrência reportada por utilizadores, entidades externas, equipas de suporte ou sistemas de monitorização automática e decide se reúne os dados necessários para registo.",
+                      "children": []
+                    },
+                    {
+                      "text": "Registar detalhes da ocorrência",
+                      "description": "O incidente é registado na ferramenta de gestão de incidentes com data, hora, descrição, utilizador afetado, aplicações e sistemas envolvidos.",
+                      "children": []
+                    },
+                    {
+                      "text": "Classificar incidente",
+                      "description": "O incidente é classificado quanto a urgência e impacto para determinar a prioridade de resposta.",
+                      "children": []
+                    },
+                    {
+                      "text": "Triagem inicial",
+                      "description": "A equipa de suporte realiza um diagnóstico inicial e pesquisa na Knowledge Base para identificar uma solução rápida.",
+                      "children": []
+                    },
+                    {
+                      "text": "Obter solução da KB",
+                      "description": "Quando existe solução conhecida, esta é comunicada ao utilizador ou aplicada pela equipa; caso contrário, o incidente segue para investigação.",
+                      "children": []
+                    },
+                    {
+                      "text": "Assignar incidente",
+                      "description": "O incidente é encaminhado para a equipa ou linha de suporte adequada de acordo com regras de decisão previamente definidas.",
+                      "children": []
+                    },
+                    {
+                      "text": "Investigar e diagnosticar (L1)",
+                      "description": "A primeira linha de suporte analisa logs, executa testes e procura uma solução viável para restabelecer o serviço.",
+                      "children": []
+                    },
+                    {
+                      "text": "Gestão de problemas (L2)",
+                      "description": "Quando necessário, o incidente é aprofundado por equipas especializadas e programadores para identificação da causa raiz e solução técnica.",
+                      "children": []
+                    },
+                    {
+                      "text": "Resolver e recuperar",
+                      "description": "A solução é implementada, o serviço é restaurado e são realizados testes de validação do funcionamento normal.",
+                      "children": []
+                    },
+                    {
+                      "text": "Fechar incidente",
+                      "description": "O registo é atualizado com os detalhes da resolução, confirmação do restabelecimento e eventuais ações futuras.",
+                      "children": []
+                    },
+                    {
+                      "text": "Conclusão",
+                      "description": "Após notificação ao utilizador, quando aplicável, o processo é concluído.",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            "deliverables": [
+              "Solução implementada para o incidente",
+              "Identificação da causa provável ou causa raiz",
+              "Registo atualizado com evidências de tratamento e resolução"
+            ],
+            "suppliers": ["Nada a referir"],
+            "participants": [
+              "Utilizadores finais",
+              "Fornecedores",
+              "Equipas técnicas do IGFEJ",
+              "Service Desk",
+              "Equipas de suporte L1 e L2"
+            ],
+            "clients": ["Utilizadores finais", "Fornecedores"],
+            "methodologies": ["ITIL", "Gestão de Incidentes"],
+            "tools": [
+              "Ferramenta de ITSM",
+              "Knowledge Base (KB)",
+              "Ferramentas de monitorização",
+              "Sistemas de logging"
+            ],
+            "metrics": {
+              "blocks": [
+                {
+                  "type": "list",
+                  "items": [
+                    {
+                      "text": "Tempo de resolução de incidentes (MTTR - Mean Time to Resolve)",
+                      "description": "Média de tempo para resolver incidentes",
+                      "children": []
+                    },
+                    {
+                      "text": "Taxa de reabertura de incidentes",
+                      "description": "Percentagem de incidentes reabertos",
+                      "children": []
+                    },
+                    {
+                      "text": "Número de incidentes por categoria",
+                      "description": "Contagem de incidentes por tipo",
+                      "children": []
+                    },
+                    {
+                      "text": "Tempo médio de resposta (Mean Time to Respond)",
+                      "description": "Média de tempo para primeira resposta",
+                      "children": []
+                    },
+                    {
+                      "text": "Satisfação do utilizador (CSAT)",
+                      "description": "Índice de satisfação do cliente",
+                      "children": []
+                    }
+                  ]
+                }
+              ]
+            },
+            "maturity": ["Nada a referir"],
+            "itsm_request": ["Gestão de Incidentes"],
+            "cmdb_service": ["Gestão de Incidentes"],
+            "suggestions": {
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "Nada a referir"
+                }
+              ]
+            },
+            "legal_support": {
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "Nada a referir"
+                }
+              ]
+            },
+            "information_classification": {
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "Nada a referir. Ex.: Confidencial, Restrito, Interno, Público."
+                }
+              ]
+            },
+            "metadata": {
+              "interviewer": "João Caldeira (08/07/2024)",
+              "interviewed": ["NA"]
+            }
+          }
+        ],
+        "assets": []
       }
     ]
   },
@@ -378,29 +601,17 @@
               "Aplicação alvo"
             ],
 
-            "activities": [
-              {
-                "title": "Validar identidade e elegibilidade",
-                "bullets": [
-                  "Confirmar identidade por procedimento interno",
-                  "Confirmar permissão e escopo do pedido"
-                ]
-              },
-              {
-                "title": "Executar reset na aplicação",
-                "bullets": [
-                  "Efetuar reset/admin unlock conforme ferramenta",
-                  "Forçar alteração no primeiro login (quando aplicável)"
-                ]
-              },
-              {
-                "title": "Registar evidências e encerrar",
-                "bullets": [
-                  "Registar hora, sistema, operador e resultado no ITSM",
-                  "Confirmar com utilizador e fechar"
-                ]
-              }
-            ],
+            "activities": {
+              "description": "Atividades para validar o pedido, executar a redefinição na aplicação e encerrar com evidência registada.",
+              "items": [
+                "Validar identidade e elegibilidade: Confirmar identidade por procedimento interno",
+                "Validar identidade e elegibilidade: Confirmar permissão e escopo do pedido",
+                "Executar reset na aplicação: Efetuar reset/admin unlock conforme ferramenta",
+                "Executar reset na aplicação: Forçar alteração no primeiro login (quando aplicável)",
+                "Registar evidências e encerrar: Registar hora, sistema, operador e resultado no ITSM",
+                "Registar evidências e encerrar: Confirmar com utilizador e fechar"
+              ]
+            },
 
             "deliverables": ["Acesso restaurado", "Registo de evidência"],
             "suppliers": [
@@ -422,7 +633,7 @@
             "suggestions": [
               "Adicionar DMN para critérios de validação por tipo de app."
             ],
-            "legal_support_or_legislation": [
+            "legal_support": [
               "Políticas internas de segurança",
               "RGPD (quando aplicável)"
             ],
@@ -430,7 +641,10 @@
               "values": ["Restrito"],
               "note": "Procedimento sensível (controlo de acessos)."
             },
-            "metadata": ["source=mock", "security_sensitive=true"]
+            "metadata": {
+              "interviewer": "Equipa de Projeto",
+              "interviewed": ["Service Desk", "Admin de aplicação"]
+            }
           }
         ],
 
