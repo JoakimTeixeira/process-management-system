@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_185um3z" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.30.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.3.0">
+  <bpmn:collaboration id="Collaboration_023r915">
+    <bpmn:participant id="Participant_05g6y1z" name="Servidores" processRef="igfej-disable-user-ad" />
+    <bpmn:participant id="Participant_0d0ei5y" name="Help Desk" processRef="Process_07dfgjt" />
+    <bpmn:messageFlow id="Flow_15yc896" sourceRef="Participant_0d0ei5y" targetRef="Event_1298aaa" />
+    <bpmn:messageFlow id="Flow_1b4szj7" sourceRef="Event_1w3agnd" targetRef="Participant_0d0ei5y" />
+    <bpmn:textAnnotation id="TextAnnotation_0pu0dt4">
+      <bpmn:text>Incidentes/Pedidos abertos por
+E-mail e/ou Help Desk (Incidente)</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1muijpj" sourceRef="Participant_05g6y1z" targetRef="TextAnnotation_0pu0dt4" />
+  </bpmn:collaboration>
+  <bpmn:process id="igfej-disable-user-ad" isExecutable="true">
+    <bpmn:laneSet id="LaneSet_0ekg9ww">
+      <bpmn:lane id="Lane_18cvm2j">
+        <bpmn:flowNodeRef>Activity_1nd33e3</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1298aaa</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1w3agnd</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Event_1r3q552</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+    <bpmn:sequenceFlow id="Flow_0za3j71" sourceRef="Event_1298aaa" targetRef="Activity_1nd33e3" />
+    <bpmn:sequenceFlow id="Flow_1m9agn6" sourceRef="Activity_1nd33e3" targetRef="Event_1w3agnd" />
+    <bpmn:sequenceFlow id="Flow_0z34k58" sourceRef="Event_1w3agnd" targetRef="Event_1r3q552" />
+    <bpmn:userTask id="Activity_1nd33e3" name="Desativar Conta de Utilizador no SO Linux">
+      <bpmn:incoming>Flow_0za3j71</bpmn:incoming>
+      <bpmn:outgoing>Flow_1m9agn6</bpmn:outgoing>
+      <bpmn:property id="Property_1wywguy" name="__targetRef_placeholder" />
+      <bpmn:dataInputAssociation id="DataInputAssociation_113gsx6">
+        <bpmn:sourceRef>DataObjectReference_07yelct</bpmn:sourceRef>
+        <bpmn:targetRef>Property_1wywguy</bpmn:targetRef>
+      </bpmn:dataInputAssociation>
+    </bpmn:userTask>
+    <bpmn:startEvent id="Event_1298aaa">
+      <bpmn:outgoing>Flow_0za3j71</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_0hhk6e6" />
+    </bpmn:startEvent>
+    <bpmn:intermediateThrowEvent id="Event_1w3agnd" name="Notificar &#10;Help Desk">
+      <bpmn:incoming>Flow_1m9agn6</bpmn:incoming>
+      <bpmn:outgoing>Flow_0z34k58</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1vlvrwq" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:endEvent id="Event_1r3q552">
+      <bpmn:incoming>Flow_0z34k58</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:dataObjectReference id="DataObjectReference_07yelct" name="Dados do utilizador" dataObjectRef="DataObject_0mffo7y" />
+    <bpmn:dataObject id="DataObject_0mffo7y" />
+  </bpmn:process>
+  <bpmn:process id="Process_07dfgjt" isExecutable="false" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_023r915">
+      <bpmndi:BPMNShape id="BPMNShape_0mr33fy" bpmnElement="Participant_05g6y1z" isHorizontal="true">
+        <dc:Bounds x="160" y="190" width="520" height="260" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_18cvm2j_di" bpmnElement="Lane_18cvm2j" isHorizontal="true">
+        <dc:Bounds x="190" y="190" width="490" height="260" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ac33o6_di" bpmnElement="Activity_1nd33e3">
+        <dc:Bounds x="330" y="240" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0uhr8yj_di" bpmnElement="Event_1298aaa" bioc:stroke="#205022" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#205022">
+        <dc:Bounds x="232" y="262" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0gosevj_di" bpmnElement="Event_1w3agnd">
+        <dc:Bounds x="502" y="262" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="495" y="305" width="52" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1r3q552_di" bpmnElement="Event_1r3q552" bioc:stroke="#831311" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#831311">
+        <dc:Bounds x="612" y="262" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_06c36dg" bpmnElement="DataObjectReference_07yelct">
+        <dc:Bounds x="362" y="345" width="36" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="356" y="404.5" width="48" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_150mhve" bpmnElement="Flow_0za3j71">
+        <di:waypoint x="268" y="280" />
+        <di:waypoint x="330" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1m9agn6_di" bpmnElement="Flow_1m9agn6">
+        <di:waypoint x="430" y="280" />
+        <di:waypoint x="502" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0z34k58_di" bpmnElement="Flow_0z34k58">
+        <di:waypoint x="538" y="280" />
+        <di:waypoint x="612" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_0d0ei5y_di" bpmnElement="Participant_0d0ei5y" isHorizontal="true">
+        <dc:Bounds x="160" y="60" width="520" height="90" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0p83c1f" bpmnElement="TextAnnotation_0pu0dt4">
+        <dc:Bounds x="720" y="240" width="210" height="41" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_0c6nbj9" bpmnElement="DataInputAssociation_113gsx6">
+        <di:waypoint x="380" y="345" />
+        <di:waypoint x="380" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_10hat5q" bpmnElement="Association_1muijpj">
+        <di:waypoint x="680" y="260" />
+        <di:waypoint x="720" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15yc896_di" bpmnElement="Flow_15yc896">
+        <di:waypoint x="250" y="150" />
+        <di:waypoint x="250" y="262" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1b4szj7_di" bpmnElement="Flow_1b4szj7">
+        <di:waypoint x="520" y="262" />
+        <di:waypoint x="520" y="150" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

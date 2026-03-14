@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="https://www.omg.org/spec/DMN/20191111/MODEL/" xmlns:dmndi="https://www.omg.org/spec/DMN/20191111/DMNDI/" xmlns:dc="http://www.omg.org/spec/DMN/20180521/DC/" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:di="http://www.omg.org/spec/DMN/20180521/DI/" id="team-assignment" name="DRD" namespace="http://camunda.org/schema/1.0/dmn" exporter="Camunda Modeler" exporterVersion="5.45.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
+  <decision id="Decision_1rc370u" name="Assignar Incidente">
+    <informationRequirement id="InformationRequirement_0vkqz49">
+      <requiredInput href="#InputData_0lzjn73" />
+    </informationRequirement>
+    <informationRequirement id="InformationRequirement_1t9dv40">
+      <requiredInput href="#InputData_04o4dkr" />
+    </informationRequirement>
+    <decisionTable id="DecisionTable_0v8kw42">
+      <input id="Input_1">
+        <inputExpression id="InputExpression_1" typeRef="string">
+          <text></text>
+        </inputExpression>
+      </input>
+      <output id="Output_1" typeRef="string" />
+    </decisionTable>
+  </decision>
+  <inputData id="InputData_0lzjn73" name="Prioridade" />
+  <inputData id="InputData_04o4dkr" name="Tecnologia" />
+  <dmndi:DMNDI>
+    <dmndi:DMNDiagram>
+      <dmndi:DMNShape dmnElementRef="Decision_1rc370u">
+        <dc:Bounds height="80" width="180" x="320" y="90" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_1ldeh1w" dmnElementRef="InputData_0lzjn73">
+        <dc:Bounds height="45" width="125" x="167" y="308" />
+      </dmndi:DMNShape>
+      <dmndi:DMNShape id="DMNShape_1mfvnn0" dmnElementRef="InputData_04o4dkr">
+        <dc:Bounds height="45" width="125" x="497" y="309" />
+      </dmndi:DMNShape>
+      <dmndi:DMNEdge id="DMNEdge_0v49i8g" dmnElementRef="InformationRequirement_0vkqz49">
+        <di:waypoint x="230" y="308" />
+        <di:waypoint x="380" y="190" />
+        <di:waypoint x="380" y="170" />
+      </dmndi:DMNEdge>
+      <dmndi:DMNEdge id="DMNEdge_0h976dz" dmnElementRef="InformationRequirement_1t9dv40">
+        <di:waypoint x="560" y="309" />
+        <di:waypoint x="440" y="190" />
+        <di:waypoint x="440" y="170" />
+      </dmndi:DMNEdge>
+    </dmndi:DMNDiagram>
+  </dmndi:DMNDI>
+</definitions>
