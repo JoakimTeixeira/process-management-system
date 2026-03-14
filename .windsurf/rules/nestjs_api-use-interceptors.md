@@ -3,6 +3,7 @@ title: Use Interceptors for Cross-Cutting Concerns
 impact: MEDIUM-HIGH
 impactDescription: Interceptors provide clean separation for cross-cutting logic
 tags: api, interceptors, logging, caching
+trigger: model_decision
 ---
 
 ## Use Interceptors for Cross-Cutting Concerns

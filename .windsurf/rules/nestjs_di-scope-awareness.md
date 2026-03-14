@@ -3,6 +3,7 @@ title: Understand Provider Scopes
 impact: CRITICAL
 impactDescription: Prevents data leaks and performance issues
 tags: dependency-injection, scopes, request-context
+trigger: model_decision
 ---
 
 ## Understand Provider Scopes

@@ -3,6 +3,7 @@ title: Use Testing Module for Unit Tests
 impact: HIGH
 impactDescription: Enables proper isolated testing with mocked dependencies
 tags: testing, unit-tests, mocking, jest
+trigger: model_decision
 ---
 
 ## Use Testing Module for Unit Tests

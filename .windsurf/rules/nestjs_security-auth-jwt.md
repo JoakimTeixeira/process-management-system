@@ -3,6 +3,7 @@ title: Implement Secure JWT Authentication
 impact: CRITICAL
 impactDescription: Essential for secure APIs
 tags: security, jwt, authentication, tokens
+trigger: model_decision
 ---
 
 ## Implement Secure JWT Authentication

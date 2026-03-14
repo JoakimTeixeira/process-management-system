@@ -3,6 +3,7 @@ title: Implement Rate Limiting
 impact: HIGH
 impactDescription: Protects against abuse and ensures fair resource usage
 tags: security, rate-limiting, throttler, protection
+trigger: model_decision
 ---
 
 ## Implement Rate Limiting

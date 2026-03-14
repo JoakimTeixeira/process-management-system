@@ -3,6 +3,7 @@ title: Use Structured Logging
 impact: MEDIUM-HIGH
 impactDescription: Structured logging enables effective debugging and monitoring
 tags: devops, logging, structured-logs, pino
+trigger: model_decision
 ---
 
 ## Use Structured Logging

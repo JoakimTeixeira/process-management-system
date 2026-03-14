@@ -3,6 +3,7 @@ title: Use Guards for Authentication and Authorization
 impact: HIGH
 impactDescription: Enforces access control before handlers execute
 tags: security, guards, authentication, authorization
+trigger: model_decision
 ---
 
 ## Use Guards for Authentication and Authorization

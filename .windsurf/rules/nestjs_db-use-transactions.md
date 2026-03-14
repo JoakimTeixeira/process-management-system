@@ -3,6 +3,7 @@ title: Use Transactions for Multi-Step Operations
 impact: HIGH
 impactDescription: Ensures data consistency in multi-step operations
 tags: database, transactions, typeorm, consistency
+trigger: model_decision
 ---
 
 ## Use Transactions for Multi-Step Operations

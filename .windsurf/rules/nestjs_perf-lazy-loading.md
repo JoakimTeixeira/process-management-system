@@ -3,6 +3,7 @@ title: Use Lazy Loading for Large Modules
 impact: MEDIUM
 impactDescription: Improves startup time for large applications
 tags: performance, lazy-loading, modules, optimization
+trigger: model_decision
 ---
 
 ## Use Lazy Loading for Large Modules

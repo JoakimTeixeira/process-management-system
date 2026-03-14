@@ -3,6 +3,7 @@ title: Use Injection Tokens for Interfaces
 impact: HIGH
 impactDescription: Enables interface-based DI at runtime
 tags: dependency-injection, tokens, interfaces
+trigger: model_decision
 ---
 
 ## Use Injection Tokens for Interfaces

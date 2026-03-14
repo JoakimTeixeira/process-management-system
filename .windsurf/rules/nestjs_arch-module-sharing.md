@@ -3,6 +3,7 @@ title: Use Proper Module Sharing Patterns
 impact: CRITICAL
 impactDescription: Prevents duplicate instances, memory leaks, and state inconsistency
 tags: architecture, modules, sharing, exports
+trigger: model_decision
 ---
 
 ## Use Proper Module Sharing Patterns

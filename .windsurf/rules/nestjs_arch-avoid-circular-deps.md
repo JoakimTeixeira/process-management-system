@@ -3,6 +3,7 @@ title: Avoid Circular Dependencies
 impact: CRITICAL
 impactDescription: "#1 cause of runtime crashes"
 tags: architecture, modules, dependencies
+trigger: model_decision
 ---
 
 ## Avoid Circular Dependencies

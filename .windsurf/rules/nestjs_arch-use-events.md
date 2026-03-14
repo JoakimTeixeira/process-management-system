@@ -3,6 +3,7 @@ title: Use Event-Driven Architecture for Decoupling
 impact: MEDIUM-HIGH
 impactDescription: Enables async processing and modularity
 tags: architecture, events, decoupling
+trigger: model_decision
 ---
 
 ## Use Event-Driven Architecture for Decoupling

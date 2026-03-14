@@ -3,6 +3,7 @@ title: Use Supertest for E2E Testing
 impact: HIGH
 impactDescription: Validates the full request/response cycle
 tags: testing, e2e, supertest, integration
+trigger: model_decision
 ---
 
 ## Use Supertest for E2E Testing

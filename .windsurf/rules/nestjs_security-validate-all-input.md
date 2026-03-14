@@ -3,6 +3,7 @@ title: Validate All Input with DTOs and Pipes
 impact: HIGH
 impactDescription: First line of defense against attacks
 tags: security, validation, dto, pipes
+trigger: model_decision
 ---
 
 ## Validate All Input with DTOs and Pipes

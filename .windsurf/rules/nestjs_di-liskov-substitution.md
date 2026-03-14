@@ -3,6 +3,7 @@ title: Honor Liskov Substitution Principle
 impact: HIGH
 impactDescription: Ensures implementations are truly interchangeable without breaking callers
 tags: dependency-injection, inheritance, solid, lsp
+trigger: model_decision
 ---
 
 ## Honor Liskov Substitution Principle

@@ -3,6 +3,7 @@ title: Use Database Migrations
 impact: HIGH
 impactDescription: Enables safe, repeatable database schema changes
 tags: database, migrations, typeorm, schema
+trigger: model_decision
 ---
 
 ## Use Database Migrations

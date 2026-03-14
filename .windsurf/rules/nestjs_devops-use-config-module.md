@@ -3,6 +3,7 @@ title: Use ConfigModule for Environment Configuration
 impact: LOW-MEDIUM
 impactDescription: Proper configuration prevents deployment failures
 tags: devops, configuration, environment, validation
+trigger: model_decision
 ---
 
 ## Use ConfigModule for Environment Configuration

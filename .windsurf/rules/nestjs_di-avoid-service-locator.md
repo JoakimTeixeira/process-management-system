@@ -3,6 +3,7 @@ title: Avoid Service Locator Anti-Pattern
 impact: HIGH
 impactDescription: Hides dependencies and breaks testability
 tags: dependency-injection, anti-patterns, testing
+trigger: model_decision
 ---
 
 ## Avoid Service Locator Anti-Pattern

@@ -3,6 +3,7 @@ title: Implement Graceful Shutdown
 impact: MEDIUM-HIGH
 impactDescription: Proper shutdown handling ensures zero-downtime deployments
 tags: devops, graceful-shutdown, lifecycle, kubernetes
+trigger: model_decision
 ---
 
 ## Implement Graceful Shutdown

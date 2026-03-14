@@ -3,6 +3,7 @@ title: Use Caching Strategically
 impact: HIGH
 impactDescription: Dramatically reduces database load and response times
 tags: performance, caching, redis, optimization
+trigger: model_decision
 ---
 
 ## Use Caching Strategically

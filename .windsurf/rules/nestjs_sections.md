@@ -1,3 +1,6 @@
+---
+trigger: model_decision
+---
 # Sections
 
 This file defines all sections, their ordering, impact levels, and descriptions.

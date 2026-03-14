@@ -3,6 +3,7 @@ title: Organize by Feature Modules
 impact: CRITICAL
 impactDescription: "3-5x faster onboarding and development"
 tags: architecture, modules, organization
+trigger: model_decision
 ---
 
 ## Organize by Feature Modules

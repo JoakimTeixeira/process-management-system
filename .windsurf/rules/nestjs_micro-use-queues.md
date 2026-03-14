@@ -3,6 +3,7 @@ title: Use Message Queues for Background Jobs
 impact: MEDIUM-HIGH
 impactDescription: Queues enable reliable background processing
 tags: microservices, queues, bullmq, background-jobs
+trigger: model_decision
 ---
 
 ## Use Message Queues for Background Jobs

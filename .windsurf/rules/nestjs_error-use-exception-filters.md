@@ -3,6 +3,7 @@ title: Use Exception Filters for Error Handling
 impact: HIGH
 impactDescription: Consistent, centralized error handling
 tags: error-handling, exception-filters, consistency
+trigger: model_decision
 ---
 
 ## Use Exception Filters for Error Handling

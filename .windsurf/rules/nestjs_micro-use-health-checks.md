@@ -3,6 +3,7 @@ title: Implement Health Checks for Microservices
 impact: MEDIUM-HIGH
 impactDescription: Health checks enable orchestrators to manage service lifecycle
 tags: microservices, health-checks, terminus, kubernetes
+trigger: model_decision
 ---
 
 ## Implement Health Checks for Microservices

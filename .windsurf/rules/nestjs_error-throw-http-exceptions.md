@@ -3,6 +3,7 @@ title: Throw HTTP Exceptions from Services
 impact: HIGH
 impactDescription: Keeps controllers thin and simplifies error handling
 tags: error-handling, exceptions, services
+trigger: model_decision
 ---
 
 ## Throw HTTP Exceptions from Services

@@ -3,6 +3,7 @@ title: Sanitize Output to Prevent XSS
 impact: HIGH
 impactDescription: XSS vulnerabilities can compromise user sessions and data
 tags: security, xss, sanitization, html
+trigger: model_decision
 ---
 
 ## Sanitize Output to Prevent XSS

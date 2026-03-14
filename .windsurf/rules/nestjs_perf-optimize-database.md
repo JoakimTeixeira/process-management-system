@@ -3,6 +3,7 @@ title: Optimize Database Queries
 impact: HIGH
 impactDescription: Database queries are typically the largest source of latency
 tags: performance, database, queries, optimization
+trigger: model_decision
 ---
 
 ## Optimize Database Queries

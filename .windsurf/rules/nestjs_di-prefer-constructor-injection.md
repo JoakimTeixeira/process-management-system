@@ -3,6 +3,7 @@ title: Prefer Constructor Injection
 impact: CRITICAL
 impactDescription: Required for proper DI and testing
 tags: dependency-injection, constructor, testing
+trigger: model_decision
 ---
 
 ## Prefer Constructor Injection

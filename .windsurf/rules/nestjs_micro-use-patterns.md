@@ -3,6 +3,7 @@ title: Use Message and Event Patterns Correctly
 impact: MEDIUM
 impactDescription: Proper patterns ensure reliable microservice communication
 tags: microservices, message-pattern, event-pattern, communication
+trigger: model_decision
 ---
 
 ## Use Message and Event Patterns Correctly

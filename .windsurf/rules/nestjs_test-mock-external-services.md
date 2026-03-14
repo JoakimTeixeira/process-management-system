@@ -3,6 +3,7 @@ title: Mock External Services in Tests
 impact: HIGH
 impactDescription: Ensures fast, reliable, deterministic tests
 tags: testing, mocking, external-services, jest
+trigger: model_decision
 ---
 
 ## Mock External Services in Tests

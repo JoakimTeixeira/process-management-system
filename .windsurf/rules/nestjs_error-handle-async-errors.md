@@ -3,6 +3,7 @@ title: Handle Async Errors Properly
 impact: HIGH
 impactDescription: Prevents process crashes from unhandled rejections
 tags: error-handling, async, promises
+trigger: model_decision
 ---
 
 ## Handle Async Errors Properly

@@ -3,6 +3,7 @@ title: Use Pipes for Input Transformation
 impact: MEDIUM
 impactDescription: Pipes ensure clean, validated data reaches your handlers
 tags: api, pipes, validation, transformation
+trigger: model_decision
 ---
 
 ## Use Pipes for Input Transformation

@@ -3,6 +3,7 @@ title: Use API Versioning for Breaking Changes
 impact: MEDIUM
 impactDescription: Versioning allows you to evolve APIs without breaking existing clients
 tags: api, versioning, breaking-changes, compatibility
+trigger: model_decision
 ---
 
 ## Use API Versioning for Breaking Changes

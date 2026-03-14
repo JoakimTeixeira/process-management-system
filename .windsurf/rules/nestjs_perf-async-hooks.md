@@ -3,6 +3,7 @@ title: Use Async Lifecycle Hooks Correctly
 impact: HIGH
 impactDescription: Improper async handling blocks application startup
 tags: performance, lifecycle, async, hooks
+trigger: model_decision
 ---
 
 ## Use Async Lifecycle Hooks Correctly

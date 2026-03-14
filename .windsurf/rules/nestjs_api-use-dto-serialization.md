@@ -3,6 +3,7 @@ title: Use DTOs and Serialization for API Responses
 impact: MEDIUM
 impactDescription: Response DTOs prevent accidental data exposure and ensure consistency
 tags: api, dto, serialization, class-transformer
+trigger: model_decision
 ---
 
 ## Use DTOs and Serialization for API Responses

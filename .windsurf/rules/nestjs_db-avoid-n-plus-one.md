@@ -3,6 +3,7 @@ title: Avoid N+1 Query Problems
 impact: HIGH
 impactDescription: N+1 queries are one of the most common performance killers
 tags: database, n-plus-one, queries, performance
+trigger: model_decision
 ---
 
 ## Avoid N+1 Query Problems

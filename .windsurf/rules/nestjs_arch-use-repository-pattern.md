@@ -3,6 +3,7 @@ title: Use Repository Pattern for Data Access
 impact: HIGH
 impactDescription: Decouples business logic from database
 tags: architecture, repository, data-access
+trigger: model_decision
 ---
 
 ## Use Repository Pattern for Data Access

@@ -3,6 +3,7 @@ title: Single Responsibility for Services
 impact: CRITICAL
 impactDescription: "40%+ improvement in testability"
 tags: architecture, services, single-responsibility
+trigger: model_decision
 ---
 
 ## Single Responsibility for Services

@@ -3,6 +3,7 @@ title: Apply Interface Segregation Principle
 impact: HIGH
 impactDescription: Reduces coupling and improves testability by 30-50%
 tags: dependency-injection, interfaces, solid, isp
+trigger: model_decision
 ---
 
 ## Apply Interface Segregation Principle
