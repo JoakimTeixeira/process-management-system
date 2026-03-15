@@ -73,6 +73,40 @@ This file serves as a comprehensive index for the Cascade agent to navigate and 
 
 ## Agent Guidelines
 
+### IGFEJ Frontend Prototype
+
+When working on the current IGFEJ prototype, the main area is:
+
+- `docs/IGFEJ/prototypes/frontend-prototype/`
+
+Important files and folders there:
+
+- `index.html` - thin entry file
+- `README.md` - prototype-specific documentation
+- `models/` - BPMN/SVG/DMN sample files used by the viewer
+- `assets/css/prototype.css` - shared prototype styles
+- `assets/data/` - mock data for macroprocesses, processes, and search
+- `assets/js/core/` - app bootstrap, layout, state, routing, view switching
+- `assets/js/components/` - shared UI fragments and reusable renderers
+- `assets/js/sections/` - top-level menu-backed sections such as welcome and dashboard
+- `assets/js/routes/` - dynamic detail controllers for macroprocess, process, subprocess, and asset pages
+- `assets/js/utils/` - BPMN utilities, search, and small helpers
+
+Current frontend routing model:
+
+- section routes: `#welcome`, `#dashboard`, `#introduction`, `#methodology`, `#faq`
+- dynamic routes: `#macroprocess/{id}`, `#process/{id}/{tab}`, `#subprocess/{id}/{tab}`, `#asset/{id}`
+
+Current prototype tab naming:
+
+- process: `Visão Geral`, `Subprocessos`, `Diagramas`, `Versões`
+- subprocess: `Visão Geral`, `Detalhes`, `Diagrama`
+
+If you update the prototype structure or interaction model, also check whether these docs need updating:
+
+- `docs/IGFEJ/prototypes/frontend-prototype/README.md`
+- `docs/IGFEJ/scope-analysis/6. Frontend Prototype Analysis.md`
+
 ### Navigation Rules
 
 1. **Start here**: Always consult this `AGENTS.md` file first when exploring the repository

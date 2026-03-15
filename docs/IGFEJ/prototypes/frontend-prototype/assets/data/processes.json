@@ -553,7 +553,20 @@
             }
           }
         ],
-        "assets": []
+        "assets": [
+          {
+            "id": "95cdcd42-feef-424a-a1eb-163356036e6f",
+            "code": "7.0",
+            "subtitle": "Modelo do Processo Gestão de Incidentes",
+            "files": [
+              {
+                "bpmn_file": "models/0500-00-gestao-incidentes.bpmn",
+                "svg_file": "models/0500-00-gestao-incidentes.svg",
+                "dmn_file": null
+              }
+            ]
+          }
+        ]
       }
     ]
   },
@@ -669,6 +682,334 @@
               {
                 "bpmn_file": "models/0009-01-igfej-redefinicao-password-apps.bpmn",
                 "svg_file": "models/0009-01-igfej-redefinicao-password-apps.svg",
+                "dmn_file": null
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "b9d6ec51-9d53-4a69-9fe4-8f0d7312b8a1",
+    "code": "10.0",
+    "title": "Gestão de Problemas",
+    "macroprocess_id": "gestao-global",
+    "state": "to_be",
+    "current_version_id": "a0f22d58-8d41-45a7-bb18-0f0c56ad66c9",
+    "author_id": "user-002",
+    "updated_by": "user-003",
+    "created_at": "2026-01-18T10:00:00Z",
+    "updated_at": "2026-03-05T11:00:00Z",
+    "versions": [
+      {
+        "id": "a0f22d58-8d41-45a7-bb18-0f0c56ad66c9",
+        "process_id": "b9d6ec51-9d53-4a69-9fe4-8f0d7312b8a1",
+        "version": "1.0",
+        "code": "10.0",
+        "author_id": "user-002",
+        "updated_by": "user-003",
+        "change_description": "Versão inicial (TO-BE) para gestão estruturada de problemas e eliminação de causas raiz.",
+        "created_at": "2026-01-18T10:00:00Z",
+        "updated_at": "2026-03-05T11:00:00Z",
+        "subprocesses": [
+          {
+            "id": "0d2b416e-6ad8-4bdf-b0d4-fc3a598fae75",
+            "code": "10.1",
+            "title": "Análise de Causa Raiz",
+            "entity": ["IGFEJ"],
+            "responsible": ["Problem Manager"],
+            "description": "Subprocesso para consolidar incidentes recorrentes, analisar tendências e propor ações permanentes.",
+            "keywords": ["problemas", "causa raiz", "melhoria contínua"],
+            "objectives": ["Eliminar causas recorrentes", "Reduzir incidentes repetidos"],
+            "inputs": ["Incidentes recorrentes", "Dados de monitorização"],
+            "activities": {
+              "description": "Atividades para identificar, analisar e propor remediação de causas raiz.",
+              "items": [
+                "Consolidar incidentes relacionados",
+                "Executar análise de causa raiz",
+                "Definir plano de remediação",
+                "Registar erro conhecido e ações"
+              ]
+            },
+            "deliverables": ["Plano de remediação", "Erro conhecido registado"],
+            "suppliers": ["Service Desk", "Equipas técnicas"],
+            "participants": ["Gestão de problemas", "Equipas de suporte"],
+            "clients": ["Áreas operacionais"],
+            "methodologies": ["ITIL"],
+            "tools": ["ITSM", "Knowledge Base"],
+            "metrics": ["Problemas resolvidos", "Incidentes recorrentes"],
+            "maturity": ["Definido"],
+            "suggestions": ["Automatizar correlação de incidentes"],
+            "legal_support": ["Políticas internas"],
+            "information_classification": {
+              "values": ["Interno"],
+              "note": "Registos operacionais."
+            },
+            "metadata": {
+              "interviewer": "Equipa de Projeto",
+              "interviewed": ["Problem Manager"]
+            }
+          }
+        ],
+        "assets": [
+          {
+            "id": "772ad4e1-d6f4-4a65-a20b-2c12ac09d366",
+            "code": "10.0",
+            "subtitle": "Modelo de referência para Gestão de Problemas",
+            "files": [
+              {
+                "bpmn_file": "models/0800-00-igfej-gestao-de-problemas.bpmn",
+                "svg_file": "models/0800-00-igfej-gestao-de-problemas.svg",
+                "dmn_file": null
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "f4a53a2d-e2d3-4122-8aef-e9ae5606af95",
+    "code": "11.0",
+    "title": "Gestão de Capacidade e Disponibilidade",
+    "macroprocess_id": "gestao-infraestrutura",
+    "state": "as_is",
+    "current_version_id": "762fcb6d-26dd-49df-b928-c1cb4ec9eced",
+    "author_id": "user-002",
+    "updated_by": "user-002",
+    "created_at": "2026-01-22T10:00:00Z",
+    "updated_at": "2026-03-08T09:30:00Z",
+    "versions": [
+      {
+        "id": "762fcb6d-26dd-49df-b928-c1cb4ec9eced",
+        "process_id": "f4a53a2d-e2d3-4122-8aef-e9ae5606af95",
+        "version": "1.0",
+        "code": "11.0",
+        "author_id": "user-002",
+        "updated_by": "user-002",
+        "change_description": "Versão inicial com avaliação periódica de capacidade, disponibilidade e risco operacional.",
+        "created_at": "2026-01-22T10:00:00Z",
+        "updated_at": "2026-03-08T09:30:00Z",
+        "subprocesses": [
+          {
+            "id": "3355162d-8109-42c7-a776-4d9723a4070a",
+            "code": "11.1",
+            "title": "Avaliação de Capacidade",
+            "entity": ["IGFEJ"],
+            "responsible": ["Infraestrutura"],
+            "description": "Análise de tendência e planeamento de recursos para assegurar capacidade adequada dos serviços.",
+            "keywords": ["capacidade", "disponibilidade", "infraestrutura"],
+            "objectives": ["Antecipar saturação de recursos", "Suportar continuidade do serviço"],
+            "inputs": ["Métricas de infraestrutura", "Projeções de consumo"],
+            "activities": {
+              "description": "Atividades para rever métricas, prever crescimento e propor ações preventivas.",
+              "items": [
+                "Recolher métricas de capacidade",
+                "Analisar tendências de consumo",
+                "Definir medidas preventivas",
+                "Comunicar riscos e recomendações"
+              ]
+            },
+            "deliverables": ["Relatório de capacidade", "Plano de ação"],
+            "suppliers": ["Monitorização"],
+            "participants": ["Infraestrutura", "Arquitetura"],
+            "clients": ["Gestão de TI"],
+            "methodologies": ["ITIL", "Capacity Management"],
+            "tools": ["Monitorização", "Dashboards"],
+            "metrics": ["Utilização média", "Eventos de saturação"],
+            "maturity": ["Em evolução"],
+            "suggestions": ["Integrar alertas preditivos"],
+            "legal_support": ["Normas internas"],
+            "information_classification": {
+              "values": ["Interno"],
+              "note": "Informação técnica de capacidade."
+            },
+            "metadata": {
+              "interviewer": "Equipa de Projeto",
+              "interviewed": ["Infraestrutura"]
+            }
+          }
+        ],
+        "assets": [
+          {
+            "id": "57aee8ec-b0a8-4d5d-a59c-e1941af112c8",
+            "code": "11.0",
+            "subtitle": "Modelo de gestão de capacidade e desempenho",
+            "files": [
+              {
+                "bpmn_file": "models/0820-00-igfej-gestao-da-capacidade-e-desempenho.bpmn",
+                "svg_file": "models/0820-00-igfej-gestao-da-capacidade-e-desempenho.svg",
+                "dmn_file": null
+              }
+            ]
+          },
+          {
+            "id": "82a1fe2e-cd8b-4aeb-8c28-2cb2b94f2e4d",
+            "code": "11.1",
+            "subtitle": "Modelo complementar de gestão da disponibilidade",
+            "files": [
+              {
+                "bpmn_file": "models/0502-00-igfej-gestao-disponibilidade.bpmn",
+                "svg_file": "models/0502-00-igfej-gestao-disponibilidade.svg",
+                "dmn_file": null
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "3c13ad17-7fd1-4ce6-9548-3436b8862925",
+    "code": "12.0",
+    "title": "Gestão de Conhecimento",
+    "macroprocess_id": "suporte-negocio",
+    "state": "as_is",
+    "current_version_id": "741ca1ce-e208-4d3b-95d3-fe9c8ad7dbb8",
+    "author_id": "user-001",
+    "updated_by": "user-002",
+    "created_at": "2026-01-25T09:00:00Z",
+    "updated_at": "2026-03-09T15:00:00Z",
+    "versions": [
+      {
+        "id": "741ca1ce-e208-4d3b-95d3-fe9c8ad7dbb8",
+        "process_id": "3c13ad17-7fd1-4ce6-9548-3436b8862925",
+        "version": "1.0",
+        "code": "12.0",
+        "author_id": "user-001",
+        "updated_by": "user-002",
+        "change_description": "Versão inicial para gestão de artigos, revisão de conhecimento e reutilização operacional.",
+        "created_at": "2026-01-25T09:00:00Z",
+        "updated_at": "2026-03-09T15:00:00Z",
+        "subprocesses": [
+          {
+            "id": "67ebed2d-b4f6-4560-98b4-c5d744cbf73c",
+            "code": "12.1",
+            "title": "Publicação de Artigos",
+            "entity": ["IGFEJ"],
+            "responsible": ["Knowledge Manager"],
+            "description": "Criação, revisão e publicação de artigos reutilizáveis para suporte e equipas técnicas.",
+            "keywords": ["conhecimento", "artigos", "base de conhecimento"],
+            "objectives": ["Aumentar reutilização de soluções", "Reduzir tempo de resolução"],
+            "inputs": ["Problemas resolvidos", "Documentação técnica"],
+            "activities": {
+              "description": "Atividades para transformar conhecimento operacional em artigos reutilizáveis.",
+              "items": [
+                "Identificar conhecimento reutilizável",
+                "Redigir artigo",
+                "Rever e aprovar conteúdo",
+                "Publicar e versionar"
+              ]
+            },
+            "deliverables": ["Artigo publicado", "Registo de revisão"],
+            "suppliers": ["Equipas de suporte"],
+            "participants": ["Knowledge Manager", "Especialistas"],
+            "clients": ["Service Desk", "Equipas técnicas"],
+            "methodologies": ["Knowledge Management"],
+            "tools": ["Knowledge Base", "ITSM"],
+            "metrics": ["Artigos publicados", "Taxa de reutilização"],
+            "maturity": ["Definido"],
+            "suggestions": ["Adicionar revisão periódica automática"],
+            "legal_support": ["Normas internas"],
+            "information_classification": {
+              "values": ["Interno"],
+              "note": "Conhecimento operacional."
+            },
+            "metadata": {
+              "interviewer": "Equipa de Projeto",
+              "interviewed": ["Knowledge Manager"]
+            }
+          }
+        ],
+        "assets": [
+          {
+            "id": "818e2759-96cf-47a2-8e1d-380b181aa495",
+            "code": "12.0",
+            "subtitle": "Modelo de publicação e disseminação de conhecimento",
+            "files": [
+              {
+                "bpmn_file": "models/0022-01-igfej-publicacao-intranet-site.bpmn",
+                "svg_file": "models/0022-01-igfej-publicacao-intranet-site.svg",
+                "dmn_file": null
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "97e1da0d-40d0-4434-9172-adf2022dd2c5",
+    "code": "13.0",
+    "title": "Gestão de Acessos Privilegiados",
+    "macroprocess_id": "seguranca-conformidade",
+    "state": "to_be",
+    "current_version_id": "4d35657d-b99d-4ce0-bcc5-c3311d14ce31",
+    "author_id": "user-003",
+    "updated_by": "user-003",
+    "created_at": "2026-02-02T09:00:00Z",
+    "updated_at": "2026-03-12T16:00:00Z",
+    "versions": [
+      {
+        "id": "4d35657d-b99d-4ce0-bcc5-c3311d14ce31",
+        "process_id": "97e1da0d-40d0-4434-9172-adf2022dd2c5",
+        "version": "1.0",
+        "code": "13.0",
+        "author_id": "user-003",
+        "updated_by": "user-003",
+        "change_description": "Versão inicial (TO-BE) para controlo de acessos privilegiados com dupla validação.",
+        "created_at": "2026-02-02T09:00:00Z",
+        "updated_at": "2026-03-12T16:00:00Z",
+        "subprocesses": [
+          {
+            "id": "61bb6b93-71f9-4b7e-bb47-b9b869d4934f",
+            "code": "13.1",
+            "title": "Aprovação de Privilégios",
+            "entity": ["IGFEJ"],
+            "responsible": ["Segurança"],
+            "description": "Validação de necessidade, risco e aprovação antes da concessão de acessos privilegiados.",
+            "keywords": ["privilégios", "segurança", "aprovação"],
+            "objectives": ["Reduzir risco de acesso indevido", "Garantir rastreabilidade de aprovação"],
+            "inputs": ["Pedido de privilégio", "Justificação de negócio"],
+            "activities": {
+              "description": "Atividades para validar contexto, aprovar concessão e registar decisão.",
+              "items": [
+                "Validar necessidade e risco",
+                "Obter dupla aprovação",
+                "Executar concessão controlada",
+                "Registar evidência e data de revisão"
+              ]
+            },
+            "deliverables": ["Acesso privilegiado aprovado", "Evidência de aprovação"],
+            "suppliers": ["Gestor da área"],
+            "participants": ["Segurança", "Sistemas"],
+            "clients": ["Administradores autorizados"],
+            "methodologies": ["IAM", "Least Privilege"],
+            "tools": ["PAM", "ITSM"],
+            "metrics": ["Acessos aprovados", "Pedidos rejeitados"],
+            "maturity": ["Em definição"],
+            "suggestions": ["Adicionar expiração automática de privilégios"],
+            "legal_support": ["Políticas internas de segurança"],
+            "information_classification": {
+              "values": ["Restrito"],
+              "note": "Controlo de acessos sensíveis."
+            },
+            "metadata": {
+              "interviewer": "Equipa de Projeto",
+              "interviewed": ["Segurança"]
+            }
+          }
+        ],
+        "assets": [
+          {
+            "id": "6901a357-f941-49eb-83b6-a3f9e71ef29c",
+            "code": "13.0",
+            "subtitle": "Modelo de referência para concessão controlada de acessos",
+            "files": [
+              {
+                "bpmn_file": "models/0026-00-igfej-configuracao-acesso-remoto.bpmn",
+                "svg_file": "models/0026-00-igfej-configuracao-acesso-remoto.svg",
                 "dmn_file": null
               }
             ]

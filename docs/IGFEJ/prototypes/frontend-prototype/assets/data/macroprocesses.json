@@ -9,7 +9,7 @@
     "created_at": "2026-01-05T10:00:00Z",
     "updated_at": "2026-01-05T10:00:00Z",
     "metrics": {
-      "total_processes": 1,
+      "total_processes": 2,
       "total_subprocesses": 3
     }
   },
@@ -23,8 +23,64 @@
     "created_at": "2026-01-05T10:00:00Z",
     "updated_at": "2026-02-01T09:30:00Z",
     "metrics": {
-      "total_processes": 3,
+      "total_processes": 4,
       "total_subprocesses": 4
+    }
+  },
+  {
+    "id": "gestao-infraestrutura",
+    "title": "Gestão de Infraestrutura",
+    "description": "Processos associados à disponibilidade, capacidade e operação da infraestrutura tecnológica.",
+    "icon": "server",
+    "author_id": "user-002",
+    "updated_by": "user-002",
+    "created_at": "2026-01-12T10:00:00Z",
+    "updated_at": "2026-03-10T09:00:00Z",
+    "metrics": {
+      "total_processes": 1,
+      "total_subprocesses": 1
+    }
+  },
+  {
+    "id": "gestao-aplicacional",
+    "title": "Gestão Aplicacional",
+    "description": "Processos de evolução, manutenção e suporte funcional das aplicações de negócio.",
+    "icon": "layers",
+    "author_id": "user-002",
+    "updated_by": "user-003",
+    "created_at": "2026-01-18T10:00:00Z",
+    "updated_at": "2026-03-11T11:00:00Z",
+    "metrics": {
+      "total_processes": 1,
+      "total_subprocesses": 1
+    }
+  },
+  {
+    "id": "seguranca-conformidade",
+    "title": "Segurança e Conformidade",
+    "description": "Processos de governação de acessos privilegiados, auditoria e controlo de conformidade.",
+    "icon": "shield",
+    "author_id": "user-003",
+    "updated_by": "user-003",
+    "created_at": "2026-01-20T10:00:00Z",
+    "updated_at": "2026-03-12T15:00:00Z",
+    "metrics": {
+      "total_processes": 1,
+      "total_subprocesses": 1
+    }
+  },
+  {
+    "id": "suporte-negocio",
+    "title": "Suporte ao Negócio",
+    "description": "Processos transversais de conhecimento, suporte funcional e melhoria contínua do serviço.",
+    "icon": "book-open",
+    "author_id": "user-001",
+    "updated_by": "user-002",
+    "created_at": "2026-01-22T10:00:00Z",
+    "updated_at": "2026-03-13T10:30:00Z",
+    "metrics": {
+      "total_processes": 1,
+      "total_subprocesses": 1
     }
   }
 ]

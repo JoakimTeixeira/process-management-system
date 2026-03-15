@@ -1,0 +1,50 @@
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        "govpt-primary": "#0055A4",
+        "govpt-secondary": "#003366",
+        "govpt-accent": "#FF6B35",
+        "govpt-success": "#28A745",
+        "govpt-success-soft": "#D4EDDA",
+        "govpt-success-text": "#155724",
+        "govpt-warning": "#FFC107",
+        "govpt-warning-soft": "#FFF3CD",
+        "govpt-warning-text": "#856404",
+        "govpt-light": "#F8F9FA",
+        "govpt-gray": "#6C757D",
+        "govpt-dark": "#2C3E50",
+        "govpt-text": "#495057",
+        "govpt-heading": "#212529",
+        "govpt-border": "#DEE2E6",
+        "govpt-blue-light": "#E3F2FD",
+        "igfej-light": "#F8F9FA",
+        "igfej-blue": "#0055A4",
+      },
+      fontFamily: {
+        sans: ["Source Sans Pro", "Helvetica Neue", "Helvetica", "Arial", "sans-serif"],
+        govpt: ["Source Sans Pro", "Helvetica Neue", "Helvetica", "Arial", "sans-serif"],
+        "govpt-heading": ["Source Sans Pro", "Helvetica Neue", "Helvetica", "Arial", "sans-serif"],
+      },
+      fontSize: {
+        "govpt-xs": ["12px", "1.4"],
+        "govpt-sm": ["14px", "1.4"],
+        "govpt-base": ["16px", "1.5"],
+        "govpt-lg": ["18px", "1.5"],
+        "govpt-xl": ["20px", "1.5"],
+        "govpt-2xl": ["24px", "1.5"],
+        "govpt-3xl": ["30px", "1.5"],
+        "govpt-4xl": ["36px", "1.5"],
+      },
+      spacing: {
+        "govpt-header": "80px",
+        "govpt-section": "60px",
+        "govpt-container": "1200px",
+      },
+      borderRadius: {
+        govpt: "4px",
+        "govpt-lg": "8px",
+      },
+    },
+  },
+};

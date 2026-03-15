@@ -103,5 +103,101 @@
     "category": "Gerir Pedidos de Serviço",
     "keywords": ["incidentes", "igfej", "service desk", "resolução", "itil"],
     "code": "7.1"
+  },
+  {
+    "objectID": "process-10.0",
+    "href": "#process-10.0",
+    "title": "Gestão de Problemas",
+    "section": "Gestão Global",
+    "text": "Processo para análise de causa raiz e eliminação de problemas recorrentes.",
+    "crumbs": ["Início", "Gestão Global", "Gestão de Problemas"],
+    "type": "process",
+    "category": "Gestão Global",
+    "keywords": ["problemas", "causa raiz", "itil", "melhoria"],
+    "code": "10.0"
+  },
+  {
+    "objectID": "subprocess-10.1",
+    "href": "#subprocess-10.1",
+    "title": "Análise de Causa Raiz",
+    "section": "Gestão Global",
+    "text": "Subprocesso para consolidar incidentes recorrentes e definir remediação permanente.",
+    "crumbs": ["Início", "Gestão Global", "Gestão de Problemas", "Análise de Causa Raiz"],
+    "type": "subprocess",
+    "category": "Gestão Global",
+    "keywords": ["causa raiz", "problemas", "remediação"],
+    "code": "10.1"
+  },
+  {
+    "objectID": "process-11.0",
+    "href": "#process-11.0",
+    "title": "Gestão de Capacidade e Disponibilidade",
+    "section": "Gestão de Infraestrutura",
+    "text": "Processo para monitorizar capacidade, antecipar saturação e melhorar disponibilidade.",
+    "crumbs": ["Início", "Gestão de Infraestrutura", "Gestão de Capacidade e Disponibilidade"],
+    "type": "process",
+    "category": "Gestão de Infraestrutura",
+    "keywords": ["capacidade", "disponibilidade", "infraestrutura"],
+    "code": "11.0"
+  },
+  {
+    "objectID": "subprocess-11.1",
+    "href": "#subprocess-11.1",
+    "title": "Avaliação de Capacidade",
+    "section": "Gestão de Infraestrutura",
+    "text": "Subprocesso para análise de tendência e planeamento preventivo de capacidade.",
+    "crumbs": ["Início", "Gestão de Infraestrutura", "Gestão de Capacidade e Disponibilidade", "Avaliação de Capacidade"],
+    "type": "subprocess",
+    "category": "Gestão de Infraestrutura",
+    "keywords": ["capacidade", "monitorização", "planeamento"],
+    "code": "11.1"
+  },
+  {
+    "objectID": "process-12.0",
+    "href": "#process-12.0",
+    "title": "Gestão de Conhecimento",
+    "section": "Suporte ao Negócio",
+    "text": "Processo para criação, revisão e publicação de artigos reutilizáveis.",
+    "crumbs": ["Início", "Suporte ao Negócio", "Gestão de Conhecimento"],
+    "type": "process",
+    "category": "Suporte ao Negócio",
+    "keywords": ["conhecimento", "artigos", "knowledge base"],
+    "code": "12.0"
+  },
+  {
+    "objectID": "subprocess-12.1",
+    "href": "#subprocess-12.1",
+    "title": "Publicação de Artigos",
+    "section": "Suporte ao Negócio",
+    "text": "Subprocesso para estruturar, rever e publicar conhecimento operacional.",
+    "crumbs": ["Início", "Suporte ao Negócio", "Gestão de Conhecimento", "Publicação de Artigos"],
+    "type": "subprocess",
+    "category": "Suporte ao Negócio",
+    "keywords": ["artigos", "conhecimento", "publicação"],
+    "code": "12.1"
+  },
+  {
+    "objectID": "process-13.0",
+    "href": "#process-13.0",
+    "title": "Gestão de Acessos Privilegiados",
+    "section": "Segurança e Conformidade",
+    "text": "Processo para concessão controlada de privilégios com validação de risco.",
+    "crumbs": ["Início", "Segurança e Conformidade", "Gestão de Acessos Privilegiados"],
+    "type": "process",
+    "category": "Segurança e Conformidade",
+    "keywords": ["privilégios", "segurança", "pam"],
+    "code": "13.0"
+  },
+  {
+    "objectID": "subprocess-13.1",
+    "href": "#subprocess-13.1",
+    "title": "Aprovação de Privilégios",
+    "section": "Segurança e Conformidade",
+    "text": "Subprocesso para validar necessidade, risco e aprovação de acessos privilegiados.",
+    "crumbs": ["Início", "Segurança e Conformidade", "Gestão de Acessos Privilegiados", "Aprovação de Privilégios"],
+    "type": "subprocess",
+    "category": "Segurança e Conformidade",
+    "keywords": ["privilégios", "aprovação", "segurança"],
+    "code": "13.1"
   }
 ]
