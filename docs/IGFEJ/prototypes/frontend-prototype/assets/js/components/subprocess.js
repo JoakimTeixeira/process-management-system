@@ -33,8 +33,7 @@ function renderSubprocessOverviewColumns(sections) {
   return `<div class="grid grid-cols-1 gap-x-8 gap-y-8 lg:grid-cols-2">${sections.filter(Boolean).map((section) => `<div>${section}</div>`).join("")}</div>`;
 }
 
-function renderSubprocessOverview(subprocess) {
-  const description = normalizeDescription(subprocess.description) || "Sem descrição disponível para este subprocesso.";
+function renderSubprocessSummary(subprocess) {
   const keywords = Array.isArray(subprocess.keywords) ? subprocess.keywords : [];
   const participants = Array.isArray(subprocess.participants) ? subprocess.participants : [];
   const tools = Array.isArray(subprocess.tools) ? subprocess.tools : [];
@@ -45,37 +44,38 @@ function renderSubprocessOverview(subprocess) {
   const interviewed = Array.isArray(metadata.interviewed) ? metadata.interviewed : [];
 
   return `
-    <div class="space-y-6">
-      <div>
-        <h2 class="text-base font-semibold text-gray-900 mb-3">Descrição</h2>
-        <p class="text-sm leading-7 text-gray-700">${description}</p>
+    <dl class="grid grid-cols-1 gap-4 xl:grid-cols-4">
+      <div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <dt class="text-sm text-gray-500">Responsável</dt>
+        <dd class="mt-1 text-sm font-medium text-gray-900">${Array.isArray(subprocess.responsible) && subprocess.responsible.length ? subprocess.responsible.join(", ") : "N/A"}</dd>
       </div>
-      <div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">Resumo</h3>
-        <dl class="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
-          <div><dt class="text-sm text-gray-500">Responsável</dt><dd class="mt-1 text-sm font-medium text-gray-900">${Array.isArray(subprocess.responsible) && subprocess.responsible.length ? subprocess.responsible.join(", ") : "N/A"}</dd></div>
-          <div><dt class="text-sm text-gray-500">Participantes</dt><dd class="mt-1 text-sm font-medium text-gray-900">${participants.length}</dd></div>
-          <div><dt class="text-sm text-gray-500">Inputs</dt><dd class="mt-1 text-sm font-medium text-gray-900">${inputs.length}</dd></div>
-          <div><dt class="text-sm text-gray-500">Entregáveis</dt><dd class="mt-1 text-sm font-medium text-gray-900">${deliverables.length}</dd></div>
-        </dl>
+      <div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <dt class="text-sm text-gray-500">Participantes</dt>
+        <dd class="mt-1 text-sm font-medium text-gray-900">${participants.length}</dd>
       </div>
-      <div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">Contexto</h3>
-        <dl class="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
-          <div><dt class="text-sm text-gray-500">Entidade</dt><dd class="mt-1 text-sm font-medium text-gray-900">${Array.isArray(subprocess.entity) && subprocess.entity.length ? subprocess.entity.join(", ") : "N/A"}</dd></div>
-          <div><dt class="text-sm text-gray-500">Palavras Chave</dt><dd class="mt-1 text-sm font-medium text-gray-900">${keywords.length ? keywords.join(", ") : "N/A"}</dd></div>
-          <div><dt class="text-sm text-gray-500">Ferramentas</dt><dd class="mt-1 text-sm font-medium text-gray-900">${tools.length ? tools.join(", ") : "N/A"}</dd></div>
-          <div><dt class="text-sm text-gray-500">Métricas</dt><dd class="mt-1 text-sm font-medium text-gray-900">${metrics.length ? metrics.join(", ") : "N/A"}</dd></div>
-        </dl>
+      <div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <dt class="text-sm text-gray-500">Inputs</dt>
+        <dd class="mt-1 text-sm font-medium text-gray-900">${inputs.length}</dd>
       </div>
-      <div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-200">Metadados</h3>
-        <dl class="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
-          <div><dt class="text-sm text-gray-500">Entrevistador</dt><dd class="mt-1 text-sm font-medium text-gray-900">${metadata.interviewer || "N/A"}</dd></div>
-          <div><dt class="text-sm text-gray-500">Entrevistados</dt><dd class="mt-1 text-sm font-medium text-gray-900">${interviewed.length ? interviewed.join(", ") : "N/A"}</dd></div>
-        </dl>
+      <div class="rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <dt class="text-sm text-gray-500">Entregáveis</dt>
+        <dd class="mt-1 text-sm font-medium text-gray-900">${deliverables.length}</dd>
       </div>
-    </div>
+      <div class="rounded-lg border border-gray-200 p-4 xl:col-span-2">
+        <dt class="text-sm text-gray-500">Contexto</dt>
+        <dd class="mt-1 text-sm text-gray-700">${Array.isArray(subprocess.entity) && subprocess.entity.length ? subprocess.entity.join(", ") : "N/A"}</dd>
+        <dd class="mt-2 text-sm text-gray-700">${keywords.length ? keywords.join(", ") : "Sem palavras-chave"}</dd>
+      </div>
+      <div class="rounded-lg border border-gray-200 p-4">
+        <dt class="text-sm text-gray-500">Ferramentas</dt>
+        <dd class="mt-1 text-sm text-gray-700">${tools.length ? tools.join(", ") : "N/A"}</dd>
+      </div>
+      <div class="rounded-lg border border-gray-200 p-4">
+        <dt class="text-sm text-gray-500">Métricas e Metadados</dt>
+        <dd class="mt-1 text-sm text-gray-700">${metrics.length ? metrics.join(", ") : "Sem métricas definidas"}</dd>
+        <dd class="mt-2 text-sm text-gray-700">${metadata.interviewer || interviewed.length ? `Entrevistas: ${[metadata.interviewer, ...interviewed].filter(Boolean).join(", ")}` : "Sem metadados de entrevista"}</dd>
+      </div>
+    </dl>
   `;
 }
 
@@ -86,6 +86,6 @@ function renderSubprocessDetails(subprocess) {
 Object.assign(window, {
   getSubprocessSectionEntries,
   renderSubprocessOverviewColumns,
-  renderSubprocessOverview,
+  renderSubprocessSummary,
   renderSubprocessDetails,
 });

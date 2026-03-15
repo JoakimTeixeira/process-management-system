@@ -21,7 +21,6 @@ const PROCESS_TAB_ROUTE_NAMES = {
 };
 
 const SUBPROCESS_TAB_ROUTE_NAMES = {
-  overview: "overview",
   details: "details",
   bpmn: "diagram",
 };

@@ -27,7 +27,7 @@ function getWelcomeSection() {
         </div>
 
         <div class="mb-8 rounded-lg border border-govpt-border bg-white p-6">
-          <h2 class="mb-6 text-center text-govpt-2xl font-semibold text-govpt-heading">Encontre o serviço que procura</h2>
+          <h2 class="mb-6 text-center text-govpt-2xl font-semibold text-govpt-heading">Encontre o processo que procura</h2>
           <div id="welcome-search-shell" class="relative mx-auto max-w-xl">
             <input id="welcome-search" type="text" placeholder="Pesquisar processos, macroprocessos..." onfocus="showSearchResults()" class="govpt-input w-full border-2 border-govpt-primary pl-4 pr-20 text-govpt-base" />
             <div class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-govpt-primary"><i data-feather="search" class="h-5 w-5"></i></div>

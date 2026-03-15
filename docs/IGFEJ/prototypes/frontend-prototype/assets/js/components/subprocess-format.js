@@ -127,10 +127,10 @@ function renderSubprocessActivitiesSection(sectionNumber, subprocess) {
       <div class="space-y-4">
         ${description ? `<p class="text-sm text-gray-700 leading-relaxed">${description}</p>` : ""}
         ${items.length
-          ? `<div class="bg-gray-50 rounded p-4"><ul class="space-y-2 ml-6">${items.map((item, index) => {
+          ? `<div class="bg-gray-50 rounded p-4"><ol class="space-y-2 pl-6 list-decimal marker:text-gray-600">${items.map((item, index) => {
               const [title, ...rest] = item.split(":");
-              return `<li class="text-sm text-gray-600 list-disc"><span class="font-semibold text-gray-900">${index + 1}. ${title}</span>${rest.length ? `: ${rest.join(":")}` : ""}</li>`;
-            }).join("")}</ul></div>`
+              return `<li class="text-sm text-gray-600 pl-1"><span class="font-semibold text-gray-900">${title}</span>${rest.length ? `: ${rest.join(":")}` : ""}</li>`;
+            }).join("")}</ol></div>`
           : `<p class="text-sm text-gray-500">N/A</p>`}
       </div>
     `,

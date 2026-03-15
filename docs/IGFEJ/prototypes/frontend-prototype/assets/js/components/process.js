@@ -88,7 +88,7 @@ function renderProcessDetail(process, currentVersion) {
         </div>
         <div id="subprocesses-tab" class="tab-content">${renderSubprocesses(currentVersion?.subprocesses || [])}</div>
         <div id="process-bpmn-tab" class="tab-content"><div class="space-y-6"><div><h3 class="text-lg font-semibold text-gray-900 mb-4">Diagrama do Processo</h3><div class="bpmn-container" id="process-bpmn-container"><div class="flex items-center justify-center h-full text-gray-500"><div class="text-center"><div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-igfej-blue"></div><p class="text-sm text-gray-500 mt-2">Carregando Diagrama do processo...</p></div></div></div></div></div></div>
-        <div id="assets-tab" class="tab-content">${renderDiagramViewer({ listMarkup: renderAssets(currentVersion?.assets || []), containerId: "bpmn-container" })}</div>
+        <div id="assets-tab" class="tab-content">${renderDiagramViewer({ listMarkup: renderAssets(currentVersion?.assets || []), containerId: "bpmn-container", hasDiagrams: (currentVersion?.assets || []).length > 0 })}</div>
         <div id="history-tab" class="tab-content">
           <div class="space-y-6">
             <div>

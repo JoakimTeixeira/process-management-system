@@ -74,7 +74,8 @@ function switchSubprocessTab(tabName, event) {
 }
 
 function showSubprocessDetail(subprocessId, options = {}) {
-  const { updateHash: shouldUpdateHash = true, activeTab = "overview" } = options;
+  const { updateHash: shouldUpdateHash = true, activeTab = "details" } = options;
+  const resolvedActiveTab = ["details", "bpmn"].includes(activeTab) ? activeTab : "details";
   window.closeHeaderSearchOnNavigation?.();
 
   const parentProcess = findSubprocessParent(subprocessId);
@@ -88,6 +89,7 @@ function showSubprocessDetail(subprocessId, options = {}) {
   AppState.currentSubprocessId = subprocessId;
   AppState.currentMacroprocessId = parentProcess.macroprocess_id;
   AppState.currentView = "subprocess-detail";
+  const subprocessAssets = getSubprocessAssets(subprocess);
 
   renderDynamicView("subprocess-detail-view", `
     <div class="bg-white rounded-lg border border-gray-200">
@@ -102,23 +104,21 @@ function showSubprocessDetail(subprocessId, options = {}) {
       </div>
       <div class="border-b border-gray-200">
         <nav class="flex space-x-8 px-6" aria-label="Tabs">
-          <button onclick="switchSubprocessTab('overview', event)" class="tab-button py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Visão Geral</button>
-          <button onclick="switchSubprocessTab('details', event)" class="tab-button py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Detalhes</button>
+          <button onclick="switchSubprocessTab('details', event)" class="tab-button py-4 px-1 border-b-2 font-medium text-sm border-igfej-blue text-igfej-blue hover:text-gray-700 hover:border-gray-300">Detalhes</button>
           <button onclick="switchSubprocessTab('bpmn', event)" class="tab-button py-4 px-1 border-b-2 font-medium text-sm border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300">Diagrama</button>
         </nav>
       </div>
       <div class="p-6">
-        <div id="subprocess-overview-tab" class="tab-content">${renderSubprocessOverview(subprocess)}</div>
-        <div id="subprocess-bpmn-tab" class="tab-content">${renderDiagramViewer({ listMarkup: renderAssets(getSubprocessAssets(subprocess)), containerId: "subprocess-bpmn-container" })}</div>
-        <div id="subprocess-details-tab" class="tab-content">${renderSubprocessDetails(subprocess)}</div>
+        <div id="subprocess-bpmn-tab" class="tab-content">${renderDiagramViewer({ listMarkup: renderAssets(subprocessAssets), containerId: "subprocess-bpmn-container", hasDiagrams: subprocessAssets.length > 0 })}</div>
+        <div id="subprocess-details-tab" class="tab-content active">${renderSubprocessDetails(subprocess)}</div>
       </div>
     </div>
   `);
 
   syncNavigationState();
   showBreadcrumbTrail(["Início", getMacroprocessTitle(parentProcess.macroprocess_id), `${parentProcess.code}: ${parentProcess.title}`, `${getDisplayCode(subprocess)}: ${subprocess.title}`]);
-  switchSubprocessTab(activeTab);
-  if (shouldUpdateHash) updateHash({ type: "subprocess", id: subprocessId, tab: getRouteTabName(activeTab, SUBPROCESS_TAB_ROUTE_NAMES) });
+  switchSubprocessTab(resolvedActiveTab);
+  if (shouldUpdateHash) updateHash({ type: "subprocess", id: subprocessId, tab: getRouteTabName(resolvedActiveTab, SUBPROCESS_TAB_ROUTE_NAMES) });
   setTimeout(() => loadSubprocessBpmn(subprocessId), 100);
 }
 

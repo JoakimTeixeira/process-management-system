@@ -93,9 +93,10 @@ function applyRoute(route, replace = false) {
     });
   }
   if (route.type === "subprocess") {
+    const subprocessTab = route.tab === "overview" ? "details" : route.tab || "details";
     return showSubprocessDetail(route.id, {
       updateHash: false,
-      activeTab: getInternalTabName(route.tab || "overview", SUBPROCESS_TAB_ROUTE_NAMES),
+      activeTab: getInternalTabName(subprocessTab, SUBPROCESS_TAB_ROUTE_NAMES),
     });
   }
   if (route.type === "asset") return showAssetDetail(route.id, { updateHash: false });

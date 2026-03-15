@@ -39,7 +39,6 @@ This prototype is a vanilla JavaScript frontend for exploring IGFEJ macroprocess
 
 ### Subprocess tabs
 
-- `overview`
 - `details`
 - `diagram`
 
@@ -164,7 +163,8 @@ Prebuilt search index used by Fuse.js for:
 - Dashboard route is `#dashboard`, not `#homepage`
 - Welcome cards navigate to section anchors where appropriate
 - Process overview uses a simplified summary-first layout
-- Subprocess overview follows the same lighter reading model
+- Subprocess detail opens directly in the structured `details` view
+- Subprocess summaries are shown in the page header instead of a separate overview tab
 - Dashboard tables use fixed-height paginated rows to reduce footer jumping
 
 ## Running Locally
