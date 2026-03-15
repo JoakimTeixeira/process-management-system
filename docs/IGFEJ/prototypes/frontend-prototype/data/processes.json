@@ -29,8 +29,8 @@
             "subtitle": "Modelo de processo de mudança de local de utilizador",
             "files": [
               {
-                "bpmn_file": "models/0004-00-igfej-mudanca-de-local-do-utilizador.bpmn",
-                "svg_file": "models/4.0-igfej-mudanca-de-local-do-utilizador.svg",
+                "bpmn_file": "diagrams/0004-00-igfej-mudanca-de-local-do-utilizador.bpmn",
+                "svg_file": "diagrams/4.0-igfej-mudanca-de-local-do-utilizador.svg",
                 "dmn_file": null
               }
             ]
@@ -96,8 +96,8 @@
             "subtitle": "Modelo de processo v2 - mudança de local com subprocessos",
             "files": [
               {
-                "bpmn_file": "models/0004-00-igfej-mudanca-de-local-do-utilizador.bpmn",
-                "svg_file": "models/4.0-igfej-mudanca-de-local-do-utilizador.svg",
+                "bpmn_file": "diagrams/0004-00-igfej-mudanca-de-local-do-utilizador.bpmn",
+                "svg_file": "diagrams/4.0-igfej-mudanca-de-local-do-utilizador.svg",
                 "dmn_file": null
               }
             ]
@@ -281,8 +281,8 @@
             "subtitle": "Modelo do Processo Onboarding (DGAJ)",
             "files": [
               {
-                "bpmn_file": "models/0005-00-dgaj-onboarding.bpmn",
-                "svg_file": "models/0005-00-dgaj-onboarding.svg",
+                "bpmn_file": "diagrams/0005-00-dgaj-onboarding.bpmn",
+                "svg_file": "diagrams/0005-00-dgaj-onboarding.svg",
                 "dmn_file": null
               }
             ]
@@ -293,8 +293,8 @@
             "subtitle": "Modelo do Processo Criação de Utilizador",
             "files": [
               {
-                "bpmn_file": "models/0005-01-igfej-criacao-utilizador.bpmn",
-                "svg_file": "models/0005-01-igfej-criacao-utilizador.svg",
+                "bpmn_file": "diagrams/0005-01-igfej-criacao-utilizador.bpmn",
+                "svg_file": "diagrams/0005-01-igfej-criacao-utilizador.svg",
                 "dmn_file": null
               }
             ]
@@ -305,8 +305,8 @@
             "subtitle": "Modelo do Processo Criação de VPN",
             "files": [
               {
-                "bpmn_file": "models/0005-02-igfej-criacao-vpn.bpmn",
-                "svg_file": "models/0005-02-igfej-criacao-vpn.svg",
+                "bpmn_file": "diagrams/0005-02-igfej-criacao-vpn.bpmn",
+                "svg_file": "diagrams/0005-02-igfej-criacao-vpn.svg",
                 "dmn_file": null
               }
             ]
@@ -560,8 +560,8 @@
             "subtitle": "Modelo do Processo Gestão de Incidentes",
             "files": [
               {
-                "bpmn_file": "models/0500-00-gestao-incidentes.bpmn",
-                "svg_file": "models/0500-00-gestao-incidentes.svg",
+                "bpmn_file": "diagrams/0500-00-gestao-incidentes.bpmn",
+                "svg_file": "diagrams/0500-00-gestao-incidentes.svg",
                 "dmn_file": null
               }
             ]
@@ -668,8 +668,8 @@
             "subtitle": "Modelo do Processo Redefinição de Password",
             "files": [
               {
-                "bpmn_file": "models/0009-00-igfej-redefinicao-password.bpmn",
-                "svg_file": "models/0009-00-igfej-redefinicao-password.svg",
+                "bpmn_file": "diagrams/0009-00-igfej-redefinicao-password.bpmn",
+                "svg_file": "diagrams/0009-00-igfej-redefinicao-password.svg",
                 "dmn_file": null
               }
             ]
@@ -680,8 +680,8 @@
             "subtitle": "Modelo do Processo Redefinição de Password (Apps)",
             "files": [
               {
-                "bpmn_file": "models/0009-01-igfej-redefinicao-password-apps.bpmn",
-                "svg_file": "models/0009-01-igfej-redefinicao-password-apps.svg",
+                "bpmn_file": "diagrams/0009-01-igfej-redefinicao-password-apps.bpmn",
+                "svg_file": "diagrams/0009-01-igfej-redefinicao-password-apps.svg",
                 "dmn_file": null
               }
             ]
@@ -759,8 +759,8 @@
             "subtitle": "Modelo de referência para Gestão de Problemas",
             "files": [
               {
-                "bpmn_file": "models/0800-00-igfej-gestao-de-problemas.bpmn",
-                "svg_file": "models/0800-00-igfej-gestao-de-problemas.svg",
+                "bpmn_file": "diagrams/0800-00-igfej-gestao-de-problemas.bpmn",
+                "svg_file": "diagrams/0800-00-igfej-gestao-de-problemas.svg",
                 "dmn_file": null
               }
             ]
@@ -838,8 +838,8 @@
             "subtitle": "Modelo de gestão de capacidade e desempenho",
             "files": [
               {
-                "bpmn_file": "models/0820-00-igfej-gestao-da-capacidade-e-desempenho.bpmn",
-                "svg_file": "models/0820-00-igfej-gestao-da-capacidade-e-desempenho.svg",
+                "bpmn_file": "diagrams/0820-00-igfej-gestao-da-capacidade-e-desempenho.bpmn",
+                "svg_file": "diagrams/0820-00-igfej-gestao-da-capacidade-e-desempenho.svg",
                 "dmn_file": null
               }
             ]
@@ -850,8 +850,8 @@
             "subtitle": "Modelo complementar de gestão da disponibilidade",
             "files": [
               {
-                "bpmn_file": "models/0502-00-igfej-gestao-disponibilidade.bpmn",
-                "svg_file": "models/0502-00-igfej-gestao-disponibilidade.svg",
+                "bpmn_file": "diagrams/0502-00-igfej-gestao-disponibilidade.bpmn",
+                "svg_file": "diagrams/0502-00-igfej-gestao-disponibilidade.svg",
                 "dmn_file": null
               }
             ]
@@ -929,8 +929,8 @@
             "subtitle": "Modelo de publicação e disseminação de conhecimento",
             "files": [
               {
-                "bpmn_file": "models/0022-01-igfej-publicacao-intranet-site.bpmn",
-                "svg_file": "models/0022-01-igfej-publicacao-intranet-site.svg",
+                "bpmn_file": "diagrams/0022-01-igfej-publicacao-intranet-site.bpmn",
+                "svg_file": "diagrams/0022-01-igfej-publicacao-intranet-site.svg",
                 "dmn_file": null
               }
             ]
@@ -1008,8 +1008,8 @@
             "subtitle": "Modelo de referência para concessão controlada de acessos",
             "files": [
               {
-                "bpmn_file": "models/0026-00-igfej-configuracao-acesso-remoto.bpmn",
-                "svg_file": "models/0026-00-igfej-configuracao-acesso-remoto.svg",
+                "bpmn_file": "diagrams/0026-00-igfej-configuracao-acesso-remoto.bpmn",
+                "svg_file": "diagrams/0026-00-igfej-configuracao-acesso-remoto.svg",
                 "dmn_file": null
               }
             ]

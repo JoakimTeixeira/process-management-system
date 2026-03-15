@@ -49,8 +49,8 @@ function getMacroprocessTitle(macroprocessId) {
 async function loadJSONData() {
   try {
     const [macroprocessesResponse, processesResponse] = await Promise.all([
-      fetch("assets/data/macroprocesses.json"),
-      fetch("assets/data/processes.json"),
+      fetch("data/macroprocesses.json"),
+      fetch("data/processes.json"),
     ]);
 
     if (!macroprocessesResponse.ok || !processesResponse.ok) {

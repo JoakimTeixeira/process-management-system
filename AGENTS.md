@@ -83,14 +83,15 @@ Important files and folders there:
 
 - `index.html` - thin entry file
 - `README.md` - prototype-specific documentation
-- `models/` - BPMN/SVG/DMN sample files used by the viewer
+- `diagrams/` - BPMN/SVG/DMN sample files used by the viewer
 - `assets/css/prototype.css` - shared prototype styles
-- `assets/data/` - mock data for macroprocesses, processes, and search
-- `assets/js/core/` - app bootstrap, layout, state, routing, view switching
-- `assets/js/components/` - shared UI fragments and reusable renderers
-- `assets/js/sections/` - top-level menu-backed sections such as welcome and dashboard
-- `assets/js/routes/` - dynamic detail controllers for macroprocess, process, subprocess, and asset pages
-- `assets/js/utils/` - BPMN utilities, search, and small helpers
+- `data/` - mock data for macroprocesses, processes, and search
+- `src/components/` - shared UI fragments and reusable renderers
+- `src/controllers/` - dynamic detail-page controllers for macroprocess, process, subprocess, and asset pages
+- `src/core/` - app bootstrap, layout, state, route parsing, and view switching
+- `src/sections/` - top-level menu-backed sections such as welcome and dashboard
+- `src/services/` - shared app capabilities such as BPMN loading and search interactions
+- `src/utils/` - small helpers
 
 Current frontend routing model:
 

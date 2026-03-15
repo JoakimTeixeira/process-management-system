@@ -97,7 +97,7 @@ async function initializeSearch() {
   if (SearchState.initPromise) return SearchState.initPromise;
   SearchState.initPromise = (async () => {
     try {
-      const response = await fetch("assets/data/search-index.json");
+      const response = await fetch("data/search-index.json");
       SearchState.index = await response.json();
     } catch (error) {
       console.error("Error initializing search:", error);

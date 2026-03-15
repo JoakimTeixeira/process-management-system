@@ -48,61 +48,54 @@ This prototype is a vanilla JavaScript frontend for exploring IGFEJ macroprocess
 index.html
 server.js
 sample-diagram.bpmn
-models/
+diagrams/
 assets/
 |-- css/
 |   `-- prototype.css
-|-- data/
-|   |-- macroprocesses.json
-|   |-- processes.json
-|   `-- search-index.json
-`-- js/
-    |-- core/
-    |   |-- bootstrap.js
-    |   |-- header-search.js
-    |   |-- layout.js
-    |   |-- router.js
-    |   |-- state.js
-    |   |-- tailwind-config.js
-    |   |-- ui.js
-    |   `-- views.js
-    |-- components/
-    |   |-- diagram.js
-    |   |-- header.js
-    |   |-- menus.js
-    |   |-- navigation.js
-    |   |-- process-list.js
-    |   |-- process.js
-    |   |-- shell.js
-    |   |-- subprocess-format.js
-    |   |-- subprocess.js
-    |   `-- tables.js
-    |-- routes/
-    |   |-- asset.js
-    |   |-- macroprocess.js
-    |   |-- process.js
-    |   `-- subprocess.js
-    |-- sections/
-    |   |-- dashboard.js
-    |   |-- faq.js
-    |   |-- introduction.js
-    |   |-- methodology.js
-    |   `-- welcome.js
-    `-- utils/
-        |-- bpmn.js
-        |-- chevron.js
-        `-- search.js
+data/
+|-- macroprocesses.json
+|-- processes.json
+`-- search-index.json
+src/
+|-- components/
+|   |-- diagram.js
+|   |-- header.js
+|   |-- menus.js
+|   |-- navigation.js
+|   |-- process-list.js
+|   |-- process.js
+|   |-- shell.js
+|   |-- subprocess-format.js
+|   |-- subprocess.js
+|   `-- tables.js
+|-- controllers/
+|   |-- asset.js
+|   |-- macroprocess.js
+|   |-- process.js
+|   `-- subprocess.js
+|-- core/
+|   |-- bootstrap.js
+|   |-- header-search.js
+|   |-- layout.js
+|   |-- router.js
+|   |-- state.js
+|   |-- tailwind-config.js
+|   |-- ui.js
+|   `-- views.js
+|-- sections/
+|   |-- dashboard.js
+|   |-- faq.js
+|   |-- introduction.js
+|   |-- methodology.js
+|   `-- welcome.js
+|-- services/
+|   |-- bpmn.js
+|   `-- search.js
+`-- utils/
+    `-- chevron.js
 ```
 
 ## Responsibility Map
-
-### `core/`
-
-- app bootstrapping
-- shared state
-- layout mounting
-- section visibility
-- hash route parsing and route application
 
 ### `components/`
 
@@ -111,6 +104,22 @@ assets/
 - shared dashboard table logic
 - shared diagram viewer shell
 
+### `controllers/`
+
+- macroprocess detail controller
+- process detail controller
+- subprocess detail controller
+- asset detail controller
+
+### `core/`
+
+- app bootstrapping
+- shared state
+- layout mounting
+- hash route parsing and route application
+- section visibility
+- app-wide wiring and view lifecycle
+
 ### `sections/`
 
 - menu-backed screens
@@ -118,18 +127,20 @@ assets/
 - dashboard tables and stats
 - methodology and FAQ content
 
-### `routes/`
+### `services/`
 
-- macroprocess detail controller
-- process detail controller
-- subprocess detail controller
-- asset detail controller
+- shared app capabilities
+- search state, indexing, and interaction handling
+- BPMN loading, viewport control, and viewer actions
 
 ### `utils/`
 
-- search indexing and highlighting
-- BPMN loading and viewer actions
 - small presentation helpers
+
+### `data/`
+
+- mock runtime JSON used by the frontend
+- macroprocess, process, and search records fetched by the browser
 
 ## Data Files
 
