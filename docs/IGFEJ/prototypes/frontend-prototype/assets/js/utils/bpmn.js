@@ -3,6 +3,7 @@ let bpmnResizeObserver = null;
 let fitRafId = null;
 let activeBpmnContainerId = "bpmn-container";
 let fullscreenListenerBound = false;
+let handToolCleanup = null;
 
 const BPMN_CONTAINER_IDS = ["bpmn-container", "subprocess-bpmn-container"];
 const FALLBACK_MESSAGE = `
@@ -78,6 +79,12 @@ function downloadBlob(blob, filename) {
 function stopPreviousInstance() {
   if (fitRafId !== null) cancelAnimationFrame(fitRafId);
   fitRafId = null;
+  if (typeof handToolCleanup === "function") {
+    try {
+      handToolCleanup();
+    } catch {}
+    handToolCleanup = null;
+  }
 
   if (bpmnResizeObserver) {
     try {
@@ -147,6 +154,135 @@ function ensureResizeAutoFit(container) {
   }
 }
 
+function enableTemporaryHandTool(container) {
+  if (!container) return;
+
+  if (typeof handToolCleanup === "function") {
+    try {
+      handToolCleanup();
+    } catch {}
+  }
+
+  let dragState = null;
+  let isHovering = false;
+  let isCtrlPressed = false;
+  const getCursorTargets = () => [container, ...container.querySelectorAll(".djs-container,.djs-container svg,.viewport")];
+  const setViewerCursor = (value) => {
+    getCursorTargets().forEach((element) => {
+      if (element?.style) element.style.cursor = value;
+    });
+  };
+
+  const updateCursor = () => {
+    if (dragState) {
+      setViewerCursor("grabbing");
+      return;
+    }
+
+    if (!isHovering) {
+      setViewerCursor("default");
+      return;
+    }
+
+    setViewerCursor(isCtrlPressed ? "grab" : "default");
+  };
+
+  const stopDrag = () => {
+    dragState = null;
+    updateCursor();
+  };
+
+  const handleDragMove = (event) => {
+    if (!dragState) return;
+
+    const canvas = getCanvas();
+    if (!canvas || typeof canvas.viewbox !== "function") return;
+
+    const rect = dragState.rect;
+    if (!rect.width || !rect.height) return;
+
+    const viewbox = canvas.viewbox();
+    const dx = event.clientX - dragState.startX;
+    const dy = event.clientY - dragState.startY;
+    const scaleX = dragState.viewbox.width / rect.width;
+    const scaleY = dragState.viewbox.height / rect.height;
+
+    canvas.viewbox({
+      x: dragState.viewbox.x - (dx * scaleX),
+      y: dragState.viewbox.y - (dy * scaleY),
+      width: viewbox.width,
+      height: viewbox.height,
+    });
+  };
+
+  const handleMouseDown = (event) => {
+    if (event.button !== 0 || !event.ctrlKey) return;
+    if (!event.target.closest(".djs-container,.bpmn-container")) return;
+
+    const canvas = getCanvas();
+    if (!canvas || typeof canvas.viewbox !== "function") return;
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    dragState = {
+      startX: event.clientX,
+      startY: event.clientY,
+      rect: container.getBoundingClientRect(),
+      viewbox: canvas.viewbox(),
+    };
+
+    setViewerCursor("grabbing");
+  };
+
+  const handleMouseEnter = (event) => {
+    isHovering = true;
+    isCtrlPressed = event.ctrlKey;
+    updateCursor();
+  };
+
+  const handleMouseMove = (event) => {
+    isCtrlPressed = event.ctrlKey;
+    updateCursor();
+  };
+
+  const handleMouseLeave = () => {
+    isHovering = false;
+    isCtrlPressed = false;
+    if (!dragState) setViewerCursor("default");
+  };
+
+  const handleKeyChange = (event) => {
+    isCtrlPressed = event.ctrlKey;
+    updateCursor();
+  };
+
+  const handleWindowBlur = () => stopDrag();
+
+  container.addEventListener("mouseenter", handleMouseEnter);
+  container.addEventListener("mousemove", handleMouseMove);
+  container.addEventListener("mouseleave", handleMouseLeave);
+  container.addEventListener("mousedown", handleMouseDown, true);
+  window.addEventListener("keydown", handleKeyChange);
+  window.addEventListener("keyup", handleKeyChange);
+  window.addEventListener("mousemove", handleDragMove);
+  window.addEventListener("mouseup", stopDrag);
+  window.addEventListener("blur", handleWindowBlur);
+
+  handToolCleanup = () => {
+    container.removeEventListener("mouseenter", handleMouseEnter);
+    container.removeEventListener("mousemove", handleMouseMove);
+    container.removeEventListener("mouseleave", handleMouseLeave);
+    container.removeEventListener("mousedown", handleMouseDown, true);
+    window.removeEventListener("keydown", handleKeyChange);
+    window.removeEventListener("keyup", handleKeyChange);
+    window.removeEventListener("mousemove", handleDragMove);
+    window.removeEventListener("mouseup", stopDrag);
+    window.removeEventListener("blur", handleWindowBlur);
+    stopDrag();
+  };
+}
+
 function showBPMNFallback(containerId = "bpmn-container") {
   const container = getContainer(containerId);
   if (container) container.innerHTML = FALLBACK_MESSAGE;
@@ -186,6 +322,7 @@ async function loadBPMDiagram(url, containerId = "bpmn-container") {
     window.updateDownloadOptions?.();
     fitViewportSafely();
     ensureResizeAutoFit(container);
+    enableTemporaryHandTool(container);
     setTimeout(() => window.fitBPMN?.(containerId), 150);
   } catch (err) {
     console.error("Error loading/rendering BPMN:", err);

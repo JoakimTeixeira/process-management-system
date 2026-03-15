@@ -39,6 +39,8 @@ function getIcon(iconName, size = 20) {
     layers: "layers",
     "zoom-in": "zoom-in",
     "zoom-out": "zoom-out",
+    "mouse-pointer": "mouse-pointer",
+    move: "move",
     maximize: "maximize",
     monitor: "monitor",
     home: "home",
