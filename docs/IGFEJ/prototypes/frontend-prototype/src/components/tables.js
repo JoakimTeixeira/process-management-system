@@ -87,12 +87,41 @@ class TableManager {
     return this.filteredData.slice((this.currentPage - 1) * this.itemsPerPage, this.currentPage * this.itemsPerPage);
   }
 
-  renderFillerRows(count, columns, cellClass = "") {
-    return Array.from({ length: count }, () => `
-      <tr class="table-filler-row" aria-hidden="true">
-        <td colspan="${columns}" class="px-6 py-4 ${tableCellHeight} ${cellClass}">&nbsp;</td>
+  getPageHeight() {
+    return this.itemsPerPage * 80;
+  }
+
+  getRemainingPageHeight(rowCount) {
+    return Math.max(0, this.getPageHeight() - (rowCount * 80));
+  }
+
+  setBodyEmptyState(tbody, isEmpty) {
+    if (!tbody) return;
+    tbody.classList.toggle("divide-y", !isEmpty);
+    tbody.classList.toggle("divide-govpt-border", !isEmpty);
+  }
+
+  renderEmptyState(columns, message = "Nenhum resultado encontrado.", hint = "Ajuste a pesquisa ou os filtros para voltar a ver resultados.") {
+    return `
+      <tr class="table-empty-row">
+        <td colspan="${columns}" class="px-6 text-center align-middle" style="height:${this.getPageHeight()}px;">
+          <div class="mx-auto max-w-md">
+            <p class="text-sm font-medium text-gray-900">${message}</p>
+            <p class="mt-1 text-sm text-gray-500">${hint}</p>
+          </div>
+        </td>
       </tr>
-    `).join("");
+    `;
+  }
+
+  renderSpacerRow(columns, rowCount) {
+    const remainingHeight = this.getRemainingPageHeight(rowCount);
+    if (!remainingHeight) return "";
+    return `
+      <tr class="table-spacer-row" aria-hidden="true">
+        <td colspan="${columns}" class="p-0" style="height:${remainingHeight}px;"></td>
+      </tr>
+    `;
   }
 
   updatePagination() {
@@ -173,20 +202,27 @@ class MacroprocessTableManager extends TableManager {
     const tbody = document.getElementById(this.tableId);
     if (!tbody) return;
     const pageData = this.getPageData();
+    if (!pageData.length) {
+      this.setBodyEmptyState(tbody, true);
+      tbody.innerHTML = this.renderEmptyState(5);
+      if (typeof feather !== "undefined") feather.replace();
+      return;
+    }
+    this.setBodyEmptyState(tbody, false);
     const rows = pageData
       .map(
         (macro) => `
           <tr class="${tableRowClass(true)}">
-            <td class="px-6 py-4 ${tableCellHeight} whitespace-nowrap"><div><div class="text-sm font-medium text-gray-900">${macro.title}</div><div class="text-sm text-gray-500">${macro.slug}</div></div></td>
-            <td class="px-6 py-4 ${tableCellHeight}"><div class="${clampTwoLines}">${macro.description}</div></td>
-            <td class="px-6 py-4 ${tableCellHeight} whitespace-nowrap align-middle"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-govpt-blue-light text-govpt-primary">${macro.processCount}</span></td>
-            <td class="px-6 py-4 ${tableCellHeight} whitespace-nowrap align-middle"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-govpt-blue-light text-govpt-primary">${macro.subprocessCount}</span></td>
-            <td class="px-6 py-4 ${tableCellHeight} whitespace-nowrap align-middle text-sm font-medium"><button type="button" class="text-blue-600 hover:text-blue-800 mr-3" onclick="navigateToMacroprocess('${macro.id}')">Ver Detalhes</button></td>
+            <td class="px-4 py-4 ${tableCellHeight} whitespace-nowrap"><div><div class="text-sm font-medium text-gray-900">${macro.title}</div><div class="text-sm text-gray-500">${macro.slug}</div></div></td>
+            <td class="px-4 py-4 ${tableCellHeight}"><div class="${clampTwoLines}">${macro.description}</div></td>
+            <td class="px-4 py-4 ${tableCellHeight} whitespace-nowrap align-middle text-center"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-govpt-blue-light text-govpt-primary">${macro.processCount}</span></td>
+            <td class="px-4 py-4 ${tableCellHeight} whitespace-nowrap align-middle text-center"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-govpt-blue-light text-govpt-primary">${macro.subprocessCount}</span></td>
+            <td class="px-4 py-4 ${tableCellHeight} whitespace-nowrap align-middle text-sm font-medium text-center"><button type="button" class="text-blue-600 hover:text-blue-800" onclick="navigateToMacroprocess('${macro.id}')">Ver Detalhes</button></td>
           </tr>
         `,
       )
       .join("");
-    tbody.innerHTML = rows + this.renderFillerRows(this.itemsPerPage - pageData.length, 5, "h-20");
+    tbody.innerHTML = rows + this.renderSpacerRow(5, pageData.length);
     if (typeof feather !== "undefined") feather.replace();
   }
 }
@@ -227,20 +263,27 @@ class ProcessTableManager extends TableManager {
     const tbody = document.getElementById(this.tableId);
     if (!tbody) return;
     const pageData = this.getPageData();
+    if (!pageData.length) {
+      this.setBodyEmptyState(tbody, true);
+      tbody.innerHTML = this.renderEmptyState(5);
+      if (typeof feather !== "undefined") feather.replace();
+      return;
+    }
+    this.setBodyEmptyState(tbody, false);
     const rows = pageData
       .map(
         (process) => `
           <tr class="${tableRowClass()}">
-            <td class="px-6 py-4 ${tableCellHeight} whitespace-nowrap align-middle"><div class="text-sm font-medium text-gray-900">${process.code}</div></td>
-            <td class="px-6 py-4 ${tableCellHeight} align-middle"><div class="${clampTwoLines}">${process.title}</div></td>
-            <td class="px-6 py-4 ${tableCellHeight} align-middle"><div class="${clampTwoLines}">${process.macroprocessTitle}</div></td>
-            <td class="px-6 py-4 ${tableCellHeight} whitespace-nowrap align-middle"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClasses(process.status)}">${process.status}</span></td>
-            <td class="px-6 py-4 ${tableCellHeight} whitespace-nowrap align-middle text-sm font-medium"><button type="button" class="text-blue-600 hover:text-blue-800 mr-3" onclick="showProcessDetail('${process.id}')">Ver Detalhes</button></td>
+            <td class="px-4 py-4 ${tableCellHeight} whitespace-nowrap align-middle"><div class="text-sm font-medium text-gray-900">${process.code}</div></td>
+            <td class="px-4 py-4 ${tableCellHeight} align-middle"><div class="${clampTwoLines}">${process.title}</div></td>
+            <td class="px-4 py-4 ${tableCellHeight} align-middle"><div class="${clampTwoLines}">${process.macroprocessTitle}</div></td>
+            <td class="px-4 py-4 ${tableCellHeight} whitespace-nowrap align-middle text-center"><span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeClasses(process.status)}">${process.status}</span></td>
+            <td class="px-4 py-4 ${tableCellHeight} whitespace-nowrap align-middle text-sm font-medium text-center"><button type="button" class="text-blue-600 hover:text-blue-800" onclick="showProcessDetail('${process.id}')">Ver Detalhes</button></td>
           </tr>
         `,
       )
       .join("");
-    tbody.innerHTML = rows + this.renderFillerRows(this.itemsPerPage - pageData.length, 5, tableCellHeight);
+    tbody.innerHTML = rows + this.renderSpacerRow(5, pageData.length);
     if (typeof feather !== "undefined") feather.replace();
   }
 }

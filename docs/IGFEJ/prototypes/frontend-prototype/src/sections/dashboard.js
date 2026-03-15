@@ -11,6 +11,7 @@ const MACROPROCESS_COLUMNS = [
   ["package", "Processos", "processes"],
   ["git-branch", "Subprocessos", "subprocesses"],
 ];
+const MACROPROCESS_COLUMN_WIDTHS = ["22%", "36%", "132px", "144px", "96px"];
 
 const PROCESS_COLUMNS = [
   ["hash", "Código", "code"],
@@ -18,9 +19,11 @@ const PROCESS_COLUMNS = [
   ["layers", "Macroprocesso", "macroprocess"],
   ["check-circle", "Status", "status"],
 ];
+const PROCESS_COLUMN_WIDTHS = ["112px", null, null, "120px", "104px"];
 
 function tableHeader([icon, label, sortKey], handlerName) {
-  return `<th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-govpt-heading cursor-pointer hover:bg-govpt-blue-light transition-colors" onclick="${handlerName}('${sortKey}', event)"><div class="flex items-center"><i data-feather="${icon}" class="mr-2 h-4 w-4 text-govpt-primary"></i><span>${label}</span><i data-feather="chevron-up" class="sort-icon sort-${sortKey} ml-2 h-4 w-4 text-govpt-gray"></i></div></th>`;
+  const headerPadding = sortKey === "processes" ? "pl-4 pr-10" : "px-4";
+  return `<th class="${headerPadding} py-4 text-left text-xs font-semibold uppercase tracking-wide text-govpt-heading cursor-pointer hover:bg-govpt-blue-light transition-colors" onclick="${handlerName}('${sortKey}', event)"><div class="flex items-center gap-1 whitespace-nowrap"><i data-feather="${icon}" class="h-4 w-4 shrink-0 text-govpt-primary"></i><span>${label}</span><i data-feather="chevron-up" class="sort-icon sort-${sortKey} h-4 w-4 shrink-0 text-govpt-gray"></i></div></th>`;
 }
 
 function tableSearchInput(id, placeholder) {
@@ -35,8 +38,12 @@ function paginationBlock(showingId, totalId, prevId, nextId, label) {
   return `<div class="mt-6 flex items-center justify-between border-t border-govpt-border pt-4"><div class="text-sm text-govpt-text">Mostrando <span id="${showingId}" class="font-medium text-govpt-heading">0</span> de <span id="${totalId}" class="font-medium text-govpt-heading">0</span> ${label}</div><div class="flex gap-2"><button type="button" id="${prevId}" class="table-page-btn" disabled><i data-feather="chevron-left" class="h-4 w-4"></i></button><button type="button" id="${nextId}" class="table-page-btn" disabled><i data-feather="chevron-right" class="h-4 w-4"></i></button></div></div>`;
 }
 
-function tableCard(sectionId, title, toolbar, tableName, columns, bodyId, paginationIds, label, sortHandler) {
-  return `<div id="${sectionId}" class="space-y-4"><h3 class="text-govpt-2xl font-semibold text-govpt-heading">${title}</h3><div class="govpt-card"><div class="govpt-card-body"><div class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center">${toolbar}</div><div class="overflow-x-auto" data-table-sort="${tableName}"><table class="min-w-full rounded-lg border border-govpt-border bg-white"><thead class="bg-govpt-light"><tr>${columns.map((column) => tableHeader(column, sortHandler)).join("")}<th class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wider text-govpt-heading">Ações</th></tr></thead><tbody id="${bodyId}" class="divide-y divide-govpt-border bg-white"></tbody></table></div>${paginationBlock(...paginationIds, label)}</div></div></div>`;
+function tableColGroup(widths) {
+  return `<colgroup>${widths.map((width) => (width ? `<col style="width:${width};">` : "<col>")).join("")}</colgroup>`;
+}
+
+function tableCard(sectionId, title, toolbar, tableName, columns, columnWidths, bodyId, paginationIds, label, sortHandler) {
+  return `<div id="${sectionId}" class="space-y-4"><h3 class="text-govpt-2xl font-semibold text-govpt-heading">${title}</h3><div class="govpt-card"><div class="govpt-card-body"><div class="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center">${toolbar}</div><div class="overflow-x-auto" data-table-sort="${tableName}"><table class="w-full table-fixed rounded-lg border border-govpt-border bg-white">${tableColGroup(columnWidths)}<thead class="bg-govpt-light"><tr>${columns.map((column) => tableHeader(column, sortHandler)).join("")}<th class="px-4 py-4 text-center text-xs font-semibold uppercase tracking-wide text-govpt-heading">Ações</th></tr></thead><tbody id="${bodyId}" class="divide-y divide-govpt-border bg-white"></tbody></table></div>${paginationBlock(...paginationIds, label)}</div></div></div>`;
 }
 
 function getDashboardSection() {
@@ -65,9 +72,9 @@ function getDashboardSection() {
             <div id="featured-processes" class="space-y-6"></div>
           </div>
 
-          ${tableCard("dashboard-macroprocesses", "Todos os Macroprocessos", macroToolbar, "macroprocesses", MACROPROCESS_COLUMNS, "macroprocesses-table-body", ["macroprocesses-showing", "macroprocesses-total", "macroprocesses-prev", "macroprocesses-next"], "macroprocessos", "sortMacroprocessTable")}
+          ${tableCard("dashboard-macroprocesses", "Todos os Macroprocessos", macroToolbar, "macroprocesses", MACROPROCESS_COLUMNS, MACROPROCESS_COLUMN_WIDTHS, "macroprocesses-table-body", ["macroprocesses-showing", "macroprocesses-total", "macroprocesses-prev", "macroprocesses-next"], "macroprocessos", "sortMacroprocessTable")}
 
-          ${tableCard("dashboard-processes", "Todos os Processos", processToolbar, "processes", PROCESS_COLUMNS, "processes-table-body", ["processes-showing", "processes-total", "processes-prev", "processes-next"], "processos", "sortProcessTable")}
+          ${tableCard("dashboard-processes", "Todos os Processos", processToolbar, "processes", PROCESS_COLUMNS, PROCESS_COLUMN_WIDTHS, "processes-table-body", ["processes-showing", "processes-total", "processes-prev", "processes-next"], "processos", "sortProcessTable")}
 
           <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <div id="dashboard-subprocesses" class="govpt-card"><div class="govpt-card-body"><h3 class="mb-3 text-govpt-xl font-semibold text-govpt-heading">Subprocessos</h3><p class="mb-3 text-govpt-base text-govpt-text">Os subprocessos estão distribuídos pelos processos e podem ser consultados a partir de cada detalhe de processo.</p><p class="text-sm text-govpt-gray">Use a tabela de processos acima para abrir um processo e aceder à aba <strong>Subprocessos</strong>.</p></div></div>
