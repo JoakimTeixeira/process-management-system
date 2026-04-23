@@ -5,7 +5,15 @@ import { AppModule } from './app.module';
 import { buildAppConfig } from './config/app.config';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const { nodeEnv, port } = buildAppConfig();
+  const app = await NestFactory.create(AppModule, {
+    logger:
+      nodeEnv === 'production'
+        ? ['error', 'warn', 'log']
+        : ['error', 'warn', 'log', 'debug', 'verbose'],
+  });
+
+  app.enableShutdownHooks();
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -14,7 +22,6 @@ async function bootstrap() {
     }),
   );
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
-  const { port } = buildAppConfig();
   await app.listen(port);
 }
 

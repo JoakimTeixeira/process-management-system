@@ -2,8 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigType } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './modules/auth/auth.module';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { HealthModule } from './modules/health/health.module';
 import appConfig from './config/app.config';
 import authConfig from './config/auth.config';
 import databaseConfig from './config/database.config';
@@ -29,8 +28,7 @@ import { createTypeOrmModuleOptions } from './database/typeorm-options';
         createTypeOrmModuleOptions(dbConfig),
     }),
     AuthModule,
+    HealthModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
