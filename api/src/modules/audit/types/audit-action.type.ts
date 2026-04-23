@@ -1,0 +1,16 @@
+export type AuditAction =
+  | 'CREATE'
+  | 'UPDATE'
+  | 'DELETE'
+  | 'STATE_CHANGE'
+  | 'APPROVE'
+  | 'REJECT'
+  | 'PUBLISH'
+  | 'ARCHIVE'
+  | 'UPLOAD'
+  | 'PROMOTE'
+  | 'USER_CREATE'
+  | 'USER_UPDATE'
+  | 'USER_DEACTIVATE'
+  | 'ROLE_ASSIGN'
+  | 'TEAM_CHANGE';

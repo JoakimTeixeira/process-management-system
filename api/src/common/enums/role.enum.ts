@@ -49,7 +49,7 @@ export function isRole(value: string): value is Role {
 
 export function parseRole(value: string): Role {
   if (!isRole(value)) {
-    throw new Error(`Unsupported role "${value}"`);
+    throw new TypeError(`Unsupported role "${value}"`);
   }
 
   return value;
