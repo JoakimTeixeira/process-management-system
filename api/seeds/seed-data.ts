@@ -121,7 +121,7 @@ export interface AuditLogSeed {
   newData?: Record<string, unknown> | null;
 }
 
-export const SHARED_DEMO_PASSWORD = 'ProcessMVP!2026';
+export const SHARED_DEMO_PASSWORD = 'ProcessSeed!2026';
 export const SEED_REASON_PREFIX = '[seed]';
 export const BPMN_DIRECTORY = 'seed';
 
