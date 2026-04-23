@@ -6,9 +6,9 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
 import authConfig from '../../config/auth.config';
+import { LoginResponseDto } from './dto/login-response.dto';
 import { AuthenticatedUser } from './interfaces/authenticated-user.interface';
 import { JwtPayload } from './interfaces/jwt-payload.interface';
-import { LoginResponse } from './interfaces/login-response.interface';
 
 interface QueryRow {
   [key: string]: unknown;
@@ -59,9 +59,8 @@ export class AuthService {
     @Inject('JWT_SIGNER') private readonly jwtSigner: JwtSigner,
   ) {}
 
-  async login(email: string, password: string): Promise<LoginResponse> {
-    const normalizedEmail = email.trim();
-    const user = await this.findUserByEmail(normalizedEmail);
+  async login(email: string, password: string): Promise<LoginResponseDto> {
+    const user = await this.findUserByEmail(email);
 
     if (!user || !user.isActive || !user.passwordHash) {
       throw new UnauthorizedException('Invalid email or password');
@@ -84,12 +83,12 @@ export class AuthService {
       email: user.email,
     });
 
-    return {
+    return new LoginResponseDto({
       accessToken,
       tokenType: 'Bearer',
       expiresIn: this.authConfiguration.jwtExpiresInSeconds,
       expiresAt: expiresAt.toISOString(),
-    };
+    });
   }
 
   async getAuthenticatedUserById(
