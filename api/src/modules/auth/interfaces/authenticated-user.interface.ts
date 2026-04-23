@@ -1,3 +1,5 @@
+import type { Role } from '../../../common/enums/role.enum';
+
 export interface AuthenticatedUserTeam {
   id: string;
   code: string;
@@ -9,6 +11,6 @@ export interface AuthenticatedUser {
   name: string;
   email: string;
   roleId: string;
-  roleName: string;
+  role: Role;
   team: AuthenticatedUserTeam | null;
 }

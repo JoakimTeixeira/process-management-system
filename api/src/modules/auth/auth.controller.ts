@@ -26,7 +26,7 @@ export class AuthController {
       email: user.email,
       role: {
         id: user.roleId,
-        name: user.roleName,
+        name: user.role,
       },
       team: user.team,
     });

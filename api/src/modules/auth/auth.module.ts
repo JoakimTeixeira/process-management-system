@@ -6,6 +6,7 @@ import { PassportModule } from '@nestjs/passport';
 
 import authConfig from '../../config/auth.config';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
 import { AuthController } from './auth.controller';
 import { AuthRepository } from './auth.repository';
 import { AuthService } from './auth.service';
@@ -30,12 +31,13 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     AuthService,
     JwtStrategy,
     JwtAuthGuard,
+    RolesGuard,
     {
       provide: 'JWT_SIGNER',
       inject: [JwtService],
       useFactory: (jwtService: JwtService) => jwtService,
     },
   ],
-  exports: [AuthRepository, AuthService, JwtAuthGuard],
+  exports: [AuthRepository, AuthService, JwtAuthGuard, RolesGuard],
 })
 export class AuthModule {}

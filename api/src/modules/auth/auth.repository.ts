@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
+import { parseRole, Role } from '../../common/enums/role.enum';
 import { AuthenticatedUser } from './interfaces/authenticated-user.interface';
 
 interface QueryRow {
@@ -28,7 +29,7 @@ export interface AuthRepositoryUser {
   passwordHash: string | null;
   isActive: boolean;
   roleId: string;
-  roleName: string;
+  role: Role;
   team: AuthenticatedUser['team'];
 }
 
@@ -112,7 +113,7 @@ export class AuthRepository {
       passwordHash: row.password_hash,
       isActive: row.is_active,
       roleId: row.role_id,
-      roleName: row.role_name,
+      role: parseRole(row.role_name),
       team:
         row.team_id && row.team_code && row.team_name
           ? {

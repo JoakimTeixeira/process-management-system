@@ -21,6 +21,8 @@ interface JwtSigner {
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
+  private static readonly INVALID_CREDENTIALS_MESSAGE =
+    'Invalid email or password';
 
   constructor(
     private readonly authRepository: AuthRepository,
@@ -32,9 +34,8 @@ export class AuthService {
   async login(email: string, password: string): Promise<LoginResponseDto> {
     const user = await this.authRepository.findUserByEmail(email);
 
-    if (!user || !user.isActive || !user.passwordHash) {
-      this.logger.warn(`Rejected login attempt for email "${email}"`);
-      throw new UnauthorizedException('Invalid email or password');
+    if (!user?.isActive || !user.passwordHash) {
+      this.rejectLoginAttempt(email);
     }
 
     const passwordIsValid = await argon2.verify(user.passwordHash, password, {
@@ -42,8 +43,7 @@ export class AuthService {
     });
 
     if (!passwordIsValid) {
-      this.logger.warn(`Rejected login attempt for email "${email}"`);
-      throw new UnauthorizedException('Invalid email or password');
+      this.rejectLoginAttempt(email);
     }
 
     const issuedAt = new Date();
@@ -70,7 +70,7 @@ export class AuthService {
   ): Promise<AuthenticatedUser | null> {
     const user = await this.authRepository.findUserById(userId);
 
-    if (!user || !user.isActive) {
+    if (!user?.isActive) {
       return null;
     }
 
@@ -83,8 +83,13 @@ export class AuthService {
       name: user.name,
       email: user.email,
       roleId: user.roleId,
-      roleName: user.roleName,
+      role: user.role,
       team: user.team,
     };
+  }
+
+  private rejectLoginAttempt(email: string): never {
+    this.logger.warn(`Rejected login attempt for email "${email}"`);
+    throw new UnauthorizedException(AuthService.INVALID_CREDENTIALS_MESSAGE);
   }
 }

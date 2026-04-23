@@ -9,12 +9,15 @@ import { AuthService } from '../auth.service';
 import type { AuthenticatedUser } from '../interfaces/authenticated-user.interface';
 import type { JwtPayload } from '../interfaces/jwt-payload.interface';
 
+type AuthenticatedUserLookup = Pick<AuthService, 'getAuthenticatedUserById'>;
+
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
     @Inject(authConfig.KEY)
     authConfiguration: ConfigType<typeof authConfig>,
-    private readonly authService: AuthService,
+    @Inject(AuthService)
+    private readonly authService: AuthenticatedUserLookup,
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
