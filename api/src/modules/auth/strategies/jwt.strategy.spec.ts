@@ -29,7 +29,7 @@ describe('JwtStrategy', () => {
     strategy = new JwtStrategy(authConfiguration, authService);
   });
 
-  it('reloads the current user by payload.sub and returns request.user data', async () => {
+  it('should reload the current user by payload.sub and return request.user data', async () => {
     const user = createAuthenticatedUser(Role.EDITOR);
 
     authService.getAuthenticatedUserById.mockResolvedValue(user);
@@ -38,7 +38,7 @@ describe('JwtStrategy', () => {
     expect(authService.getAuthenticatedUserById).toHaveBeenCalledWith('user-1');
   });
 
-  it('reflects role changes on the next authenticated request', async () => {
+  it('should reflect role changes on the next authenticated request', async () => {
     authService.getAuthenticatedUserById
       .mockResolvedValueOnce(createAuthenticatedUser(Role.EDITOR))
       .mockResolvedValueOnce(createAuthenticatedUser(Role.REVIEWER));
@@ -51,7 +51,7 @@ describe('JwtStrategy', () => {
     });
   });
 
-  it('rejects deactivated users on the next authenticated request', async () => {
+  it('should reject deactivated users on the next authenticated request', async () => {
     authService.getAuthenticatedUserById
       .mockResolvedValueOnce(createAuthenticatedUser(Role.EDITOR))
       .mockResolvedValueOnce(null);

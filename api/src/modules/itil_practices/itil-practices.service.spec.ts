@@ -41,7 +41,7 @@ describe('ItilPracticesService', () => {
     );
   });
 
-  it('creates an ITIL practice and writes an audit row', async () => {
+  it('should create an ITIL practice and write an audit row', async () => {
     const createdPractice = {
       id: 'practice-1',
       code: 'CHANGE_CONTROL',
@@ -73,7 +73,7 @@ describe('ItilPracticesService', () => {
     });
   });
 
-  it('rejects duplicate code or name', async () => {
+  it('should reject duplicate code or name', async () => {
     repository.findByCodeOrName.mockResolvedValue({
       id: 'practice-1',
       code: 'CHANGE_CONTROL',
@@ -92,7 +92,7 @@ describe('ItilPracticesService', () => {
     ).rejects.toBeInstanceOf(ConflictException);
   });
 
-  it('lists ITIL practices', async () => {
+  it('should list ITIL practices', async () => {
     const practices = [
       {
         id: 'practice-1',

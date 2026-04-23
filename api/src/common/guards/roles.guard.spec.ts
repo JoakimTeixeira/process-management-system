@@ -129,14 +129,14 @@ describe('RolesGuard', () => {
     guard = new RolesGuard(new Reflector());
   });
 
-  it('allows access when no roles metadata exists', () => {
+  it('should allow access when no roles metadata exists', () => {
     const controller = new NoRolesController();
     const context = createExecutionContext(controller, 'handler');
 
     expect(guard.canActivate(context)).toBe(true);
   });
 
-  it('allows access for a matching role', () => {
+  it('should allow access for a matching role', () => {
     const controller = new EditorOnlyController();
     const context = createExecutionContext(controller, 'handler', {
       user: createAuthenticatedUser(Role.EDITOR),
@@ -145,7 +145,7 @@ describe('RolesGuard', () => {
     expect(guard.canActivate(context)).toBe(true);
   });
 
-  it('denies access for a non-matching role', () => {
+  it('should deny access for a non-matching role', () => {
     const controller = new EditorOnlyController();
     const context = createExecutionContext(controller, 'handler', {
       user: createAuthenticatedUser(Role.VIEWER),
@@ -154,14 +154,14 @@ describe('RolesGuard', () => {
     expect(guard.canActivate(context)).toBe(false);
   });
 
-  it('denies access when request.user is missing', () => {
+  it('should deny access when request.user is missing', () => {
     const controller = new EditorOnlyController();
     const context = createExecutionContext(controller, 'handler');
 
     expect(guard.canActivate(context)).toBe(false);
   });
 
-  it('denies access when request.user.role is missing', () => {
+  it('should deny access when request.user.role is missing', () => {
     const controller = new EditorOnlyController();
     const context = createExecutionContext(controller, 'handler', {
       user: {
@@ -176,7 +176,7 @@ describe('RolesGuard', () => {
     expect(guard.canActivate(context)).toBe(false);
   });
 
-  it('honors method-level metadata overriding class-level metadata', () => {
+  it('should honor method-level metadata overriding class-level metadata', () => {
     const controller = new ClassRoleController();
     const reviewerContext = createExecutionContext(
       controller,
@@ -197,7 +197,7 @@ describe('RolesGuard', () => {
     expect(guard.canActivate(viewerContext)).toBe(false);
   });
 
-  it('performs an in-memory comparison against request.user.role only', () => {
+  it('should perform an in-memory comparison against request.user.role only', () => {
     const controller = new EditorOnlyController();
     let roleAccessCount = 0;
     let otherAccessCount = 0;

@@ -44,7 +44,7 @@ describe('AuthService', () => {
     jest.clearAllMocks();
   });
 
-  it('signs a minimal jwt payload during login', async () => {
+  it('should sign a minimal jwt payload during login', async () => {
     const user: AuthRepositoryUser = {
       id: 'user-1',
       name: 'Editor User',

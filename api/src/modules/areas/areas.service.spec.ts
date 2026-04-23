@@ -64,7 +64,7 @@ describe('AreasService', () => {
     );
   });
 
-  it('creates an area and writes an audit row', async () => {
+  it('should create an area and write an audit row', async () => {
     repository.ownerExists.mockResolvedValue(true);
     itilPracticesService.findById.mockResolvedValue({
       id: 'practice-1',
@@ -109,7 +109,7 @@ describe('AreasService', () => {
     });
   });
 
-  it('rejects create when owner does not exist', async () => {
+  it('should reject create when owner does not exist', async () => {
     repository.ownerExists.mockResolvedValue(false);
 
     await expect(
@@ -125,7 +125,7 @@ describe('AreasService', () => {
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('rejects create when ITIL practice does not exist', async () => {
+  it('should reject create when ITIL practice does not exist', async () => {
     repository.ownerExists.mockResolvedValue(true);
     itilPracticesService.findById.mockResolvedValue(null);
 
@@ -142,7 +142,7 @@ describe('AreasService', () => {
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('rejects duplicate area code on create', async () => {
+  it('should reject duplicate area code on create', async () => {
     repository.ownerExists.mockResolvedValue(true);
     itilPracticesService.findById.mockResolvedValue({
       id: 'practice-1',
@@ -165,7 +165,7 @@ describe('AreasService', () => {
     ).rejects.toBeInstanceOf(ConflictException);
   });
 
-  it('lists and gets areas', async () => {
+  it('should list and get areas', async () => {
     repository.findAll.mockResolvedValue([existingArea]);
     repository.findById.mockResolvedValue(existingArea);
 
@@ -173,7 +173,7 @@ describe('AreasService', () => {
     await expect(service.getById('area-1')).resolves.toEqual(existingArea);
   });
 
-  it('rejects getById when the area does not exist', async () => {
+  it('should reject getById when the area does not exist', async () => {
     repository.findById.mockResolvedValue(null);
 
     await expect(service.getById('missing-area')).rejects.toBeInstanceOf(
@@ -181,7 +181,7 @@ describe('AreasService', () => {
     );
   });
 
-  it('validates changed ownerId and itilPracticeId during update', async () => {
+  it('should validate changed ownerId and itilPracticeId during update', async () => {
     repository.findById.mockResolvedValue(existingArea);
     repository.findByCode.mockResolvedValue(null);
     repository.ownerExists.mockResolvedValue(true);
@@ -215,7 +215,7 @@ describe('AreasService', () => {
     });
   });
 
-  it('rejects update when the changed owner does not exist', async () => {
+  it('should reject update when the changed owner does not exist', async () => {
     repository.findById.mockResolvedValue(existingArea);
     repository.ownerExists.mockResolvedValue(false);
 
@@ -230,7 +230,7 @@ describe('AreasService', () => {
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('rejects update when the changed ITIL practice does not exist', async () => {
+  it('should reject update when the changed ITIL practice does not exist', async () => {
     repository.findById.mockResolvedValue(existingArea);
     itilPracticesService.findById.mockResolvedValue(null);
 
@@ -245,7 +245,7 @@ describe('AreasService', () => {
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('rejects duplicate area code on update', async () => {
+  it('should reject duplicate area code on update', async () => {
     repository.findById.mockResolvedValue(existingArea);
     repository.findByCode.mockResolvedValue({
       ...existingArea,
@@ -264,7 +264,7 @@ describe('AreasService', () => {
     ).rejects.toBeInstanceOf(ConflictException);
   });
 
-  it('writes an audit row on update', async () => {
+  it('should write an audit row on update', async () => {
     const updatedArea = {
       ...existingArea,
       title: 'Updated Change Area',

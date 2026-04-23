@@ -19,14 +19,14 @@ function getControllerMethod(target: object, key: string): ControllerMethod {
 }
 
 describe('AreasController metadata', () => {
-  it('protects the controller with JWT and roles guards', () => {
+  it('should protect the controller with JWT and roles guards', () => {
     expect(Reflect.getMetadata(GUARDS_METADATA, AreasController)).toEqual([
       JwtAuthGuard,
       RolesGuard,
     ]);
   });
 
-  it('restricts create and update to EDITOR', () => {
+  it('should restrict create and update to EDITOR', () => {
     expect(
       Reflect.getMetadata(
         ROLES_KEY,
@@ -41,7 +41,7 @@ describe('AreasController metadata', () => {
     ).toEqual([Role.EDITOR]);
   });
 
-  it('leaves list and getById role-open', () => {
+  it('should leave list and getById role-open', () => {
     expect(
       Reflect.getMetadata(
         ROLES_KEY,

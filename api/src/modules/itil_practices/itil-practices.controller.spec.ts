@@ -19,13 +19,13 @@ function getControllerMethod(target: object, key: string): ControllerMethod {
 }
 
 describe('ItilPracticesController metadata', () => {
-  it('protects the controller with JWT and roles guards', () => {
+  it('should protect the controller with JWT and roles guards', () => {
     expect(
       Reflect.getMetadata(GUARDS_METADATA, ItilPracticesController),
     ).toEqual([JwtAuthGuard, RolesGuard]);
   });
 
-  it('restricts create to EDITOR', () => {
+  it('should restrict create to EDITOR', () => {
     expect(
       Reflect.getMetadata(
         ROLES_KEY,
@@ -34,7 +34,7 @@ describe('ItilPracticesController metadata', () => {
     ).toEqual([Role.EDITOR]);
   });
 
-  it('leaves list role-open', () => {
+  it('should leave list role-open', () => {
     expect(
       Reflect.getMetadata(
         ROLES_KEY,
