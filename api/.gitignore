@@ -5,3 +5,5 @@ coverage/
 .env
 .env.*
 !.env.example
+uploads/seed/*
+!uploads/seed/.gitkeep
