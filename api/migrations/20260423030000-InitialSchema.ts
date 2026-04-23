@@ -41,7 +41,7 @@ CREATE EXTENSION IF NOT EXISTS unaccent;
 -- Enforces that derived_from_version_id, when present, points to a version
 -- belonging to the same process.
 --
--- Implementation note:
+-- Initial scope note:
 -- Search support is kept because it is useful for the public catalog and
 -- taxonomy browsing, but the schema avoids overengineering the data model
 -- around search-only concerns.
@@ -110,7 +110,7 @@ NEW.search_document :=
 normalize_search_text(
 coalesce(NEW.code, '') || ' ' ||
 coalesce(NEW.title, '') || ' ' ||
-coalesce(NEW.summary, '')
+coalesce(NEW.description, '')
 );
 RETURN NEW;
 END IF;
@@ -120,7 +120,6 @@ NEW.search_document :=
 normalize_search_text(
 coalesce(NEW.version_number::TEXT, '') || ' ' ||
 coalesce(NEW.title, '') || ' ' ||
-coalesce(NEW.summary, '') || ' ' ||
 coalesce(NEW.change_description, '') || ' ' ||
 coalesce(NEW.reason_for_change, '')
 );
@@ -132,9 +131,13 @@ NEW.search_document :=
 normalize_search_text(
 coalesce(NEW.code, '') || ' ' ||
 coalesce(NEW.title, '') || ' ' ||
-coalesce(NEW.summary, '') || ' ' ||
-coalesce(NEW.purpose, '') || ' ' ||
-coalesce(NEW.scope, '')
+coalesce(NEW.utility, '') || ' ' ||
+coalesce(NEW.warranty, '') || ' ' ||
+coalesce(NEW.outcome, '') || ' ' ||
+coalesce(NEW.policy, '') || ' ' ||
+coalesce(NEW.activities::TEXT, '') || ' ' ||
+coalesce(NEW.inputs::TEXT, '') || ' ' ||
+coalesce(NEW.outputs::TEXT, '')
 );
 RETURN NEW;
 END IF;
@@ -142,8 +145,7 @@ END IF;
 IF TG_TABLE_NAME = 'assets' THEN
 NEW.search_document :=
 normalize_search_text(
-coalesce(NEW.code, '') || ' ' ||
-coalesce(NEW.subtitle, '') || ' ' ||
+coalesce(NEW.caption, '') || ' ' ||
 coalesce(NEW.asset_type::TEXT, '') || ' ' ||
 coalesce(NEW.mime_type, '') || ' ' ||
 coalesce(NEW.file_path, '')
@@ -158,27 +160,63 @@ CREATE OR REPLACE FUNCTION validate_same_process_lineage()
 RETURNS TRIGGER AS $$
 DECLARE
 parent_process_id UUID;
+parent_version_number INTEGER;
+current_version_id UUID;
+current_process_id UUID;
 BEGIN
 
 IF NEW.derived_from_version_id IS NULL THEN
 RETURN NEW;
 END IF;
-SELECT pv.process_id
-INTO parent_process_id
+
+-- Check that derived_from_version_id exists
+SELECT pv.process_id, pv.version_number
+INTO parent_process_id, parent_version_number
 FROM process_versions pv
 WHERE pv.id = NEW.derived_from_version_id;
+
 IF parent_process_id IS NULL THEN
 RAISE EXCEPTION
 'derived_from_version_id % does not reference an existing process version',
 NEW.derived_from_version_id;
 END IF;
 
+-- Check that it belongs to the same process
 IF parent_process_id <> NEW.process_id THEN
 RAISE EXCEPTION
 'derived_from_version_id % must belong to the same process as process_id %',
 NEW.derived_from_version_id,
 NEW.process_id;
 END IF;
+
+-- Check that derived version has a lower version number
+IF parent_version_number >= NEW.version_number THEN
+RAISE EXCEPTION
+'derived_from_version_id % must have a lower version_number (% < %)',
+NEW.derived_from_version_id,
+parent_version_number,
+NEW.version_number;
+END IF;
+
+-- Check for circular references (prevent v1 -> v2 -> v1)
+current_version_id := NEW.derived_from_version_id;
+WHILE current_version_id IS NOT NULL LOOP
+  SELECT pv.derived_from_version_id, pv.process_id
+  INTO current_version_id, current_process_id
+  FROM process_versions pv
+  WHERE pv.id = current_version_id;
+  
+  -- If we loop back to the current version, we have a circular reference
+  IF current_version_id = NEW.id THEN
+    RAISE EXCEPTION
+    'Circular reference detected in version lineage starting from version %',
+    NEW.id;
+  END IF;
+  
+  -- Safety: prevent infinite loops
+  EXIT WHEN current_version_id IS NULL;
+END LOOP;
+
 RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -208,16 +246,17 @@ CREATE TYPE process_architecture_state AS ENUM (
 -- ============================================================================
 -- ASSET TYPES
 --
--- Schema simplification:
+-- Initial scope simplification:
 -- The prototype only needs BPMN viewing and optional static support files.
--- DMN, JSON and other advanced artifact categories were removed from this schema version
+-- BPMN, DMN, PNG, SVG, PDF and other advanced artifact categories were removed from the initial scope
 -- to reduce implementation complexity.
 -- ============================================================================
 CREATE TYPE asset_type AS ENUM (
     'BPMN',
+    'DMN',
+    'PNG',
     'SVG',
-    'PDF',
-    'OTHER'
+    'PDF'
 );
 
 -- ============================================================================
@@ -235,6 +274,7 @@ CREATE TYPE audit_action AS ENUM (
     'STATE_CHANGE',
     'APPROVE',
     'REJECT',
+    'REOPEN',
     'PUBLISH',
     'ARCHIVE',
     'UPLOAD',
@@ -254,18 +294,24 @@ CREATE TYPE audit_action AS ENUM (
 CREATE TABLE roles (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name VARCHAR(100) UNIQUE NOT NULL,
-    description TEXT,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+    description TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT chk_roles_name_not_blank CHECK (btrim(name) <> ''),
+    CONSTRAINT chk_roles_description_not_blank CHECK (btrim(description) <> '')
 );
 
 CREATE TABLE teams (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     code VARCHAR(50) UNIQUE NOT NULL,
     name VARCHAR(255) UNIQUE NOT NULL,
-    description TEXT,
+    description TEXT NOT NULL,
     search_document TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT chk_teams_code_not_blank CHECK (btrim(code) <> ''),
+    CONSTRAINT chk_teams_name_not_blank CHECK (btrim(name) <> ''),
+    CONSTRAINT chk_teams_description_not_blank CHECK (btrim(description) <> ''),
+    CONSTRAINT chk_teams_updated_at_after_created_at CHECK (updated_at >= created_at)
 );
 
 CREATE TABLE team_aliases (
@@ -279,7 +325,6 @@ CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     role_id UUID NOT NULL REFERENCES roles(id) ON DELETE RESTRICT,
     team_id UUID REFERENCES teams(id) ON DELETE SET NULL,
-    active_directory_id VARCHAR(255) UNIQUE,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     password_hash TEXT,
@@ -287,7 +332,8 @@ CREATE TABLE users (
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT chk_users_name_not_blank CHECK (btrim(name) <> ''),
-    CONSTRAINT chk_users_email_not_blank CHECK (btrim(email) <> '')
+    CONSTRAINT chk_users_email_not_blank CHECK (btrim(email) <> ''),
+    CONSTRAINT chk_users_updated_at_after_created_at CHECK (updated_at >= created_at)
 );
 
 CREATE UNIQUE INDEX uq_users_email_normalized
@@ -332,12 +378,14 @@ CREATE TABLE itil_practices (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     code VARCHAR(50) UNIQUE NOT NULL,
     name VARCHAR(255) UNIQUE NOT NULL,
-    description TEXT,
+    description TEXT NOT NULL,
     search_document TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT chk_itil_practices_code_not_blank CHECK (btrim(code) <> ''),
-    CONSTRAINT chk_itil_practices_name_not_blank CHECK (btrim(name) <> '')
+    CONSTRAINT chk_itil_practices_name_not_blank CHECK (btrim(name) <> ''),
+    CONSTRAINT chk_itil_practices_description_not_blank CHECK (btrim(description) <> ''),
+    CONSTRAINT chk_itil_practices_updated_at_after_created_at CHECK (updated_at >= created_at)
 );
 
 -- ============================================================================
@@ -348,7 +396,7 @@ CREATE TABLE areas (
     itil_practice_id UUID NOT NULL REFERENCES itil_practices(id) ON DELETE RESTRICT,
     code VARCHAR(50) UNIQUE NOT NULL,
     title VARCHAR(255) NOT NULL,
-    description TEXT,
+    description TEXT NOT NULL,
     search_document TEXT NOT NULL DEFAULT '',
     owner_id UUID NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
     created_by UUID REFERENCES users(id) ON DELETE SET NULL,
@@ -356,7 +404,9 @@ CREATE TABLE areas (
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT chk_areas_code_not_blank CHECK (btrim(code) <> ''),
-    CONSTRAINT chk_areas_title_not_blank CHECK (btrim(title) <> '')
+    CONSTRAINT chk_areas_title_not_blank CHECK (btrim(title) <> ''),
+    CONSTRAINT chk_areas_description_not_blank CHECK (btrim(description) <> ''),
+    CONSTRAINT chk_areas_updated_at_after_created_at CHECK (updated_at >= created_at)
 );
 
 -- ============================================================================
@@ -367,7 +417,7 @@ CREATE TABLE processes (
     area_id UUID NOT NULL REFERENCES areas(id) ON DELETE CASCADE,
     code VARCHAR(50) UNIQUE NOT NULL,
     title VARCHAR(255) NOT NULL,
-    summary TEXT,
+    description TEXT NOT NULL,
     search_document TEXT NOT NULL DEFAULT '',
     owner_id UUID NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
     created_by UUID REFERENCES users(id) ON DELETE SET NULL,
@@ -375,7 +425,9 @@ CREATE TABLE processes (
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT chk_processes_code_not_blank CHECK (btrim(code) <> ''),
-    CONSTRAINT chk_processes_title_not_blank CHECK (btrim(title) <> '')
+    CONSTRAINT chk_processes_title_not_blank CHECK (btrim(title) <> ''),
+    CONSTRAINT chk_processes_description_not_blank CHECK (btrim(description) <> ''),
+    CONSTRAINT chk_processes_updated_at_after_created_at CHECK (updated_at >= created_at)
 );
 
 -- ============================================================================
@@ -391,12 +443,9 @@ CREATE TABLE process_versions (
     lifecycle_state process_lifecycle_state NOT NULL DEFAULT 'Draft',
     architecture_state process_architecture_state NOT NULL,
     title VARCHAR(255) NOT NULL,
-    summary TEXT,
     search_document TEXT NOT NULL DEFAULT '',
     checklist_completed BOOLEAN NOT NULL DEFAULT FALSE,
     derived_from_version_id UUID REFERENCES process_versions(id) ON DELETE RESTRICT,
-    overview TEXT,
-    notes TEXT,
     change_description TEXT NOT NULL,
     reason_for_change TEXT NOT NULL,
     created_by UUID REFERENCES users(id) ON DELETE SET NULL,
@@ -406,7 +455,8 @@ CREATE TABLE process_versions (
     CONSTRAINT uq_process_versions_process_version UNIQUE (process_id, version_number),
     CONSTRAINT chk_process_versions_title_not_blank CHECK (btrim(title) <> ''),
     CONSTRAINT chk_process_versions_change_description_not_blank CHECK (btrim(change_description) <> ''),
-    CONSTRAINT chk_process_versions_reason_for_change_not_blank CHECK (btrim(reason_for_change) <> '')
+    CONSTRAINT chk_process_versions_reason_for_change_not_blank CHECK (btrim(reason_for_change) <> ''),
+    CONSTRAINT chk_process_versions_updated_at_after_created_at CHECK (updated_at >= created_at)
 );
 
 CREATE UNIQUE INDEX uq_one_published_version_per_process_architecture
@@ -423,7 +473,8 @@ CREATE TABLE version_state_history (
     to_state process_lifecycle_state NOT NULL,
     actor_id UUID REFERENCES users(id) ON DELETE SET NULL,
     reason TEXT,
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT chk_version_state_history_no_duplicate_transition CHECK (from_state IS NULL OR from_state <> to_state)
 );
 
 -- ============================================================================
@@ -431,21 +482,29 @@ CREATE TABLE version_state_history (
 -- ============================================================================
 CREATE TABLE procedures (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    process_version_id UUID NOT NULL REFERENCES process_versions(id) ON DELETE CASCADE,
+    process_version_id UUID NOT NULL REFERENCES process_versions(id) ON DELETE RESTRICT,
     code VARCHAR(50) NOT NULL,
     title VARCHAR(255) NOT NULL,
-    summary TEXT,
+    utility TEXT NOT NULL,
+    warranty TEXT NOT NULL,
+    outcome TEXT NOT NULL,
+    policy TEXT NOT NULL,
     search_document TEXT NOT NULL DEFAULT '',
-    purpose TEXT,
-    scope TEXT,
-    owner_id UUID NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
+    activities JSONB DEFAULT '[]'::jsonb,
+    inputs JSONB DEFAULT '[]'::jsonb,
+    outputs JSONB DEFAULT '[]'::jsonb,
     created_by UUID REFERENCES users(id) ON DELETE SET NULL,
     updated_by UUID REFERENCES users(id) ON DELETE SET NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT uq_procedures_version_code UNIQUE (process_version_id, code),
     CONSTRAINT chk_procedures_code_not_blank CHECK (btrim(code) <> ''),
-    CONSTRAINT chk_procedures_title_not_blank CHECK (btrim(title) <> '')
+    CONSTRAINT chk_procedures_title_not_blank CHECK (btrim(title) <> ''),
+    CONSTRAINT chk_procedures_utility_not_blank CHECK (btrim(utility) <> ''),
+    CONSTRAINT chk_procedures_warranty_not_blank CHECK (btrim(warranty) <> ''),
+    CONSTRAINT chk_procedures_outcome_not_blank CHECK (btrim(outcome) <> ''),
+    CONSTRAINT chk_procedures_policy_not_blank CHECK (btrim(policy) <> ''),
+    CONSTRAINT chk_procedures_updated_at_after_created_at CHECK (updated_at >= created_at)
 );
 
 -- ============================================================================
@@ -453,15 +512,14 @@ CREATE TABLE procedures (
 -- ============================================================================
 CREATE TABLE assets (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    process_version_id UUID NOT NULL REFERENCES process_versions(id) ON DELETE CASCADE,
-    code VARCHAR(50),
-    subtitle VARCHAR(255),
+    process_version_id UUID NOT NULL REFERENCES process_versions(id) ON DELETE RESTRICT,
+    caption VARCHAR(255) NOT NULL,
     search_document TEXT NOT NULL DEFAULT '',
     asset_type asset_type NOT NULL,
     file_path VARCHAR(500) NOT NULL,
-    mime_type VARCHAR(100),
-    checksum VARCHAR(128),
-    size_bytes BIGINT CHECK (size_bytes IS NULL OR size_bytes >= 0),
+    mime_type VARCHAR(100) NOT NULL,
+    checksum VARCHAR(128) NOT NULL,
+    size_bytes BIGINT NOT NULL CHECK (size_bytes >= 0),
     created_by UUID REFERENCES users(id) ON DELETE SET NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT chk_assets_file_path_not_blank CHECK (btrim(file_path) <> '')
@@ -476,56 +534,62 @@ CREATE TABLE audit_logs (
     entity_id UUID NOT NULL,
     action audit_action NOT NULL,
     actor_id UUID REFERENCES users(id) ON DELETE SET NULL,
-    reason_for_change TEXT,
+    reason_for_change TEXT NOT NULL,
     old_data JSONB,
     new_data JSONB,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT chk_audit_logs_entity_type_not_blank CHECK (btrim(entity_type) <> '')
+    CONSTRAINT chk_audit_logs_entity_type_not_blank CHECK (btrim(entity_type) <> ''),
+    CONSTRAINT chk_audit_logs_entity_type_valid CHECK (entity_type IN ('area', 'process', 'process_version', 'procedure', 'asset', 'user', 'role', 'team', 'glossary_term', 'itil_practice'))
 );
 
 -- ============================================================================
 -- 10. INDEXES
 -- ============================================================================
+CREATE UNIQUE INDEX uq_processes_code_normalized
+ON processes (normalize_search_text(code));
+
+CREATE UNIQUE INDEX uq_areas_code_normalized
+ON areas (normalize_search_text(code));
+
+CREATE UNIQUE INDEX uq_itil_practices_code_normalized
+ON itil_practices (normalize_search_text(code));
+
+CREATE UNIQUE INDEX uq_teams_code_normalized
+ON teams (normalize_search_text(code));
+CREATE INDEX idx_team_aliases_team_id ON team_aliases(team_id);
+CREATE INDEX idx_areas_owner_id ON areas(owner_id);
+CREATE INDEX idx_processes_owner_id ON processes(owner_id);
+CREATE INDEX idx_procedures_created_by ON procedures(created_by);
+CREATE INDEX idx_procedures_updated_by ON procedures(updated_by);
+CREATE INDEX idx_assets_created_by ON assets(created_by);
+CREATE INDEX idx_audit_logs_actor_id ON audit_logs(actor_id);
+CREATE INDEX idx_glossary_terms_created_by ON glossary_terms(created_by);
+CREATE INDEX idx_processes_created_by ON processes(created_by);
+CREATE INDEX idx_processes_updated_by ON processes(updated_by);
+CREATE INDEX idx_process_versions_created_by ON process_versions(created_by);
+CREATE INDEX idx_process_versions_updated_by ON process_versions(updated_by);
+CREATE INDEX idx_areas_created_by ON areas(created_by);
+CREATE INDEX idx_areas_updated_by ON areas(updated_by);
 CREATE INDEX idx_itil_practices_code ON itil_practices(code);
-
 CREATE INDEX idx_itil_practices_name ON itil_practices(name);
-
 CREATE INDEX idx_areas_itil_practice_id ON areas(itil_practice_id);
-
 CREATE INDEX idx_areas_code ON areas(code);
-
 CREATE INDEX idx_areas_title ON areas(title);
-
 CREATE INDEX idx_processes_area_id ON processes(area_id);
-
 CREATE INDEX idx_processes_code ON processes(code);
-
 CREATE INDEX idx_processes_title ON processes(title);
-
 CREATE INDEX idx_process_versions_process_id ON process_versions(process_id);
-
 CREATE INDEX idx_process_versions_lifecycle_state ON process_versions(lifecycle_state);
-
 CREATE INDEX idx_process_versions_architecture_state ON process_versions(architecture_state);
-
 CREATE INDEX idx_process_versions_derived_from_version_id ON process_versions(derived_from_version_id);
-
 CREATE INDEX idx_procedures_process_version_id ON procedures(process_version_id);
-
 CREATE INDEX idx_procedures_code ON procedures(code);
-
 CREATE INDEX idx_procedures_title ON procedures(title);
-
 CREATE INDEX idx_assets_process_version_id ON assets(process_version_id);
-
 CREATE INDEX idx_assets_asset_type ON assets(asset_type);
-
 CREATE INDEX idx_users_role_id ON users(role_id);
-
 CREATE INDEX idx_users_team_id ON users(team_id);
-
 CREATE INDEX idx_audit_logs_entity ON audit_logs(entity_type, entity_id);
-
 CREATE INDEX idx_audit_logs_created_at ON audit_logs(created_at);
 
 CREATE INDEX idx_version_state_history_process_version_id
@@ -696,14 +760,13 @@ UPDATE processes
 SET search_document = normalize_search_text(
 coalesce(code, '') || ' ' ||
 coalesce(title, '') || ' ' ||
-coalesce(summary, '')
+coalesce(description, '')
 );
 
 UPDATE process_versions
 SET search_document = normalize_search_text(
 coalesce(version_number::TEXT, '') || ' ' ||
 coalesce(title, '') || ' ' ||
-coalesce(summary, '') || ' ' ||
 coalesce(change_description, '') || ' ' ||
 coalesce(reason_for_change, '')
 );
@@ -712,15 +775,18 @@ UPDATE procedures
 SET search_document = normalize_search_text(
 coalesce(code, '') || ' ' ||
 coalesce(title, '') || ' ' ||
-coalesce(summary, '') || ' ' ||
-coalesce(purpose, '') || ' ' ||
-coalesce(scope, '')
+coalesce(utility, '') || ' ' ||
+coalesce(warranty, '') || ' ' ||
+coalesce(outcome, '') || ' ' ||
+coalesce(policy, '') || ' ' ||
+coalesce(activities::TEXT, '') || ' ' ||
+coalesce(inputs::TEXT, '') || ' ' ||
+coalesce(outputs::TEXT, '')
 );
 
 UPDATE assets
 SET search_document = normalize_search_text(
-coalesce(code, '') || ' ' ||
-coalesce(subtitle, '') || ' ' ||
+coalesce(caption, '') || ' ' ||
 coalesce(asset_type::TEXT, '') || ' ' ||
 coalesce(mime_type, '') || ' ' ||
 coalesce(file_path, '')

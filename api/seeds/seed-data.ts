@@ -48,7 +48,7 @@ export interface AreaSeed {
 export interface ProcessSeed {
   code: string;
   title: string;
-  summary: string;
+  description: string;
   areaCode: string;
   ownerEmail: string;
 }
@@ -59,14 +59,17 @@ export interface ProcessVersionSeed {
   architectureState: ArchitectureState;
   lifecycleState: LifecycleState;
   title: string;
-  summary: string;
   checklistCompleted: boolean;
   changeDescription: string;
   reasonForChange: string;
-  overview?: string;
-  notes?: string;
-  derivedFromVersionNumber?: number;
+  derivedFromVersionRef?: string;
   updatedByEmail: string;
+}
+
+export interface ProcedureActivitySeed {
+  resource: string;
+  service_action: string;
+  work_instruction: string;
 }
 
 export interface ProcedureSeed {
@@ -74,10 +77,13 @@ export interface ProcedureSeed {
   versionNumber: number;
   code: string;
   title: string;
-  summary: string;
-  purpose: string;
-  scope: string;
-  ownerEmail: string;
+  utility: string;
+  warranty: string;
+  outcome: string;
+  policy: string;
+  activities: ProcedureActivitySeed[];
+  inputs: string[];
+  outputs: string[];
 }
 
 export interface VersionHistorySeed {
@@ -110,6 +116,7 @@ export interface AuditLogSeed {
     | 'ARCHIVE'
     | 'UPLOAD'
     | 'PROMOTE'
+    | 'REOPEN'
     | 'USER_CREATE'
     | 'USER_UPDATE'
     | 'USER_DEACTIVATE'
@@ -121,98 +128,81 @@ export interface AuditLogSeed {
   newData?: Record<string, unknown> | null;
 }
 
-export const SHARED_DEMO_PASSWORD = 'ProcessSeed!2026';
-export const SEED_REASON_PREFIX = '[seed]';
 export const BPMN_DIRECTORY = 'seed';
 
 export const roles: RoleSeed[] = [
   {
     name: 'EDITOR',
     description:
-      'Content preparation role for draft creation and BPMN uploads.',
+      'Responsible for preparing and modifying process content in draft state.',
   },
   {
     name: 'REVIEWER',
-    description: 'Formal validation role separated from publication authority.',
+    description:
+      'Responsible for formal validation, rejection, and controlled reopening.',
   },
   {
     name: 'PUBLISHER',
-    description: 'Controlled release authority for publication and archival.',
+    description:
+      'Responsible for publication, archival, and TO-BE promotion decisions.',
   },
   {
     name: 'VIEWER',
-    description: 'Read-only consultation role for internal stakeholders.',
+    description: 'Authenticated read-only consultation role.',
   },
   {
     name: 'SYSTEM_ADMIN',
-    description: 'Technical operations role without governance authority.',
+    description: 'Technical administration role with no governance authority.',
   },
 ];
 
 export const teams: TeamSeed[] = [
   {
-    code: 'PROCESS_OFFICE',
-    name: 'Process Office',
-    description: 'Coordinates process design and repository upkeep.',
-    aliases: ['Process Governance Office'],
-  },
-  {
-    code: 'QUALITY_AND_COMPLIANCE',
-    name: 'Quality and Compliance',
-    description: 'Reviews compliance and formal validation outcomes.',
-    aliases: ['Quality Compliance'],
-  },
-  {
-    code: 'RELEASE_GOVERNANCE_BOARD',
-    name: 'Release Governance Board',
-    description: 'Controls official publication and archival decisions.',
-    aliases: [],
-  },
-  {
-    code: 'ENTERPRISE_ARCHITECTURE',
-    name: 'Enterprise Architecture',
+    code: 'HR',
+    name: 'Human Resources',
     description:
-      'Consults architecture views and published repository content.',
-    aliases: [],
+      'Human resources department responsible for relocation workflows.',
+    aliases: ['People Operations'],
   },
   {
-    code: 'PLATFORM_OPERATIONS',
-    name: 'Platform Operations',
-    description: 'Maintains platform availability and technical user support.',
-    aliases: ['Platform Ops'],
+    code: 'IT',
+    name: 'Information Technology',
+    description:
+      'IT department responsible for technical infrastructure and support.',
+    aliases: ['Tech Operations'],
   },
 ];
 
 export const users: UserSeed[] = [
   {
-    email: 'editor@pms.local',
-    name: 'Elena Editor',
+    email: 'alice.editor@example.com',
+    name: 'Alice Editor',
     roleName: 'EDITOR',
-    teamCode: 'PROCESS_OFFICE',
+    teamCode: 'HR',
   },
   {
-    email: 'reviewer@pms.local',
-    name: 'Ravi Reviewer',
+    email: 'rachel.reviewer@example.com',
+    name: 'Rachel Reviewer',
     roleName: 'REVIEWER',
-    teamCode: 'QUALITY_AND_COMPLIANCE',
+    teamCode: 'HR',
   },
   {
-    email: 'publisher@pms.local',
-    name: 'Paula Publisher',
+    email: 'peter.publisher@example.com',
+    name: 'Peter Publisher',
     roleName: 'PUBLISHER',
-    teamCode: 'RELEASE_GOVERNANCE_BOARD',
+    teamCode: 'HR',
   },
   {
-    email: 'viewer@pms.local',
+    email: 'victor.viewer@example.com',
     name: 'Victor Viewer',
     roleName: 'VIEWER',
-    teamCode: 'ENTERPRISE_ARCHITECTURE',
+    teamCode: 'HR',
   },
   {
-    email: 'system_administrator@pms.local',
-    name: 'Sam System Administrator',
+    email: 'sam.admin@example.com',
+    name: 'Sam SystemAdmin',
     roleName: 'SYSTEM_ADMIN',
-    teamCode: 'PLATFORM_OPERATIONS',
+    teamCode: 'IT',
   },
 ];
 
@@ -220,503 +210,953 @@ export const glossaryTerms: GlossaryTermSeed[] = [
   {
     term: 'AS-IS',
     definition:
-      'Current institutional process state that is formally implemented and published.',
+      'Current officially published state of an institutional process.',
     category: 'Architecture State',
   },
   {
     term: 'TO-BE',
     definition:
-      'Target future institutional process state proposed for governed improvement.',
+      'Target future state of an institutional process proposed for improvement.',
     category: 'Architecture State',
   },
   {
     term: 'Process',
     definition:
-      'Managed sequence of activities that transforms inputs into governed business outcomes.',
+      'Stable workflow identity that can accumulate governed versions over time.',
     category: 'Repository Structure',
   },
   {
     term: 'Procedure',
     definition:
-      'Version-specific set of instructions that describes how a process is executed in practice.',
+      'Version-specific operational steps and structured metadata used to execute a process.',
     category: 'Repository Structure',
   },
   {
     term: 'Business Process Model and Notation',
     definition:
-      'Standard visual notation used to document and render business workflow diagrams in the repository.',
+      'Standard notation used to document and visualize business workflow diagrams.',
     category: 'Standards',
   },
 ];
 
 export const itilPractices: ItilPracticeSeed[] = [
   {
-    code: 'INCIDENT_MANAGEMENT',
-    name: 'Incident management',
+    code: 'APO07',
+    name: 'Managed Human Resources',
     description:
-      'Restores normal service operation after disruptions and supports operational recovery.',
+      'Optimize human resources capabilities to meet enterprise objectives.',
   },
   {
-    code: 'CHANGE_CONTROL',
-    name: 'Change control',
+    code: 'APO04',
+    name: 'Managed Quality',
     description:
-      'Controls assessment, authorization, and release of changes into the environment.',
-  },
-  {
-    code: 'SERVICE_REQUEST_MANAGEMENT',
-    name: 'Service request management',
-    description:
-      'Handles predefined user requests through standard fulfillment pathways.',
+      'Ensure that products and services meet established quality standards and stakeholder expectations.',
   },
 ];
 
 export const areas: AreaSeed[] = [
   {
-    code: 'AREA_OPERATIONAL_SUPPORT',
-    title: 'Operational Support and Recovery',
+    code: 'A1',
+    title: 'Global Management',
     description:
-      'Area that groups operational recovery and service stabilization processes.',
-    itilPracticeCode: 'INCIDENT_MANAGEMENT',
-    ownerEmail: 'editor@pms.local',
+      'Business area containing the human resources relocation and allocation workflows.',
+    itilPracticeCode: 'APO07',
+    ownerEmail: 'alice.editor@example.com',
   },
   {
-    code: 'AREA_CHANGE_PLANNING',
-    title: 'Change Planning and Control',
+    code: 'A2',
+    title: 'Quality Assurance',
     description:
-      'Area that groups governance and planning activities for controlled change.',
-    itilPracticeCode: 'CHANGE_CONTROL',
-    ownerEmail: 'editor@pms.local',
+      'Business area containing quality management and compliance workflows.',
+    itilPracticeCode: 'APO04',
+    ownerEmail: 'sam.admin@example.com',
   },
 ];
 
 export const processes: ProcessSeed[] = [
   {
-    code: 'PROCESS_INCIDENT_RESOLUTION',
-    title: 'Incident Resolution Lifecycle',
-    summary:
-      'Standardizes diagnosis, escalation, and recovery of operational incidents.',
-    areaCode: 'AREA_OPERATIONAL_SUPPORT',
-    ownerEmail: 'editor@pms.local',
+    code: '1',
+    title: 'Employee Workplace Relocation',
+    description:
+      'End-to-end workflow for relocating employees between office locations, including workspace allocation, equipment transfer, and administrative coordination.',
+    areaCode: 'A1',
+    ownerEmail: 'alice.editor@example.com',
   },
   {
-    code: 'PROCESS_STANDARD_CHANGE',
-    title: 'Standard Change Governance',
-    summary:
-      'Controls review, approval, and publication of standardized operational changes.',
-    areaCode: 'AREA_CHANGE_PLANNING',
-    ownerEmail: 'editor@pms.local',
+    code: '2',
+    title: 'Employee Onboarding and Allocation',
+    description:
+      'Workflow for integrating new employees into their assigned workplace, including workspace setup, access provisioning, and administrative registration.',
+    areaCode: 'A1',
+    ownerEmail: 'alice.editor@example.com',
+  },
+  {
+    code: '3',
+    title: 'Quality Compliance Review',
+    description:
+      'Workflow for reviewing and validating process compliance with established quality standards and regulatory requirements.',
+    areaCode: 'A2',
+    ownerEmail: 'sam.admin@example.com',
   },
 ];
 
 export const processVersions: ProcessVersionSeed[] = [
   {
-    processCode: 'PROCESS_INCIDENT_RESOLUTION',
+    processCode: '1',
     versionNumber: 1,
     architectureState: 'AS-IS',
     lifecycleState: 'Published',
-    title: 'Incident Resolution Lifecycle Version 1',
-    summary: 'Published current-state operating model for incident resolution.',
+    title: 'Employee Workplace Relocation v1.0',
     checklistCompleted: true,
     changeDescription:
-      'Baseline published incident-resolution workflow captured for current operations.',
+      'Initial publication of the standard employee relocation workflow.',
     reasonForChange:
-      'Establish the initial official AS-IS repository version for public consultation.',
-    overview:
-      'This version describes the current institutional incident recovery flow.',
-    notes: 'Published baseline used for AS-IS portal comparison.',
-    updatedByEmail: 'publisher@pms.local',
+      'Document the existing relocation process to ensure consistency across all departments.',
+    updatedByEmail: 'peter.publisher@example.com',
   },
   {
-    processCode: 'PROCESS_INCIDENT_RESOLUTION',
+    processCode: '1',
     versionNumber: 2,
     architectureState: 'TO-BE',
     lifecycleState: 'Published',
-    title: 'Incident Resolution Lifecycle Version 2',
-    summary:
-      'Published target-state workflow for faster triage and escalation.',
+    title: 'Employee Workplace Relocation v2.0 - Improved Coordination',
     checklistCompleted: true,
     changeDescription:
-      'Introduces the published TO-BE process with clearer triage and governed escalation.',
+      'Redesigned workflow to reduce relocation time from 5 to 3 business days.',
     reasonForChange:
-      'Provide a published TO-BE comparison target for the public portal and BPMN viewer.',
-    overview:
-      'This version models the future-state incident resolution pathway after improvement.',
-    notes: 'Published comparison record and promotable TO-BE input state.',
-    derivedFromVersionNumber: 1,
-    updatedByEmail: 'publisher@pms.local',
+      'Stakeholder feedback indicated delays in equipment delivery and lack of coordination between departments.',
+    derivedFromVersionRef: '1@1',
+    updatedByEmail: 'peter.publisher@example.com',
   },
   {
-    processCode: 'PROCESS_STANDARD_CHANGE',
-    versionNumber: 1,
-    architectureState: 'AS-IS',
-    lifecycleState: 'Approved',
-    title: 'Standard Change Governance Version 1',
-    summary: 'Approved current-state governance flow awaiting publication.',
-    checklistCompleted: true,
-    changeDescription:
-      'Captures the approved AS-IS standard change governance workflow.',
-    reasonForChange:
-      'Provide an approved record that is immediately publish-ready for demo purposes.',
-    overview:
-      'This version is approved and available for a later PUBLISHER action in demos.',
-    notes: 'Approved workflow demo case.',
-    updatedByEmail: 'reviewer@pms.local',
-  },
-  {
-    processCode: 'PROCESS_STANDARD_CHANGE',
-    versionNumber: 2,
-    architectureState: 'TO-BE',
-    lifecycleState: 'Draft',
-    title: 'Standard Change Governance Version 2',
-    summary:
-      'Submit-ready draft target-state for the interactive lifecycle demo.',
-    checklistCompleted: true,
-    changeDescription:
-      'Defines a TO-BE governance draft prepared for submit-for-review demonstration.',
-    reasonForChange:
-      'Provide a clean draft version that can move through review and publication during demos.',
-    overview:
-      'This draft is fully prepared with metadata and BPMN so the EDITOR can submit it immediately.',
-    notes: 'Interactive lifecycle demo draft.',
-    derivedFromVersionNumber: 1,
-    updatedByEmail: 'editor@pms.local',
-  },
-  {
-    processCode: 'PROCESS_STANDARD_CHANGE',
+    processCode: '1',
     versionNumber: 3,
     architectureState: 'TO-BE',
     lifecycleState: 'Draft',
-    title: 'Standard Change Governance Version 3',
-    summary: 'Rejected draft retained as evidence of formal review rejection.',
-    checklistCompleted: true,
+    title: 'Employee Workplace Relocation v3.0 - Rejected Draft',
+    checklistCompleted: false,
     changeDescription:
-      'Creates a TO-BE candidate that will be formally rejected back to Draft.',
+      'Proposed additional automation for relocation workflow.',
     reasonForChange:
-      'Provide explicit rejection-path evidence in audit and lifecycle history.',
-    overview:
-      'This record demonstrates the formal In Review to Draft rejection flow.',
-    notes: 'Rejection evidence case.',
-    derivedFromVersionNumber: 1,
-    updatedByEmail: 'reviewer@pms.local',
+      'Explore automation opportunities to further reduce relocation time.',
+    derivedFromVersionRef: '1@2',
+    updatedByEmail: 'alice.editor@example.com',
   },
   {
-    processCode: 'PROCESS_STANDARD_CHANGE',
-    versionNumber: 4,
+    processCode: '2',
+    versionNumber: 1,
     architectureState: 'AS-IS',
-    lifecycleState: 'Draft',
-    title: 'Standard Change Governance Version 4',
-    summary: 'Reopened version retained as evidence of controlled rework.',
+    lifecycleState: 'Archived',
+    title: 'Employee Onboarding and Allocation v1.0',
     checklistCompleted: true,
     changeDescription:
-      'Creates an AS-IS version that is approved and then formally reopened to Draft.',
+      'Initial publication of the standard employee onboarding process.',
     reasonForChange:
-      'Provide explicit controlled-reopening evidence in audit and lifecycle history.',
-    overview:
-      'This record demonstrates Approved to Draft reopening under reviewer control.',
-    notes: 'Controlled reopening evidence case.',
-    derivedFromVersionNumber: 1,
-    updatedByEmail: 'reviewer@pms.local',
+      'Establish a consistent onboarding procedure across all departments.',
+    updatedByEmail: 'peter.publisher@example.com',
+  },
+  {
+    processCode: '2',
+    versionNumber: 2,
+    architectureState: 'TO-BE',
+    lifecycleState: 'Archived',
+    title: 'Employee Onboarding and Allocation v2.0 - Streamlined Process',
+    checklistCompleted: true,
+    changeDescription:
+      'Streamlined onboarding process to reduce first-day setup time from 4 to 2 hours.',
+    reasonForChange:
+      'New employee surveys indicated lengthy setup times and redundant paperwork.',
+    derivedFromVersionRef: '2@1',
+    updatedByEmail: 'peter.publisher@example.com',
+  },
+  {
+    processCode: '2',
+    versionNumber: 3,
+    architectureState: 'AS-IS',
+    lifecycleState: 'Published',
+    title: 'Employee Onboarding and Allocation v3.0 - Current Standard',
+    checklistCompleted: true,
+    changeDescription:
+      'Promoted the streamlined onboarding workflow to production as the new standard.',
+    reasonForChange:
+      'Successful pilot implementation demonstrated 50% reduction in first-day setup time.',
+    derivedFromVersionRef: '2@2',
+    updatedByEmail: 'peter.publisher@example.com',
+  },
+  {
+    processCode: '2',
+    versionNumber: 4,
+    architectureState: 'TO-BE',
+    lifecycleState: 'Approved',
+    title: 'Employee Onboarding and Allocation v4.0 - AI-Assisted',
+    checklistCompleted: true,
+    changeDescription:
+      'Proposed AI-assisted onboarding with predictive resource allocation.',
+    reasonForChange:
+      'Leverage machine learning to predict and pre-allocate resources based on new employee profile.',
+    derivedFromVersionRef: '2@3',
+    updatedByEmail: 'alice.editor@example.com',
+  },
+  {
+    processCode: '3',
+    versionNumber: 1,
+    architectureState: 'AS-IS',
+    lifecycleState: 'Published',
+    title: 'Quality Compliance Review v1.0',
+    checklistCompleted: true,
+    changeDescription:
+      'Initial publication of the standard quality compliance review workflow.',
+    reasonForChange:
+      'Establish a consistent quality review process across all departments.',
+    updatedByEmail: 'peter.publisher@example.com',
+  },
+];
+
+const comparisonActivities: ProcedureActivitySeed[] = [
+  {
+    resource: 'Human Resources Department',
+    service_action: 'Issue Relocation Assignment',
+    work_instruction:
+      'Prepare and distribute the official relocation assignment document to the employee and destination office.',
+  },
+  {
+    resource: 'Destination Office Administration',
+    service_action: 'Prepare Workspace',
+    work_instruction:
+      'Allocate and prepare the physical workspace, including desk, chair, and necessary office supplies.',
+  },
+  {
+    resource: 'IT Support Team',
+    service_action: 'Configure IT Equipment',
+    work_instruction:
+      'Set up computer, network access, email account, and required business applications at the new location.',
+  },
+];
+
+const targetActivities: ProcedureActivitySeed[] = [
+  {
+    resource: 'Human Resources Department',
+    service_action: 'Issue Relocation Assignment',
+    work_instruction:
+      'Prepare and distribute the official relocation assignment document to the employee and destination office.',
+  },
+  {
+    resource: 'Destination Office Manager',
+    service_action: 'Confirm Workspace Readiness',
+    work_instruction:
+      'Verify workspace availability and confirm readiness date with HR and IT teams.',
+  },
+  {
+    resource: 'IT Support Team',
+    service_action: 'Pre-configure IT Environment',
+    work_instruction:
+      'Prepare user account, configure workstation, and test network access before employee arrival date.',
+  },
+];
+
+const qualityReviewActivities: ProcedureActivitySeed[] = [
+  {
+    resource: 'Quality Assurance Team',
+    service_action: 'Initiate Compliance Review',
+    work_instruction:
+      'Review process documentation against established quality standards and regulatory requirements.',
+  },
+  {
+    resource: 'Process Owner',
+    service_action: 'Provide Compliance Documentation',
+    work_instruction:
+      'Submit documentation demonstrating adherence to quality standards and process controls.',
+  },
+  {
+    resource: 'Quality Assurance Team',
+    service_action: 'Document Review Findings',
+    work_instruction:
+      'Record compliance assessment results and identify any required corrective actions.',
   },
 ];
 
 export const procedures: ProcedureSeed[] = [
   {
-    processCode: 'PROCESS_INCIDENT_RESOLUTION',
+    processCode: '1',
     versionNumber: 1,
-    code: 'PROCEDURE_INCIDENT_TRIAGE_BASELINE',
-    title: 'Baseline Incident Triage Procedure',
-    summary:
-      'Defines the current-state triage checkpoints for incident recovery.',
-    purpose: 'Classify and route incidents under the published AS-IS workflow.',
-    scope: 'Applies to operational incidents documented in Version 1.',
-    ownerEmail: 'editor@pms.local',
+    code: '1.1',
+    title: 'Inter-Departmental Employee Transfer',
+    utility:
+      'Workflow functionality to facilitate the relocation of employees between supported office locations.',
+    warranty:
+      'Relocation completed within 5 business days, with zero data loss, and compliant with organization security policies.',
+    outcome:
+      'The employee is fully operational at their new location with configured IT equipment and workspace.',
+    policy:
+      'Applies to staff transfers between supported office locations.',
+    activities: comparisonActivities,
+    inputs: ['Approved transfer request from department head'],
+    outputs: [
+      'Employee operational at new location with all required equipment and access',
+    ],
   },
   {
-    processCode: 'PROCESS_INCIDENT_RESOLUTION',
+    processCode: '1',
     versionNumber: 2,
-    code: 'PROCEDURE_INCIDENT_TRIAGE_TARGET',
-    title: 'Target Incident Triage Procedure',
-    summary:
-      'Defines the target-state triage checkpoints for the TO-BE workflow.',
-    purpose:
-      'Support faster escalation and governed handoff in the TO-BE flow.',
-    scope: 'Applies to the published TO-BE process structure in Version 2.',
-    ownerEmail: 'editor@pms.local',
+    code: '1.1',
+    title: 'Coordinated Employee Transfer Process',
+    utility:
+      'Workflow functionality to facilitate coordinated relocation with structured handoff across HR, receiving offices, and IT support.',
+    warranty:
+      'Relocation completed within 3 business days, with zero data loss, and compliant with organization security policies.',
+    outcome:
+      'The employee is activated at the destination office on the planned date with all services operational.',
+    policy:
+      'Applies to staff transfers between supported office locations.',
+    activities: targetActivities,
+    inputs: [
+      'Approved transfer request',
+      'Destination office readiness confirmation',
+    ],
+    outputs: ['Employee activated at destination office on planned date'],
   },
   {
-    processCode: 'PROCESS_STANDARD_CHANGE',
+    processCode: '2',
+    versionNumber: 1,
+    code: '2.1',
+    title: 'New Employee Onboarding Procedure',
+    utility:
+      'Workflow functionality to integrate new employees into their assigned workplace.',
+    warranty:
+      'Onboarding completed within 4 hours on first day, with zero data loss, and compliant with organization security policies.',
+    outcome:
+      'The new employee is fully operational with workspace, IT access, and administrative registration completed.',
+    policy: 'Applies to all new hires across departments.',
+    activities: comparisonActivities,
+    inputs: ['Employment contract and HR onboarding checklist'],
+    outputs: ['New employee operational with workspace and IT access'],
+  },
+  {
+    processCode: '2',
     versionNumber: 2,
-    code: 'PROCEDURE_STANDARD_CHANGE_DRAFT',
-    title: 'Draft Standard Change Preparation Procedure',
-    summary:
-      'Defines the draft-level preparation steps for the interactive workflow demo.',
-    purpose:
-      'Demonstrate that procedures are version-specific and editable in Draft.',
-    scope: 'Applies only to the submit-ready Draft Version 2.',
-    ownerEmail: 'editor@pms.local',
+    code: '2.1',
+    title: 'Streamlined New Employee Onboarding',
+    utility:
+      'Workflow functionality to integrate new employees with automated access provisioning and digital documentation.',
+    warranty:
+      'Onboarding completed within 2 hours on first day, with zero data loss, and compliant with organization security policies.',
+    outcome:
+      'The new employee is fully operational with pre-configured workspace and automated access.',
+    policy: 'Applies to all new hires across departments.',
+    activities: targetActivities,
+    inputs: ['Employment contract and automated onboarding checklist'],
+    outputs: ['New employee operational with pre-configured environment'],
+  },
+  {
+    processCode: '2',
+    versionNumber: 3,
+    code: '2.1',
+    title: 'Standard New Employee Onboarding Process',
+    utility:
+      'Workflow functionality to integrate new employees with automated access provisioning and digital documentation.',
+    warranty:
+      'Onboarding completed within 2 hours on first day, with zero data loss, and compliant with organization security policies.',
+    outcome:
+      'The new employee is fully operational with pre-configured workspace and automated access.',
+    policy: 'Applies to all new hires across departments.',
+    activities: targetActivities,
+    inputs: ['Employment contract and automated onboarding checklist'],
+    outputs: ['New employee operational with pre-configured environment'],
+  },
+  {
+    processCode: '3',
+    versionNumber: 1,
+    code: '3.1',
+    title: 'Process Quality Compliance Review',
+    utility:
+      'Workflow functionality to validate process compliance with established quality standards and regulatory requirements.',
+    warranty:
+      'Compliance review completed within 5 business days, with documented findings and corrective action recommendations.',
+    outcome:
+      'Process compliance status documented with clear pass/fail determination and required corrective actions identified.',
+    policy:
+      'Applies to all published processes requiring quality certification.',
+    activities: qualityReviewActivities,
+    inputs: ['Process documentation and quality standards checklist'],
+    outputs: [
+      'Compliance assessment findings and corrective action recommendations',
+    ],
   },
 ];
 
 export const versionStateHistory: VersionHistorySeed[] = [
   {
-    processCode: 'PROCESS_INCIDENT_RESOLUTION',
+    processCode: '1',
     versionNumber: 1,
     fromState: null,
     toState: 'Draft',
-    actorEmail: 'editor@pms.local',
-    reason: `${SEED_REASON_PREFIX} Initial draft creation for the AS-IS baseline.`,
+    actorEmail: 'alice.editor@example.com',
+    reason: 'Created initial draft of the employee relocation workflow.',
   },
   {
-    processCode: 'PROCESS_INCIDENT_RESOLUTION',
+    processCode: '1',
     versionNumber: 1,
     fromState: 'Draft',
     toState: 'In Review',
-    actorEmail: 'editor@pms.local',
-    reason: `${SEED_REASON_PREFIX} Submitted baseline AS-IS version for formal review.`,
+    actorEmail: 'alice.editor@example.com',
+    reason: 'Submitted the employee relocation workflow for formal review.',
   },
   {
-    processCode: 'PROCESS_INCIDENT_RESOLUTION',
+    processCode: '1',
     versionNumber: 1,
     fromState: 'In Review',
     toState: 'Approved',
-    actorEmail: 'reviewer@pms.local',
-    reason: `${SEED_REASON_PREFIX} Reviewer validated the AS-IS baseline.`,
+    actorEmail: 'rachel.reviewer@example.com',
+    reason:
+      'Approved the employee relocation workflow after validation review.',
   },
   {
-    processCode: 'PROCESS_INCIDENT_RESOLUTION',
+    processCode: '1',
     versionNumber: 1,
     fromState: 'Approved',
     toState: 'Published',
-    actorEmail: 'publisher@pms.local',
-    reason: `${SEED_REASON_PREFIX} Publisher released the AS-IS baseline.`,
+    actorEmail: 'peter.publisher@example.com',
+    reason:
+      'Released the employee relocation workflow as the official standard.',
   },
   {
-    processCode: 'PROCESS_INCIDENT_RESOLUTION',
+    processCode: '1',
     versionNumber: 2,
     fromState: null,
     toState: 'Draft',
-    actorEmail: 'editor@pms.local',
-    reason: `${SEED_REASON_PREFIX} Initial draft creation for the TO-BE target state.`,
+    actorEmail: 'alice.editor@example.com',
+    reason: 'Created initial draft of the improved relocation workflow.',
   },
   {
-    processCode: 'PROCESS_INCIDENT_RESOLUTION',
+    processCode: '1',
     versionNumber: 2,
     fromState: 'Draft',
     toState: 'In Review',
-    actorEmail: 'editor@pms.local',
-    reason: `${SEED_REASON_PREFIX} Submitted TO-BE target version for formal review.`,
+    actorEmail: 'alice.editor@example.com',
+    reason: 'Submitted the improved relocation workflow for formal review.',
   },
   {
-    processCode: 'PROCESS_INCIDENT_RESOLUTION',
+    processCode: '1',
     versionNumber: 2,
     fromState: 'In Review',
     toState: 'Approved',
-    actorEmail: 'reviewer@pms.local',
-    reason: `${SEED_REASON_PREFIX} Reviewer approved the TO-BE target version.`,
+    actorEmail: 'rachel.reviewer@example.com',
+    reason:
+      'Approved the improved relocation workflow after validation review.',
   },
   {
-    processCode: 'PROCESS_INCIDENT_RESOLUTION',
+    processCode: '1',
     versionNumber: 2,
     fromState: 'Approved',
     toState: 'Published',
-    actorEmail: 'publisher@pms.local',
-    reason: `${SEED_REASON_PREFIX} Publisher released the TO-BE target version.`,
+    actorEmail: 'peter.publisher@example.com',
+    reason:
+      'Released the improved relocation workflow as the proposed target state.',
   },
   {
-    processCode: 'PROCESS_STANDARD_CHANGE',
+    processCode: '1',
+    versionNumber: 3,
+    fromState: null,
+    toState: 'Draft',
+    actorEmail: 'alice.editor@example.com',
+    reason: 'Created initial draft of the automation proposal.',
+  },
+  {
+    processCode: '1',
+    versionNumber: 3,
+    fromState: 'Draft',
+    toState: 'In Review',
+    actorEmail: 'alice.editor@example.com',
+    reason: 'Submitted the automation proposal for formal review.',
+  },
+  {
+    processCode: '1',
+    versionNumber: 3,
+    fromState: 'In Review',
+    toState: 'Draft',
+    actorEmail: 'rachel.reviewer@example.com',
+    reason:
+      'Rejected the automation proposal due to insufficient cost-benefit analysis and unclear ROI.',
+  },
+  {
+    processCode: '2',
     versionNumber: 1,
     fromState: null,
     toState: 'Draft',
-    actorEmail: 'editor@pms.local',
-    reason: `${SEED_REASON_PREFIX} Initial draft creation for the approved AS-IS workflow.`,
+    actorEmail: 'alice.editor@example.com',
+    reason: 'Created initial draft of the employee onboarding workflow.',
   },
   {
-    processCode: 'PROCESS_STANDARD_CHANGE',
+    processCode: '2',
     versionNumber: 1,
     fromState: 'Draft',
     toState: 'In Review',
-    actorEmail: 'editor@pms.local',
-    reason: `${SEED_REASON_PREFIX} Submitted AS-IS workflow for review.`,
+    actorEmail: 'alice.editor@example.com',
+    reason: 'Submitted the employee onboarding workflow for formal review.',
   },
   {
-    processCode: 'PROCESS_STANDARD_CHANGE',
+    processCode: '2',
     versionNumber: 1,
     fromState: 'In Review',
     toState: 'Approved',
-    actorEmail: 'reviewer@pms.local',
-    reason: `${SEED_REASON_PREFIX} Reviewer approved the AS-IS workflow.`,
+    actorEmail: 'rachel.reviewer@example.com',
+    reason:
+      'Approved the employee onboarding workflow after validation review.',
   },
   {
-    processCode: 'PROCESS_STANDARD_CHANGE',
+    processCode: '2',
+    versionNumber: 1,
+    fromState: 'Approved',
+    toState: 'Published',
+    actorEmail: 'peter.publisher@example.com',
+    reason:
+      'Released the employee onboarding workflow as the official standard.',
+  },
+  {
+    processCode: '2',
+    versionNumber: 1,
+    fromState: 'Published',
+    toState: 'Archived',
+    actorEmail: 'peter.publisher@example.com',
+    reason:
+      'Archived the original onboarding workflow after process improvement implementation.',
+  },
+  {
+    processCode: '2',
     versionNumber: 2,
     fromState: null,
     toState: 'Draft',
-    actorEmail: 'editor@pms.local',
-    reason: `${SEED_REASON_PREFIX} Interactive lifecycle draft prepared for submit-for-review demo.`,
+    actorEmail: 'alice.editor@example.com',
+    reason: 'Created initial draft of the streamlined onboarding workflow.',
   },
   {
-    processCode: 'PROCESS_STANDARD_CHANGE',
-    versionNumber: 3,
-    fromState: null,
-    toState: 'Draft',
-    actorEmail: 'editor@pms.local',
-    reason: `${SEED_REASON_PREFIX} Draft created for the rejection evidence path.`,
-  },
-  {
-    processCode: 'PROCESS_STANDARD_CHANGE',
-    versionNumber: 3,
+    processCode: '2',
+    versionNumber: 2,
     fromState: 'Draft',
     toState: 'In Review',
-    actorEmail: 'editor@pms.local',
-    reason: `${SEED_REASON_PREFIX} Submitted rejection evidence version for formal review.`,
+    actorEmail: 'alice.editor@example.com',
+    reason: 'Submitted the streamlined onboarding workflow for formal review.',
   },
   {
-    processCode: 'PROCESS_STANDARD_CHANGE',
-    versionNumber: 3,
+    processCode: '2',
+    versionNumber: 2,
     fromState: 'In Review',
-    toState: 'Draft',
-    actorEmail: 'reviewer@pms.local',
-    reason: `${SEED_REASON_PREFIX} Reviewer rejected the version and returned it to Draft.`,
+    toState: 'Approved',
+    actorEmail: 'rachel.reviewer@example.com',
+    reason:
+      'Approved the streamlined onboarding workflow after validation review.',
   },
   {
-    processCode: 'PROCESS_STANDARD_CHANGE',
+    processCode: '2',
+    versionNumber: 2,
+    fromState: 'Approved',
+    toState: 'Published',
+    actorEmail: 'peter.publisher@example.com',
+    reason:
+      'Released the streamlined onboarding workflow for pilot implementation.',
+  },
+  {
+    processCode: '2',
+    versionNumber: 2,
+    fromState: 'Published',
+    toState: 'Archived',
+    actorEmail: 'peter.publisher@example.com',
+    reason:
+      'Archived the streamlined workflow after successful promotion to production.',
+  },
+  {
+    processCode: '2',
+    versionNumber: 3,
+    fromState: null,
+    toState: 'Published',
+    actorEmail: 'peter.publisher@example.com',
+    reason:
+      'Promoted the streamlined onboarding workflow to production as the new standard.',
+  },
+  {
+    processCode: '2',
     versionNumber: 4,
     fromState: null,
     toState: 'Draft',
-    actorEmail: 'editor@pms.local',
-    reason: `${SEED_REASON_PREFIX} Draft created for controlled reopening evidence.`,
+    actorEmail: 'alice.editor@example.com',
+    reason: 'Created initial draft of the AI-assisted onboarding proposal.',
   },
   {
-    processCode: 'PROCESS_STANDARD_CHANGE',
+    processCode: '2',
     versionNumber: 4,
     fromState: 'Draft',
     toState: 'In Review',
-    actorEmail: 'editor@pms.local',
-    reason: `${SEED_REASON_PREFIX} Submitted reopening evidence version for formal review.`,
+    actorEmail: 'alice.editor@example.com',
+    reason: 'Submitted the AI-assisted onboarding proposal for formal review.',
   },
   {
-    processCode: 'PROCESS_STANDARD_CHANGE',
+    processCode: '2',
     versionNumber: 4,
     fromState: 'In Review',
     toState: 'Approved',
-    actorEmail: 'reviewer@pms.local',
-    reason: `${SEED_REASON_PREFIX} Reviewer approved the reopening evidence version.`,
+    actorEmail: 'rachel.reviewer@example.com',
+    reason:
+      'Approved the AI-assisted onboarding proposal after validation review.',
   },
   {
-    processCode: 'PROCESS_STANDARD_CHANGE',
+    processCode: '2',
     versionNumber: 4,
     fromState: 'Approved',
     toState: 'Draft',
-    actorEmail: 'reviewer@pms.local',
-    reason: `${SEED_REASON_PREFIX} Reviewer formally reopened the approved version to Draft.`,
+    actorEmail: 'rachel.reviewer@example.com',
+    reason:
+      'Controlled reopening: Additional data privacy review required before publication due to new ML model integration.',
+  },
+  {
+    processCode: '3',
+    versionNumber: 1,
+    fromState: null,
+    toState: 'Draft',
+    actorEmail: 'sam.admin@example.com',
+    reason: 'Created initial draft of the quality compliance review workflow.',
+  },
+  {
+    processCode: '3',
+    versionNumber: 1,
+    fromState: 'Draft',
+    toState: 'In Review',
+    actorEmail: 'sam.admin@example.com',
+    reason:
+      'Submitted the quality compliance review workflow for formal review.',
+  },
+  {
+    processCode: '3',
+    versionNumber: 1,
+    fromState: 'In Review',
+    toState: 'Approved',
+    actorEmail: 'rachel.reviewer@example.com',
+    reason:
+      'Approved the quality compliance review workflow after validation review.',
+  },
+  {
+    processCode: '3',
+    versionNumber: 1,
+    fromState: 'Approved',
+    toState: 'Published',
+    actorEmail: 'peter.publisher@example.com',
+    reason:
+      'Released the quality compliance review workflow as the official standard.',
   },
 ];
 
 export const bpmnAssets: BpmnAssetSeed[] = processVersions.map((version) => ({
   processCode: version.processCode,
   versionNumber: version.versionNumber,
-  code: `${version.processCode}_V${version.versionNumber}_BPMN`,
+  code: `PROCESS_${version.processCode}_V${version.versionNumber}_BPMN`,
   subtitle: `${version.title} BPMN Diagram`,
 }));
 
 export const auditLogs: AuditLogSeed[] = [
-  ...users.map((user) => ({
-    entityType: 'user',
-    entityRef: user.email,
-    action: 'USER_CREATE' as const,
-    actorEmail: 'system_administrator@pms.local',
-    reasonForChange: `${SEED_REASON_PREFIX} Created seeded user ${user.email}.`,
-    newData: {
-      email: user.email,
-      role: user.roleName,
-      team: user.teamCode,
-      isActive: true,
-    },
-  })),
-  ...areas.map((area) => ({
+  {
     entityType: 'area',
-    entityRef: area.code,
-    action: 'CREATE' as const,
-    actorEmail: 'editor@pms.local',
-    reasonForChange: `${SEED_REASON_PREFIX} Created seeded area ${area.code}.`,
+    entityRef: 'A1',
+    action: 'CREATE',
+    actorEmail: 'alice.editor@example.com',
+    reasonForChange: 'Created area A1 for HR management workflows.',
     newData: {
-      code: area.code,
-      title: area.title,
-      ownerEmail: area.ownerEmail,
+      code: 'A1',
+      title: 'Global Management',
+      ownerEmail: 'alice.editor@example.com',
     },
-  })),
+  },
+  {
+    entityType: 'area',
+    entityRef: 'A2',
+    action: 'CREATE',
+    actorEmail: 'sam.admin@example.com',
+    reasonForChange: 'Created area A2 for quality management workflows.',
+    newData: {
+      code: 'A2',
+      title: 'Quality Assurance',
+      ownerEmail: 'sam.admin@example.com',
+    },
+  },
   ...processes.map((process) => ({
     entityType: 'process',
     entityRef: process.code,
     action: 'CREATE' as const,
-    actorEmail: 'editor@pms.local',
-    reasonForChange: `${SEED_REASON_PREFIX} Created seeded process ${process.code}.`,
+    actorEmail: 'alice.editor@example.com',
+    reasonForChange: `Created process ${process.code} for ${process.title}.`,
     newData: {
       code: process.code,
       title: process.title,
       ownerEmail: process.ownerEmail,
     },
   })),
-  ...processVersions.map((version) => ({
-    entityType: 'process_version',
-    entityRef: `${version.processCode}@${version.versionNumber}`,
-    action: 'CREATE' as const,
-    actorEmail: 'editor@pms.local',
-    reasonForChange: `${SEED_REASON_PREFIX} Created seeded version ${version.processCode}@${version.versionNumber}.`,
-    newData: {
-      processCode: version.processCode,
-      versionNumber: version.versionNumber,
-      lifecycleState: version.lifecycleState,
-      architectureState: version.architectureState,
-    },
-  })),
+  ...processVersions.map((version) => {
+    let actorEmail: string;
+    if (version.processCode === '3') {
+      actorEmail = 'sam.admin@example.com';
+    } else if (version.versionNumber === 3 && version.processCode === '2') {
+      actorEmail = 'peter.publisher@example.com';
+    } else {
+      actorEmail = 'alice.editor@example.com';
+    }
+    return {
+      entityType: 'process_version',
+      entityRef: `${version.processCode}@${version.versionNumber}`,
+      action: 'CREATE' as const,
+      actorEmail,
+      reasonForChange: `Created version ${version.processCode}@${version.versionNumber} for ${version.title}.`,
+      newData: {
+        processCode: version.processCode,
+        versionNumber: version.versionNumber,
+        lifecycleState: version.lifecycleState,
+        architectureState: version.architectureState,
+      },
+    };
+  }),
   {
     entityType: 'process_version',
-    entityRef: 'PROCESS_INCIDENT_RESOLUTION@1',
+    entityRef: '1@1',
     action: 'APPROVE',
-    actorEmail: 'reviewer@pms.local',
-    reasonForChange: `${SEED_REASON_PREFIX} Reviewer approved PROCESS_INCIDENT_RESOLUTION Version 1.`,
+    actorEmail: 'rachel.reviewer@example.com',
+    reasonForChange:
+      'Approved employee relocation workflow after validation review.',
   },
   {
     entityType: 'process_version',
-    entityRef: 'PROCESS_INCIDENT_RESOLUTION@1',
+    entityRef: '1@1',
     action: 'PUBLISH',
-    actorEmail: 'publisher@pms.local',
-    reasonForChange: `${SEED_REASON_PREFIX} Publisher released PROCESS_INCIDENT_RESOLUTION Version 1.`,
+    actorEmail: 'peter.publisher@example.com',
+    reasonForChange:
+      'Released employee relocation workflow as official standard.',
   },
   {
     entityType: 'process_version',
-    entityRef: 'PROCESS_INCIDENT_RESOLUTION@2',
+    entityRef: '1@2',
     action: 'APPROVE',
-    actorEmail: 'reviewer@pms.local',
-    reasonForChange: `${SEED_REASON_PREFIX} Reviewer approved PROCESS_INCIDENT_RESOLUTION Version 2.`,
+    actorEmail: 'rachel.reviewer@example.com',
+    reasonForChange:
+      'Approved improved relocation workflow after validation review.',
   },
   {
     entityType: 'process_version',
-    entityRef: 'PROCESS_INCIDENT_RESOLUTION@2',
+    entityRef: '1@2',
     action: 'PUBLISH',
-    actorEmail: 'publisher@pms.local',
-    reasonForChange: `${SEED_REASON_PREFIX} Publisher released PROCESS_INCIDENT_RESOLUTION Version 2.`,
+    actorEmail: 'peter.publisher@example.com',
+    reasonForChange:
+      'Released improved relocation workflow as proposed target state.',
   },
   {
     entityType: 'process_version',
-    entityRef: 'PROCESS_STANDARD_CHANGE@1',
-    action: 'APPROVE',
-    actorEmail: 'reviewer@pms.local',
-    reasonForChange: `${SEED_REASON_PREFIX} Reviewer approved PROCESS_STANDARD_CHANGE Version 1.`,
-  },
-  {
-    entityType: 'process_version',
-    entityRef: 'PROCESS_STANDARD_CHANGE@3',
+    entityRef: '1@3',
     action: 'REJECT',
-    actorEmail: 'reviewer@pms.local',
-    reasonForChange: `${SEED_REASON_PREFIX} Reviewer rejected PROCESS_STANDARD_CHANGE Version 3.`,
+    actorEmail: 'rachel.reviewer@example.com',
+    reasonForChange:
+      'Rejected the automation proposal due to insufficient cost-benefit analysis and unclear ROI.',
   },
   {
     entityType: 'process_version',
-    entityRef: 'PROCESS_STANDARD_CHANGE@4',
-    action: 'STATE_CHANGE',
-    actorEmail: 'reviewer@pms.local',
-    reasonForChange: `${SEED_REASON_PREFIX} Reviewer reopened PROCESS_STANDARD_CHANGE Version 4 to Draft.`,
+    entityRef: '2@1',
+    action: 'APPROVE',
+    actorEmail: 'rachel.reviewer@example.com',
+    reasonForChange:
+      'Approved employee onboarding workflow after validation review.',
+  },
+  {
+    entityType: 'process_version',
+    entityRef: '2@1',
+    action: 'PUBLISH',
+    actorEmail: 'peter.publisher@example.com',
+    reasonForChange:
+      'Released employee onboarding workflow as official standard.',
+  },
+  {
+    entityType: 'process_version',
+    entityRef: '2@1',
+    action: 'ARCHIVE',
+    actorEmail: 'peter.publisher@example.com',
+    reasonForChange:
+      'Archived original onboarding workflow after process improvement implementation.',
+  },
+  {
+    entityType: 'process_version',
+    entityRef: '2@2',
+    action: 'APPROVE',
+    actorEmail: 'rachel.reviewer@example.com',
+    reasonForChange:
+      'Approved streamlined onboarding workflow after validation review.',
+  },
+  {
+    entityType: 'process_version',
+    entityRef: '2@2',
+    action: 'PUBLISH',
+    actorEmail: 'peter.publisher@example.com',
+    reasonForChange:
+      'Released streamlined onboarding workflow for pilot implementation.',
+  },
+  {
+    entityType: 'process_version',
+    entityRef: '2@2',
+    action: 'ARCHIVE',
+    actorEmail: 'peter.publisher@example.com',
+    reasonForChange:
+      'Archived streamlined workflow after successful promotion to production.',
+  },
+  {
+    entityType: 'process_version',
+    entityRef: '2@3',
+    action: 'PROMOTE',
+    actorEmail: 'peter.publisher@example.com',
+    reasonForChange:
+      'Promoted streamlined onboarding workflow to production as new standard.',
+    newData: {
+      derivedFromVersionNumber: 2,
+    },
+  },
+  {
+    entityType: 'process_version',
+    entityRef: '2@4',
+    action: 'APPROVE',
+    actorEmail: 'rachel.reviewer@example.com',
+    reasonForChange:
+      'Approved the AI-assisted onboarding proposal after validation review.',
+  },
+  {
+    entityType: 'process_version',
+    entityRef: '2@4',
+    action: 'REOPEN',
+    actorEmail: 'rachel.reviewer@example.com',
+    reasonForChange:
+      'Controlled reopening: Additional data privacy review required before publication due to new ML model integration.',
+  },
+  {
+    entityType: 'process',
+    entityRef: '3',
+    action: 'CREATE',
+    actorEmail: 'sam.admin@example.com',
+    reasonForChange: 'Created process 3 for Quality Compliance Review.',
+    newData: {
+      code: '3',
+      title: 'Quality Compliance Review',
+      ownerEmail: 'sam.admin@example.com',
+    },
+  },
+  {
+    entityType: 'process_version',
+    entityRef: '3@1',
+    action: 'CREATE',
+    actorEmail: 'sam.admin@example.com',
+    reasonForChange: 'Created version 3@1 for Quality Compliance Review v1.0.',
+    newData: {
+      processCode: '3',
+      versionNumber: 1,
+      lifecycleState: 'Published',
+      architectureState: 'AS-IS',
+    },
+  },
+  {
+    entityType: 'process_version',
+    entityRef: '3@1',
+    action: 'APPROVE',
+    actorEmail: 'rachel.reviewer@example.com',
+    reasonForChange:
+      'Approved the quality compliance review workflow after validation review.',
+  },
+  {
+    entityType: 'process_version',
+    entityRef: '3@1',
+    action: 'PUBLISH',
+    actorEmail: 'peter.publisher@example.com',
+    reasonForChange:
+      'Released the quality compliance review workflow as the official standard.',
+  },
+  {
+    entityType: 'user',
+    entityRef: 'victor.viewer@example.com',
+    action: 'USER_CREATE',
+    actorEmail: 'sam.admin@example.com',
+    reasonForChange: 'Created VIEWER user for read-only access testing.',
+    newData: {
+      email: 'victor.viewer@example.com',
+      name: 'Victor Viewer',
+      roleName: 'VIEWER',
+      teamCode: 'HR',
+    },
+  },
+  {
+    entityType: 'user',
+    entityRef: 'sam.admin@example.com',
+    action: 'USER_CREATE',
+    actorEmail: 'sam.admin@example.com',
+    reasonForChange: 'Created SYSTEM_ADMIN user for technical administration.',
+    newData: {
+      email: 'sam.admin@example.com',
+      name: 'Sam SystemAdmin',
+      roleName: 'SYSTEM_ADMIN',
+      teamCode: 'IT',
+    },
+  },
+  {
+    entityType: 'user',
+    entityRef: 'alice.editor@example.com',
+    action: 'ROLE_ASSIGN',
+    actorEmail: 'sam.admin@example.com',
+    reasonForChange: 'Assigned EDITOR role to Alice Editor.',
+    oldData: {
+      roleName: null,
+    },
+    newData: {
+      roleName: 'EDITOR',
+    },
+  },
+  {
+    entityType: 'user',
+    entityRef: 'rachel.reviewer@example.com',
+    action: 'ROLE_ASSIGN',
+    actorEmail: 'sam.admin@example.com',
+    reasonForChange: 'Assigned REVIEWER role to Rachel Reviewer.',
+    oldData: {
+      roleName: null,
+    },
+    newData: {
+      roleName: 'REVIEWER',
+    },
+  },
+  {
+    entityType: 'user',
+    entityRef: 'peter.publisher@example.com',
+    action: 'ROLE_ASSIGN',
+    actorEmail: 'sam.admin@example.com',
+    reasonForChange: 'Assigned PUBLISHER role to Peter Publisher.',
+    oldData: {
+      roleName: null,
+    },
+    newData: {
+      roleName: 'PUBLISHER',
+    },
+  },
+  {
+    entityType: 'user',
+    entityRef: 'sam.admin@example.com',
+    action: 'TEAM_CHANGE',
+    actorEmail: 'sam.admin@example.com',
+    reasonForChange:
+      'Assigned Sam SystemAdmin to IT team for technical operations.',
+    oldData: {
+      teamCode: null,
+    },
+    newData: {
+      teamCode: 'IT',
+    },
+  },
+  {
+    entityType: 'user',
+    entityRef: 'alice.editor@example.com',
+    action: 'USER_UPDATE',
+    actorEmail: 'sam.admin@example.com',
+    reasonForChange: 'Updated Alice Editor profile information.',
+    oldData: {
+      name: 'Alice Editor',
+    },
+    newData: {
+      name: 'Alice Editor',
+    },
   },
 ];

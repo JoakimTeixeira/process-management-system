@@ -17,8 +17,6 @@ import {
   procedures,
   processVersions,
   roles,
-  SEED_REASON_PREFIX,
-  SHARED_DEMO_PASSWORD,
   teams,
   users,
   versionStateHistory,
@@ -91,17 +89,20 @@ function getRequiredEnv(name: string): string {
 }
 
 function getBpmnFilename(processCode: string, versionNumber: number): string {
-  return `${processCode.toLowerCase()}-v${versionNumber}.bpmn`;
+  const safeCode = processCode.replaceAll(/[^a-zA-Z0-9]+/g, '-').toLowerCase();
+
+  return `process-${safeCode}-v${versionNumber}.bpmn`;
 }
 
 function buildBpmnXml(processCode: string, title: string): string {
-  const definitionId = `${processCode}_Definitions`;
-  const processId = `${processCode}_Process`;
-  const startId = `${processCode}_Start`;
-  const taskId = `${processCode}_Task`;
-  const endId = `${processCode}_End`;
-  const flowOneId = `${processCode}_Flow_1`;
-  const flowTwoId = `${processCode}_Flow_2`;
+  const safeCode = `process_${processCode.replaceAll(/[^a-zA-Z0-9]+/g, '_')}`;
+  const definitionId = `${safeCode}_Definitions`;
+  const processId = `${safeCode}_Process`;
+  const startId = `${safeCode}_Start`;
+  const taskId = `${safeCode}_Task`;
+  const endId = `${safeCode}_End`;
+  const flowOneId = `${safeCode}_Flow_1`;
+  const flowTwoId = `${safeCode}_Flow_2`;
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -125,8 +126,8 @@ function buildBpmnXml(processCode: string, title: string): string {
     <bpmn:sequenceFlow id="${flowOneId}" sourceRef="${startId}" targetRef="${taskId}" />
     <bpmn:sequenceFlow id="${flowTwoId}" sourceRef="${taskId}" targetRef="${endId}" />
   </bpmn:process>
-  <bpmndi:BPMNDiagram id="${processCode}_Diagram">
-    <bpmndi:BPMNPlane id="${processCode}_Plane" bpmnElement="${processId}">
+  <bpmndi:BPMNDiagram id="${safeCode}_Diagram">
+    <bpmndi:BPMNPlane id="${safeCode}_Plane" bpmnElement="${processId}">
       <bpmndi:BPMNShape id="${startId}_di" bpmnElement="${startId}">
         <dc:Bounds x="100" y="100" width="36" height="36" />
       </bpmndi:BPMNShape>
@@ -370,7 +371,7 @@ async function upsertProcess(
     areaId: string;
     code: string;
     title: string;
-    summary: string;
+    description: string;
     ownerId: string;
     authorId: string;
   },
@@ -382,7 +383,7 @@ async function upsertProcess(
         area_id,
         code,
         title,
-        summary,
+        description,
         owner_id,
         created_by,
         updated_by
@@ -392,7 +393,7 @@ async function upsertProcess(
       DO UPDATE SET
         area_id = EXCLUDED.area_id,
         title = EXCLUDED.title,
-        summary = EXCLUDED.summary,
+        description = EXCLUDED.description,
         owner_id = EXCLUDED.owner_id,
         updated_by = EXCLUDED.updated_by
       RETURNING id
@@ -401,7 +402,7 @@ async function upsertProcess(
       params.areaId,
       params.code,
       params.title,
-      params.summary,
+      params.description,
       params.ownerId,
       params.authorId,
     ],
@@ -416,11 +417,8 @@ async function upsertProcessVersion(
     lifecycleState: string;
     architectureState: string;
     title: string;
-    summary: string;
     checklistCompleted: boolean;
     derivedFromVersionId: string | null;
-    overview: string | null;
-    notes: string | null;
     changeDescription: string;
     reasonForChange: string;
     createdBy: string;
@@ -436,11 +434,8 @@ async function upsertProcessVersion(
         lifecycle_state,
         architecture_state,
         title,
-        summary,
         checklist_completed,
         derived_from_version_id,
-        overview,
-        notes,
         change_description,
         reason_for_change,
         created_by,
@@ -467,11 +462,8 @@ async function upsertProcessVersion(
         lifecycle_state = EXCLUDED.lifecycle_state,
         architecture_state = EXCLUDED.architecture_state,
         title = EXCLUDED.title,
-        summary = EXCLUDED.summary,
         checklist_completed = EXCLUDED.checklist_completed,
         derived_from_version_id = EXCLUDED.derived_from_version_id,
-        overview = EXCLUDED.overview,
-        notes = EXCLUDED.notes,
         change_description = EXCLUDED.change_description,
         reason_for_change = EXCLUDED.reason_for_change,
         updated_by = EXCLUDED.updated_by
@@ -483,11 +475,8 @@ async function upsertProcessVersion(
       params.lifecycleState,
       params.architectureState,
       params.title,
-      params.summary,
       params.checklistCompleted,
       params.derivedFromVersionId,
-      params.overview,
-      params.notes,
       params.changeDescription,
       params.reasonForChange,
       params.createdBy,
@@ -502,10 +491,13 @@ async function upsertProcedure(
     processVersionId: string;
     code: string;
     title: string;
-    summary: string;
-    purpose: string;
-    scope: string;
-    ownerId: string;
+    utility: string;
+    warranty: string;
+    outcome: string;
+    policy: string;
+    activities: unknown[];
+    inputs: string[];
+    outputs: string[];
     authorId: string;
   },
 ): Promise<void> {
@@ -516,31 +508,40 @@ async function upsertProcedure(
         process_version_id,
         code,
         title,
-        summary,
-        purpose,
-        scope,
-        owner_id,
+        utility,
+        warranty,
+        outcome,
+        policy,
+        activities,
+        inputs,
+        outputs,
         created_by,
         updated_by
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $8)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, $9::jsonb, $10::jsonb, $11, $11)
       ON CONFLICT (process_version_id, code)
       DO UPDATE SET
         title = EXCLUDED.title,
-        summary = EXCLUDED.summary,
-        purpose = EXCLUDED.purpose,
-        scope = EXCLUDED.scope,
-        owner_id = EXCLUDED.owner_id,
+        utility = EXCLUDED.utility,
+        warranty = EXCLUDED.warranty,
+        outcome = EXCLUDED.outcome,
+        policy = EXCLUDED.policy,
+        activities = EXCLUDED.activities,
+        inputs = EXCLUDED.inputs,
+        outputs = EXCLUDED.outputs,
         updated_by = EXCLUDED.updated_by
     `,
     [
       params.processVersionId,
       params.code,
       params.title,
-      params.summary,
-      params.purpose,
-      params.scope,
-      params.ownerId,
+      params.utility,
+      params.warranty,
+      params.outcome,
+      params.policy,
+      JSON.stringify(params.activities),
+      JSON.stringify(params.inputs),
+      JSON.stringify(params.outputs),
       params.authorId,
     ],
   );
@@ -662,7 +663,7 @@ async function seedGlossaryTerms(
   manager: SqlExecutor,
   context: SeedContext,
 ): Promise<void> {
-  const editorId = context.userIds.get('editor@pms.local');
+  const editorId = context.userIds.get('alice.editor@example.com');
 
   if (!editorId) {
     throw new Error('Missing editor id while seeding glossary terms');
@@ -701,7 +702,7 @@ async function seedAreas(
   for (const area of areas) {
     const practiceId = context.practiceIds.get(area.itilPracticeCode);
     const ownerId = context.userIds.get(area.ownerEmail);
-    const editorId = context.userIds.get('editor@pms.local');
+    const editorId = context.userIds.get('alice.editor@example.com');
 
     if (!practiceId || !ownerId || !editorId) {
       throw new Error(`Missing dependency for area ${area.code}`);
@@ -727,7 +728,7 @@ async function seedProcesses(
   for (const process of processes) {
     const areaId = context.areaIds.get(process.areaCode);
     const ownerId = context.userIds.get(process.ownerEmail);
-    const editorId = context.userIds.get('editor@pms.local');
+    const editorId = context.userIds.get('alice.editor@example.com');
 
     if (!areaId || !ownerId || !editorId) {
       throw new Error(`Missing dependency for process ${process.code}`);
@@ -737,7 +738,7 @@ async function seedProcesses(
       areaId,
       code: process.code,
       title: process.title,
-      summary: process.summary,
+      description: process.description,
       ownerId,
       authorId: editorId,
     });
@@ -752,7 +753,7 @@ async function seedProcessVersions(
 ): Promise<void> {
   for (const version of processVersions) {
     const processId = context.processIds.get(version.processCode);
-    const editorId = context.userIds.get('editor@pms.local');
+    const editorId = context.userIds.get('alice.editor@example.com');
     const updatedById = context.userIds.get(version.updatedByEmail);
 
     if (!processId || !editorId || !updatedById) {
@@ -761,18 +762,13 @@ async function seedProcessVersions(
       );
     }
 
-    const derivedFromVersionId = version.derivedFromVersionNumber
-      ? (context.versionIds.get(
-          buildVersionKey(
-            version.processCode,
-            version.derivedFromVersionNumber,
-          ),
-        ) ?? null)
+    const derivedFromVersionId = version.derivedFromVersionRef
+      ? (context.versionIds.get(version.derivedFromVersionRef) ?? null)
       : null;
 
-    if (version.derivedFromVersionNumber && !derivedFromVersionId) {
+    if (version.derivedFromVersionRef && !derivedFromVersionId) {
       throw new Error(
-        `Missing derived version for ${buildVersionKey(version.processCode, version.versionNumber)}`,
+        `Missing derived version for ${buildVersionKey(version.processCode, version.versionNumber)}: ${version.derivedFromVersionRef}`,
       );
     }
 
@@ -782,11 +778,8 @@ async function seedProcessVersions(
       lifecycleState: version.lifecycleState,
       architectureState: version.architectureState,
       title: version.title,
-      summary: version.summary,
       checklistCompleted: version.checklistCompleted,
       derivedFromVersionId,
-      overview: version.overview ?? null,
-      notes: version.notes ?? null,
       changeDescription: version.changeDescription,
       reasonForChange: version.reasonForChange,
       createdBy: editorId,
@@ -823,7 +816,7 @@ async function reseedProcedures(
     );
   }
 
-  const editorId = context.userIds.get('editor@pms.local');
+  const editorId = context.userIds.get('alice.editor@example.com');
 
   if (!editorId) {
     throw new Error('Missing editor id while seeding procedures');
@@ -833,9 +826,8 @@ async function reseedProcedures(
     const processVersionId = context.versionIds.get(
       buildVersionKey(procedure.processCode, procedure.versionNumber),
     );
-    const ownerId = context.userIds.get(procedure.ownerEmail);
 
-    if (!processVersionId || !ownerId) {
+    if (!processVersionId) {
       throw new Error(
         `Missing dependency for procedure ${procedure.code} on ${procedure.processCode}@${procedure.versionNumber}`,
       );
@@ -845,10 +837,13 @@ async function reseedProcedures(
       processVersionId,
       code: procedure.code,
       title: procedure.title,
-      summary: procedure.summary,
-      purpose: procedure.purpose,
-      scope: procedure.scope,
-      ownerId,
+      utility: procedure.utility,
+      warranty: procedure.warranty,
+      outcome: procedure.outcome,
+      policy: procedure.policy,
+      activities: procedure.activities,
+      inputs: procedure.inputs,
+      outputs: procedure.outputs,
       authorId: editorId,
     });
   }
@@ -872,7 +867,7 @@ async function reseedBpmnAssets(
     );
   }
 
-  const editorId = context.userIds.get('editor@pms.local');
+  const editorId = context.userIds.get('alice.editor@example.com');
 
   if (!editorId) {
     throw new Error('Missing editor id while seeding assets');
@@ -1038,9 +1033,8 @@ async function reseedAuditLogs(
     manager,
     `
       DELETE FROM audit_logs
-      WHERE reason_for_change LIKE $1
     `,
-    [`${SEED_REASON_PREFIX}%`],
+    [],
   );
 
   for (const entry of auditLogs) {
@@ -1094,8 +1088,9 @@ async function reseedAuditLogs(
 
 async function hashDemoPassword(): Promise<string> {
   const pepper = getRequiredEnv('AUTH_PASSWORD_PEPPER');
+  const demoPassword = getRequiredEnv('DEMO_PASSWORD');
 
-  return argon2.hash(SHARED_DEMO_PASSWORD, {
+  return argon2.hash(demoPassword, {
     type: argon2.argon2id,
     secret: Buffer.from(pepper, 'utf8'),
     memoryCost: 65536,
