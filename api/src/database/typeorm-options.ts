@@ -1,4 +1,4 @@
-import { join } from 'node:path';
+import { extname, join } from 'node:path';
 
 import { ConfigType } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
@@ -6,10 +6,13 @@ import { DataSourceOptions } from 'typeorm';
 
 import databaseConfig from '../config/database.config';
 
-const getMigrationPaths = (): string[] => [
-  join(process.cwd(), 'migrations', '*{.ts,.js}'),
-  join(process.cwd(), 'dist', 'migrations', '*.js'),
-];
+const getMigrationPaths = (): string[] => {
+  const isTsRuntime = extname(__filename) === '.ts';
+
+  return isTsRuntime
+    ? [join(process.cwd(), 'migrations', '*.ts')]
+    : [join(process.cwd(), 'dist', 'migrations', '*.js')];
+};
 
 const buildSharedOptions = (dbConfig: ConfigType<typeof databaseConfig>) => ({
   type: 'postgres' as const,
