@@ -54,8 +54,8 @@ export function validateEnvironment(
 
 export function getValidatedEnvironment(): EnvironmentVariables {
   if (!cachedEnvironment) {
-    cachedEnvironment = validateEnvironment(process.env);
+    const validatedEnv = validateEnvironment(process.env);
+    cachedEnvironment = validatedEnv;
   }
-
   return cachedEnvironment;
 }
