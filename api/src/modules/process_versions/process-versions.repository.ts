@@ -12,6 +12,14 @@ interface ExistsRow extends QueryRow {
   exists: boolean;
 }
 
+interface CountRow extends QueryRow {
+  count: string;
+}
+
+interface ActorRow extends QueryRow {
+  actor_id: string | null;
+}
+
 interface ProcessVersionRow extends QueryRow {
   id: string;
   process_id: string;
@@ -287,6 +295,26 @@ export class ProcessVersionsRepository {
     return this.findRequiredById(id, executor);
   }
 
+  async setLifecycleState(
+    id: string,
+    lifecycleState: string,
+    actorId: string,
+    executor: SqlExecutor = this.dataSource,
+  ): Promise<ProcessVersionRecord> {
+    await executor.query(
+      `
+        UPDATE process_versions
+        SET
+          lifecycle_state = $2::process_lifecycle_state,
+          updated_by = $3
+        WHERE id = $1
+      `,
+      [id, lifecycleState, actorId],
+    );
+
+    return this.findRequiredById(id, executor);
+  }
+
   async delete(
     id: string,
     executor: SqlExecutor = this.dataSource,
@@ -298,6 +326,24 @@ export class ProcessVersionsRepository {
       `,
       [id],
     );
+  }
+
+  async countBpmnAssets(
+    processVersionId: string,
+    executor: SqlExecutor = this.dataSource,
+  ): Promise<number> {
+    const rows = await queryRows<CountRow>(
+      executor,
+      `
+        SELECT COUNT(*)::text AS count
+        FROM assets a
+        WHERE a.process_version_id = $1
+          AND a.asset_type = 'BPMN'::asset_type
+      `,
+      [processVersionId],
+    );
+
+    return Number(rows[0]?.count ?? '0');
   }
 
   async insertStateHistory(
@@ -329,6 +375,73 @@ export class ProcessVersionsRepository {
         params.reason,
       ],
     );
+  }
+
+  async findLatestActorForState(
+    processVersionId: string,
+    toState: string,
+    executor: SqlExecutor = this.dataSource,
+  ): Promise<string | null> {
+    const rows = await queryRows<ActorRow>(
+      executor,
+      `
+        SELECT vsh.actor_id
+        FROM version_state_history vsh
+        WHERE vsh.process_version_id = $1
+          AND vsh.to_state = $2::process_lifecycle_state
+        ORDER BY vsh.created_at DESC
+        LIMIT 1
+      `,
+      [processVersionId, toState],
+    );
+
+    return rows[0]?.actor_id ?? null;
+  }
+
+  async findPublishedVersion(
+    processId: string,
+    architectureState: string,
+    executor: SqlExecutor = this.dataSource,
+    excludeVersionId?: string,
+    forUpdate = false,
+  ): Promise<ProcessVersionRecord | null> {
+    const parameters: unknown[] = [processId, architectureState];
+    let excludeClause = '';
+
+    if (excludeVersionId) {
+      parameters.push(excludeVersionId);
+      excludeClause = `AND pv.id <> $${parameters.length}`;
+    }
+
+    const rows = await queryRows<ProcessVersionRow>(
+      executor,
+      `
+        SELECT
+          pv.id,
+          pv.process_id,
+          pv.version_number,
+          pv.lifecycle_state,
+          pv.architecture_state,
+          pv.title,
+          pv.summary,
+          pv.checklist_completed,
+          pv.derived_from_version_id,
+          pv.overview,
+          pv.notes,
+          pv.change_description,
+          pv.reason_for_change
+        FROM process_versions pv
+        WHERE pv.process_id = $1
+          AND pv.architecture_state = $2::process_architecture_state
+          AND pv.lifecycle_state = 'Published'::process_lifecycle_state
+          ${excludeClause}
+        LIMIT 1
+        ${forUpdate ? 'FOR UPDATE' : ''}
+      `,
+      parameters,
+    );
+
+    return rows[0] ? this.mapRecord(rows[0]) : null;
   }
 
   private async findRequiredById(

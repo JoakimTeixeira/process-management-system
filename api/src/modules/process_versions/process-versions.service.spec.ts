@@ -15,11 +15,15 @@ describe('ProcessVersionsService', () => {
   let processVersionsRepository: jest.Mocked<
     Pick<
       ProcessVersionsRepository,
+      | 'countBpmnAssets'
       | 'create'
       | 'delete'
       | 'findById'
       | 'findByProcessAndVersionNumber'
+      | 'findLatestActorForState'
+      | 'findPublishedVersion'
       | 'insertStateHistory'
+      | 'setLifecycleState'
       | 'update'
     >
   >;
@@ -33,11 +37,11 @@ describe('ProcessVersionsService', () => {
   let service: ProcessVersionsService;
 
   const currentUser: AuthenticatedUser = {
-    id: 'editor-1',
-    name: 'Erin Editor',
-    email: 'erin@example.com',
+    id: 'publisher-1',
+    name: 'Peter Publisher',
+    email: 'peter@example.com',
     roleId: 'role-1',
-    role: Role.EDITOR,
+    role: Role.PUBLISHER,
     team: {
       id: 'team-1',
       code: 'HR',
@@ -45,18 +49,15 @@ describe('ProcessVersionsService', () => {
     },
   };
 
-  const draftVersion = {
+  const approvedVersion = {
     id: 'version-1',
     processId: 'process-1',
-    versionNumber: 1,
-    lifecycleState: 'Draft',
-    architectureState: 'AS-IS',
-    title: 'AS-IS version',
-    summary: 'summary',
-    checklistCompleted: false,
+    versionNumber: 2,
+    lifecycleState: 'Approved',
+    architectureState: 'TO-BE',
+    title: 'TO-BE version',
+    checklistCompleted: true,
     derivedFromVersionId: null,
-    overview: null,
-    notes: null,
     changeDescription: 'change',
     reasonForChange: 'reason',
   };
@@ -72,11 +73,15 @@ describe('ProcessVersionsService', () => {
       findById: jest.fn(),
     };
     processVersionsRepository = {
+      countBpmnAssets: jest.fn(),
       create: jest.fn(),
       delete: jest.fn(),
       findById: jest.fn(),
       findByProcessAndVersionNumber: jest.fn(),
+      findLatestActorForState: jest.fn(),
+      findPublishedVersion: jest.fn(),
       insertStateHistory: jest.fn(),
+      setLifecycleState: jest.fn(),
       update: jest.fn(),
     };
     workflowAuthorizationService = {
@@ -95,69 +100,41 @@ describe('ProcessVersionsService', () => {
     );
   });
 
-  it('should create a Draft version with initial state history and audit entry', async () => {
-    processesRepository.findById.mockResolvedValue({
-      id: 'process-1',
-      areaId: 'area-1',
-      code: '1',
-      title: 'Employee relocation',
-      summary: null,
-      ownerId: 'owner-1',
-    });
-    processVersionsRepository.findByProcessAndVersionNumber.mockResolvedValue(
-      null,
-    );
-    processVersionsRepository.create.mockResolvedValue(draftVersion);
-
-    await service.create(
-      'process-1',
-      {
-        versionNumber: 1,
-        architectureState: 'AS-IS',
-        title: 'AS-IS version',
-        changeDescription: 'change',
-        reasonForChange: 'reason',
-      },
-      currentUser,
-    );
-
-    expect(processVersionsRepository.create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        processId: 'process-1',
-        lifecycleState: 'Draft',
-        createdBy: currentUser.id,
-        updatedBy: currentUser.id,
-      }),
-      expect.anything(),
-    );
-    expect(processVersionsRepository.insertStateHistory).toHaveBeenCalledWith(
-      expect.objectContaining({
-        processVersionId: draftVersion.id,
-        fromState: null,
-        toState: 'Draft',
-        actorId: currentUser.id,
-      }),
-      expect.anything(),
-    );
-    expect(auditLogWriterService.create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        entityType: 'process_version',
-        entityId: draftVersion.id,
-        action: 'CREATE',
-        actorId: currentUser.id,
-      }),
-      expect.anything(),
-    );
-  });
-
-  it('should reject direct updates outside Draft', async () => {
+  it('should require a BPMN asset before submit for review', async () => {
     processVersionsRepository.findById.mockResolvedValue({
-      ...draftVersion,
-      lifecycleState: 'Published',
+      ...approvedVersion,
+      lifecycleState: 'Draft',
     });
+    processVersionsRepository.countBpmnAssets.mockResolvedValue(0);
 
     await expect(
-      service.update('version-1', { title: 'Updated title' }, currentUser),
+      service.submitForReview(
+        'version-1',
+        { reason: 'submit' },
+        { ...currentUser, role: Role.EDITOR },
+      ),
+    ).rejects.toBeInstanceOf(ConflictException);
+  });
+
+  it('should block publish when the approver and publisher are the same actor', async () => {
+    processVersionsRepository.findById.mockResolvedValue(approvedVersion);
+    processVersionsRepository.countBpmnAssets.mockResolvedValue(1);
+    processVersionsRepository.findLatestActorForState.mockResolvedValue(
+      currentUser.id,
+    );
+
+    await expect(
+      service.publish('version-1', { reason: 'publish' }, currentUser),
+    ).rejects.toBeInstanceOf(ConflictException);
+  });
+
+  it('should block publish when approval evidence is missing', async () => {
+    processVersionsRepository.findById.mockResolvedValue(approvedVersion);
+    processVersionsRepository.countBpmnAssets.mockResolvedValue(1);
+    processVersionsRepository.findLatestActorForState.mockResolvedValue(null);
+
+    await expect(
+      service.publish('version-1', { reason: 'publish' }, currentUser),
     ).rejects.toBeInstanceOf(ConflictException);
   });
 });

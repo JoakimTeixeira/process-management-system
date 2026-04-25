@@ -17,7 +17,9 @@ import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 import type { AuthenticatedUser } from '../auth/interfaces/authenticated-user.interface';
 import { CreateProcessVersionDto } from './dto/create-process-version.dto';
+import { LifecycleJustificationDto } from './dto/lifecycle-justification.dto';
 import { ProcessVersionResponseDto } from './dto/process-version-response.dto';
+import { RequiredJustificationDto } from './dto/required-justification.dto';
 import { UpdateProcessVersionDto } from './dto/update-process-version.dto';
 import { ProcessVersionsService } from './process-versions.service';
 
@@ -87,5 +89,101 @@ export class ProcessVersionsController {
     @CurrentUser() currentUser: AuthenticatedUser,
   ): Promise<void> {
     await this.processVersionsService.delete(params.id, currentUser);
+  }
+
+  @Roles(Role.EDITOR)
+  @Post('process-versions/:id/submit-for-review')
+  async submitForReview(
+    @Param() params: IdParamDto,
+    @Body() justificationDto: LifecycleJustificationDto,
+    @CurrentUser() currentUser: AuthenticatedUser,
+  ): Promise<ProcessVersionResponseDto> {
+    return new ProcessVersionResponseDto(
+      await this.processVersionsService.submitForReview(
+        params.id,
+        justificationDto,
+        currentUser,
+      ),
+    );
+  }
+
+  @Roles(Role.REVIEWER)
+  @Post('process-versions/:id/approve')
+  async approve(
+    @Param() params: IdParamDto,
+    @Body() justificationDto: LifecycleJustificationDto,
+    @CurrentUser() currentUser: AuthenticatedUser,
+  ): Promise<ProcessVersionResponseDto> {
+    return new ProcessVersionResponseDto(
+      await this.processVersionsService.approve(
+        params.id,
+        justificationDto,
+        currentUser,
+      ),
+    );
+  }
+
+  @Roles(Role.REVIEWER)
+  @Post('process-versions/:id/reject')
+  async reject(
+    @Param() params: IdParamDto,
+    @Body() justificationDto: RequiredJustificationDto,
+    @CurrentUser() currentUser: AuthenticatedUser,
+  ): Promise<ProcessVersionResponseDto> {
+    return new ProcessVersionResponseDto(
+      await this.processVersionsService.reject(
+        params.id,
+        justificationDto,
+        currentUser,
+      ),
+    );
+  }
+
+  @Roles(Role.REVIEWER)
+  @Post('process-versions/:id/reopen')
+  async reopen(
+    @Param() params: IdParamDto,
+    @Body() justificationDto: RequiredJustificationDto,
+    @CurrentUser() currentUser: AuthenticatedUser,
+  ): Promise<ProcessVersionResponseDto> {
+    return new ProcessVersionResponseDto(
+      await this.processVersionsService.reopen(
+        params.id,
+        justificationDto,
+        currentUser,
+      ),
+    );
+  }
+
+  @Roles(Role.PUBLISHER)
+  @Post('process-versions/:id/publish')
+  async publish(
+    @Param() params: IdParamDto,
+    @Body() justificationDto: LifecycleJustificationDto,
+    @CurrentUser() currentUser: AuthenticatedUser,
+  ): Promise<ProcessVersionResponseDto> {
+    return new ProcessVersionResponseDto(
+      await this.processVersionsService.publish(
+        params.id,
+        justificationDto,
+        currentUser,
+      ),
+    );
+  }
+
+  @Roles(Role.PUBLISHER)
+  @Post('process-versions/:id/archive')
+  async archive(
+    @Param() params: IdParamDto,
+    @Body() justificationDto: RequiredJustificationDto,
+    @CurrentUser() currentUser: AuthenticatedUser,
+  ): Promise<ProcessVersionResponseDto> {
+    return new ProcessVersionResponseDto(
+      await this.processVersionsService.archive(
+        params.id,
+        justificationDto,
+        currentUser,
+      ),
+    );
   }
 }
