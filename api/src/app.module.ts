@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigType } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './modules/auth/auth.module';
+import { AssetsModule } from './modules/assets/assets.module';
 import { AreasModule } from './modules/areas/areas.module';
 import { HealthModule } from './modules/health/health.module';
 import { ItilPracticesModule } from './modules/itil_practices/itil-practices.module';
@@ -33,6 +34,7 @@ import { createTypeOrmModuleOptions } from './database/typeorm-options';
         createTypeOrmModuleOptions(dbConfig),
     }),
     AuthModule,
+    AssetsModule,
     ItilPracticesModule,
     AreasModule,
     ProcessesModule,

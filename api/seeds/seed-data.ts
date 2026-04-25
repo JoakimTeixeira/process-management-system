@@ -99,7 +99,7 @@ export interface BpmnAssetSeed {
   processCode: string;
   versionNumber: number;
   code: string;
-  subtitle: string;
+  caption: string;
 }
 
 export interface AuditLogSeed {
@@ -848,7 +848,7 @@ export const bpmnAssets: BpmnAssetSeed[] = processVersions.map((version) => ({
   processCode: version.processCode,
   versionNumber: version.versionNumber,
   code: `PROCESS_${version.processCode}_V${version.versionNumber}_BPMN`,
-  subtitle: `${version.title} BPMN Diagram`,
+  caption: `${version.title} BPMN Diagram`,
 }));
 
 export const auditLogs: AuditLogSeed[] = [

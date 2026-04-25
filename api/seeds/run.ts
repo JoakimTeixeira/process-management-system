@@ -1,6 +1,7 @@
 import 'dotenv/config';
 
 import * as argon2 from 'argon2';
+import { createHash } from 'node:crypto';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { DataSource, EntityManager } from 'typeorm';
@@ -452,10 +453,7 @@ async function upsertProcessVersion(
         $8,
         $9,
         $10,
-        $11,
-        $12,
-        $13,
-        $14
+        $11
       )
       ON CONFLICT (process_id, version_number)
       DO UPDATE SET
@@ -548,10 +546,13 @@ async function upsertProcedure(
 }
 
 async function writeSeedBpmnFiles(): Promise<
-  Map<string, { filePath: string; size: number }>
+  Map<string, { filePath: string; size: number; checksum: string }>
 > {
   const uploadsDirectory = join(process.cwd(), 'uploads', BPMN_DIRECTORY);
-  const result = new Map<string, { filePath: string; size: number }>();
+  const result = new Map<
+    string,
+    { filePath: string; size: number; checksum: string }
+  >();
 
   await mkdir(uploadsDirectory, { recursive: true });
 
@@ -569,6 +570,7 @@ async function writeSeedBpmnFiles(): Promise<
     result.set(buildVersionKey(version.processCode, version.versionNumber), {
       filePath: relativePath,
       size: Buffer.byteLength(xml, 'utf8'),
+      checksum: createHash('sha256').update(xml).digest('hex'),
     });
   }
 
@@ -852,7 +854,7 @@ async function reseedProcedures(
 async function reseedBpmnAssets(
   manager: SqlExecutor,
   context: SeedContext,
-  files: Map<string, { filePath: string; size: number }>,
+  files: Map<string, { filePath: string; size: number; checksum: string }>,
 ): Promise<void> {
   const versionIds = [...context.versionIds.values()];
 
@@ -887,19 +889,19 @@ async function reseedBpmnAssets(
       `
         INSERT INTO assets (
           process_version_id,
-          code,
-          subtitle,
+          caption,
           asset_type,
           file_path,
           mime_type,
+          checksum,
           size_bytes,
           created_by
         )
         VALUES (
           $1,
           $2,
-          $3,
           'BPMN'::asset_type,
+          $3,
           $4,
           $5,
           $6,
@@ -908,10 +910,10 @@ async function reseedBpmnAssets(
       `,
       [
         processVersionId,
-        asset.code,
-        asset.subtitle,
+        asset.caption,
         fileMetadata.filePath,
         'application/xml',
+        fileMetadata.checksum,
         fileMetadata.size,
         editorId,
       ],
