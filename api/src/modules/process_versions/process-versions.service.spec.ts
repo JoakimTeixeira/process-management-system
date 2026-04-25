@@ -22,6 +22,7 @@ describe('ProcessVersionsService', () => {
       | 'findByProcessAndVersionNumber'
       | 'findLatestActorForState'
       | 'findPublishedVersion'
+      | 'getNextVersionNumber'
       | 'insertStateHistory'
       | 'setLifecycleState'
       | 'update'
@@ -80,6 +81,7 @@ describe('ProcessVersionsService', () => {
       findByProcessAndVersionNumber: jest.fn(),
       findLatestActorForState: jest.fn(),
       findPublishedVersion: jest.fn(),
+      getNextVersionNumber: jest.fn(),
       insertStateHistory: jest.fn(),
       setLifecycleState: jest.fn(),
       update: jest.fn(),
@@ -136,5 +138,79 @@ describe('ProcessVersionsService', () => {
     await expect(
       service.publish('version-1', { reason: 'publish' }, currentUser),
     ).rejects.toBeInstanceOf(ConflictException);
+  });
+
+  it('should promote a published TO-BE version into a new published AS-IS version', async () => {
+    const sourceVersion = {
+      ...approvedVersion,
+      id: 'to-be-version',
+      lifecycleState: 'Published',
+      architectureState: 'TO-BE',
+    };
+    const existingAsIsVersion = {
+      ...approvedVersion,
+      id: 'as-is-version',
+      lifecycleState: 'Published',
+      architectureState: 'AS-IS',
+    };
+    const promotedVersion = {
+      ...sourceVersion,
+      id: 'promoted-version',
+      versionNumber: 4,
+      architectureState: 'AS-IS',
+      derivedFromVersionId: sourceVersion.id,
+    };
+
+    processVersionsRepository.findById.mockResolvedValue(sourceVersion);
+    processVersionsRepository.findPublishedVersion.mockResolvedValue(
+      existingAsIsVersion,
+    );
+    processVersionsRepository.setLifecycleState
+      .mockResolvedValueOnce({
+        ...existingAsIsVersion,
+        lifecycleState: 'Archived',
+      })
+      .mockResolvedValueOnce({
+        ...sourceVersion,
+        lifecycleState: 'Archived',
+      });
+    processVersionsRepository.getNextVersionNumber.mockResolvedValue(4);
+    processVersionsRepository.create.mockResolvedValue(promotedVersion);
+
+    await service.promote(
+      sourceVersion.id,
+      { justification: 'TO-BE has been adopted' },
+      currentUser,
+    );
+
+    expect(processVersionsRepository.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        processId: sourceVersion.processId,
+        versionNumber: 4,
+        lifecycleState: 'Published',
+        architectureState: 'AS-IS',
+        derivedFromVersionId: sourceVersion.id,
+        reasonForChange: 'TO-BE has been adopted',
+      }),
+      expect.anything(),
+    );
+    expect(processVersionsRepository.insertStateHistory).toHaveBeenCalledWith(
+      expect.objectContaining({
+        processVersionId: promotedVersion.id,
+        fromState: null,
+        toState: 'Published',
+        actorId: currentUser.id,
+      }),
+      expect.anything(),
+    );
+    expect(auditLogWriterService.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        entityType: 'process_version',
+        entityId: promotedVersion.id,
+        action: 'PROMOTE',
+        actorId: currentUser.id,
+      }),
+      expect.anything(),
+    );
   });
 });

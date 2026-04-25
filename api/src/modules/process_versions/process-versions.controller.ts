@@ -19,6 +19,7 @@ import type { AuthenticatedUser } from '../auth/interfaces/authenticated-user.in
 import { CreateProcessVersionDto } from './dto/create-process-version.dto';
 import { LifecycleJustificationDto } from './dto/lifecycle-justification.dto';
 import { ProcessVersionResponseDto } from './dto/process-version-response.dto';
+import { PromoteProcessVersionDto } from './dto/promote-process-version.dto';
 import { RequiredJustificationDto } from './dto/required-justification.dto';
 import { UpdateProcessVersionDto } from './dto/update-process-version.dto';
 import { ProcessVersionsService } from './process-versions.service';
@@ -182,6 +183,22 @@ export class ProcessVersionsController {
       await this.processVersionsService.archive(
         params.id,
         justificationDto,
+        currentUser,
+      ),
+    );
+  }
+
+  @Roles(Role.PUBLISHER)
+  @Post('process-versions/:id/promote')
+  async promote(
+    @Param() params: IdParamDto,
+    @Body() promoteProcessVersionDto: PromoteProcessVersionDto,
+    @CurrentUser() currentUser: AuthenticatedUser,
+  ): Promise<ProcessVersionResponseDto> {
+    return new ProcessVersionResponseDto(
+      await this.processVersionsService.promote(
+        params.id,
+        promoteProcessVersionDto,
         currentUser,
       ),
     );

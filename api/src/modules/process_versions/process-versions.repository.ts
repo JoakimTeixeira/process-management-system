@@ -16,6 +16,10 @@ interface CountRow extends QueryRow {
   count: string;
 }
 
+interface MaxRow extends QueryRow {
+  max_version_number: number | null;
+}
+
 interface ActorRow extends QueryRow {
   actor_id: string | null;
 }
@@ -442,6 +446,23 @@ export class ProcessVersionsRepository {
     );
 
     return rows[0] ? this.mapRecord(rows[0]) : null;
+  }
+
+  async getNextVersionNumber(
+    processId: string,
+    executor: SqlExecutor = this.dataSource,
+  ): Promise<number> {
+    const rows = await queryRows<MaxRow>(
+      executor,
+      `
+        SELECT MAX(version_number) AS max_version_number
+        FROM process_versions
+        WHERE process_id = $1
+      `,
+      [processId],
+    );
+
+    return (rows[0]?.max_version_number ?? 0) + 1;
   }
 
   private async findRequiredById(

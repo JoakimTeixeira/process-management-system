@@ -14,6 +14,7 @@ import { ProcessesRepository } from '../processes/processes.repository';
 import { WorkflowAuthorizationService } from '../workflow_support/workflow-authorization.service';
 import type { CreateProcessVersionDto } from './dto/create-process-version.dto';
 import type { LifecycleJustificationDto } from './dto/lifecycle-justification.dto';
+import type { PromoteProcessVersionDto } from './dto/promote-process-version.dto';
 import type { RequiredJustificationDto } from './dto/required-justification.dto';
 import type { UpdateProcessVersionDto } from './dto/update-process-version.dto';
 import type {
@@ -447,6 +448,156 @@ export class ProcessVersionsService {
       toState: 'Archived',
       action: 'ARCHIVE',
       reason: justificationDto.reason,
+    });
+  }
+
+  async promote(
+    id: string,
+    promoteProcessVersionDto: PromoteProcessVersionDto,
+    currentUser: AuthenticatedUser,
+  ): Promise<ProcessVersionRecord> {
+    const sourceVersion = await this.getById(id);
+
+    this.ensureLifecycle(
+      sourceVersion,
+      'Published',
+      'Only published TO-BE versions can be promoted',
+    );
+
+    if (sourceVersion.architectureState !== 'TO-BE') {
+      throw new ConflictException(
+        'Only published TO-BE versions can be promoted',
+      );
+    }
+
+    return await this.dataSource.transaction(async (manager) => {
+      const lockedSource = await this.getRequiredVersion(id, manager, true);
+      const existingPublishedAsIs =
+        await this.processVersionsRepository.findPublishedVersion(
+          lockedSource.processId,
+          'AS-IS',
+          manager,
+          undefined,
+          true,
+        );
+
+      if (existingPublishedAsIs) {
+        const archivedAsIs =
+          await this.processVersionsRepository.setLifecycleState(
+            existingPublishedAsIs.id,
+            'Archived',
+            currentUser.id,
+            manager,
+          );
+
+        await this.processVersionsRepository.insertStateHistory(
+          {
+            processVersionId: archivedAsIs.id,
+            fromState: 'Published',
+            toState: 'Archived',
+            actorId: currentUser.id,
+            reason: 'Archived previous AS-IS version during TO-BE promotion',
+          },
+          manager,
+        );
+
+        await this.auditLogWriterService.create(
+          {
+            entityType: 'process_version',
+            entityId: archivedAsIs.id,
+            action: 'ARCHIVE',
+            actorId: currentUser.id,
+            reasonForChange:
+              'Archived previous AS-IS version during TO-BE promotion',
+            oldData: existingPublishedAsIs,
+            newData: archivedAsIs,
+          },
+          manager,
+        );
+      }
+
+      const archivedSource =
+        await this.processVersionsRepository.setLifecycleState(
+          lockedSource.id,
+          'Archived',
+          currentUser.id,
+          manager,
+        );
+
+      await this.processVersionsRepository.insertStateHistory(
+        {
+          processVersionId: archivedSource.id,
+          fromState: 'Published',
+          toState: 'Archived',
+          actorId: currentUser.id,
+          reason: 'Archived promoted TO-BE version after promotion',
+        },
+        manager,
+      );
+
+      await this.auditLogWriterService.create(
+        {
+          entityType: 'process_version',
+          entityId: archivedSource.id,
+          action: 'ARCHIVE',
+          actorId: currentUser.id,
+          reasonForChange: 'Archived promoted TO-BE version after promotion',
+          oldData: lockedSource,
+          newData: archivedSource,
+        },
+        manager,
+      );
+
+      const promotedVersion = await this.processVersionsRepository.create(
+        {
+          processId: lockedSource.processId,
+          versionNumber:
+            await this.processVersionsRepository.getNextVersionNumber(
+              lockedSource.processId,
+              manager,
+            ),
+          lifecycleState: 'Published',
+          architectureState: 'AS-IS',
+          title: promoteProcessVersionDto.title ?? lockedSource.title,
+          checklistCompleted: true,
+          derivedFromVersionId: lockedSource.id,
+          changeDescription:
+            'Promoted the published TO-BE version into a new AS-IS version.',
+          reasonForChange: promoteProcessVersionDto.justification,
+          createdBy: currentUser.id,
+          updatedBy: currentUser.id,
+        },
+        manager,
+      );
+
+      await this.processVersionsRepository.insertStateHistory(
+        {
+          processVersionId: promotedVersion.id,
+          fromState: null,
+          toState: 'Published',
+          actorId: currentUser.id,
+          reason:
+            'Created the new AS-IS version directly as Published during promotion',
+        },
+        manager,
+      );
+
+      await this.auditLogWriterService.create(
+        {
+          entityType: 'process_version',
+          entityId: promotedVersion.id,
+          action: 'PROMOTE',
+          actorId: currentUser.id,
+          reasonForChange: promoteProcessVersionDto.justification,
+          newData: {
+            ...promotedVersion,
+            promotedFromVersionId: lockedSource.id,
+          },
+        },
+        manager,
+      );
+
+      return promotedVersion;
     });
   }
 
