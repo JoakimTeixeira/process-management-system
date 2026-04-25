@@ -35,7 +35,8 @@ export class ProcessesService {
       currentUser,
     );
 
-    const nextCode = await this.processesRepository.getNextProcessCode();
+    const nextCode: string =
+      await this.processesRepository.getNextProcessCode();
 
     try {
       const process = await this.processesRepository.create({

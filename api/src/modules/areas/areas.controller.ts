@@ -8,6 +8,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
 
 import { IdParamDto } from '../../common/dto/uuid-param.dto';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
@@ -34,21 +35,21 @@ export class AreasController {
   ): Promise<AreaResponseDto> {
     const area = await this.areasService.create(createAreaDto, currentUser);
 
-    return this.toAreaResponseDto(area);
+    return this.toDto(area);
   }
 
   @Get()
   async list(): Promise<AreaResponseDto[]> {
     const areas = await this.areasService.list();
 
-    return areas.map((area) => this.toAreaResponseDto(area));
+    return areas.map((area) => this.toDto(area));
   }
 
   @Get(':id')
   async getById(@Param() params: IdParamDto): Promise<AreaResponseDto> {
     const area = await this.areasService.getById(params.id);
 
-    return this.toAreaResponseDto(area);
+    return this.toDto(area);
   }
 
   @Roles(Role.EDITOR)
@@ -64,7 +65,7 @@ export class AreasController {
       currentUser,
     );
 
-    return this.toAreaResponseDto(area);
+    return this.toDto(area);
   }
 
   @Roles(Role.EDITOR)
@@ -76,7 +77,7 @@ export class AreasController {
     await this.areasService.delete(params.id, currentUser);
   }
 
-  private toAreaResponseDto(area: {
+  private toDto(area: {
     id: string;
     code: string;
     title: string;
@@ -85,7 +86,7 @@ export class AreasController {
     itilPracticeId: string;
     itilPracticeName: string;
   }): AreaResponseDto {
-    return new AreaResponseDto({
+    return plainToInstance(AreaResponseDto, {
       ...area,
       itilPractice: {
         id: area.itilPracticeId,

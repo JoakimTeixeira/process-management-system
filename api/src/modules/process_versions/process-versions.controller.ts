@@ -8,6 +8,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
 
 import { IdParamDto, ProcessIdParamDto } from '../../common/dto/uuid-param.dto';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
@@ -22,6 +23,7 @@ import { ProcessVersionResponseDto } from './dto/process-version-response.dto';
 import { PromoteProcessVersionDto } from './dto/promote-process-version.dto';
 import { RequiredJustificationDto } from './dto/required-justification.dto';
 import { UpdateProcessVersionDto } from './dto/update-process-version.dto';
+import type { ProcessVersionRecord } from './process-versions.repository';
 import { ProcessVersionsService } from './process-versions.service';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -38,7 +40,7 @@ export class ProcessVersionsController {
     @Body() createProcessVersionDto: CreateProcessVersionDto,
     @CurrentUser() currentUser: AuthenticatedUser,
   ): Promise<ProcessVersionResponseDto> {
-    return new ProcessVersionResponseDto(
+    return this.toDto(
       await this.processVersionsService.create(
         params.processId,
         createProcessVersionDto,
@@ -55,16 +57,14 @@ export class ProcessVersionsController {
       params.processId,
     );
 
-    return versions.map((version) => new ProcessVersionResponseDto(version));
+    return versions.map((version) => this.toDto(version));
   }
 
   @Get('process-versions/:id')
   async getById(
     @Param() params: IdParamDto,
   ): Promise<ProcessVersionResponseDto> {
-    return new ProcessVersionResponseDto(
-      await this.processVersionsService.getById(params.id),
-    );
+    return this.toDto(await this.processVersionsService.getById(params.id));
   }
 
   @Roles(Role.EDITOR)
@@ -74,7 +74,7 @@ export class ProcessVersionsController {
     @Body() updateProcessVersionDto: UpdateProcessVersionDto,
     @CurrentUser() currentUser: AuthenticatedUser,
   ): Promise<ProcessVersionResponseDto> {
-    return new ProcessVersionResponseDto(
+    return this.toDto(
       await this.processVersionsService.update(
         params.id,
         updateProcessVersionDto,
@@ -99,7 +99,7 @@ export class ProcessVersionsController {
     @Body() justificationDto: LifecycleJustificationDto,
     @CurrentUser() currentUser: AuthenticatedUser,
   ): Promise<ProcessVersionResponseDto> {
-    return new ProcessVersionResponseDto(
+    return this.toDto(
       await this.processVersionsService.submitForReview(
         params.id,
         justificationDto,
@@ -115,7 +115,7 @@ export class ProcessVersionsController {
     @Body() justificationDto: LifecycleJustificationDto,
     @CurrentUser() currentUser: AuthenticatedUser,
   ): Promise<ProcessVersionResponseDto> {
-    return new ProcessVersionResponseDto(
+    return this.toDto(
       await this.processVersionsService.approve(
         params.id,
         justificationDto,
@@ -131,7 +131,7 @@ export class ProcessVersionsController {
     @Body() justificationDto: RequiredJustificationDto,
     @CurrentUser() currentUser: AuthenticatedUser,
   ): Promise<ProcessVersionResponseDto> {
-    return new ProcessVersionResponseDto(
+    return this.toDto(
       await this.processVersionsService.reject(
         params.id,
         justificationDto,
@@ -147,7 +147,7 @@ export class ProcessVersionsController {
     @Body() justificationDto: RequiredJustificationDto,
     @CurrentUser() currentUser: AuthenticatedUser,
   ): Promise<ProcessVersionResponseDto> {
-    return new ProcessVersionResponseDto(
+    return this.toDto(
       await this.processVersionsService.reopen(
         params.id,
         justificationDto,
@@ -163,7 +163,7 @@ export class ProcessVersionsController {
     @Body() justificationDto: LifecycleJustificationDto,
     @CurrentUser() currentUser: AuthenticatedUser,
   ): Promise<ProcessVersionResponseDto> {
-    return new ProcessVersionResponseDto(
+    return this.toDto(
       await this.processVersionsService.publish(
         params.id,
         justificationDto,
@@ -179,7 +179,7 @@ export class ProcessVersionsController {
     @Body() justificationDto: RequiredJustificationDto,
     @CurrentUser() currentUser: AuthenticatedUser,
   ): Promise<ProcessVersionResponseDto> {
-    return new ProcessVersionResponseDto(
+    return this.toDto(
       await this.processVersionsService.archive(
         params.id,
         justificationDto,
@@ -195,12 +195,16 @@ export class ProcessVersionsController {
     @Body() promoteProcessVersionDto: PromoteProcessVersionDto,
     @CurrentUser() currentUser: AuthenticatedUser,
   ): Promise<ProcessVersionResponseDto> {
-    return new ProcessVersionResponseDto(
+    return this.toDto(
       await this.processVersionsService.promote(
         params.id,
         promoteProcessVersionDto,
         currentUser,
       ),
     );
+  }
+
+  private toDto(version: ProcessVersionRecord): ProcessVersionResponseDto {
+    return plainToInstance(ProcessVersionResponseDto, version);
   }
 }

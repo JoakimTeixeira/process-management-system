@@ -65,10 +65,14 @@ describe('ProcessVersionsService', () => {
 
   beforeEach(() => {
     dataSource = {
-      transaction: jest.fn(
-        async (callback: (manager: DataSource) => Promise<unknown>) =>
-          await callback({} as DataSource),
-      ),
+      transaction: jest
+        .fn()
+        .mockImplementation(
+          async (
+            _isolationLevel: unknown,
+            runInTransaction: (entityManager: unknown) => Promise<unknown>,
+          ) => await runInTransaction({}),
+        ),
     };
     processesRepository = {
       findById: jest.fn(),

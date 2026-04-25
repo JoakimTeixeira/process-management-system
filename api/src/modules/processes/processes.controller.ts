@@ -8,6 +8,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
 
 import { IdParamDto } from '../../common/dto/uuid-param.dto';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
@@ -19,6 +20,7 @@ import type { AuthenticatedUser } from '../auth/interfaces/authenticated-user.in
 import { CreateProcessDto } from './dto/create-process.dto';
 import { ProcessResponseDto } from './dto/process-response.dto';
 import { UpdateProcessDto } from './dto/update-process.dto';
+import type { ProcessRecord } from './processes.repository';
 import { ProcessesService } from './processes.service';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -32,7 +34,7 @@ export class ProcessesController {
     @Body() createProcessDto: CreateProcessDto,
     @CurrentUser() currentUser: AuthenticatedUser,
   ): Promise<ProcessResponseDto> {
-    return new ProcessResponseDto(
+    return this.toDto(
       await this.processesService.create(createProcessDto, currentUser),
     );
   }
@@ -41,14 +43,12 @@ export class ProcessesController {
   async list(): Promise<ProcessResponseDto[]> {
     const processes = await this.processesService.list();
 
-    return processes.map((process) => new ProcessResponseDto(process));
+    return processes.map((process) => this.toDto(process));
   }
 
   @Get(':id')
   async getById(@Param() params: IdParamDto): Promise<ProcessResponseDto> {
-    return new ProcessResponseDto(
-      await this.processesService.getById(params.id),
-    );
+    return this.toDto(await this.processesService.getById(params.id));
   }
 
   @Roles(Role.EDITOR)
@@ -58,7 +58,7 @@ export class ProcessesController {
     @Body() updateProcessDto: UpdateProcessDto,
     @CurrentUser() currentUser: AuthenticatedUser,
   ): Promise<ProcessResponseDto> {
-    return new ProcessResponseDto(
+    return this.toDto(
       await this.processesService.update(
         params.id,
         updateProcessDto,
@@ -74,5 +74,9 @@ export class ProcessesController {
     @CurrentUser() currentUser: AuthenticatedUser,
   ): Promise<void> {
     await this.processesService.delete(params.id, currentUser);
+  }
+
+  private toDto(process: ProcessRecord): ProcessResponseDto {
+    return plainToInstance(ProcessResponseDto, process);
   }
 }

@@ -1,4 +1,5 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
 
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -11,6 +12,10 @@ import { AuditReaderService } from './audit-reader.service';
 import { AuditEntityParamDto } from './dto/audit-entity-param.dto';
 import { AuditLogResponseDto } from './dto/audit-log-response.dto';
 import { VersionStateHistoryResponseDto } from './dto/version-state-history-response.dto';
+import type {
+  AuditLogRecord,
+  VersionStateHistoryRecord,
+} from './audit-reader.repository';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller()
@@ -28,7 +33,7 @@ export class AuditController {
       currentUser,
     );
 
-    return history.map((entry) => new VersionStateHistoryResponseDto(entry));
+    return history.map((entry) => this.toVersionStateHistoryDto(entry));
   }
 
   @Roles(Role.EDITOR, Role.REVIEWER, Role.PUBLISHER, Role.SYSTEM_ADMIN)
@@ -43,6 +48,16 @@ export class AuditController {
       currentUser,
     );
 
-    return logs.map((log) => new AuditLogResponseDto(log));
+    return logs.map((log) => this.toAuditLogDto(log));
+  }
+
+  private toVersionStateHistoryDto(
+    entry: VersionStateHistoryRecord,
+  ): VersionStateHistoryResponseDto {
+    return plainToInstance(VersionStateHistoryResponseDto, entry);
+  }
+
+  private toAuditLogDto(log: AuditLogRecord): AuditLogResponseDto {
+    return plainToInstance(AuditLogResponseDto, log);
   }
 }

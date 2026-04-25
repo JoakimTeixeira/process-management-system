@@ -8,6 +8,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { plainToInstance } from 'class-transformer';
 
 import {
   IdParamDto,
@@ -22,6 +23,7 @@ import type { AuthenticatedUser } from '../auth/interfaces/authenticated-user.in
 import { CreateProcedureDto } from './dto/create-procedure.dto';
 import { ProcedureResponseDto } from './dto/procedure-response.dto';
 import { UpdateProcedureDto } from './dto/update-procedure.dto';
+import type { ProcedureRecord } from './procedures.repository';
 import { ProceduresService } from './procedures.service';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -36,7 +38,7 @@ export class ProceduresController {
     @Body() createProcedureDto: CreateProcedureDto,
     @CurrentUser() currentUser: AuthenticatedUser,
   ): Promise<ProcedureResponseDto> {
-    return new ProcedureResponseDto(
+    return this.toDto(
       await this.proceduresService.create(
         params.processVersionId,
         createProcedureDto,
@@ -53,14 +55,12 @@ export class ProceduresController {
       params.processVersionId,
     );
 
-    return procedures.map((procedure) => new ProcedureResponseDto(procedure));
+    return procedures.map((procedure) => this.toDto(procedure));
   }
 
   @Get('procedures/:id')
   async getById(@Param() params: IdParamDto): Promise<ProcedureResponseDto> {
-    return new ProcedureResponseDto(
-      await this.proceduresService.getById(params.id),
-    );
+    return this.toDto(await this.proceduresService.getById(params.id));
   }
 
   @Roles(Role.EDITOR)
@@ -70,7 +70,7 @@ export class ProceduresController {
     @Body() updateProcedureDto: UpdateProcedureDto,
     @CurrentUser() currentUser: AuthenticatedUser,
   ): Promise<ProcedureResponseDto> {
-    return new ProcedureResponseDto(
+    return this.toDto(
       await this.proceduresService.update(
         params.id,
         updateProcedureDto,
@@ -86,5 +86,9 @@ export class ProceduresController {
     @CurrentUser() currentUser: AuthenticatedUser,
   ): Promise<void> {
     await this.proceduresService.delete(params.id, currentUser);
+  }
+
+  private toDto(procedure: ProcedureRecord): ProcedureResponseDto {
+    return plainToInstance(ProcedureResponseDto, procedure);
   }
 }

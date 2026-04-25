@@ -48,7 +48,7 @@ describe('ProcessesService', () => {
     areaId: 'area-1',
     code: '1',
     title: 'Human Resources Management',
-    summary: 'Current process summary',
+    description: 'Current process description',
     ownerId: 'owner-1',
   };
 
@@ -87,10 +87,9 @@ describe('ProcessesService', () => {
       service.create(
         {
           areaId: 'area-1',
-          code: '1',
           title: 'Human Resources Management',
           ownerId: 'owner-1',
-          summary: 'Current process summary',
+          description: 'Current process description',
         },
         currentUser,
       ),
@@ -108,9 +107,9 @@ describe('ProcessesService', () => {
       service.create(
         {
           areaId: 'area-1',
-          code: '1',
           title: 'Human Resources Management',
           ownerId: 'missing-owner',
+          description: 'Test description',
         },
         currentUser,
       ),
@@ -126,9 +125,9 @@ describe('ProcessesService', () => {
       service.create(
         {
           areaId: 'area-1',
-          code: '1',
           title: 'Human Resources Management',
           ownerId: 'owner-1',
+          description: 'Test description',
         },
         currentUser,
       ),
