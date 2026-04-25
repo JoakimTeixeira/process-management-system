@@ -12,6 +12,7 @@ describe('AreasService', () => {
     Pick<
       AreasRepository,
       | 'create'
+      | 'delete'
       | 'findAll'
       | 'findByCode'
       | 'findById'
@@ -45,6 +46,7 @@ describe('AreasService', () => {
   beforeEach(() => {
     repository = {
       create: jest.fn(),
+      delete: jest.fn(),
       findAll: jest.fn(),
       findByCode: jest.fn(),
       findById: jest.fn(),
@@ -305,6 +307,35 @@ describe('AreasService', () => {
         id: 'area-1',
         code: 'AREA_CHANGE',
         title: 'Updated Change Area',
+        description: 'Area description',
+        ownerId: 'owner-1',
+        itilPracticeId: 'practice-1',
+        itilPractice: {
+          id: 'practice-1',
+          name: 'Change control',
+        },
+      },
+    });
+  });
+
+  it('should delete an area and write an audit row', async () => {
+    repository.findById.mockResolvedValue(existingArea);
+
+    await expect(
+      service.delete('area-1', currentUser),
+    ).resolves.toBeUndefined();
+
+    expect(repository.delete).toHaveBeenCalledWith('area-1');
+    expect(auditLogWriterService.create).toHaveBeenCalledWith({
+      entityType: 'area',
+      entityId: 'area-1',
+      action: 'DELETE',
+      actorId: 'user-1',
+      reasonForChange: 'Deleted area via API',
+      oldData: {
+        id: 'area-1',
+        code: 'AREA_CHANGE',
+        title: 'Change Area',
         description: 'Area description',
         ownerId: 'owner-1',
         itilPracticeId: 'practice-1',

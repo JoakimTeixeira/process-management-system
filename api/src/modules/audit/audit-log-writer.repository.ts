@@ -2,14 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
+import type { SqlExecutor } from '../../common/types/sql-executor.type';
 import type { CreateAuditLogEntry } from './interfaces/create-audit-log-entry.interface';
 
 @Injectable()
 export class AuditLogWriterRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
-  async create(entry: CreateAuditLogEntry): Promise<void> {
-    await this.dataSource.query(
+  async create(
+    entry: CreateAuditLogEntry,
+    executor: SqlExecutor = this.dataSource,
+  ): Promise<void> {
+    await executor.query(
       `
         INSERT INTO audit_logs (
           entity_type,

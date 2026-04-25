@@ -5,6 +5,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { AreasModule } from './modules/areas/areas.module';
 import { HealthModule } from './modules/health/health.module';
 import { ItilPracticesModule } from './modules/itil_practices/itil-practices.module';
+import { ProcessesModule } from './modules/processes/processes.module';
 import appConfig from './config/app.config';
 import authConfig from './config/auth.config';
 import databaseConfig from './config/database.config';
@@ -32,6 +33,7 @@ import { createTypeOrmModuleOptions } from './database/typeorm-options';
     AuthModule,
     ItilPracticesModule,
     AreasModule,
+    ProcessesModule,
     HealthModule,
   ],
 })

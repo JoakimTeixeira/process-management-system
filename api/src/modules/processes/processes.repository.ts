@@ -2,128 +2,140 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
+import type { SqlExecutor } from '../../common/types/sql-executor.type';
+
 interface QueryRow {
   [key: string]: unknown;
-}
-
-interface AreaRow extends QueryRow {
-  id: string;
-  code: string;
-  title: string;
-  description: string | null;
-  owner_id: string;
-  itil_practice_id: string;
-  practice_name: string;
 }
 
 interface ExistsRow extends QueryRow {
   exists: boolean;
 }
 
-export interface AreaRecord {
+interface ProcessRow extends QueryRow {
   id: string;
+  area_id: string;
   code: string;
   title: string;
   description: string | null;
-  ownerId: string;
-  itilPracticeId: string;
-  itilPracticeName: string;
+  owner_id: string;
 }
 
-interface CreateAreaInput {
+export interface ProcessRecord {
+  id: string;
+  areaId: string;
   code: string;
   title: string;
   description: string | null;
   ownerId: string;
-  itilPracticeId: string;
+}
+
+interface CreateProcessInput {
+  areaId: string;
+  code: string;
+  title: string;
+  description: string;
+  ownerId: string;
   actorId: string;
 }
 
-interface UpdateAreaInput {
-  code?: string;
+interface UpdateProcessInput {
+  areaId?: string;
   title?: string;
   description?: string;
   ownerId?: string;
-  itilPracticeId?: string;
 }
 
 async function queryRows<T extends QueryRow>(
-  dataSource: DataSource,
+  executor: SqlExecutor,
   sql: string,
   parameters: readonly unknown[] = [],
 ): Promise<T[]> {
-  return await dataSource.query(sql, [...parameters]);
+  return await executor.query<T[]>(sql, [...parameters]);
 }
 
 @Injectable()
-export class AreasRepository {
+export class ProcessesRepository {
   constructor(@InjectDataSource() private readonly dataSource: DataSource) {}
 
-  async findAll(): Promise<AreaRecord[]> {
-    const rows = await queryRows<AreaRow>(
+  async findAll(): Promise<ProcessRecord[]> {
+    const rows = await queryRows<ProcessRow>(
       this.dataSource,
       `
         SELECT
-          a.id,
-          a.code,
-          a.title,
-          a.description,
-          a.owner_id,
-          a.itil_practice_id,
-          ip.name AS practice_name
-        FROM areas a
-        INNER JOIN itil_practices ip ON ip.id = a.itil_practice_id
-        ORDER BY a.title ASC
+          p.id,
+          p.area_id,
+          p.code,
+          p.title,
+          p.description,
+          p.owner_id
+        FROM processes p
+        ORDER BY p.code ASC
       `,
     );
 
     return rows.map((row) => this.mapRecord(row));
   }
 
-  async findById(id: string): Promise<AreaRecord | null> {
-    const rows = await queryRows<AreaRow>(
-      this.dataSource,
+  async findById(
+    id: string,
+    executor: SqlExecutor = this.dataSource,
+  ): Promise<ProcessRecord | null> {
+    const rows = await queryRows<ProcessRow>(
+      executor,
       `
         SELECT
-          a.id,
-          a.code,
-          a.title,
-          a.description,
-          a.owner_id,
-          a.itil_practice_id,
-          ip.name AS practice_name
-        FROM areas a
-        INNER JOIN itil_practices ip ON ip.id = a.itil_practice_id
-        WHERE a.id = $1
+          p.id,
+          p.area_id,
+          p.code,
+          p.title,
+          p.description,
+          p.owner_id
+        FROM processes p
+        WHERE p.id = $1
         LIMIT 1
       `,
       [id],
     );
 
-    return this.mapFirstRecord(rows);
+    return rows[0] ? this.mapRecord(rows[0]) : null;
   }
 
-  async findByCode(code: string): Promise<AreaRecord | null> {
-    const rows = await queryRows<AreaRow>(
+  async findByCode(code: string): Promise<ProcessRecord | null> {
+    const rows = await queryRows<ProcessRow>(
       this.dataSource,
       `
         SELECT
-          a.id,
-          a.code,
-          a.title,
-          a.description,
-          a.owner_id,
-          a.itil_practice_id,
-          ip.name AS practice_name
-        FROM areas a
-        INNER JOIN itil_practices ip ON ip.id = a.itil_practice_id
-        WHERE a.code = $1
+          p.id,
+          p.area_id,
+          p.code,
+          p.title,
+          p.description,
+          p.owner_id
+        FROM processes p
+        WHERE p.code = $1
         LIMIT 1
       `,
       [code],
     );
 
-    return this.mapFirstRecord(rows);
+    return rows[0] ? this.mapRecord(rows[0]) : null;
+  }
+
+  async areaExists(areaId: string): Promise<boolean> {
+    const rows = await queryRows<ExistsRow>(
+      this.dataSource,
+      `
+        SELECT EXISTS (
+          SELECT 1
+          FROM areas a
+          WHERE a.id = $1
+        ) AS exists
+      `,
+      [areaId],
+    );
+
+    return rows[0]?.exists ?? false;
   }
 
   async ownerExists(ownerId: string): Promise<boolean> {
@@ -142,12 +154,12 @@ export class AreasRepository {
     return rows[0]?.exists ?? false;
   }
 
-  async create(input: CreateAreaInput): Promise<AreaRecord> {
+  async create(input: CreateProcessInput): Promise<ProcessRecord> {
     const rows = await queryRows<{ id: string }>(
       this.dataSource,
       `
-        INSERT INTO areas (
-          itil_practice_id,
+        INSERT INTO processes (
+          area_id,
           code,
           title,
           description,
@@ -159,7 +171,7 @@ export class AreasRepository {
         RETURNING id
       `,
       [
-        input.itilPracticeId,
+        input.areaId,
         input.code,
         input.title,
         input.description,
@@ -173,15 +185,15 @@ export class AreasRepository {
 
   async update(
     id: string,
-    input: UpdateAreaInput,
+    input: UpdateProcessInput,
     actorId: string,
-  ): Promise<AreaRecord> {
+  ): Promise<ProcessRecord> {
     const setClauses: string[] = [];
     const parameters: unknown[] = [];
 
-    if (input.code !== undefined) {
-      parameters.push(input.code);
-      setClauses.push(`code = $${parameters.length}`);
+    if (input.areaId !== undefined) {
+      parameters.push(input.areaId);
+      setClauses.push(`area_id = $${parameters.length}`);
     }
 
     if (input.title !== undefined) {
@@ -199,18 +211,13 @@ export class AreasRepository {
       setClauses.push(`owner_id = $${parameters.length}`);
     }
 
-    if (input.itilPracticeId !== undefined) {
-      parameters.push(input.itilPracticeId);
-      setClauses.push(`itil_practice_id = $${parameters.length}`);
-    }
-
     parameters.push(actorId);
     setClauses.push(`updated_by = $${parameters.length}`);
     parameters.push(id);
 
     await this.dataSource.query(
       `
-        UPDATE areas
+        UPDATE processes
         SET ${setClauses.join(', ')}
         WHERE id = $${parameters.length}
       `,
@@ -223,40 +230,55 @@ export class AreasRepository {
   async delete(id: string): Promise<void> {
     await this.dataSource.query(
       `
-        DELETE FROM areas
+        DELETE FROM processes
         WHERE id = $1
       `,
       [id],
     );
   }
 
-  private async findRequiredById(id: string | undefined): Promise<AreaRecord> {
+  private async findRequiredById(
+    id: string | undefined,
+  ): Promise<ProcessRecord> {
     if (!id) {
-      throw new TypeError('Expected area identifier to be available');
+      throw new TypeError('Expected process identifier to be available');
     }
 
-    const area = await this.findById(id);
+    const process = await this.findById(id);
 
-    if (!area) {
-      throw new TypeError(`Expected area "${id}" to exist`);
+    if (!process) {
+      throw new TypeError(`Expected process "${id}" to exist`);
     }
 
-    return area;
+    return process;
   }
 
-  private mapFirstRecord(rows: AreaRow[]): AreaRecord | null {
-    return rows.length > 0 ? this.mapRecord(rows[0]) : null;
-  }
-
-  private mapRecord(row: AreaRow): AreaRecord {
+  private mapRecord(row: ProcessRow): ProcessRecord {
     return {
       id: row.id,
+      areaId: row.area_id,
       code: row.code,
       title: row.title,
       description: row.description,
       ownerId: row.owner_id,
-      itilPracticeId: row.itil_practice_id,
-      itilPracticeName: row.practice_name,
     };
+  }
+
+  async getNextProcessCode(): Promise<string> {
+    const rows = await queryRows<{ max_code: string | null }>(
+      this.dataSource,
+      `
+        SELECT MAX(code) AS max_code
+        FROM processes
+      `,
+    );
+
+    const maxCode = rows[0]?.max_code;
+    if (!maxCode) {
+      return '1';
+    }
+
+    const nextNumber = Number.parseInt(maxCode, 10) + 1;
+    return nextNumber.toString();
   }
 }

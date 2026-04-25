@@ -150,6 +150,20 @@ export class AreasService {
     }
   }
 
+  async delete(id: string, currentUser: AuthenticatedUser): Promise<void> {
+    const currentArea = await this.getById(id);
+
+    await this.areasRepository.delete(id);
+    await this.auditLogWriterService.create({
+      entityType: 'area',
+      entityId: currentArea.id,
+      action: 'DELETE',
+      actorId: currentUser.id,
+      reasonForChange: 'Deleted area via API',
+      oldData: this.toAuditSnapshot(currentArea),
+    });
+  }
+
   private async ensureOwnerExists(ownerId: string): Promise<void> {
     const ownerExists = await this.areasRepository.ownerExists(ownerId);
 

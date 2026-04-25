@@ -1,14 +1,15 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
-  ParseUUIDPipe,
   Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
 
+import { IdParamDto } from '../../common/dto/uuid-param.dto';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '../../common/enums/role.enum';
@@ -44,10 +45,8 @@ export class AreasController {
   }
 
   @Get(':id')
-  async getById(
-    @Param('id', new ParseUUIDPipe()) id: string,
-  ): Promise<AreaResponseDto> {
-    const area = await this.areasService.getById(id);
+  async getById(@Param() params: IdParamDto): Promise<AreaResponseDto> {
+    const area = await this.areasService.getById(params.id);
 
     return this.toAreaResponseDto(area);
   }
@@ -55,13 +54,26 @@ export class AreasController {
   @Roles(Role.EDITOR)
   @Patch(':id')
   async update(
-    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param() params: IdParamDto,
     @Body() updateAreaDto: UpdateAreaDto,
     @CurrentUser() currentUser: AuthenticatedUser,
   ): Promise<AreaResponseDto> {
-    const area = await this.areasService.update(id, updateAreaDto, currentUser);
+    const area = await this.areasService.update(
+      params.id,
+      updateAreaDto,
+      currentUser,
+    );
 
     return this.toAreaResponseDto(area);
+  }
+
+  @Roles(Role.EDITOR)
+  @Delete(':id')
+  async delete(
+    @Param() params: IdParamDto,
+    @CurrentUser() currentUser: AuthenticatedUser,
+  ): Promise<void> {
+    await this.areasService.delete(params.id, currentUser);
   }
 
   private toAreaResponseDto(area: {
