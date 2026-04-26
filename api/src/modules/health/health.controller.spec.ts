@@ -1,5 +1,5 @@
 import { HealthController } from './health.controller';
-import { HealthService } from './health.service';
+import { HealthService, HealthStatus } from './health.service';
 
 describe('HealthController', () => {
   let controller: HealthController;
@@ -15,26 +15,24 @@ describe('HealthController', () => {
     controller = new HealthController(healthService);
   });
 
-  it('should return health status', () => {
-    const mockStatus = { status: 'ok' };
-    healthService.getStatus.mockReturnValue(mockStatus);
+  it('should return health status', async () => {
+    const mockStatus: HealthStatus = {
+      status: 'UP',
+      checks: {
+        database: 'UP',
+      },
+    };
+    healthService.getStatus.mockResolvedValue(mockStatus);
 
-    const result = controller.getHealth();
-
-    expect(result).toEqual(mockStatus);
+    await expect(controller.getHealth()).resolves.toEqual(mockStatus);
     expect(healthService.getStatus).toHaveBeenCalled();
   });
 
-  it('should return error status when service is unhealthy', () => {
-    const mockStatus = {
-      status: 'error',
-      message: 'Database connection failed',
-    };
-    healthService.getStatus.mockReturnValue(mockStatus);
+  it('should propagate service failure when unhealthy', async () => {
+    const error = new Error('Database connection failed');
+    healthService.getStatus.mockRejectedValue(error);
 
-    const result = controller.getHealth();
-
-    expect(result).toEqual(mockStatus);
+    await expect(controller.getHealth()).rejects.toThrow(error);
     expect(healthService.getStatus).toHaveBeenCalled();
   });
 });
