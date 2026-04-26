@@ -17,6 +17,7 @@ describe('ProcessesService', () => {
       | 'findAll'
       | 'findByCode'
       | 'findById'
+      | 'getNextProcessCode'
       | 'ownerExists'
       | 'update'
     >
@@ -60,6 +61,7 @@ describe('ProcessesService', () => {
       findAll: jest.fn(),
       findByCode: jest.fn(),
       findById: jest.fn(),
+      getNextProcessCode: jest.fn(),
       ownerExists: jest.fn(),
       update: jest.fn(),
     };
@@ -81,6 +83,7 @@ describe('ProcessesService', () => {
     repository.ownerExists.mockResolvedValue(true);
     repository.areaExists.mockResolvedValue(true);
     repository.findByCode.mockResolvedValue(null);
+    repository.getNextProcessCode.mockResolvedValue('1');
     repository.create.mockResolvedValue(existingProcess);
 
     await expect(
@@ -119,7 +122,11 @@ describe('ProcessesService', () => {
   it('should reject duplicate code on create', async () => {
     repository.ownerExists.mockResolvedValue(true);
     repository.areaExists.mockResolvedValue(true);
-    repository.findByCode.mockResolvedValue(existingProcess);
+    repository.getNextProcessCode.mockResolvedValue('1');
+    repository.create.mockRejectedValue({
+      code: '23505',
+      constraint: 'processes_code_key',
+    });
 
     await expect(
       service.create(

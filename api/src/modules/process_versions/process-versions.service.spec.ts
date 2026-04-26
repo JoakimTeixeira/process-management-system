@@ -69,7 +69,6 @@ describe('ProcessVersionsService', () => {
         .fn()
         .mockImplementation(
           async (
-            _isolationLevel: unknown,
             runInTransaction: (entityManager: unknown) => Promise<unknown>,
           ) => await runInTransaction({}),
         ),
@@ -128,6 +127,7 @@ describe('ProcessVersionsService', () => {
     processVersionsRepository.findLatestActorForState.mockResolvedValue(
       currentUser.id,
     );
+    processVersionsRepository.findPublishedVersion.mockResolvedValue(null);
 
     await expect(
       service.publish('version-1', { reason: 'publish' }, currentUser),
@@ -138,6 +138,7 @@ describe('ProcessVersionsService', () => {
     processVersionsRepository.findById.mockResolvedValue(approvedVersion);
     processVersionsRepository.countBpmnAssets.mockResolvedValue(1);
     processVersionsRepository.findLatestActorForState.mockResolvedValue(null);
+    processVersionsRepository.findPublishedVersion.mockResolvedValue(null);
 
     await expect(
       service.publish('version-1', { reason: 'publish' }, currentUser),
@@ -180,6 +181,7 @@ describe('ProcessVersionsService', () => {
       });
     processVersionsRepository.getNextVersionNumber.mockResolvedValue(4);
     processVersionsRepository.create.mockResolvedValue(promotedVersion);
+    processVersionsRepository.insertStateHistory.mockResolvedValue(undefined);
 
     await service.promote(
       sourceVersion.id,

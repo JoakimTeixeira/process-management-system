@@ -24,6 +24,7 @@ describe('AuthService', () => {
 
   let authRepository: AuthRepository;
   let findUserByEmailSpy: jest.SpiedFunction<AuthRepository['findUserByEmail']>;
+  let findUserByIdSpy: jest.SpiedFunction<AuthRepository['findUserById']>;
   let jwtSigner: {
     signAsync: jest.MockedFunction<(payload: JwtPayload) => Promise<string>>;
   };
@@ -32,12 +33,15 @@ describe('AuthService', () => {
   beforeEach(() => {
     authRepository = new AuthRepository({} as DataSource);
     findUserByEmailSpy = jest.spyOn(authRepository, 'findUserByEmail');
+    findUserByIdSpy = jest.spyOn(authRepository, 'findUserById');
     jwtSigner = {
       signAsync: jest
         .fn<Promise<string>, [JwtPayload]>()
         .mockResolvedValue('signed-token'),
     };
     authService = new AuthService(authRepository, authConfiguration, jwtSigner);
+    jest.spyOn(authService['logger'], 'log').mockImplementation();
+    jest.spyOn(authService['logger'], 'warn').mockImplementation();
   });
 
   afterEach(() => {
@@ -75,5 +79,105 @@ describe('AuthService', () => {
       sub: 'user-1',
       email,
     });
+  });
+
+  it('should reject login when user not found', async () => {
+    findUserByEmailSpy.mockResolvedValue(null);
+
+    await expect(authService.login(email, password)).rejects.toThrow(
+      'Invalid email or password',
+    );
+  });
+
+  it('should reject login when user is inactive', async () => {
+    const user: AuthRepositoryUser = {
+      id: 'user-1',
+      name: 'Editor User',
+      email,
+      passwordHash: 'stored-hash',
+      isActive: false,
+      roleId: 'role-1',
+      role: Role.EDITOR,
+      team: null,
+    };
+
+    findUserByEmailSpy.mockResolvedValue(user);
+
+    await expect(authService.login(email, password)).rejects.toThrow(
+      'Invalid email or password',
+    );
+  });
+
+  it('should reject login when password is invalid', async () => {
+    const user: AuthRepositoryUser = {
+      id: 'user-1',
+      name: 'Editor User',
+      email,
+      passwordHash: 'stored-hash',
+      isActive: true,
+      roleId: 'role-1',
+      role: Role.EDITOR,
+      team: null,
+    };
+
+    findUserByEmailSpy.mockResolvedValue(user);
+    jest.mocked(argon2.verify).mockResolvedValue(false);
+
+    await expect(authService.login(email, password)).rejects.toThrow(
+      'Invalid email or password',
+    );
+  });
+
+  it('should return authenticated user by id', async () => {
+    const user: AuthRepositoryUser = {
+      id: 'user-1',
+      name: 'Editor User',
+      email,
+      passwordHash: 'stored-hash',
+      isActive: true,
+      roleId: 'role-1',
+      role: Role.EDITOR,
+      team: null,
+    };
+
+    findUserByIdSpy.mockResolvedValue(user);
+
+    const result = await authService.getAuthenticatedUserById('user-1');
+
+    expect(result).toEqual({
+      id: 'user-1',
+      name: 'Editor User',
+      email,
+      roleId: 'role-1',
+      role: Role.EDITOR,
+      team: null,
+    });
+  });
+
+  it('should return null when user not found by id', async () => {
+    findUserByIdSpy.mockResolvedValue(null);
+
+    const result = await authService.getAuthenticatedUserById('user-1');
+
+    expect(result).toBeNull();
+  });
+
+  it('should return null when user is inactive', async () => {
+    const user: AuthRepositoryUser = {
+      id: 'user-1',
+      name: 'Editor User',
+      email,
+      passwordHash: 'stored-hash',
+      isActive: false,
+      roleId: 'role-1',
+      role: Role.EDITOR,
+      team: null,
+    };
+
+    findUserByIdSpy.mockResolvedValue(user);
+
+    const result = await authService.getAuthenticatedUserById('user-1');
+
+    expect(result).toBeNull();
   });
 });
