@@ -327,12 +327,13 @@ CREATE TABLE users (
     team_id UUID REFERENCES teams(id) ON DELETE SET NULL,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
-    password_hash TEXT,
+    password_hash TEXT NOT NULL,
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT chk_users_name_not_blank CHECK (btrim(name) <> ''),
     CONSTRAINT chk_users_email_not_blank CHECK (btrim(email) <> ''),
+    CONSTRAINT chk_users_password_not_blank CHECK (btrim(password_hash) <> ''),
     CONSTRAINT chk_users_updated_at_after_created_at CHECK (updated_at >= created_at)
 );
 

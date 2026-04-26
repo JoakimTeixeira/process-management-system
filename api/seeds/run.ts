@@ -197,7 +197,7 @@ async function upsertUser(
     email: string;
     name: string;
     roleId: string;
-    teamId: string;
+    teamId: string | null;
     passwordHash: string;
   },
 ): Promise<string> {
@@ -643,17 +643,21 @@ async function seedUsers(
 ): Promise<void> {
   for (const user of users) {
     const roleId = context.roleIds.get(user.roleName);
-    const teamId = context.teamIds.get(user.teamCode);
+    const teamId = user.teamCode ? context.teamIds.get(user.teamCode) : null;
 
-    if (!roleId || !teamId) {
-      throw new Error(`Missing role or team for seeded user ${user.email}`);
+    if (!roleId) {
+      throw new Error(`Missing role for seeded user ${user.email}`);
+    }
+
+    if (user.teamCode && !teamId) {
+      throw new Error(`Missing team for seeded user ${user.email}`);
     }
 
     const userId = await upsertUser(manager, {
       email: user.email,
       name: user.name,
       roleId,
-      teamId,
+      teamId: teamId ?? null,
       passwordHash,
     });
 
