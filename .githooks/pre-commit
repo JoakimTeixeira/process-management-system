@@ -1,0 +1,11 @@
+#!/bin/sh
+
+cd api
+
+echo "Running prettier..."
+npm run format
+
+echo "Running eslint..."
+npm run lint
+
+echo "Pre-commit checks passed!"
