@@ -324,7 +324,7 @@ CREATE TABLE team_aliases (
 CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     role_id UUID NOT NULL REFERENCES roles(id) ON DELETE RESTRICT,
-    team_id UUID REFERENCES teams(id) ON DELETE SET NULL,
+    team_id UUID NOT NULL REFERENCES teams(id) ON DELETE RESTRICT,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     password_hash TEXT NOT NULL,
