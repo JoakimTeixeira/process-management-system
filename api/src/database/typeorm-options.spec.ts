@@ -1,4 +1,7 @@
-import { createDataSourceOptions, createTypeOrmModuleOptions } from './typeorm-options';
+import {
+  createDataSourceOptions,
+  createTypeOrmModuleOptions,
+} from './typeorm-options';
 import type { DatabaseConfig } from '../config/database.config';
 
 import { DEFAULT_DB_PORT } from '../common/constants/workflow.constants';

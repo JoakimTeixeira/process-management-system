@@ -47,12 +47,7 @@ describe('ProceduresController', () => {
       getById: jest.fn(),
       update: jest.fn(),
       delete: jest.fn(),
-    } as jest.Mocked<
-      Pick<
-        ProceduresService,
-        'create' | 'listByProcessVersionId' | 'getById' | 'update' | 'delete'
-      >
-    >;
+    };
 
     controller = new ProceduresController(
       proceduresService as unknown as ProceduresService,

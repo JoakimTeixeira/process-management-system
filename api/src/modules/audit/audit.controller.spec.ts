@@ -6,10 +6,7 @@ import { Role } from '../../common/enums/role.enum';
 describe('AuditController', () => {
   let controller: AuditController;
   let auditReaderService: jest.Mocked<
-    Pick<
-      AuditReaderService,
-      'listVersionStateHistory' | 'listLogsByEntity'
-    >
+    Pick<AuditReaderService, 'listVersionStateHistory' | 'listLogsByEntity'>
   >;
 
   const mockUser: AuthenticatedUser = {
@@ -49,12 +46,7 @@ describe('AuditController', () => {
     auditReaderService = {
       listVersionStateHistory: jest.fn(),
       listLogsByEntity: jest.fn(),
-    } as jest.Mocked<
-      Pick<
-        AuditReaderService,
-        'listVersionStateHistory' | 'listLogsByEntity'
-      >
-    >;
+    };
 
     controller = new AuditController(
       auditReaderService as unknown as AuditReaderService,

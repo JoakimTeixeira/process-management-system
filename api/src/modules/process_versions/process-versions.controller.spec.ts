@@ -64,23 +64,7 @@ describe('ProcessVersionsController', () => {
       publish: jest.fn(),
       archive: jest.fn(),
       promote: jest.fn(),
-    } as jest.Mocked<
-      Pick<
-        ProcessVersionsService,
-        | 'create'
-        | 'listByProcessId'
-        | 'getById'
-        | 'update'
-        | 'delete'
-        | 'submitForReview'
-        | 'approve'
-        | 'reject'
-        | 'reopen'
-        | 'publish'
-        | 'archive'
-        | 'promote'
-      >
-    >;
+    };
 
     controller = new ProcessVersionsController(
       processVersionsService as unknown as ProcessVersionsService,
