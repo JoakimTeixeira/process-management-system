@@ -2,6 +2,7 @@ import { UnauthorizedException } from '@nestjs/common';
 
 import type { AuthConfig } from '../../../config/auth.config';
 import { Role } from '../../../common/enums/role.enum';
+import { TEST_TOKEN_EXPIRES_IN_SECONDS_SHORT } from '../../../common/constants/workflow.constants';
 import type { AuthService } from '../auth.service';
 import type { AuthenticatedUser } from '../interfaces/authenticated-user.interface';
 import type { JwtPayload } from '../interfaces/jwt-payload.interface';
@@ -12,7 +13,7 @@ describe('JwtStrategy', () => {
     passwordPepper: 'pepper',
     jwtSecret: 'secret',
     jwtExpiresIn: '15m',
-    jwtExpiresInSeconds: 900,
+    jwtExpiresInSeconds: TEST_TOKEN_EXPIRES_IN_SECONDS_SHORT,
   };
   const payload: JwtPayload = {
     sub: 'user-1',

@@ -1,6 +1,11 @@
 import { registerAs } from '@nestjs/config';
 
 import { getValidatedEnvironment } from './env.validation';
+import {
+  SECONDS_PER_DAY,
+  SECONDS_PER_HOUR,
+  SECONDS_PER_MINUTE,
+} from '../common/constants/workflow.constants';
 
 export interface AuthConfig {
   passwordPepper: string;
@@ -11,9 +16,9 @@ export interface AuthConfig {
 
 const JWT_EXPIRATION_UNITS: Record<string, number> = {
   s: 1,
-  m: 60,
-  h: 60 * 60,
-  d: 60 * 60 * 24,
+  m: SECONDS_PER_MINUTE,
+  h: SECONDS_PER_HOUR,
+  d: SECONDS_PER_DAY,
 };
 
 function parseJwtExpiresIn(value: string): number {

@@ -2,7 +2,7 @@ interface PostgresErrorLike {
   code?: string;
 }
 
-const UNIQUE_VIOLATION_ERROR_CODE = '23505';
+export const UNIQUE_VIOLATION_ERROR_CODE = '23505';
 
 export function isUniqueViolationError(
   error: unknown,

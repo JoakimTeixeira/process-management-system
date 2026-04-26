@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import type { ConfigType } from '@nestjs/config';
 
+import { MILLISECONDS_PER_SECOND } from '../../common/constants/workflow.constants';
 import authConfig from '../../config/auth.config';
 import { LoginResponseDto } from './dto/login-response.dto';
 import { AuthRepository, AuthRepositoryUser } from './auth.repository';
@@ -48,7 +49,8 @@ export class AuthService {
 
     const issuedAt = new Date();
     const expiresAt = new Date(
-      issuedAt.getTime() + this.authConfiguration.jwtExpiresInSeconds * 1000,
+      issuedAt.getTime() +
+        this.authConfiguration.jwtExpiresInSeconds * MILLISECONDS_PER_SECOND,
     );
     const accessToken = await this.jwtSigner.signAsync({
       sub: user.id,

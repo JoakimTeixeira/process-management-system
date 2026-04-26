@@ -1,6 +1,7 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
 
 import { Role } from '../../common/enums/role.enum';
+import { UNIQUE_VIOLATION_ERROR_CODE } from '../../common/utils/postgres-error.util';
 import type { AuditLogWriterService } from '../audit/audit-log-writer.service';
 import type { AuthenticatedUser } from '../auth/interfaces/authenticated-user.interface';
 import type { WorkflowAuthorizationService } from '../workflow_support/workflow-authorization.service';
@@ -124,7 +125,7 @@ describe('ProcessesService', () => {
     repository.areaExists.mockResolvedValue(true);
     repository.getNextProcessCode.mockResolvedValue('1');
     repository.create.mockRejectedValue({
-      code: '23505',
+      code: UNIQUE_VIOLATION_ERROR_CODE,
       constraint: 'processes_code_key',
     });
 

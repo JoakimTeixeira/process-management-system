@@ -1,5 +1,10 @@
 import * as Joi from 'joi';
 
+import {
+  DEFAULT_DB_PORT,
+  DEFAULT_PORT,
+} from '../common/constants/workflow.constants';
+
 export interface EnvironmentVariables {
   NODE_ENV: 'development' | 'production' | 'test';
   PORT: number;
@@ -18,9 +23,9 @@ const environmentSchema = Joi.object<EnvironmentVariables>({
   NODE_ENV: Joi.string()
     .valid('development', 'production', 'test')
     .default('development'),
-  PORT: Joi.number().port().default(3000),
+  PORT: Joi.number().port().default(DEFAULT_PORT),
   DB_HOST: Joi.string().hostname().required(),
-  DB_PORT: Joi.number().port().default(5432),
+  DB_PORT: Joi.number().port().default(DEFAULT_DB_PORT),
   DB_USERNAME: Joi.string().required(),
   DB_PASSWORD: Joi.string().required(),
   DB_NAME: Joi.string().required(),

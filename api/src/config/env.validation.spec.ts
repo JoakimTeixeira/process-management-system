@@ -1,5 +1,10 @@
 import { validateEnvironment, getValidatedEnvironment } from './env.validation';
 
+import {
+  DEFAULT_DB_PORT,
+  DEFAULT_PORT,
+} from '../common/constants/workflow.constants';
+
 describe('env.validation', () => {
   const originalEnv = process.env;
 
@@ -16,9 +21,9 @@ describe('env.validation', () => {
     it('should validate correct environment variables', () => {
       const config = {
         NODE_ENV: 'development',
-        PORT: 3000,
+        PORT: DEFAULT_PORT,
         DB_HOST: 'localhost',
-        DB_PORT: 5432,
+        DB_PORT: DEFAULT_DB_PORT,
         DB_USERNAME: 'user',
         DB_PASSWORD: 'password',
         DB_NAME: 'test-db',
@@ -47,8 +52,8 @@ describe('env.validation', () => {
       const result = validateEnvironment(config);
 
       expect(result.NODE_ENV).toBe('development');
-      expect(result.PORT).toBe(3000);
-      expect(result.DB_PORT).toBe(5432);
+      expect(result.PORT).toBe(DEFAULT_PORT);
+      expect(result.DB_PORT).toBe(DEFAULT_DB_PORT);
       expect(result.DB_SSL).toBe(false);
     });
 

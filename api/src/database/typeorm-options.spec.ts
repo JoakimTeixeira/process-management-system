@@ -1,10 +1,12 @@
 import { createDataSourceOptions, createTypeOrmModuleOptions } from './typeorm-options';
 import type { DatabaseConfig } from '../config/database.config';
 
+import { DEFAULT_DB_PORT } from '../common/constants/workflow.constants';
+
 describe('typeorm-options', () => {
   const mockDbConfig: DatabaseConfig = {
     host: 'localhost',
-    port: 5432,
+    port: DEFAULT_DB_PORT,
     username: 'user',
     password: 'pass',
     database: 'db',
@@ -17,7 +19,7 @@ describe('typeorm-options', () => {
     expect(options).toMatchObject({
       type: 'postgres',
       host: 'localhost',
-      port: 5432,
+      port: DEFAULT_DB_PORT,
       username: 'user',
       password: 'pass',
       database: 'db',
@@ -48,7 +50,7 @@ describe('typeorm-options', () => {
     expect(options).toMatchObject({
       type: 'postgres',
       host: 'localhost',
-      port: 5432,
+      port: DEFAULT_DB_PORT,
       username: 'user',
       password: 'pass',
       database: 'db',

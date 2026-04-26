@@ -1,6 +1,14 @@
 import { buildDatabaseConfig } from './database.config';
 import { getValidatedEnvironment } from './env.validation';
 
+import {
+  DEFAULT_DB_PORT,
+  DEFAULT_PORT,
+  TEST_DATABASE_PORT,
+  TEST_PORT,
+  TEST_TOKEN_EXPIRES_IN_SECONDS,
+} from '../common/constants/workflow.constants';
+
 jest.mock('./env.validation');
 
 describe('database.config', () => {
@@ -11,15 +19,15 @@ describe('database.config', () => {
   it('should build database config from environment', () => {
     (getValidatedEnvironment as jest.Mock).mockReturnValue({
       NODE_ENV: 'development',
-      PORT: 3000,
+      PORT: DEFAULT_PORT,
       DB_HOST: 'localhost',
-      DB_PORT: 5432,
+      DB_PORT: DEFAULT_DB_PORT,
       DB_USERNAME: 'user',
       DB_PASSWORD: 'pass',
       DB_NAME: 'db',
       DB_SSL: false,
       JWT_SECRET: 'secret',
-      JWT_EXPIRES_IN_SECONDS: 3600,
+      JWT_EXPIRES_IN_SECONDS: TEST_TOKEN_EXPIRES_IN_SECONDS,
       PASSWORD_PEPPER: 'pepper',
     });
 
@@ -27,7 +35,7 @@ describe('database.config', () => {
 
     expect(config).toEqual({
       host: 'localhost',
-      port: 5432,
+      port: DEFAULT_DB_PORT,
       username: 'user',
       password: 'pass',
       database: 'db',
@@ -39,15 +47,15 @@ describe('database.config', () => {
   it('should build database config with SSL enabled', () => {
     (getValidatedEnvironment as jest.Mock).mockReturnValue({
       NODE_ENV: 'production',
-      PORT: 8080,
+      PORT: TEST_PORT,
       DB_HOST: 'prod-db.example.com',
-      DB_PORT: 5432,
-      DB_USERNAME: 'produser',
-      DB_PASSWORD: 'prodpass',
-      DB_NAME: 'proddb',
+      DB_PORT: DEFAULT_DB_PORT,
+      DB_USERNAME: 'prod-user',
+      DB_PASSWORD: 'prod-password',
+      DB_NAME: 'prod-db',
       DB_SSL: true,
       JWT_SECRET: 'secret',
-      JWT_EXPIRES_IN_SECONDS: 3600,
+      JWT_EXPIRES_IN_SECONDS: TEST_TOKEN_EXPIRES_IN_SECONDS,
       PASSWORD_PEPPER: 'pepper',
     });
 
@@ -55,10 +63,10 @@ describe('database.config', () => {
 
     expect(config).toEqual({
       host: 'prod-db.example.com',
-      port: 5432,
-      username: 'produser',
-      password: 'prodpass',
-      database: 'proddb',
+      port: DEFAULT_DB_PORT,
+      username: 'prod-user',
+      password: 'prod-password',
+      database: 'prod-db',
       ssl: true,
     });
   });
@@ -66,15 +74,15 @@ describe('database.config', () => {
   it('should build database config with custom port', () => {
     (getValidatedEnvironment as jest.Mock).mockReturnValue({
       NODE_ENV: 'development',
-      PORT: 3000,
+      PORT: DEFAULT_PORT,
       DB_HOST: 'localhost',
-      DB_PORT: 5433,
+      DB_PORT: TEST_DATABASE_PORT,
       DB_USERNAME: 'user',
       DB_PASSWORD: 'pass',
       DB_NAME: 'db',
       DB_SSL: false,
       JWT_SECRET: 'secret',
-      JWT_EXPIRES_IN_SECONDS: 3600,
+      JWT_EXPIRES_IN_SECONDS: TEST_TOKEN_EXPIRES_IN_SECONDS,
       PASSWORD_PEPPER: 'pepper',
     });
 
@@ -82,7 +90,7 @@ describe('database.config', () => {
 
     expect(config).toEqual({
       host: 'localhost',
-      port: 5433,
+      port: TEST_DATABASE_PORT,
       username: 'user',
       password: 'pass',
       database: 'db',

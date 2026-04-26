@@ -1,6 +1,14 @@
 import { buildAuthConfig } from './auth.config';
 import { getValidatedEnvironment } from './env.validation';
 
+import {
+  DEFAULT_DB_PORT,
+  DEFAULT_PORT,
+  SECONDS_PER_DAY,
+  SECONDS_PER_HOUR,
+  SECONDS_PER_MINUTE,
+} from '../common/constants/workflow.constants';
+
 jest.mock('./env.validation');
 
 describe('auth.config', () => {
@@ -11,9 +19,9 @@ describe('auth.config', () => {
   it('should build auth config from environment', () => {
     (getValidatedEnvironment as jest.Mock).mockReturnValue({
       NODE_ENV: 'development',
-      PORT: 3000,
+      PORT: DEFAULT_PORT,
       DB_HOST: 'localhost',
-      DB_PORT: 5432,
+      DB_PORT: DEFAULT_DB_PORT,
       DB_USERNAME: 'user',
       DB_PASSWORD: 'pass',
       DB_NAME: 'db',
@@ -29,7 +37,7 @@ describe('auth.config', () => {
       passwordPepper: 'pepper',
       jwtSecret: 'secret',
       jwtExpiresIn: '15m',
-      jwtExpiresInSeconds: 900,
+      jwtExpiresInSeconds: 15 * SECONDS_PER_MINUTE,
     });
     expect(getValidatedEnvironment).toHaveBeenCalled();
   });
@@ -55,7 +63,7 @@ describe('auth.config', () => {
 
     const config = buildAuthConfig();
 
-    expect(config.jwtExpiresInSeconds).toBe(900);
+    expect(config.jwtExpiresInSeconds).toBe(15 * SECONDS_PER_MINUTE);
   });
 
   it('should parse JWT expiration in hours', () => {
@@ -67,7 +75,7 @@ describe('auth.config', () => {
 
     const config = buildAuthConfig();
 
-    expect(config.jwtExpiresInSeconds).toBe(7200);
+    expect(config.jwtExpiresInSeconds).toBe(2 * SECONDS_PER_HOUR);
   });
 
   it('should parse JWT expiration in days', () => {
@@ -79,7 +87,7 @@ describe('auth.config', () => {
 
     const config = buildAuthConfig();
 
-    expect(config.jwtExpiresInSeconds).toBe(86400);
+    expect(config.jwtExpiresInSeconds).toBe(SECONDS_PER_DAY);
   });
 
   it('should throw error for invalid JWT_EXPIRES_IN format', () => {

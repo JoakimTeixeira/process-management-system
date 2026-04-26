@@ -3,6 +3,8 @@ import { DataSource } from 'typeorm';
 import { buildDatabaseConfig } from '../config/database.config';
 import { createDataSourceOptions } from './typeorm-options';
 
+import { DEFAULT_DB_PORT } from '../common/constants/workflow.constants';
+
 jest.mock('typeorm', () => ({
   DataSource: jest.fn(),
 }));
@@ -23,7 +25,7 @@ describe('typeorm.datasource', () => {
   it('should create a DataSource with correct options', () => {
     const mockDbConfig = {
       host: 'localhost',
-      port: 5432,
+      port: DEFAULT_DB_PORT,
       username: 'user',
       password: 'pass',
       database: 'db',
@@ -33,7 +35,7 @@ describe('typeorm.datasource', () => {
     const mockOptions = {
       type: 'postgres',
       host: 'localhost',
-      port: 5432,
+      port: DEFAULT_DB_PORT,
       username: 'user',
       password: 'pass',
       database: 'db',
@@ -51,6 +53,7 @@ describe('typeorm.datasource', () => {
       initialize: jest.fn(),
     }));
 
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     require('./typeorm.datasource');
 
     expect(buildDatabaseConfig).toHaveBeenCalled();

@@ -11,6 +11,7 @@ import {
   MinLength,
 } from 'class-validator';
 
+import { MAX_TEXT_LENGTH } from '../../../common/constants/workflow.constants';
 import { trimString } from '../../../common/utils/trim-string-transform.util';
 
 export class CreateProcessVersionDto {
@@ -24,7 +25,7 @@ export class CreateProcessVersionDto {
   @Transform(trimString)
   @IsString()
   @MinLength(1)
-  @MaxLength(255)
+  @MaxLength(MAX_TEXT_LENGTH)
   title!: string;
 
   @Transform(trimString)

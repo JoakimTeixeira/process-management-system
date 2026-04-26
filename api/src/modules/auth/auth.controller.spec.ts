@@ -2,6 +2,10 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import type { AuthenticatedUser } from './interfaces/authenticated-user.interface';
 import { Role } from '../../common/enums/role.enum';
+import {
+  MILLISECONDS_PER_SECOND,
+  TEST_TOKEN_EXPIRES_IN_SECONDS,
+} from '../../common/constants/workflow.constants';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -36,8 +40,10 @@ describe('AuthController', () => {
     const mockResponse = {
       accessToken: 'jwt-token',
       tokenType: 'Bearer' as const,
-      expiresIn: 3600,
-      expiresAt: new Date(Date.now() + 3600000).toISOString(),
+      expiresIn: TEST_TOKEN_EXPIRES_IN_SECONDS,
+      expiresAt: new Date(
+        Date.now() + TEST_TOKEN_EXPIRES_IN_SECONDS * MILLISECONDS_PER_SECOND,
+      ).toISOString(),
     };
     authService.login.mockResolvedValue(mockResponse);
 

@@ -9,6 +9,10 @@ import {
   ValidateNested,
 } from 'class-validator';
 
+import {
+  MAX_CODE_LENGTH,
+  MAX_TEXT_LENGTH,
+} from '../../../common/constants/workflow.constants';
 import { trimString } from '../../../common/utils/trim-string-transform.util';
 import { ProcedureActivityDto } from './shared-procedure.dto';
 
@@ -17,7 +21,7 @@ export class UpdateProcedureDto {
   @Transform(trimString)
   @IsString()
   @MinLength(1)
-  @MaxLength(50)
+  @MaxLength(MAX_CODE_LENGTH)
   @Matches(/^\d+(?:\.\d+)+$/, {
     message: 'code must be a string hierarchical identifier such as "1.1"',
   })
@@ -27,7 +31,7 @@ export class UpdateProcedureDto {
   @Transform(trimString)
   @IsString()
   @MinLength(1)
-  @MaxLength(255)
+  @MaxLength(MAX_TEXT_LENGTH)
   title?: string;
 
   @IsOptional()

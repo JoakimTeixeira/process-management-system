@@ -2,6 +2,7 @@ import { AssetsController } from './assets.controller';
 import { AssetsService } from './assets.service';
 import type { AuthenticatedUser } from '../auth/interfaces/authenticated-user.interface';
 import { Role } from '../../common/enums/role.enum';
+import { TEST_FILE_SIZE_BYTES } from '../../common/constants/workflow.constants';
 import type { AssetRecord } from './assets.repository';
 
 describe('AssetsController', () => {
@@ -35,7 +36,7 @@ describe('AssetsController', () => {
     filePath: '/uploads/test.bpmn',
     mimeType: 'application/xml',
     checksum: 'abc123',
-    sizeBytes: 1024,
+    sizeBytes: TEST_FILE_SIZE_BYTES,
   };
 
   beforeEach(() => {

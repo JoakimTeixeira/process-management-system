@@ -1,8 +1,8 @@
 import { readFile } from 'node:fs/promises';
-import { ConflictException } from '@nestjs/common';
-import { NotFoundException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
 
 import { Role } from '../../common/enums/role.enum';
+import { TEST_FILE_SIZE_BYTES_SMALL } from '../../common/constants/workflow.constants';
 import type { AuditLogWriterService } from '../audit/audit-log-writer.service';
 import type { AuthenticatedUser } from '../auth/interfaces/authenticated-user.interface';
 import type { ProcessVersionsRepository } from '../process_versions/process-versions.repository';
@@ -116,7 +116,7 @@ describe('AssetsService', () => {
       filePath: 'seed/process-1-v1.bpmn',
       mimeType: 'application/xml',
       checksum: 'checksum',
-      sizeBytes: 42,
+      sizeBytes: TEST_FILE_SIZE_BYTES_SMALL,
     });
 
     await service.createBpmnAsset(

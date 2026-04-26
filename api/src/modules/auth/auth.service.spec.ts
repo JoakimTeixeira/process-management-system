@@ -3,6 +3,7 @@ import type { DataSource } from 'typeorm';
 
 import type { AuthConfig } from '../../config/auth.config';
 import { Role } from '../../common/enums/role.enum';
+import { TEST_TOKEN_EXPIRES_IN_SECONDS_SHORT } from '../../common/constants/workflow.constants';
 import { AuthRepository } from './auth.repository';
 import type { AuthRepositoryUser } from './auth.repository';
 import type { JwtPayload } from './interfaces/jwt-payload.interface';
@@ -19,7 +20,7 @@ describe('AuthService', () => {
     passwordPepper: 'pepper',
     jwtSecret: 'secret',
     jwtExpiresIn: '15m',
-    jwtExpiresInSeconds: 900,
+    jwtExpiresInSeconds: TEST_TOKEN_EXPIRES_IN_SECONDS_SHORT,
   };
 
   let authRepository: AuthRepository;
