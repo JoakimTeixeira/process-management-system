@@ -1,0 +1,55 @@
+<section class="portal-detail-body">
+  @if (version(); as version) {
+    <section class="portal-detail-section">
+      <div class="portal-detail-section__header">
+        <div>
+          <p class="portal-section-kicker">
+            {{ getArchitectureSubtitle(version.architectureState) }}
+          </p>
+          <h2>{{ version.title }}</h2>
+        </div>
+      </div>
+
+      <div class="portal-detail-section__content portal-detail-section__content--stack">
+        <p class="portal-detail-copy">
+          {{ version.changeDescription || 'Published architecture view.' }}
+        </p>
+        <p class="portal-muted">
+          {{ version.reasonForChange || 'No additional rationale provided.' }}
+        </p>
+      </div>
+    </section>
+
+    <section class="portal-detail-section">
+      <div class="portal-detail-section__header">
+        <div>
+          <p class="portal-section-kicker">Version</p>
+          <h2>Published version summary</h2>
+        </div>
+      </div>
+
+      <dl class="portal-definition-list portal-detail-summary-grid">
+        <div>
+          <dt>Version</dt>
+          <dd>{{ version.versionNumber }}</dd>
+        </div>
+        <div>
+          <dt>Procedures</dt>
+          <dd>{{ version.procedures.length }}</dd>
+        </div>
+        <div>
+          <dt>BPMN</dt>
+          <dd>{{ version.bpmnAsset ? 'Available' : 'Unavailable' }}</dd>
+        </div>
+        <div>
+          <dt>Public label</dt>
+          <dd>{{ getArchitectureLabel(version.architectureState) }}</dd>
+        </div>
+      </dl>
+    </section>
+  } @else {
+    <div class="portal-state-panel">
+      <p>{{ emptyMessage() }}</p>
+    </div>
+  }
+</section>

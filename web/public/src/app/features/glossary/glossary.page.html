@@ -1,0 +1,151 @@
+<app-breadcrumbs [items]="breadcrumbs" />
+
+<section class="glossary-page">
+  <header class="portal-page-intro">
+    <h1>Standardized business terms and ITIL practices</h1>
+    <p>
+      Consult the shared terminology and reference practices used throughout the public repository.
+    </p>
+  </header>
+
+  <section class="portal-card-grid glossary-note-grid">
+    <article class="portal-surface glossary-note-card">
+      <p class="portal-section-kicker">Glossary</p>
+      <p class="portal-muted">
+        Use this page to align on business vocabulary before exploring processes and procedures.
+      </p>
+    </article>
+
+    <article class="portal-surface glossary-note-card">
+      <p class="portal-section-kicker">Reference practices</p>
+      <p class="portal-muted">
+        ITIL practice notes help explain the governance context attached to published records.
+      </p>
+    </article>
+  </section>
+
+  @if (loading()) {
+    <div class="portal-state-panel">
+      <mat-spinner diameter="42" />
+    </div>
+  } @else if (errorMessage(); as errorMessage) {
+    <div class="portal-state-panel">
+      <p>{{ errorMessage }}</p>
+    </div>
+  } @else {
+    <section class="glossary-layout">
+      <article class="portal-surface glossary-panel">
+        <div class="glossary-panel__header">
+          <div>
+            <p class="portal-section-kicker">Glossary Terms</p>
+            <h2>Business vocabulary</h2>
+          </div>
+          <p class="portal-meta-note">Definitions are organized as expandable cards.</p>
+        </div>
+
+        <div
+          class="glossary-toolbar"
+          style="
+            margin-bottom: var(--spacing-4);
+            display: flex;
+            gap: var(--spacing-4);
+            flex-wrap: wrap;
+            align-items: center;
+          "
+        >
+          <mat-form-field
+            appearance="outline"
+            subscriptSizing="dynamic"
+            style="width: 100%; max-width: 400px"
+          >
+            <mat-label>Search glossary</mat-label>
+            <input
+              matInput
+              type="search"
+              placeholder="Search by term, definition, or category..."
+              [value]="searchTerm()"
+              (input)="handleSearchInput($event)"
+            />
+          </mat-form-field>
+
+          <mat-form-field
+            appearance="outline"
+            subscriptSizing="dynamic"
+            style="width: 100%; max-width: 250px"
+          >
+            <mat-label>Category</mat-label>
+            <mat-select
+              [value]="selectedCategory()"
+              (selectionChange)="selectedCategory.set($event.value)"
+            >
+              <mat-option value="">All Categories</mat-option>
+              @for (category of categories(); track category) {
+                <mat-option [value]="category">{{ category }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <div class="catalog-toolbar__actions">
+            <button
+              mat-stroked-button
+              class="portal-action-button portal-action-button--quiet"
+              type="button"
+              (click)="clearFilters()"
+              [disabled]="!searchTerm() && !selectedCategory()"
+            >
+              Clear filters
+            </button>
+          </div>
+        </div>
+
+        @if (filteredTerms().length === 0) {
+          <div class="portal-state-panel">
+            <p>No glossary terms match your search.</p>
+          </div>
+        } @else {
+          <mat-accordion class="glossary-accordion">
+            @for (item of filteredTerms(); track item.id) {
+              <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                  <mat-panel-title>{{ item.term }}</mat-panel-title>
+                </mat-expansion-panel-header>
+
+                <div class="glossary-card-content">
+                  <p class="portal-muted">{{ item.definition }}</p>
+                  <div class="portal-chip-list">
+                    <span class="portal-chip">{{ item.category || 'General' }}</span>
+                    @if (item.isPreferred) {
+                      <span class="portal-chip">Preferred</span>
+                    }
+                  </div>
+                </div>
+              </mat-expansion-panel>
+            }
+          </mat-accordion>
+        }
+      </article>
+
+      <article class="portal-surface glossary-panel">
+        <div class="glossary-panel__header">
+          <div>
+            <p class="portal-section-kicker">ITIL Practices</p>
+            <h2>Reference practices</h2>
+          </div>
+          <p class="portal-meta-note">Each area is linked to one approved practice.</p>
+        </div>
+
+        <div class="practice-card-grid">
+          @for (item of practices(); track item.id) {
+            <article class="practice-card">
+              <div class="practice-card__head">
+                <span class="portal-chip">{{ item.code }}</span>
+                <strong>{{ item.name }}</strong>
+              </div>
+              <p class="portal-muted">{{ item.description }}</p>
+            </article>
+          }
+        </div>
+      </article>
+    </section>
+  }
+</section>

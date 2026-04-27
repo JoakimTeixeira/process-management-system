@@ -1,0 +1,43 @@
+@if (version().procedures.length === 0) {
+  <div class="portal-surface detail-empty-panel">
+    <p>No published procedures are linked to this architecture view.</p>
+  </div>
+} @else {
+  <section class="procedure-list-surface">
+    <div class="procedure-list">
+      @for (procedure of version().procedures; track procedure.id) {
+        <article class="procedure-list-item">
+          <div class="procedure-list-item__main">
+            <p class="procedure-code">{{ procedure.code }}</p>
+            <h3>{{ procedure.title }}</h3>
+            <p class="procedure-list-item__summary">
+              {{ procedure.outcome || 'Structured procedure details available.' }}
+            </p>
+          </div>
+
+          <div class="procedure-list-item__meta">
+            @if (procedure.inputs.length > 0) {
+              <div class="portal-chip-list">
+                @for (input of procedure.inputs.slice(0, 3); track input) {
+                  <span class="portal-chip">{{ input }}</span>
+                }
+              </div>
+            }
+
+            <a
+              class="portal-link-button procedure-list-item__action"
+              [routerLink]="['/catalog', 'procedures', procedure.id]"
+              [queryParams]="{
+                origin: 'process',
+                originProcessId: version().processId,
+                view: viewId(),
+              }"
+            >
+              Open details
+            </a>
+          </div>
+        </article>
+      }
+    </div>
+  </section>
+}

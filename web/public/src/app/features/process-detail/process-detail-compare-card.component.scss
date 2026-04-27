@@ -1,0 +1,27 @@
+:host {
+  display: block;
+}
+
+.compare-card {
+  display: grid;
+  gap: var(--spacing-4);
+}
+
+.compare-card h3 {
+  margin: 0 0 var(--spacing-3);
+  font-size: var(--font-size-xl);
+}
+
+.compare-card__viewer {
+  margin-top: var(--spacing-5);
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--portal-border);
+  border-radius: var(--radius-lg);
+}
+
+.compare-reason {
+  margin: var(--spacing-1) 0 0;
+  color: var(--portal-copy);
+  line-height: var(--line-height-normal);
+}

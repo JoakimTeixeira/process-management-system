@@ -1,0 +1,77 @@
+<section class="viewer-layout" [class.viewer-layout--compact]="layout === 'compact'">
+  @if (layout !== 'compact') {
+    <aside class="viewer-list-panel">
+      <div class="viewer-panel-header">
+        <p class="portal-section-kicker">Diagram</p>
+        <h3>Published diagrams</h3>
+        <p class="viewer-panel-subtitle">
+          Inspect the published BPMN model associated with this process view.
+        </p>
+      </div>
+
+      @if (processVersionId) {
+        <button
+          type="button"
+          class="viewer-asset-card viewer-asset-card--active"
+          (click)="fitViewport()"
+        >
+          <span class="viewer-asset-card__type">BPMN</span>
+          <strong>Current published diagram</strong>
+          <span>Open in the viewer and fit to viewport.</span>
+        </button>
+      } @else {
+        <div class="viewer-list-note">
+          <p>No published BPMN asset is available for this process view.</p>
+        </div>
+      }
+    </aside>
+  }
+
+  <section class="viewer-card">
+    <div class="viewer-toolbar">
+      <div>
+        <p class="portal-section-kicker">Visualisation</p>
+        <span class="viewer-title">
+          {{ layout === 'compact' ? 'Diagram preview' : 'Visualize the diagram' }}
+        </span>
+        <p class="viewer-subtitle">
+          {{
+            layout === 'compact'
+              ? 'Fit and zoom the published BPMN for this version.'
+              : 'Use the controls to fit, zoom, and open fullscreen.'
+          }}
+        </p>
+      </div>
+      <div class="viewer-actions">
+        <button class="viewer-action-button" type="button" (click)="fitViewport()">Fit</button>
+        <button class="viewer-action-button" type="button" (click)="zoom(-0.1)">-</button>
+        <button class="viewer-action-button" type="button" (click)="zoom(0.1)">+</button>
+        <button
+          class="viewer-action-button"
+          type="button"
+          (click)="toggleFullscreen()"
+          [disabled]="!canFullscreen"
+        >
+          Fullscreen
+        </button>
+      </div>
+    </div>
+
+    <div class="viewer-stage" #stage>
+      <div class="viewer-shell" #canvas [class.viewer-hidden]="showStatePanel"></div>
+
+      @if (showStatePanel) {
+        <div class="viewer-state">
+          @if (loading) {
+            <mat-spinner diameter="36"></mat-spinner>
+          } @else {
+            <div class="viewer-state__message">
+              <strong>Diagram unavailable</strong>
+              <span>{{ errorMessage }}</span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </section>
+</section>

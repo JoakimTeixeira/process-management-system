@@ -1,0 +1,23 @@
+<section class="portal-detail-body">
+  @if (version(); as version) {
+    <section class="portal-detail-section portal-detail-section--padless">
+      <div class="portal-detail-section__header portal-detail-section__header--bordered">
+        <div>
+          <p class="portal-section-kicker">Diagram</p>
+          <h2>{{ version.title }}</h2>
+        </div>
+        <p class="portal-meta-note">
+          {{ getArchitectureLabel(version.architectureState) }} published BPMN
+        </p>
+      </div>
+
+      <div class="portal-detail-section__content portal-detail-section__content--flush">
+        <app-bpmn-viewer [processVersionId]="version.id" />
+      </div>
+    </section>
+  } @else {
+    <div class="portal-state-panel">
+      <p>{{ emptyMessage() }}</p>
+    </div>
+  }
+</section>

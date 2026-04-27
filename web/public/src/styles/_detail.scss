@@ -1,0 +1,102 @@
+.portal-detail-body {
+  display: grid;
+  gap: var(--spacing-6);
+  padding: var(--spacing-6);
+  min-width: 0;
+}
+
+.portal-detail-section {
+  border: 1px solid var(--portal-border);
+  border-radius: var(--radius-lg);
+  background: var(--portal-surface);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.portal-detail-section--padless {
+  padding: 0;
+}
+
+.portal-detail-section__header {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--spacing-4);
+  align-items: start;
+  padding: var(--spacing-5) var(--spacing-6) var(--spacing-4);
+}
+
+.portal-detail-section__header--bordered {
+  border-bottom: 1px solid var(--portal-border);
+}
+
+.portal-detail-section__header h2 {
+  margin: 0;
+  font-size: var(--font-size-xl);
+}
+
+.portal-detail-section__content {
+  padding: 0 var(--spacing-6) var(--spacing-6);
+}
+
+.portal-detail-section__content--stack {
+  display: grid;
+  gap: var(--spacing-3);
+}
+
+.portal-detail-section__content--flush {
+  padding: var(--spacing-5);
+}
+
+.portal-detail-summary-grid {
+  padding: 0 var(--spacing-6) var(--spacing-6);
+}
+
+.portal-detail-copy {
+  margin: var(--spacing-1) 0 0;
+  color: var(--portal-copy);
+  line-height: var(--line-height-normal);
+}
+
+.portal-text-list {
+  display: grid;
+  gap: var(--spacing-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.portal-text-list li {
+  padding-left: var(--spacing-4);
+  border-left: 3px solid var(--portal-blue-soft);
+}
+
+@media (max-width: 900px) {
+  .portal-detail-section__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 720px) {
+  .portal-detail-body {
+    gap: var(--spacing-4);
+  }
+
+  .portal-detail-section__header,
+  .portal-detail-section__content,
+  .portal-detail-section__content--flush,
+  .portal-detail-summary-grid {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  .portal-detail-section__header {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  .portal-detail-section__content,
+  .portal-detail-summary-grid {
+    padding-bottom: 1rem;
+  }
+}

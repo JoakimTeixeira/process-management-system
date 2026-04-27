@@ -4,8 +4,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './modules/auth/auth.module';
 import { AssetsModule } from './modules/assets/assets.module';
 import { AreasModule } from './modules/areas/areas.module';
+import { GlossaryModule } from './modules/glossary/glossary.module';
 import { HealthModule } from './modules/health/health.module';
 import { ItilPracticesModule } from './modules/itil_practices/itil-practices.module';
+import { PublicPortalModule } from './modules/public_portal/public-portal.module';
 import { ProcessVersionsModule } from './modules/process_versions/process-versions.module';
 import { ProcessesModule } from './modules/processes/processes.module';
 import { ProceduresModule } from './modules/procedures/procedures.module';
@@ -41,6 +43,8 @@ import { createTypeOrmModuleOptions } from './database/typeorm-options';
     ProcessVersionsModule,
     ProceduresModule,
     HealthModule,
+    GlossaryModule,
+    PublicPortalModule,
   ],
 })
 export class AppModule {}

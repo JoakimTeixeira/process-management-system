@@ -1,0 +1,141 @@
+<app-breadcrumbs [items]="breadcrumbs" />
+
+@if (loading) {
+  <div class="portal-state-panel">
+    <mat-spinner diameter="42" />
+  </div>
+} @else if (errorMessage) {
+  <div class="portal-state-panel">
+    <p>{{ errorMessage }}</p>
+  </div>
+} @else if (detail) {
+  <section class="procedure-page">
+    <header class="portal-page-intro procedure-page__intro">
+      <div class="procedure-page__identity">
+        <div class="procedure-frame__badges">
+          <span class="procedure-badge">Procedure</span>
+          <span class="procedure-badge procedure-badge--neutral">
+            {{ getArchitectureLabel(detail.version.architectureState) }}
+          </span>
+        </div>
+
+        <h1>{{ detail.procedure.code }}: {{ detail.procedure.title }}</h1>
+
+        <p class="procedure-page__meta">
+          {{ detail.process.code }}: {{ detail.process.title }} | {{ detail.area.title }} |
+          {{ detail.itilPractice.name }}
+        </p>
+      </div>
+    </header>
+
+    <section class="procedure-frame">
+      <section class="procedure-frame__summary">
+        <article class="procedure-summary-card">
+          <dt>Area</dt>
+          <dd>{{ detail.area.title }}</dd>
+        </article>
+        <article class="procedure-summary-card">
+          <dt>Practice</dt>
+          <dd>{{ detail.itilPractice.name }}</dd>
+        </article>
+        <article class="procedure-summary-card">
+          <dt>View</dt>
+          <dd>{{ getArchitectureSubtitle(detail.version.architectureState) }}</dd>
+        </article>
+        <article class="procedure-summary-card">
+          <dt>Version</dt>
+          <dd>{{ detail.version.versionNumber }}</dd>
+        </article>
+      </section>
+
+      <section class="procedure-frame__grid">
+        <article class="procedure-surface">
+          <p class="portal-section-kicker">Governance profile</p>
+          <h2>Intent and expected result</h2>
+          <dl class="portal-definition-list">
+            <div>
+              <dt>Utility</dt>
+              <dd>{{ detail.procedure.utility || 'Not specified.' }}</dd>
+            </div>
+            <div>
+              <dt>Warranty</dt>
+              <dd>{{ detail.procedure.warranty || 'Not specified.' }}</dd>
+            </div>
+            <div>
+              <dt>Outcome</dt>
+              <dd>{{ detail.procedure.outcome || 'Not specified.' }}</dd>
+            </div>
+            <div>
+              <dt>Policy</dt>
+              <dd>{{ detail.procedure.policy || 'Not specified.' }}</dd>
+            </div>
+          </dl>
+        </article>
+
+        <article class="procedure-surface">
+          <p class="portal-section-kicker">Inputs and outputs</p>
+          <h2>Published operational interfaces</h2>
+
+          <div class="procedure-io-grid">
+            <div>
+              <strong>Inputs</strong>
+              @if (detail.procedure.inputs.length === 0) {
+                <p class="portal-meta-note">None published.</p>
+              } @else {
+                <div class="portal-chip-list">
+                  @for (input of detail.procedure.inputs; track input) {
+                    <span class="portal-chip">{{ input }}</span>
+                  }
+                </div>
+              }
+            </div>
+
+            <div>
+              <strong>Outputs</strong>
+              @if (detail.procedure.outputs.length === 0) {
+                <p class="portal-meta-note">None published.</p>
+              } @else {
+                <div class="portal-chip-list">
+                  @for (output of detail.procedure.outputs; track output) {
+                    <span class="portal-chip">{{ output }}</span>
+                  }
+                </div>
+              }
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="procedure-surface">
+        <p class="portal-section-kicker">Activities</p>
+        <h2>Published procedure steps</h2>
+
+        @if (detail.procedure.activities.length === 0) {
+          <p>No structured steps are published for this procedure.</p>
+        } @else {
+          <div class="activity-list">
+            @for (activity of detail.procedure.activities; track $index; let index = $index) {
+              <div class="activity-card">
+                <p class="portal-section-kicker">Activity {{ index + 1 }}</p>
+                <dl class="activity-card__details">
+                  <div>
+                    <dt>Resource</dt>
+                    <dd>{{ readActivityField(activity, 'resource') }}</dd>
+                  </div>
+                  <div>
+                    <dt>Service action</dt>
+                    <dd>{{ readActivityField(activity, 'serviceAction') }}</dd>
+                  </div>
+                  <div>
+                    <dt>Work instruction</dt>
+                    <dd>{{ readActivityField(activity, 'workInstruction') }}</dd>
+                  </div>
+                </dl>
+              </div>
+            }
+          </div>
+        }
+      </section>
+    </section>
+  </section>
+}

@@ -1,0 +1,40 @@
+.faq-page {
+  display: grid;
+  gap: var(--spacing-8);
+}
+
+.faq-intro-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--spacing-4);
+  align-items: stretch;
+}
+
+.faq-intro-card {
+  display: grid;
+  gap: var(--spacing-3);
+  align-content: start;
+  height: 100%;
+}
+
+.faq-list {
+  display: grid;
+  gap: var(--spacing-3);
+}
+
+.mat-expansion-panel {
+  border-radius: 8px !important;
+  border: 1px solid var(--portal-border) !important;
+  box-shadow: none !important;
+  overflow: hidden;
+}
+
+.faq-answer {
+  padding-top: 0.5rem;
+}
+
+.faq-answer p {
+  margin: 0;
+  color: var(--portal-copy);
+  line-height: var(--line-height-relaxed);
+}

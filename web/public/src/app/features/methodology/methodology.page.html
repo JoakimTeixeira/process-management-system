@@ -1,0 +1,45 @@
+<app-breadcrumbs [items]="breadcrumbs" />
+
+<section class="methodology-page">
+  <header class="portal-page-intro">
+    <h1>How to interpret the public repository</h1>
+    <p>
+      Learn the publication logic, terminology, and interpretation rules used across the public
+      repository.
+    </p>
+  </header>
+
+  <section class="portal-card-grid methodology-note-grid">
+    <article class="portal-surface methodology-note">
+      <p class="portal-section-kicker">Terminology mapping</p>
+      <p class="portal-muted">
+        Current State is the business-friendly public label for AS-IS. Target State is the
+        business-friendly public label for TO-BE.
+      </p>
+    </article>
+
+    <article class="portal-surface methodology-note">
+      <p class="portal-section-kicker">Reading guide</p>
+      <p class="portal-muted">
+        Use this page alongside the glossary and FAQ when you need help understanding labels,
+        sections, and publication scope.
+      </p>
+    </article>
+  </section>
+
+  <mat-accordion class="methodology-list">
+    @for (section of sections; track section.title) {
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{ section.title }}</mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <div class="methodology-panel-content">
+          @for (paragraph of section.paragraphs; track paragraph) {
+            <p class="portal-muted">{{ paragraph }}</p>
+          }
+        </div>
+      </mat-expansion-panel>
+    }
+  </mat-accordion>
+</section>

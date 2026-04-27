@@ -1,0 +1,270 @@
+<app-breadcrumbs [items]="breadcrumbs" />
+
+@if (loading) {
+  <div class="portal-state-panel">
+    <mat-spinner diameter="42" />
+  </div>
+} @else if (errorMessage) {
+  <div class="portal-state-panel">
+    <p>{{ errorMessage }}</p>
+  </div>
+} @else if (detail) {
+  <section class="detail-page">
+    <header class="portal-page-intro detail-page__intro">
+      <div class="detail-page__identity" style="min-width: 0">
+        <div class="detail-page__header-content">
+          <div class="detail-frame__badges">
+            <span class="detail-badge">Process</span>
+            <span class="detail-badge detail-badge--neutral">{{ detail.process.area.title }}</span>
+            <span class="detail-badge detail-badge--neutral">
+              {{ detail.process.itilPractice.name }}
+            </span>
+          </div>
+
+          <h1>{{ detail.process.code }}: {{ detail.process.title }}</h1>
+
+          <p class="detail-frame__description">
+            {{ detail.process.description || 'Published process details are available below.' }}
+          </p>
+
+          <div class="portal-page-intro__meta detail-page__meta">
+            <span>Published views: {{ getPublishedViewsSummary() }}</span>
+            <span>Published procedures: {{ countPublishedProcedures() }}</span>
+            <span>History: metadata only for archived versions</span>
+          </div>
+        </div>
+
+        @if (showsViewSelector && versionOptions.length > 0) {
+          <label class="detail-version-switcher">
+            <span>Published version</span>
+            <select
+              #versionSelect
+              [value]="selectedViewId"
+              (change)="handleViewSelection(versionSelect.value === 'to-be' ? 'to-be' : 'as-is')"
+            >
+              @for (option of versionOptions; track option.id) {
+                <option [value]="option.id">{{ option.label }}</option>
+              }
+            </select>
+          </label>
+        }
+      </div>
+    </header>
+
+    <section class="detail-frame">
+      <section class="detail-frame__tabs">
+        <div class="detail-tab-shell">
+          <div class="detail-tab-shell__inner">
+            <nav class="detail-tab-nav" aria-label="Process sections">
+              @for (tab of tabDefinitions; track tab.id) {
+                <button
+                  type="button"
+                  class="detail-tab-button"
+                  [class.detail-tab-button--active]="currentTabId === tab.id"
+                  (click)="handleTabChange(tab.id)"
+                  [attr.aria-current]="currentTabId === tab.id ? 'page' : null"
+                >
+                  <span class="detail-tab-button__label">{{ tab.label }}</span>
+                  @if (tab.badge) {
+                    <span class="detail-tab-button__badge">{{ tab.badge }}</span>
+                  }
+                </button>
+              }
+            </nav>
+          </div>
+        </div>
+
+        @if (isDiagramTab()) {
+          <app-process-detail-diagram
+            [version]="selectedViewVersion"
+            emptyMessage="No published BPMN diagram is available for the selected version."
+          />
+        } @else if (isProceduresTab()) {
+          <ng-container
+            [ngTemplateOutlet]="proceduresTemplate"
+            [ngTemplateOutletContext]="{
+              version: selectedViewVersion,
+              emptyMessage: 'No published procedures are available for the selected version.',
+            }"
+          />
+        } @else if (isHistoryTab()) {
+          <section class="detail-frame__body">
+            <div class="detail-subheader">
+              <div>
+                <p class="portal-section-kicker">Version History</p>
+                <h2>Historical traceability</h2>
+              </div>
+              <p class="portal-meta-note">
+                Archived versions are shown as public-safe metadata only.
+              </p>
+            </div>
+
+            @if (historyLoading) {
+              <div class="portal-state-panel history-state">
+                <mat-spinner diameter="32" />
+              </div>
+            } @else if (historyItems.length === 0) {
+              <div class="portal-surface">
+                <p>No public version history is available.</p>
+              </div>
+            } @else {
+              <div class="portal-table-wrap">
+                <table class="portal-table history-table">
+                  <thead>
+                    <tr>
+                      <th>Version</th>
+                      <th>Title</th>
+                      <th>View</th>
+                      <th>Status</th>
+                      <th>Updated</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (item of historyItems; track item.id) {
+                      <tr>
+                        <td>
+                          <strong>v{{ item.versionNumber }}</strong>
+                        </td>
+                        <td>
+                          <strong>{{ item.title }}</strong>
+                          <p class="history-table__description">
+                            {{ item.changeDescription || 'No change summary provided.' }}
+                          </p>
+                        </td>
+                        <td>{{ getArchitectureLabel(item.architectureState) }}</td>
+                        <td>{{ item.lifecycleState }}</td>
+                        <td>{{ formatHistoryDate(item.updatedAt || item.createdAt) }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
+          </section>
+        } @else if (isCompareTab()) {
+          <section class="detail-frame__body">
+            <div class="detail-subheader">
+              <div>
+                <p class="portal-section-kicker">Compare</p>
+                <h2>Compare published versions</h2>
+              </div>
+              <p class="portal-meta-note">
+                Review both versions side by side, including their BPMN diagrams.
+              </p>
+            </div>
+
+            @if (canCompareViews) {
+              <div class="compare-grid">
+                <section class="detail-surface compare-panel">
+                  <div class="compare-panel__header">
+                    <div>
+                      <p class="portal-section-kicker">Left side</p>
+                      <h3>{{ compareLeftLabel }}</h3>
+                    </div>
+                    <label class="compare-panel__selector">
+                      <span>Published version</span>
+                      <select
+                        #compareLeftSelect
+                        [value]="compareLeftViewId"
+                        (change)="
+                          handleCompareSelection(
+                            'left',
+                            compareLeftSelect.value === 'to-be' ? 'to-be' : 'as-is'
+                          )
+                        "
+                      >
+                        @for (option of versionOptions; track option.id) {
+                          <option [value]="option.id" [selected]="option.id === compareLeftViewId">
+                            {{ option.label }}
+                          </option>
+                        }
+                      </select>
+                    </label>
+                  </div>
+                  <app-process-detail-compare-card
+                    [title]="compareLeftTitle"
+                    [subtitle]="compareLeftSubtitle"
+                    [version]="compareLeftVersion"
+                    [processVersionId]="compareLeftVersion?.id ?? null"
+                  />
+                </section>
+
+                <section class="detail-surface compare-panel">
+                  <div class="compare-panel__header">
+                    <div>
+                      <p class="portal-section-kicker">Right side</p>
+                      <h3>{{ compareRightLabel }}</h3>
+                    </div>
+                    <label class="compare-panel__selector">
+                      <span>Published version</span>
+                      <select
+                        #compareRightSelect
+                        [value]="compareRightViewId"
+                        (change)="
+                          handleCompareSelection(
+                            'right',
+                            compareRightSelect.value === 'to-be' ? 'to-be' : 'as-is'
+                          )
+                        "
+                      >
+                        @for (option of versionOptions; track option.id) {
+                          <option [value]="option.id" [selected]="option.id === compareRightViewId">
+                            {{ option.label }}
+                          </option>
+                        }
+                      </select>
+                    </label>
+                  </div>
+                  <app-process-detail-compare-card
+                    [title]="compareRightTitle"
+                    [subtitle]="compareRightSubtitle"
+                    [version]="compareRightVersion"
+                    [processVersionId]="compareRightVersion?.id ?? null"
+                  />
+                </section>
+              </div>
+            } @else {
+              <div class="portal-state-panel compare-empty-state">
+                <div class="compare-empty-state__content">
+                  <strong>Nothing to compare</strong>
+                  <p>
+                    This process currently has only one published view, so a side-by-side comparison
+                    is not available yet.
+                  </p>
+                </div>
+              </div>
+            }
+          </section>
+        } @else {
+          <app-process-detail-overview
+            [version]="selectedViewVersion"
+            emptyMessage="No published version is available for the selected view."
+          />
+        }
+      </section>
+    </section>
+
+    <ng-template #proceduresTemplate let-version="version" let-emptyMessage="emptyMessage">
+      <section class="detail-frame__body">
+        @if (version) {
+          <div class="detail-subheader">
+            <div>
+              <p class="portal-section-kicker">Procedures</p>
+              <h2>Related published procedures</h2>
+            </div>
+            <p class="portal-meta-note">
+              {{ version.title }} | {{ version.procedures.length }} linked to the selected published
+              version
+            </p>
+          </div>
+
+          <app-process-detail-procedures [version]="version" [viewId]="selectedViewId" />
+        } @else {
+          <div class="portal-state-panel">
+            <p>{{ emptyMessage }}</p>
+          </div>
+        }
+      </section>
+    </ng-template>
+  </section>
+}

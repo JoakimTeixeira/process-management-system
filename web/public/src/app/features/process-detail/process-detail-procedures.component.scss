@@ -1,0 +1,95 @@
+:host {
+  display: block;
+}
+
+.detail-empty-panel {
+  padding: var(--spacing-6);
+}
+
+.procedure-list-surface {
+  border: 1px solid var(--portal-border);
+  border-radius: var(--radius-lg);
+  background: var(--portal-surface);
+  overflow: hidden;
+}
+
+.procedure-list {
+  display: grid;
+  gap: 0;
+}
+
+.procedure-list-item {
+  display: grid;
+  grid-template-columns: minmax(0, 1.8fr) minmax(260px, 1fr);
+  gap: var(--spacing-4);
+  align-items: start;
+  padding: var(--spacing-5);
+  border-top: 1px solid var(--portal-border);
+}
+
+.procedure-list-item:first-child {
+  border-top: 0;
+}
+
+.procedure-list-item__main {
+  display: grid;
+  gap: var(--spacing-2);
+  min-width: 0;
+}
+
+.procedure-list-item__main h3 {
+  margin: 0;
+  font-size: var(--font-size-lg);
+}
+
+.procedure-list-item__summary {
+  margin: 0;
+  color: var(--portal-copy);
+  line-height: var(--line-height-relaxed);
+}
+
+.procedure-code {
+  margin: var(--spacing-1) 0 0;
+  color: var(--portal-blue);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--tracking-wider);
+}
+
+.procedure-list-item__meta {
+  display: grid;
+  gap: var(--spacing-3);
+  justify-items: end;
+  min-width: 0;
+}
+
+.procedure-list-item__meta .portal-chip-list {
+  justify-content: flex-end;
+}
+
+.procedure-list-item__action {
+  min-width: 9rem;
+  justify-content: center;
+}
+
+@media (max-width: 900px) {
+  .procedure-list-item {
+    grid-template-columns: 1fr;
+  }
+
+  .procedure-list-item__meta {
+    justify-items: start;
+  }
+
+  .procedure-list-item__meta .portal-chip-list {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 720px) {
+  .detail-empty-panel,
+  .procedure-list-item {
+    padding: 1rem;
+  }
+}

@@ -237,6 +237,51 @@ export const glossaryTerms: GlossaryTermSeed[] = [
       'Standard notation used to document and visualize business workflow diagrams.',
     category: 'Standards',
   },
+  {
+    term: 'Utility',
+    definition:
+      'The functionality offered by a product or service to meet a particular need. Utility can be summarized as "what the service does" and can be used to determine whether a service is "fit for purpose".',
+    category: 'ITIL 4',
+  },
+  {
+    term: 'Warranty',
+    definition:
+      'Assurance that a product or service will meet agreed requirements. Warranty can be summarized as "how the service performs" and can be used to determine whether a service is "fit for use". The framework specifies that warranty typically addresses areas such as availability of the service, its capacity, levels of security, and continuity.',
+    category: 'ITIL 4',
+  },
+  {
+    term: 'Outcome',
+    definition: 'A result for a stakeholder enabled by one or more outputs.',
+    category: 'ITIL 4',
+  },
+  {
+    term: 'Policy',
+    definition:
+      'Formally documented management expectations and intentions, used to direct decisions and activities.',
+    category: 'ITIL 4',
+  },
+  {
+    term: 'Resource',
+    definition:
+      'A person, or other entity, that is required for the execution of an activity.',
+    category: 'ITIL 4',
+  },
+  {
+    term: 'Service Action',
+    definition: 'Any action required to deliver a service output to a user.',
+    category: 'ITIL 4',
+  },
+  {
+    term: 'Work Instruction',
+    definition:
+      'A detailed description to be followed in order to perform an activity.',
+    category: 'ITIL 4',
+  },
+  {
+    term: 'Output',
+    definition: 'A tangible or intangible deliverable of an activity.',
+    category: 'ITIL 4',
+  },
 ];
 
 export const itilPractices: ItilPracticeSeed[] = [

@@ -1,0 +1,47 @@
+<app-breadcrumbs [items]="breadcrumbs" />
+
+<section class="faq-page">
+  <header class="portal-page-intro">
+    <h1>Frequently asked questions</h1>
+    <p>Find short answers about how to navigate and interpret the public repository safely.</p>
+  </header>
+
+  <section class="faq-intro-grid">
+    <article class="portal-surface faq-intro-card">
+      <p class="portal-section-kicker">Public guidance</p>
+      <p class="portal-muted">
+        FAQ content supports consultation and understanding. It does not expose unpublished workflow
+        states or backoffice governance actions.
+      </p>
+    </article>
+
+    <article class="portal-surface faq-intro-card">
+      <p class="portal-section-kicker">Need a quick answer?</p>
+      <p class="portal-muted">
+        Use the catalog for browsing, the methodology page for terminology, and the FAQ for short
+        consultation guidance.
+      </p>
+    </article>
+
+    <article class="portal-surface faq-intro-card">
+      <p class="portal-section-kicker">Publication rule</p>
+      <p class="portal-muted">
+        The public portal is read-only and surfaces published records only. Draft and review-stage
+        content stays inside the governed workflow.
+      </p>
+    </article>
+  </section>
+
+  <mat-accordion class="faq-list">
+    @for (item of items; track item.question) {
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title>{{ item.question }}</mat-panel-title>
+        </mat-expansion-panel-header>
+        <div class="faq-answer">
+          <p>{{ item.answer }}</p>
+        </div>
+      </mat-expansion-panel>
+    }
+  </mat-accordion>
+</section>

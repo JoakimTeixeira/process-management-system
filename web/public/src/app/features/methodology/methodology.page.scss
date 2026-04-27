@@ -1,0 +1,36 @@
+.methodology-page {
+  display: grid;
+  gap: var(--spacing-8);
+}
+
+.methodology-note-grid {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  align-items: stretch;
+}
+
+.methodology-note {
+  display: grid;
+  gap: var(--spacing-3);
+  align-content: start;
+  height: 100%;
+}
+
+.methodology-list {
+  display: grid;
+  gap: var(--spacing-3);
+}
+
+.mat-expansion-panel {
+  border: 1px solid var(--portal-border) !important;
+  border-radius: 8px !important;
+  box-shadow: none !important;
+  overflow: hidden;
+}
+
+.mat-expansion-panel-header {
+  padding: 1rem 1.25rem;
+}
+
+.methodology-panel-content {
+  padding: 0 1.25rem 1.25rem;
+}

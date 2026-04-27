@@ -1,0 +1,55 @@
+<section class="welcome-page">
+  <section class="welcome-page__hero">
+    <div class="welcome-page__hero-copy">
+      <h1>Process Management System</h1>
+      <p>Consult published processes, procedures, and diagrams.</p>
+    </div>
+
+    <div class="welcome-page__actions">
+      <a
+        class="welcome-action-button welcome-action-button--primary"
+        routerLink="/catalog/processes"
+      >
+        <mat-icon aria-hidden="true">account_tree</mat-icon>
+        <span>Explore Processes</span>
+      </a>
+      <a
+        class="welcome-action-button welcome-action-button--secondary"
+        routerLink="/catalog/procedures"
+      >
+        <mat-icon aria-hidden="true">assignment</mat-icon>
+        <span>Find Procedures</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="welcome-search-section">
+    <div class="welcome-search-card">
+      <app-catalog-search
+        mode="inline"
+        heading="Search processes, procedures, and areas"
+        placeholder="Search areas, processes, procedures, or assets..."
+        emptyHint=""
+        emptyText="No published records found."
+      />
+    </div>
+  </section>
+
+  <section class="welcome-quick-access">
+    <div class="welcome-quick-access__header">
+      <h2>Sections</h2>
+    </div>
+
+    <div class="welcome-quick-access__grid">
+      @for (card of quickAccessCards; track card.label) {
+        <a class="welcome-quick-access__card" [routerLink]="card.link">
+          <span class="welcome-quick-access__icon">
+            <mat-icon aria-hidden="true">{{ card.icon }}</mat-icon>
+          </span>
+          <h3>{{ card.label }}</h3>
+          <p>{{ card.description }}</p>
+        </a>
+      }
+    </div>
+  </section>
+</section>

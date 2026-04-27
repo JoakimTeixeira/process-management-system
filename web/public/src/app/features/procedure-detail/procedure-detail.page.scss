@@ -1,0 +1,173 @@
+.procedure-page {
+  display: grid;
+  gap: var(--spacing-8);
+}
+
+.procedure-frame {
+  display: grid;
+  gap: var(--spacing-5);
+  border: 1px solid var(--portal-border);
+  border-radius: var(--radius-lg);
+  background: var(--portal-surface);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-6);
+}
+
+.procedure-page__intro {
+  gap: var(--spacing-4);
+}
+
+.procedure-frame__badges {
+  display: flex;
+  gap: var(--spacing-2);
+  flex-wrap: wrap;
+  margin-bottom: var(--spacing-3);
+}
+
+.procedure-badge {
+  display: inline-flex;
+  padding: var(--spacing-1) var(--spacing-3);
+  border-radius: var(--radius-full);
+  background: var(--portal-blue-soft);
+  color: var(--portal-blue);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.procedure-badge--neutral {
+  background: var(--portal-surface-alt);
+  color: var(--portal-muted);
+}
+
+.procedure-page__identity {
+  min-width: 0;
+}
+
+.detail-action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-2) var(--spacing-4);
+  border: 1px solid var(--portal-border);
+  border-radius: var(--radius-sm);
+  background: var(--portal-surface);
+  color: var(--portal-blue);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  text-decoration: none;
+  cursor: pointer;
+  transition: all var(--transition-base) var(--transition-easing);
+}
+
+.detail-action-button:hover {
+  background: var(--portal-blue);
+  color: var(--portal-on-brand);
+  border-color: var(--portal-blue);
+}
+
+.procedure-page__meta {
+  margin: var(--spacing-1) 0 0;
+  color: var(--portal-muted);
+  font-size: var(--font-size-sm);
+}
+
+.procedure-frame__summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--spacing-3);
+}
+
+.procedure-summary-card {
+  margin: 0;
+  padding: var(--spacing-5);
+  border: 1px solid var(--portal-border);
+  border-radius: var(--radius-lg);
+  background: var(--portal-surface-subtle);
+}
+
+.procedure-summary-card dt {
+  color: var(--portal-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.procedure-summary-card dd {
+  margin: var(--spacing-1) 0 0;
+  color: var(--portal-ink);
+  font-weight: var(--font-weight-semibold);
+  margin-top: var(--spacing-1);
+}
+
+.procedure-frame__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--spacing-4);
+}
+
+.procedure-surface {
+  border: 1px solid var(--portal-border);
+  border-radius: var(--radius-lg);
+  background: var(--portal-surface);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-6);
+}
+
+.procedure-surface h2 {
+  margin: 0 0 var(--spacing-4);
+  font-size: var(--font-size-xl);
+}
+
+.procedure-io-grid {
+  display: grid;
+  gap: var(--spacing-4);
+}
+
+.activity-list {
+  display: grid;
+  gap: var(--spacing-3);
+  margin-top: var(--spacing-4);
+}
+
+.activity-card {
+  padding: var(--spacing-5);
+  background: var(--portal-surface);
+  border: 1px solid var(--portal-border);
+  border-left: 3px solid var(--portal-blue);
+  border-radius: var(--radius-md);
+}
+
+.activity-card__details {
+  display: grid;
+  gap: var(--spacing-3);
+  margin: var(--spacing-3) 0 0;
+}
+
+.activity-card__details dt {
+  margin: 0;
+  color: var(--portal-muted);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+}
+
+.activity-card__details dd {
+  margin: var(--spacing-1) 0 0;
+  color: var(--portal-ink);
+  line-height: var(--line-height-relaxed);
+  font-weight: var(--font-weight-medium);
+}
+
+.procedure-summary-card dt,
+.procedure-summary-card dd {
+  margin: 0;
+}
+
+@media (max-width: 720px) {
+  .procedure-frame {
+    gap: var(--spacing-4);
+    padding: var(--spacing-4);
+  }
+}

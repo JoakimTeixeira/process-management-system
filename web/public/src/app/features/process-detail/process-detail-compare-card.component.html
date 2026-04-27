@@ -1,0 +1,31 @@
+<article class="compare-card">
+  <p class="portal-section-kicker">{{ subtitle() }}</p>
+  <h3>{{ title() }}</h3>
+
+  @if (version(); as version) {
+    <dl class="portal-definition-list">
+      <div>
+        <dt>Version</dt>
+        <dd>{{ version.versionNumber }}</dd>
+      </div>
+      <div>
+        <dt>Procedures</dt>
+        <dd>{{ version.procedures.length }}</dd>
+      </div>
+      <div>
+        <dt>BPMN</dt>
+        <dd>{{ version.bpmnAsset ? 'Available' : 'Unavailable' }}</dd>
+      </div>
+      <div>
+        <dt>Title</dt>
+        <dd>{{ version.title }}</dd>
+      </div>
+    </dl>
+    <p class="compare-reason">{{ version.reasonForChange || 'Not provided.' }}</p>
+    <div class="compare-card__viewer">
+      <app-bpmn-viewer [processVersionId]="processVersionId()" layout="compact" />
+    </div>
+  } @else {
+    <p>No published version is available for this selection.</p>
+  }
+</article>

@@ -1,0 +1,63 @@
+<section
+  class="catalog-search"
+  [class.catalog-search--popover]="mode() === 'popover'"
+  [class.catalog-search--open]="isOpen()"
+>
+  @if (mode() === 'popover') {
+    <button
+      type="button"
+      class="catalog-search__trigger"
+      (click)="toggleOpen()"
+      [attr.aria-expanded]="isOpen()"
+      aria-haspopup="dialog"
+    >
+      <mat-icon aria-hidden="true">search</mat-icon>
+      <span>{{ triggerLabel() }}</span>
+    </button>
+  }
+
+  @if (mode() === 'inline' || isOpen()) {
+    <div class="catalog-search__panel">
+      @if (mode() === 'inline' && heading()) {
+        <h2 class="catalog-search__heading">{{ heading() }}</h2>
+      }
+
+      @if (mode() === 'inline' && description()) {
+        <p class="catalog-search__description">{{ description() }}</p>
+      }
+
+      <div class="catalog-search__field">
+        <input
+          type="search"
+          [value]="searchQuery()"
+          (input)="handleSearchInput($event)"
+          [placeholder]="placeholder()"
+        />
+        <mat-icon aria-hidden="true">search</mat-icon>
+      </div>
+
+      @if (searchQuery() === '') {
+        <p class="catalog-search__empty">{{ emptyHint() }}</p>
+      } @else if (searchResults().length > 0) {
+        <div class="catalog-search__results">
+          @for (result of searchResults(); track result.trackKey) {
+            <a
+              class="catalog-search__result"
+              [routerLink]="result.routeSegments"
+              [queryParams]="result.queryParams"
+              (click)="handleResultSelection()"
+            >
+              <span class="catalog-search__kind">{{ result.kind }}</span>
+              <strong>{{ formatResultHeadline(result) }}</strong>
+              <span>{{ result.subtitle }}</span>
+            </a>
+          }
+        </div>
+      } @else if (isSearching()) {
+        <p class="catalog-search__empty">{{ searchingText() }}</p>
+      } @else {
+        <p class="catalog-search__empty">{{ emptyText() }}</p>
+      }
+    </div>
+  }
+</section>

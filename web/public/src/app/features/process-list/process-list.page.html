@@ -1,0 +1,268 @@
+<app-breadcrumbs [items]="breadcrumbs()" />
+
+<section class="catalog-page">
+  <header class="portal-page-intro">
+    <h1>{{ pageTitle() }}</h1>
+    <p>{{ pageDescription() }}</p>
+  </header>
+
+  @if (loading()) {
+    <div class="portal-state-panel">
+      <mat-spinner diameter="42" />
+    </div>
+  } @else if (errorMessage(); as errorMessage) {
+    <div class="portal-state-panel">
+      <p>{{ errorMessage }}</p>
+    </div>
+  } @else {
+    <section class="portal-surface catalog-shell">
+      <div
+        class="catalog-toolbar"
+        [class.catalog-toolbar--with-process-filter]="activeTabId() === 'procedures'"
+      >
+        <mat-form-field
+          appearance="outline"
+          subscriptSizing="dynamic"
+          class="catalog-field catalog-field--search"
+        >
+          <mat-label>Search</mat-label>
+          <input
+            matInput
+            type="search"
+            [value]="searchTerm()"
+            (input)="handleSearchInput($event)"
+            [placeholder]="
+              activeTabId() === 'processes'
+                ? 'Code, title, practice, or area'
+                : 'Code, title, process, or area'
+            "
+          />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="catalog-field">
+          <mat-label>Area</mat-label>
+          <mat-select [value]="selectedAreaId()" (selectionChange)="setAreaSelection($event.value)">
+            <mat-option value="">All areas</mat-option>
+            @for (area of areas(); track area.id) {
+              <mat-option [value]="area.id">{{ area.code }} - {{ area.title }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" subscriptSizing="dynamic" class="catalog-field">
+          <mat-label>View</mat-label>
+          <mat-select
+            [value]="selectedArchitecture()"
+            (selectionChange)="setArchitectureSelection($event.value)"
+          >
+            <mat-option value="">All views</mat-option>
+            @for (option of architectureOptions; track option.value) {
+              <mat-option [value]="option.value">{{ option.label }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+
+        @if (activeTabId() === 'procedures') {
+          <mat-form-field appearance="outline" subscriptSizing="dynamic" class="catalog-field">
+            <mat-label>Process</mat-label>
+            <mat-select
+              [value]="selectedProcessId()"
+              (selectionChange)="setProcessSelection($event.value)"
+            >
+              <mat-option value="">All processes</mat-option>
+              @for (process of processOptions(); track process.id) {
+                <mat-option [value]="process.id"
+                  >{{ process.code }} - {{ process.title }}</mat-option
+                >
+              }
+            </mat-select>
+          </mat-form-field>
+        }
+
+        <div class="catalog-toolbar__actions">
+          <button
+            mat-stroked-button
+            class="portal-action-button portal-action-button--quiet"
+            type="button"
+            (click)="resetFilters()"
+            [disabled]="!hasActiveFilters()"
+          >
+            Clear filters
+          </button>
+        </div>
+      </div>
+
+      <div class="catalog-shell__header">
+        <div class="catalog-shell__summary">
+          @if (activeTabId() === 'processes') {
+            <p>
+              Showing {{ filteredProcesses().length }} of {{ processBaseCount() }} published
+              processes
+            </p>
+          } @else {
+            <p>
+              Showing {{ filteredProcedures().length }} of {{ procedureBaseCount() }} published
+              procedures
+            </p>
+          }
+        </div>
+      </div>
+
+      @if (hasActiveFilters()) {
+        <div class="catalog-active-filters" aria-label="Active filters">
+          @if (searchTerm().trim()) {
+            <span class="catalog-filter-pill">Search: {{ searchTerm().trim() }}</span>
+          }
+          @if (selectedAreaLabel(); as selectedAreaLabel) {
+            <span class="catalog-filter-pill">Area: {{ selectedAreaLabel }}</span>
+          }
+          @if (selectedArchitectureLabel(); as selectedArchitectureLabel) {
+            <span class="catalog-filter-pill">View: {{ selectedArchitectureLabel }}</span>
+          }
+          @if (activeTabId() === 'procedures' && selectedProcessLabel(); as selectedProcessLabel) {
+            <span class="catalog-filter-pill">Process: {{ selectedProcessLabel }}</span>
+          }
+        </div>
+      }
+
+      @if (activeTabId() === 'processes') {
+        @if (filteredProcesses().length === 0) {
+          <div class="catalog-empty-state">
+            <h2>No processes found</h2>
+            <p>Try removing one or more filters, or search with a broader term.</p>
+          </div>
+        } @else {
+          <div class="catalog-card-grid">
+            @for (process of filteredProcesses(); track process.id) {
+              <article class="catalog-entry-card">
+                <div class="catalog-entry-card__body">
+                  <div class="catalog-entry-card__identity">
+                    <p class="table-kicker">{{ process.code }}</p>
+                    <a
+                      class="catalog-row-title"
+                      [routerLink]="['/catalog', 'processes', process.id]"
+                      [queryParams]="{ view: getDefaultView(process) }"
+                    >
+                      {{ process.title }}
+                    </a>
+                  </div>
+
+                  <div class="portal-chip-list">
+                    @for (architecture of process.availableArchitectures; track architecture) {
+                      <span class="portal-chip">{{ getArchitectureLabel(architecture) }}</span>
+                    }
+                  </div>
+
+                  <p class="catalog-entry-card__description">
+                    {{
+                      process.description || 'Published process available in the public catalog.'
+                    }}
+                  </p>
+
+                  <dl class="catalog-entry-card__meta">
+                    <div>
+                      <dt>Area</dt>
+                      <dd>{{ process.area.code }} - {{ process.area.title }}</dd>
+                    </div>
+                    <div>
+                      <dt>Practice</dt>
+                      <dd>{{ process.itilPractice.code }} - {{ process.itilPractice.name }}</dd>
+                    </div>
+                    <div>
+                      <dt>Procedures</dt>
+                      <dd>{{ getProcedureCountForProcess(process.id) }}</dd>
+                    </div>
+                  </dl>
+                </div>
+
+                <div class="catalog-entry-card__actions">
+                  <a
+                    mat-flat-button
+                    class="catalog-card-link portal-action-button portal-action-button--full"
+                    [routerLink]="['/catalog', 'processes', process.id]"
+                    [queryParams]="{ view: getDefaultView(process) }"
+                  >
+                    Open overview
+                  </a>
+                  <a
+                    mat-stroked-button
+                    class="catalog-card-link catalog-card-link--secondary portal-action-button portal-action-button--secondary portal-action-button--full"
+                    [routerLink]="['/catalog', 'processes', process.id, 'procedures']"
+                    [queryParams]="{ view: getDefaultView(process) }"
+                  >
+                    View procedures
+                  </a>
+                </div>
+              </article>
+            }
+          </div>
+        }
+      } @else {
+        @if (filteredProcedures().length === 0) {
+          <div class="catalog-empty-state">
+            <h2>No procedures found</h2>
+            <p>Try removing one or more filters, or search with a broader term.</p>
+          </div>
+        } @else {
+          <div class="catalog-card-grid">
+            @for (procedure of filteredProcedures(); track procedure.id) {
+              <article class="catalog-entry-card catalog-entry-card--procedure">
+                <div class="catalog-entry-card__body">
+                  <div class="catalog-entry-card__identity">
+                    <p class="table-kicker">{{ procedure.code }}</p>
+                    <a
+                      class="catalog-row-title"
+                      [routerLink]="['/catalog', 'procedures', procedure.id]"
+                    >
+                      {{ procedure.title }}
+                    </a>
+                  </div>
+
+                  <div class="portal-chip-list">
+                    <span class="portal-chip">{{ getProcedureArchitectureLabel(procedure) }}</span>
+                    @if (getProcedureVersionLabel(procedure); as versionLabel) {
+                      <span class="portal-chip">{{ versionLabel }}</span>
+                    }
+                  </div>
+
+                  <p class="catalog-entry-card__description">
+                    {{
+                      procedure.description ||
+                        procedure.outcome ||
+                        'Published procedure available in the public catalog.'
+                    }}
+                  </p>
+
+                  <div class="catalog-procedure-meta">
+                    <p>
+                      <span>Process</span>
+                      <strong>{{ procedure.process.code }} - {{ procedure.process.title }}</strong>
+                    </p>
+                    <p>
+                      <span>Area</span>
+                      <strong>{{ procedure.area.code }} - {{ procedure.area.title }}</strong>
+                    </p>
+                    <p>
+                      <span>View</span>
+                      <strong>{{ getProcedureArchitectureLabel(procedure) }}</strong>
+                    </p>
+                  </div>
+                </div>
+
+                <div class="catalog-procedure-actions">
+                  <a
+                    mat-flat-button
+                    class="catalog-card-link portal-action-button portal-action-button--full"
+                    [routerLink]="['/catalog', 'procedures', procedure.id]"
+                  >
+                    Open details
+                  </a>
+                </div>
+              </article>
+            }
+          </div>
+        }
+      }
+    </section>
+  }
+</section>

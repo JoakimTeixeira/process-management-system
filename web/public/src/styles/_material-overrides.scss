@@ -1,0 +1,91 @@
+.mat-mdc-form-field {
+  font-size: var(--font-size-sm);
+}
+
+.mat-mdc-text-field-wrapper {
+  background-color: var(--portal-surface) !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+.mat-mdc-select-arrow {
+  color: var(--portal-muted) !important;
+}
+
+.mat-mdc-form-field-outline {
+  border-color: var(--portal-border-strong) !important;
+}
+
+.mat-mdc-form-field-outline-thick,
+.mat-mdc-form-field.mat-focused .mat-mdc-form-field-outline-thick {
+  color: var(--portal-blue) !important;
+}
+
+.mat-mdc-form-field-input {
+  color: var(--portal-copy) !important;
+}
+
+.mat-mdc-form-field-label,
+.mat-mdc-form-field.mat-focused .mat-mdc-form-field-label {
+  color: var(--portal-muted) !important;
+}
+
+.mat-mdc-form-field.mat-focused .mat-mdc-form-field-label {
+  color: var(--portal-blue) !important;
+}
+
+.mat-mdc-button-base {
+  border-radius: var(--radius-sm) !important;
+}
+
+.mat-mdc-unelevated-button:not(:disabled),
+.mat-mdc-raised-button:not(:disabled) {
+  background-color: var(--portal-blue) !important;
+  color: var(--portal-on-brand) !important;
+}
+
+.mat-mdc-unelevated-button:hover:not(:disabled),
+.mat-mdc-raised-button:hover:not(:disabled) {
+  background-color: var(--portal-blue-deep) !important;
+}
+
+.mat-mdc-outlined-button:not(:disabled) {
+  border-color: var(--portal-border-strong) !important;
+  color: var(--portal-blue) !important;
+}
+
+.mat-mdc-outlined-button:hover:not(:disabled) {
+  background-color: rgba(0, 85, 164, 0.05) !important;
+  border-color: var(--portal-blue) !important;
+  color: var(--portal-blue-deep) !important;
+}
+
+.mat-mdc-tab.mdc-tab--active .mdc-tab__text-label,
+.mat-mdc-tab:hover .mdc-tab__text-label,
+.mat-mdc-icon-button {
+  color: #0055a4 !important;
+}
+
+.mat-mdc-tab .mdc-tab__text-label {
+  color: #495057 !important;
+}
+
+.mat-mdc-tab-indicator .mdc-tab-indicator__content--underline {
+  border-color: #0055a4 !important;
+}
+
+.mat-mdc-icon-button:hover {
+  background-color: rgba(0, 85, 164, 0.05) !important;
+}
+
+.mat-expansion-panel {
+  box-shadow: none !important;
+  background: var(--portal-surface) !important;
+}
+
+.mat-expansion-panel-header:hover {
+  background: var(--portal-surface-subtle) !important;
+}
+
+.mat-expansion-indicator {
+  color: var(--portal-blue) !important;
+}
