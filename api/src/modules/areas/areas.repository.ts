@@ -11,7 +11,10 @@ interface AreaRow extends QueryRow {
   code: string;
   title: string;
   description: string | null;
+  team_id: string;
+  team_name: string;
   owner_id: string;
+  owner_name: string;
   itil_practice_id: string;
   practice_name: string;
 }
@@ -25,7 +28,10 @@ export interface AreaRecord {
   code: string;
   title: string;
   description: string | null;
+  teamId: string;
+  teamName: string;
   ownerId: string;
+  ownerName: string;
   itilPracticeId: string;
   itilPracticeName: string;
 }
@@ -34,15 +40,16 @@ interface CreateAreaInput {
   code: string;
   title: string;
   description: string | null;
+  teamId: string;
   ownerId: string;
   itilPracticeId: string;
   actorId: string;
 }
 
 interface UpdateAreaInput {
-  code?: string;
   title?: string;
   description?: string;
+  teamId?: string;
   ownerId?: string;
   itilPracticeId?: string;
 }
@@ -68,11 +75,16 @@ export class AreasRepository {
           a.code,
           a.title,
           a.description,
+          a.team_id,
+          t.name AS team_name,
           a.owner_id,
+          owner.name AS owner_name,
           a.itil_practice_id,
           ip.name AS practice_name
         FROM areas a
         INNER JOIN itil_practices ip ON ip.id = a.itil_practice_id
+        INNER JOIN teams t ON t.id = a.team_id
+        INNER JOIN users owner ON owner.id = a.owner_id
         ORDER BY a.title ASC
       `,
     );
@@ -89,11 +101,16 @@ export class AreasRepository {
           a.code,
           a.title,
           a.description,
+          a.team_id,
+          t.name AS team_name,
           a.owner_id,
+          owner.name AS owner_name,
           a.itil_practice_id,
           ip.name AS practice_name
         FROM areas a
         INNER JOIN itil_practices ip ON ip.id = a.itil_practice_id
+        INNER JOIN teams t ON t.id = a.team_id
+        INNER JOIN users owner ON owner.id = a.owner_id
         WHERE a.id = $1
         LIMIT 1
       `,
@@ -112,11 +129,16 @@ export class AreasRepository {
           a.code,
           a.title,
           a.description,
+          a.team_id,
+          t.name AS team_name,
           a.owner_id,
+          owner.name AS owner_name,
           a.itil_practice_id,
           ip.name AS practice_name
         FROM areas a
         INNER JOIN itil_practices ip ON ip.id = a.itil_practice_id
+        INNER JOIN teams t ON t.id = a.team_id
+        INNER JOIN users owner ON owner.id = a.owner_id
         WHERE a.code = $1
         LIMIT 1
       `,
@@ -134,9 +156,44 @@ export class AreasRepository {
           SELECT 1
           FROM users u
           WHERE u.id = $1
+            AND u.is_active = TRUE
         ) AS exists
       `,
       [ownerId],
+    );
+
+    return rows[0]?.exists ?? false;
+  }
+
+  async teamExists(teamId: string): Promise<boolean> {
+    const rows = await queryRows<ExistsRow>(
+      this.dataSource,
+      `
+        SELECT EXISTS (
+          SELECT 1
+          FROM teams t
+          WHERE t.id = $1
+        ) AS exists
+      `,
+      [teamId],
+    );
+
+    return rows[0]?.exists ?? false;
+  }
+
+  async userBelongsToTeam(userId: string, teamId: string): Promise<boolean> {
+    const rows = await queryRows<ExistsRow>(
+      this.dataSource,
+      `
+        SELECT EXISTS (
+          SELECT 1
+          FROM users u
+          WHERE u.id = $1
+            AND u.team_id = $2
+            AND u.is_active = TRUE
+        ) AS exists
+      `,
+      [userId, teamId],
     );
 
     return rows[0]?.exists ?? false;
@@ -151,11 +208,12 @@ export class AreasRepository {
           code,
           title,
           description,
+          team_id,
           owner_id,
           created_by,
           updated_by
         )
-        VALUES ($1, $2, $3, $4, $5, $6, $6)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $7)
         RETURNING id
       `,
       [
@@ -163,12 +221,32 @@ export class AreasRepository {
         input.code,
         input.title,
         input.description,
+        input.teamId,
         input.ownerId,
         input.actorId,
       ],
     );
 
     return this.findRequiredById(rows[0]?.id);
+  }
+
+  async getNextAreaCode(): Promise<string> {
+    const rows = await queryRows<{ max_code: string | null }>(
+      this.dataSource,
+      `
+        SELECT MAX(code) AS max_code
+        FROM areas
+      `,
+    );
+
+    const maxCode = rows[0]?.max_code;
+
+    if (!maxCode) {
+      return 'A1';
+    }
+
+    const nextNumber = Number.parseInt(maxCode.replace(/^A/i, ''), 10) + 1;
+    return `A${nextNumber}`;
   }
 
   async update(
@@ -179,11 +257,6 @@ export class AreasRepository {
     const setClauses: string[] = [];
     const parameters: unknown[] = [];
 
-    if (input.code !== undefined) {
-      parameters.push(input.code);
-      setClauses.push(`code = $${parameters.length}`);
-    }
-
     if (input.title !== undefined) {
       parameters.push(input.title);
       setClauses.push(`title = $${parameters.length}`);
@@ -192,6 +265,11 @@ export class AreasRepository {
     if (input.description !== undefined) {
       parameters.push(input.description);
       setClauses.push(`description = $${parameters.length}`);
+    }
+
+    if (input.teamId !== undefined) {
+      parameters.push(input.teamId);
+      setClauses.push(`team_id = $${parameters.length}`);
     }
 
     if (input.ownerId !== undefined) {
@@ -254,7 +332,10 @@ export class AreasRepository {
       code: row.code,
       title: row.title,
       description: row.description,
+      teamId: row.team_id,
+      teamName: row.team_name,
       ownerId: row.owner_id,
+      ownerName: row.owner_name,
       itilPracticeId: row.itil_practice_id,
       itilPracticeName: row.practice_name,
     };

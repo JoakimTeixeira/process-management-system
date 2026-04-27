@@ -1,6 +1,7 @@
-import { ConflictException } from '@nestjs/common';
+import { ConflictException, ForbiddenException } from '@nestjs/common';
 import type { DataSource } from 'typeorm';
 
+import { ProcessVersionAction } from '../../common/enums/process-version-action.enum';
 import { Role } from '../../common/enums/role.enum';
 import type { AuditLogWriterService } from '../audit/audit-log-writer.service';
 import type { AuthenticatedUser } from '../auth/interfaces/authenticated-user.interface';
@@ -19,6 +20,7 @@ describe('ProcessVersionsService', () => {
       | 'create'
       | 'delete'
       | 'findById'
+      | 'findByProcessId'
       | 'findByProcessAndVersionNumber'
       | 'findLatestActorForState'
       | 'findPublishedVersion'
@@ -81,6 +83,7 @@ describe('ProcessVersionsService', () => {
       create: jest.fn(),
       delete: jest.fn(),
       findById: jest.fn(),
+      findByProcessId: jest.fn(),
       findByProcessAndVersionNumber: jest.fn(),
       findLatestActorForState: jest.fn(),
       findPublishedVersion: jest.fn(),
@@ -121,6 +124,260 @@ describe('ProcessVersionsService', () => {
     ).rejects.toBeInstanceOf(ConflictException);
   });
 
+  it('should reject create when the actor is not an editor', async () => {
+    await expect(
+      service.create(
+        'process-1',
+        {
+          title: 'Wrong role',
+          architectureState: 'TO-BE',
+          changeDescription: 'Change',
+          reasonForChange: 'Reason',
+        },
+        currentUser,
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('should reject create when derivedFromVersionId belongs to a different process', async () => {
+    processesRepository.findById.mockResolvedValue({
+      id: 'process-1',
+    } as never);
+    processVersionsRepository.findById.mockResolvedValue({
+      ...approvedVersion,
+      id: 'version-parent',
+      processId: 'process-9',
+      lifecycleState: 'Published',
+    });
+
+    await expect(
+      service.create(
+        'process-1',
+        {
+          title: 'Cross-process child',
+          architectureState: 'TO-BE',
+          changeDescription: 'Change',
+          reasonForChange: 'Reason',
+          derivedFromVersionId: 'version-parent',
+        },
+        { ...currentUser, role: Role.EDITOR },
+      ),
+    ).rejects.toBeInstanceOf(ConflictException);
+  });
+
+  it('should auto-assign the next version number when creating a version', async () => {
+    const createdVersion = {
+      ...approvedVersion,
+      id: 'version-2',
+      versionNumber: 4,
+      lifecycleState: 'Draft',
+    };
+
+    processesRepository.findById.mockResolvedValue({
+      id: 'process-1',
+    } as never);
+    processVersionsRepository.getNextVersionNumber.mockResolvedValue(4);
+    processVersionsRepository.create.mockResolvedValue(createdVersion);
+    processVersionsRepository.insertStateHistory.mockResolvedValue(undefined);
+
+    const result = await service.create(
+      'process-1',
+      {
+        title: 'Next Version',
+        architectureState: 'TO-BE',
+        changeDescription: 'Change',
+        reasonForChange: 'Reason',
+      },
+      { ...currentUser, role: Role.EDITOR },
+    );
+
+    expect(processVersionsRepository.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        processId: 'process-1',
+        versionNumber: 4,
+        lifecycleState: 'Draft',
+        architectureState: 'TO-BE',
+        checklistCompleted: false,
+      }),
+      expect.anything(),
+    );
+    expect(result.versionNumber).toBe(4);
+  });
+
+  it('should reject submit for review when required metadata is missing', async () => {
+    processVersionsRepository.findById.mockResolvedValue({
+      ...approvedVersion,
+      lifecycleState: 'Draft',
+      title: '   ',
+    });
+
+    await expect(
+      service.submitForReview(
+        'version-1',
+        { reason: 'submit' },
+        { ...currentUser, role: Role.EDITOR },
+      ),
+    ).rejects.toBeInstanceOf(ConflictException);
+
+    expect(processVersionsRepository.countBpmnAssets).not.toHaveBeenCalled();
+  });
+
+  it('should reject direct updates outside Draft state', async () => {
+    processVersionsRepository.findById.mockResolvedValue({
+      ...approvedVersion,
+      lifecycleState: 'Published',
+    });
+
+    await expect(
+      service.update(
+        'version-1',
+        { title: 'Published changes are forbidden' },
+        { ...currentUser, role: Role.EDITOR },
+      ),
+    ).rejects.toBeInstanceOf(ConflictException);
+
+    expect(processVersionsRepository.update).not.toHaveBeenCalled();
+  });
+
+  it('should only advertise editor draft actions for same-team editors', async () => {
+    processesRepository.findById.mockResolvedValue({
+      id: 'process-1',
+      teamId: 'team-1',
+    } as never);
+    processVersionsRepository.findByProcessId.mockResolvedValue([
+      {
+        ...approvedVersion,
+        lifecycleState: 'Draft',
+      },
+    ]);
+
+    const ownTeamVersions = await service.listByProcessId('process-1', {
+      ...currentUser,
+      role: Role.EDITOR,
+    });
+    const otherTeamVersions = await service.listByProcessId('process-1', {
+      ...currentUser,
+      role: Role.EDITOR,
+      team: {
+        id: 'team-9',
+        code: 'OPS',
+        name: 'Operations',
+      },
+    });
+
+    expect(ownTeamVersions[0]?.availableActions).toContain(
+      ProcessVersionAction.EDIT,
+    );
+    expect(otherTeamVersions[0]?.availableActions).toEqual([
+      ProcessVersionAction.VIEW,
+    ]);
+  });
+
+  it('should reject update when derivedFromVersionId belongs to a different process', async () => {
+    processVersionsRepository.findById
+      .mockResolvedValueOnce({
+        ...approvedVersion,
+        id: 'version-1',
+        processId: 'process-1',
+        lifecycleState: 'Draft',
+      })
+      .mockResolvedValueOnce({
+        ...approvedVersion,
+        id: 'version-parent',
+        processId: 'process-9',
+        lifecycleState: 'Published',
+      });
+
+    await expect(
+      service.update(
+        'version-1',
+        { derivedFromVersionId: 'version-parent' },
+        { ...currentUser, role: Role.EDITOR },
+      ),
+    ).rejects.toBeInstanceOf(ConflictException);
+  });
+
+  it('should transition rejected versions back to Draft and write history plus audit', async () => {
+    const inReviewVersion = {
+      ...approvedVersion,
+      lifecycleState: 'In Review',
+    };
+    const rejectedVersion = {
+      ...inReviewVersion,
+      lifecycleState: 'Draft',
+    };
+
+    processVersionsRepository.findById.mockResolvedValue(inReviewVersion);
+    processVersionsRepository.setLifecycleState.mockResolvedValue(
+      rejectedVersion,
+    );
+    processVersionsRepository.insertStateHistory.mockResolvedValue(undefined);
+
+    const result = await service.reject(
+      'version-1',
+      { reason: 'Missing evidence' },
+      { ...currentUser, role: Role.REVIEWER },
+    );
+
+    expect(result.lifecycleState).toBe('Draft');
+    expect(processVersionsRepository.insertStateHistory).toHaveBeenCalledWith(
+      expect.objectContaining({
+        processVersionId: 'version-1',
+        fromState: 'In Review',
+        toState: 'Draft',
+        actorId: currentUser.id,
+        reason: 'Missing evidence',
+      }),
+      expect.anything(),
+    );
+    expect(auditLogWriterService.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        entityType: 'process_version',
+        entityId: 'version-1',
+        action: 'REJECT',
+        actorId: currentUser.id,
+        reasonForChange: 'Missing evidence',
+      }),
+      expect.anything(),
+    );
+  });
+
+  it('should transition approved versions back to Draft through reopen and write governance evidence', async () => {
+    const reopenedVersion = {
+      ...approvedVersion,
+      lifecycleState: 'Draft',
+    };
+
+    processVersionsRepository.findById.mockResolvedValue(approvedVersion);
+    processVersionsRepository.setLifecycleState.mockResolvedValue(
+      reopenedVersion,
+    );
+    processVersionsRepository.insertStateHistory.mockResolvedValue(undefined);
+
+    const result = await service.reopen(
+      'version-1',
+      { reason: 'Formal rework required' },
+      { ...currentUser, role: Role.REVIEWER },
+    );
+
+    expect(result.lifecycleState).toBe('Draft');
+    expect(processVersionsRepository.insertStateHistory).toHaveBeenCalledWith(
+      expect.objectContaining({
+        fromState: 'Approved',
+        toState: 'Draft',
+        reason: 'Formal rework required',
+      }),
+      expect.anything(),
+    );
+    expect(auditLogWriterService.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: 'STATE_CHANGE',
+        reasonForChange: 'Formal rework required',
+      }),
+      expect.anything(),
+    );
+  });
+
   it('should block publish when the approver and publisher are the same actor', async () => {
     processVersionsRepository.findById.mockResolvedValue(approvedVersion);
     processVersionsRepository.countBpmnAssets.mockResolvedValue(1);
@@ -134,6 +391,19 @@ describe('ProcessVersionsService', () => {
     ).rejects.toBeInstanceOf(ConflictException);
   });
 
+  it('should block publish when checklist completion is missing', async () => {
+    processVersionsRepository.findById.mockResolvedValue({
+      ...approvedVersion,
+      checklistCompleted: false,
+    });
+
+    await expect(
+      service.publish('version-1', { reason: 'publish' }, currentUser),
+    ).rejects.toBeInstanceOf(ConflictException);
+
+    expect(processVersionsRepository.countBpmnAssets).not.toHaveBeenCalled();
+  });
+
   it('should block publish when approval evidence is missing', async () => {
     processVersionsRepository.findById.mockResolvedValue(approvedVersion);
     processVersionsRepository.countBpmnAssets.mockResolvedValue(1);
@@ -143,6 +413,144 @@ describe('ProcessVersionsService', () => {
     await expect(
       service.publish('version-1', { reason: 'publish' }, currentUser),
     ).rejects.toBeInstanceOf(ConflictException);
+  });
+
+  it('should publish an approved version and automatically archive the previous published version', async () => {
+    const existingPublishedVersion = {
+      ...approvedVersion,
+      id: 'version-0',
+      lifecycleState: 'Published',
+    };
+    const archivedExistingVersion = {
+      ...existingPublishedVersion,
+      lifecycleState: 'Archived',
+    };
+    const publishedVersion = {
+      ...approvedVersion,
+      lifecycleState: 'Published',
+    };
+
+    processVersionsRepository.findById.mockResolvedValue(approvedVersion);
+    processVersionsRepository.countBpmnAssets.mockResolvedValue(1);
+    processVersionsRepository.findLatestActorForState.mockResolvedValue(
+      'reviewer-1',
+    );
+    processVersionsRepository.findPublishedVersion.mockResolvedValue(
+      existingPublishedVersion,
+    );
+    processVersionsRepository.setLifecycleState
+      .mockResolvedValueOnce(archivedExistingVersion)
+      .mockResolvedValueOnce(publishedVersion);
+    processVersionsRepository.insertStateHistory.mockResolvedValue(undefined);
+
+    const result = await service.publish(
+      'version-1',
+      { reason: 'Release approved draft' },
+      currentUser,
+    );
+
+    expect(result.lifecycleState).toBe('Published');
+    expect(processVersionsRepository.setLifecycleState).toHaveBeenNthCalledWith(
+      1,
+      'version-0',
+      'Archived',
+      currentUser.id,
+      expect.anything(),
+    );
+    expect(processVersionsRepository.setLifecycleState).toHaveBeenNthCalledWith(
+      2,
+      'version-1',
+      'Published',
+      currentUser.id,
+      expect.anything(),
+    );
+    expect(
+      processVersionsRepository.insertStateHistory,
+    ).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        processVersionId: 'version-0',
+        fromState: 'Published',
+        toState: 'Archived',
+      }),
+      expect.anything(),
+    );
+    expect(
+      processVersionsRepository.insertStateHistory,
+    ).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        processVersionId: 'version-1',
+        fromState: 'Approved',
+        toState: 'Published',
+        reason: 'Release approved draft',
+      }),
+      expect.anything(),
+    );
+    expect(auditLogWriterService.create).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        action: 'ARCHIVE',
+        entityId: 'version-0',
+      }),
+      expect.anything(),
+    );
+    expect(auditLogWriterService.create).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        action: 'PUBLISH',
+        entityId: 'version-1',
+      }),
+      expect.anything(),
+    );
+  });
+
+  it('should reject archive attempts for non-published versions', async () => {
+    processVersionsRepository.findById.mockResolvedValue(approvedVersion);
+
+    await expect(
+      service.archive('version-1', { reason: 'Invalid archive' }, currentUser),
+    ).rejects.toBeInstanceOf(ConflictException);
+  });
+
+  it('should archive published versions and write justification to history and audit', async () => {
+    const publishedVersion = {
+      ...approvedVersion,
+      lifecycleState: 'Published',
+    };
+    const archivedVersion = {
+      ...publishedVersion,
+      lifecycleState: 'Archived',
+    };
+
+    processVersionsRepository.findById.mockResolvedValue(publishedVersion);
+    processVersionsRepository.setLifecycleState.mockResolvedValue(
+      archivedVersion,
+    );
+    processVersionsRepository.insertStateHistory.mockResolvedValue(undefined);
+
+    const result = await service.archive(
+      'version-1',
+      { reason: 'Superseded by a newer release' },
+      currentUser,
+    );
+
+    expect(result.lifecycleState).toBe('Archived');
+    expect(processVersionsRepository.insertStateHistory).toHaveBeenCalledWith(
+      expect.objectContaining({
+        fromState: 'Published',
+        toState: 'Archived',
+        reason: 'Superseded by a newer release',
+      }),
+      expect.anything(),
+    );
+    expect(auditLogWriterService.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: 'ARCHIVE',
+        reasonForChange: 'Superseded by a newer release',
+      }),
+      expect.anything(),
+    );
   });
 
   it('should promote a published TO-BE version into a new published AS-IS version', async () => {

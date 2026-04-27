@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
+import { ProcessVersionAction } from '../../common/enums/process-version-action.enum';
 import type { SqlExecutor } from '../../common/types/sql-executor.type';
 
 interface QueryRow {
@@ -48,6 +49,7 @@ export interface ProcessVersionRecord {
   derivedFromVersionId: string | null;
   changeDescription: string;
   reasonForChange: string;
+  availableActions?: ProcessVersionAction[];
 }
 
 export interface CreateProcessVersionInput {
@@ -217,10 +219,7 @@ export class ProcessVersionsRepository {
           $8,
           $9,
           $10,
-          $11,
-          $12,
-          $13,
-          $14
+          $11
         )
         RETURNING id
       `,
@@ -427,11 +426,8 @@ export class ProcessVersionsRepository {
           pv.lifecycle_state,
           pv.architecture_state,
           pv.title,
-          pv.summary,
           pv.checklist_completed,
           pv.derived_from_version_id,
-          pv.overview,
-          pv.notes,
           pv.change_description,
           pv.reason_for_change
         FROM process_versions pv

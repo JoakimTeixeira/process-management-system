@@ -31,6 +31,9 @@ export class ProcessVersionResponseDto {
   @Expose()
   reasonForChange!: string;
 
+  @Expose()
+  availableActions?: string[];
+
   constructor(partial: Partial<ProcessVersionResponseDto>) {
     Object.assign(this, partial);
   }

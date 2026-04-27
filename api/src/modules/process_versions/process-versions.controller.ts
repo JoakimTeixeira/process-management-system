@@ -49,22 +49,29 @@ export class ProcessVersionsController {
     );
   }
 
+  @Roles(Role.EDITOR, Role.REVIEWER, Role.PUBLISHER, Role.VIEWER)
   @Get('processes/:processId/versions')
   async listByProcessId(
     @Param() params: ProcessIdParamDto,
+    @CurrentUser() currentUser: AuthenticatedUser,
   ): Promise<ProcessVersionResponseDto[]> {
     const versions = await this.processVersionsService.listByProcessId(
       params.processId,
+      currentUser,
     );
 
     return versions.map((version) => this.toDto(version));
   }
 
+  @Roles(Role.EDITOR, Role.REVIEWER, Role.PUBLISHER, Role.VIEWER)
   @Get('process-versions/:id')
   async getById(
     @Param() params: IdParamDto,
+    @CurrentUser() currentUser: AuthenticatedUser,
   ): Promise<ProcessVersionResponseDto> {
-    return this.toDto(await this.processVersionsService.getById(params.id));
+    return this.toDto(
+      await this.processVersionsService.getById(params.id, currentUser),
+    );
   }
 
   @Roles(Role.EDITOR)

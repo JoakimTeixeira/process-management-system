@@ -1,7 +1,7 @@
 import { mapGlossaryResponse } from './glossary.mapper';
 
 describe('glossary.mapper', () => {
-  it('separates glossary terms from practices', () => {
+  it('should separate glossary terms from practices', () => {
     const response = {
       terms: [
         {

@@ -17,6 +17,9 @@ export class VersionStateHistoryResponseDto {
   actorId!: string | null;
 
   @Expose()
+  actorName!: string | null;
+
+  @Expose()
   reason!: string | null;
 
   @Expose()

@@ -1,7 +1,7 @@
 import { mapProcessDetailViewModel } from './process-detail.mapper';
 
 describe('process-detail.mapper', () => {
-  it('separates current, target, compare, and empty-state data', () => {
+  it('should separate current, target, compare, and empty-state data', () => {
     const detail = {
       process: {
         id: 'process-1',

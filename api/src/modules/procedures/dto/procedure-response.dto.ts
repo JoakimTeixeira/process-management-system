@@ -8,6 +8,24 @@ export class ProcedureResponseDto {
   processVersionId!: string;
 
   @Expose()
+  processId?: string;
+
+  @Expose()
+  processCode?: string;
+
+  @Expose()
+  processTitle?: string;
+
+  @Expose()
+  versionNumber?: number;
+
+  @Expose()
+  lifecycleState?: string;
+
+  @Expose()
+  architectureState?: string;
+
+  @Expose()
   code!: string;
 
   @Expose()

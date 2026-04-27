@@ -104,11 +104,7 @@ export class AssetsRepository {
     return rows.map((row) => this.mapRecord(row));
   }
 
-  private async findRequiredById(id: string | undefined): Promise<AssetRecord> {
-    if (!id) {
-      throw new TypeError('Expected asset identifier to be available');
-    }
-
+  async findById(id: string): Promise<AssetRecord | null> {
     const rows = await queryRows<AssetRow>(
       this.dataSource,
       `
@@ -128,13 +124,21 @@ export class AssetsRepository {
       [id],
     );
 
-    const asset = rows[0];
+    return rows[0] ? this.mapRecord(rows[0]) : null;
+  }
+
+  private async findRequiredById(id: string | undefined): Promise<AssetRecord> {
+    if (!id) {
+      throw new TypeError('Expected asset identifier to be available');
+    }
+
+    const asset = await this.findById(id);
 
     if (!asset) {
       throw new TypeError(`Expected asset "${id}" to exist`);
     }
 
-    return this.mapRecord(asset);
+    return asset;
   }
 
   private mapRecord(row: AssetRow): AssetRecord {

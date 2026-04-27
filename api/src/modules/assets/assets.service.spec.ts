@@ -1,5 +1,5 @@
-import { readFile } from 'node:fs/promises';
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { ConflictException, ForbiddenException } from '@nestjs/common';
 
 import { Role } from '../../common/enums/role.enum';
 import { TEST_FILE_SIZE_BYTES_SMALL } from '../../common/constants/workflow.constants';
@@ -11,12 +11,17 @@ import type { AssetsRepository } from './assets.repository';
 import { AssetsService } from './assets.service';
 
 jest.mock('node:fs/promises', () => ({
+  mkdir: jest.fn(),
   readFile: jest.fn(),
+  writeFile: jest.fn(),
 }));
 
 describe('AssetsService', () => {
   let assetsRepository: jest.Mocked<
-    Pick<AssetsRepository, 'createBpmnAsset' | 'findByProcessVersionId'>
+    Pick<
+      AssetsRepository,
+      'createBpmnAsset' | 'findById' | 'findByProcessVersionId'
+    >
   >;
   let processVersionsRepository: jest.Mocked<
     Pick<ProcessVersionsRepository, 'findById'>
@@ -44,6 +49,7 @@ describe('AssetsService', () => {
     jest.resetAllMocks();
     assetsRepository = {
       createBpmnAsset: jest.fn(),
+      findById: jest.fn(),
       findByProcessVersionId: jest.fn(),
     };
     processVersionsRepository = {
@@ -82,8 +88,11 @@ describe('AssetsService', () => {
         'version-1',
         {
           caption: 'Diagram',
-          filePath: 'uploads/seed/process-1-v1.bpmn',
-          mimeType: 'application/xml',
+        },
+        {
+          buffer: Buffer.from('<definitions><process /></definitions>'),
+          originalname: 'diagram.bpmn',
+          mimetype: 'application/xml',
         },
         currentUser,
       ),
@@ -91,7 +100,8 @@ describe('AssetsService', () => {
   });
 
   it('validates BPMN XML content and computes checksum metadata', async () => {
-    const readFileMock = jest.mocked(readFile);
+    const mkdirMock = jest.mocked(mkdir);
+    const writeFileMock = jest.mocked(writeFile);
 
     processVersionsRepository.findById.mockResolvedValue({
       id: 'version-1',
@@ -105,15 +115,14 @@ describe('AssetsService', () => {
       changeDescription: 'change',
       reasonForChange: 'reason',
     });
-    readFileMock.mockResolvedValue(
-      '<?xml version="1.0"?><bpmn:definitions><bpmn:process id="p1" /></bpmn:definitions>',
-    );
+    mkdirMock.mockResolvedValue(undefined);
+    writeFileMock.mockResolvedValue(undefined);
     assetsRepository.createBpmnAsset.mockResolvedValue({
       id: 'asset-1',
       processVersionId: 'version-1',
       caption: 'Diagram',
       assetType: 'BPMN',
-      filePath: 'seed/process-1-v1.bpmn',
+      filePath: 'backoffice/bpmn/test.bpmn',
       mimeType: 'application/xml',
       checksum: 'checksum',
       sizeBytes: TEST_FILE_SIZE_BYTES_SMALL,
@@ -123,26 +132,47 @@ describe('AssetsService', () => {
       'version-1',
       {
         caption: 'Diagram',
-        filePath: 'seed/process-1-v1.bpmn',
-        mimeType: 'application/xml',
+      },
+      {
+        buffer: Buffer.from(
+          '<?xml version="1.0"?><bpmn:definitions><bpmn:process id="p1" /></bpmn:definitions>',
+        ),
+        originalname: 'diagram.bpmn',
+        mimetype: 'application/xml',
       },
       currentUser,
     );
 
-    const createInput = assetsRepository.createBpmnAsset.mock.calls[0]?.[0];
+    const createInput = assetsRepository.createBpmnAsset.mock.calls[0]?.[0] as
+      | {
+          caption: string;
+          filePath: string;
+          mimeType: string;
+          checksum: string;
+          sizeBytes: number;
+        }
+      | undefined;
 
-    expect(createInput).toMatchObject({
-      caption: 'Diagram',
-      filePath: 'seed/process-1-v1.bpmn',
-      mimeType: 'application/xml',
-    });
+    expect(createInput).toBeDefined();
+    expect(createInput?.caption).toBe('Diagram');
+    expect(createInput?.filePath).toContain('backoffice/bpmn/');
+    expect(createInput?.mimeType).toBe('application/xml');
     expect(typeof createInput?.checksum).toBe('string');
     expect(typeof createInput?.sizeBytes).toBe('number');
+    expect(
+      workflowAuthorizationService.assertSameTeamAsProcessVersionOwner,
+    ).toHaveBeenCalledWith('version-1', currentUser);
+    expect(auditLogWriterService.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        entityType: 'asset',
+        entityId: 'asset-1',
+        action: 'UPLOAD',
+        actorId: currentUser.id,
+      }),
+    );
   });
 
   it('rejects non-BPMN XML payloads', async () => {
-    const readFileMock = jest.mocked(readFile);
-
     processVersionsRepository.findById.mockResolvedValue({
       id: 'version-1',
       processId: 'process-1',
@@ -155,24 +185,23 @@ describe('AssetsService', () => {
       changeDescription: 'change',
       reasonForChange: 'reason',
     });
-    readFileMock.mockResolvedValue('<xml><not-bpmn /></xml>');
-
     await expect(
       service.createBpmnAsset(
         'version-1',
         {
           caption: 'Diagram',
-          filePath: 'seed/process-1-v1.bpmn',
-          mimeType: 'application/xml',
+        },
+        {
+          buffer: Buffer.from('<xml><not-bpmn /></xml>'),
+          originalname: 'diagram.xml',
+          mimetype: 'application/xml',
         },
         currentUser,
       ),
     ).rejects.toBeInstanceOf(ConflictException);
   });
 
-  it('rejects missing BPMN files', async () => {
-    const readFileMock = jest.mocked(readFile);
-
+  it('rejects missing BPMN uploads', async () => {
     processVersionsRepository.findById.mockResolvedValue({
       id: 'version-1',
       processId: 'process-1',
@@ -185,18 +214,69 @@ describe('AssetsService', () => {
       changeDescription: 'change',
       reasonForChange: 'reason',
     });
-    readFileMock.mockRejectedValue(new Error('ENOENT'));
-
     await expect(
       service.createBpmnAsset(
         'version-1',
         {
           caption: 'Diagram',
-          filePath: 'seed/process-1-v1.bpmn',
-          mimeType: 'application/xml',
+        },
+        {
+          buffer: Buffer.alloc(0),
+          originalname: 'diagram.bpmn',
+          mimetype: 'application/xml',
         },
         currentUser,
       ),
-    ).rejects.toBeInstanceOf(NotFoundException);
+    ).rejects.toMatchObject({ message: 'A BPMN file upload is required' });
+  });
+
+  it('returns stored asset content', async () => {
+    const readFileMock = jest.mocked(readFile);
+
+    assetsRepository.findById.mockResolvedValue({
+      id: 'asset-1',
+      processVersionId: 'version-1',
+      caption: 'Diagram',
+      assetType: 'BPMN',
+      filePath: 'backoffice/bpmn/test.bpmn',
+      mimeType: 'application/xml',
+      checksum: 'checksum',
+      sizeBytes: TEST_FILE_SIZE_BYTES_SMALL,
+    });
+    readFileMock.mockResolvedValue('<definitions><process /></definitions>');
+
+    await expect(
+      service.getAssetContent('version-1', 'asset-1', currentUser),
+    ).resolves.toMatchObject({
+      id: 'asset-1',
+      caption: 'Diagram',
+      mimeType: 'application/xml',
+    });
+  });
+
+  it('rejects BPMN upload for non-editor actors', async () => {
+    await expect(
+      service.createBpmnAsset(
+        'version-1',
+        {
+          caption: 'Diagram',
+        },
+        {
+          buffer: Buffer.from('<definitions><process /></definitions>'),
+          originalname: 'diagram.bpmn',
+          mimetype: 'application/xml',
+        },
+        { ...currentUser, role: Role.REVIEWER },
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('rejects asset reads for non-content roles', async () => {
+    await expect(
+      service.listByProcessVersionId('version-1', {
+        ...currentUser,
+        role: Role.SYSTEM_ADMIN,
+      }),
+    ).rejects.toBeInstanceOf(ForbiddenException);
   });
 });

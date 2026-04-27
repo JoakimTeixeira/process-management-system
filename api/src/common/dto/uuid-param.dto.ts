@@ -14,3 +14,11 @@ export class ProcessVersionIdParamDto {
   @IsUUID()
   processVersionId!: string;
 }
+
+export class ProcessVersionAssetParamDto {
+  @IsUUID()
+  processVersionId!: string;
+
+  @IsUUID()
+  assetId!: string;
+}

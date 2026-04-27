@@ -1,8 +1,56 @@
+import { GUARDS_METADATA } from '@nestjs/common/constants';
+
+import { ROLES_KEY } from '../../common/decorators/roles.decorator';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
 import { ProcessesController } from './processes.controller';
 import { ProcessesService } from './processes.service';
 import type { AuthenticatedUser } from '../auth/interfaces/authenticated-user.interface';
 import { Role } from '../../common/enums/role.enum';
 import type { ProcessRecord } from './processes.repository';
+
+type ControllerMethod = (...args: never[]) => unknown;
+
+function getControllerMethod(target: object, key: string): ControllerMethod {
+  const method: unknown = Object.getOwnPropertyDescriptor(target, key)?.value;
+
+  if (typeof method !== 'function') {
+    throw new TypeError(`Expected "${key}" to be a controller method`);
+  }
+
+  return method as ControllerMethod;
+}
+
+describe('ProcessesController metadata', () => {
+  it('protects the controller with JWT and roles guards', () => {
+    expect(Reflect.getMetadata(GUARDS_METADATA, ProcessesController)).toEqual([
+      JwtAuthGuard,
+      RolesGuard,
+    ]);
+  });
+
+  it('restricts create, update, and delete to EDITOR', () => {
+    for (const methodName of ['create', 'update', 'delete']) {
+      expect(
+        Reflect.getMetadata(
+          ROLES_KEY,
+          getControllerMethod(ProcessesController.prototype, methodName),
+        ),
+      ).toEqual([Role.EDITOR]);
+    }
+  });
+
+  it('restricts process reads to content roles', () => {
+    for (const methodName of ['list', 'getById']) {
+      expect(
+        Reflect.getMetadata(
+          ROLES_KEY,
+          getControllerMethod(ProcessesController.prototype, methodName),
+        ),
+      ).toEqual([Role.EDITOR, Role.REVIEWER, Role.PUBLISHER, Role.VIEWER]);
+    }
+  });
+});
 
 describe('ProcessesController', () => {
   let controller: ProcessesController;

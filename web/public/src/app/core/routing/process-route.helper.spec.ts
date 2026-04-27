@@ -7,7 +7,7 @@ import {
 } from './process-route.helper';
 
 describe('process-route.helper', () => {
-  it('maps process routes to the correct tab ids', () => {
+  it('should map process routes to the correct tab ids', () => {
     expect(getProcessTabIdFromUrl('/catalog/processes/1/overview')).toBe('overview');
     expect(getProcessTabIdFromUrl('/catalog/processes/1/diagram')).toBe('diagram');
     expect(getProcessTabIdFromUrl('/catalog/processes/1/procedures')).toBe('procedures');
@@ -16,14 +16,14 @@ describe('process-route.helper', () => {
     expect(getProcessTabIdFromUrl('/catalog/processes/1')).toBe('default');
   });
 
-  it('maps tab ids and indexes consistently', () => {
+  it('should map tab ids and indexes consistently', () => {
     expect(getProcessTabIndex('default')).toBe(0);
     expect(getProcessTabIndex('diagram')).toBe(1);
     expect(getProcessTabIdFromIndex(2)).toBe('procedures');
     expect(getProcessTabIdFromIndex(4)).toBe('compare');
   });
 
-  it('builds route paths for each process tab and architecture segment', () => {
+  it('should build route paths for each process tab and architecture segment', () => {
     expect(getProcessTabRoute('process-1', 'overview')).toBe('/catalog/processes/process-1');
     expect(getProcessTabRoute('process-1', 'diagram')).toBe('/catalog/processes/process-1/diagram');
     expect(getProcessTabRoute('process-1', 'procedures')).toBe(

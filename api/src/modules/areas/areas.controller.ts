@@ -38,6 +38,7 @@ export class AreasController {
     return this.toDto(area);
   }
 
+  @Roles(Role.EDITOR)
   @Get()
   async list(): Promise<AreaResponseDto[]> {
     const areas = await this.areasService.list();
@@ -45,6 +46,7 @@ export class AreasController {
     return areas.map((area) => this.toDto(area));
   }
 
+  @Roles(Role.EDITOR)
   @Get(':id')
   async getById(@Param() params: IdParamDto): Promise<AreaResponseDto> {
     const area = await this.areasService.getById(params.id);
@@ -82,7 +84,10 @@ export class AreasController {
     code: string;
     title: string;
     description: string | null;
+    teamId: string;
+    teamName: string;
     ownerId: string;
+    ownerName: string;
     itilPracticeId: string;
     itilPracticeName: string;
   }): AreaResponseDto {

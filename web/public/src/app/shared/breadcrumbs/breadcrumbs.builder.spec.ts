@@ -5,7 +5,7 @@ import {
 } from './breadcrumbs.builder';
 
 describe('breadcrumbs.builder', () => {
-  it('builds collection breadcrumbs for the active catalog tab', () => {
+  it('should build collection breadcrumbs for the active catalog tab', () => {
     expect(buildCatalogBreadcrumbs('processes')).toEqual([
       { label: 'Home', link: '/' },
       { label: 'Processes' },
@@ -17,7 +17,7 @@ describe('breadcrumbs.builder', () => {
     ]);
   });
 
-  it('builds process breadcrumbs with catalog routes and omits an overview leaf', () => {
+  it('should build process breadcrumbs with catalog routes and omit an overview leaf', () => {
     const detail = {
       process: {
         id: 'process-1',
@@ -57,7 +57,7 @@ describe('breadcrumbs.builder', () => {
     ]);
   });
 
-  it('builds direct procedure breadcrumbs for collection browsing', () => {
+  it('should build direct procedure breadcrumbs for collection browsing', () => {
     const detail = {
       procedure: {
         id: 'procedure-1',
@@ -118,7 +118,7 @@ describe('breadcrumbs.builder', () => {
     ]);
   });
 
-  it('builds process-origin procedure breadcrumbs with the process procedures context', () => {
+  it('should build process-origin procedure breadcrumbs with the process procedures context', () => {
     const detail = {
       procedure: {
         id: 'procedure-1',
@@ -195,7 +195,7 @@ describe('breadcrumbs.builder', () => {
     ]);
   });
 
-  it('falls back to direct procedure breadcrumbs when the origin process does not match', () => {
+  it('should fall back to direct procedure breadcrumbs when the origin process does not match', () => {
     const detail = {
       procedure: {
         id: 'procedure-1',

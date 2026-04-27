@@ -1,3 +1,5 @@
+import { GUARDS_METADATA } from '@nestjs/common/constants';
+
 import { PublicPortalController } from './public-portal.controller';
 import { PublicPortalService } from './public-portal.service';
 import type {
@@ -8,6 +10,14 @@ import type {
   PublicProcessSummary,
   PublicProcedureDetail,
 } from './public-portal.types';
+
+describe('PublicPortalController metadata', () => {
+  it('does not apply backoffice auth guards to public endpoints', () => {
+    expect(
+      Reflect.getMetadata(GUARDS_METADATA, PublicPortalController),
+    ).toBeUndefined();
+  });
+});
 
 describe('PublicPortalController', () => {
   let controller: PublicPortalController;

@@ -49,7 +49,7 @@ describe('PublicPortalService', () => {
     jest.clearAllMocks();
   });
 
-  it('lists public areas', async () => {
+  it('should list public areas', async () => {
     catalogRepository.listAreas.mockResolvedValue([
       { id: 'area-1', code: 'AREA_OPS', title: 'Operations' },
     ]);
@@ -59,7 +59,7 @@ describe('PublicPortalService', () => {
     ]);
   });
 
-  it('maps public process summaries and forwards filters', async () => {
+  it('should map public process summaries and forward filters', async () => {
     processesRepository.listProcesses.mockResolvedValue([
       {
         id: 'process-1',
@@ -109,12 +109,12 @@ describe('PublicPortalService', () => {
     });
   });
 
-  it('returns an empty catalog result for blank search terms', async () => {
+  it('should return an empty catalog result for blank search terms', async () => {
     await expect(service.searchCatalog({ search: '   ' })).resolves.toEqual([]);
     expect(catalogRepository.searchCatalog.mock.calls).toHaveLength(0);
   });
 
-  it('searches the published catalog and trims the search term', async () => {
+  it('should search the published catalog and trim the search term', async () => {
     catalogRepository.searchCatalog.mockResolvedValue([
       {
         kind: 'Area',
@@ -145,7 +145,7 @@ describe('PublicPortalService', () => {
     ]);
   });
 
-  it('maps public procedures from repository rows', async () => {
+  it('should map public procedures from repository rows', async () => {
     proceduresRepository.listProcedures.mockResolvedValue([
       {
         id: 'procedure-1',
@@ -209,7 +209,7 @@ describe('PublicPortalService', () => {
     );
   });
 
-  it('returns process detail with hydrated version procedures', async () => {
+  it('should return process detail with hydrated version procedures', async () => {
     processesRepository.findPublicProcessBase.mockResolvedValue({
       id: 'process-1',
       code: 'PROC_CHANGE',
@@ -327,7 +327,7 @@ describe('PublicPortalService', () => {
     });
   });
 
-  it('returns metadata-only public version history for published processes', async () => {
+  it('should return metadata-only public version history for published processes', async () => {
     processesRepository.findPublicProcessBase.mockResolvedValue({
       id: 'process-1',
       code: 'PROC_CHANGE',
@@ -372,7 +372,7 @@ describe('PublicPortalService', () => {
     ]);
   });
 
-  it('returns published bpmn xml only when a published asset exists', async () => {
+  it('should return published bpmn xml only when a published asset exists', async () => {
     processesRepository.findPublishedBpmnAsset.mockResolvedValue({
       file_path: 'diagrams/change.bpmn',
     });
@@ -387,7 +387,7 @@ describe('PublicPortalService', () => {
     ]);
   });
 
-  it('rejects bpmn access when no published asset is available', async () => {
+  it('should reject bpmn access when no published asset is available', async () => {
     processesRepository.findPublishedBpmnAsset.mockResolvedValue(null);
 
     await expect(
@@ -395,7 +395,7 @@ describe('PublicPortalService', () => {
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('returns public procedure detail only for published procedures', async () => {
+  it('should return public procedure detail only for published procedures', async () => {
     proceduresRepository.findProcedureDetail.mockResolvedValue({
       id: 'procedure-1',
       process_version_id: 'version-1',

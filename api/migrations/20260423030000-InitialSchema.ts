@@ -399,6 +399,7 @@ CREATE TABLE areas (
     title VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
     search_document TEXT NOT NULL DEFAULT '',
+    team_id UUID NOT NULL REFERENCES teams(id) ON DELETE RESTRICT,
     owner_id UUID NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
     created_by UUID REFERENCES users(id) ON DELETE SET NULL,
     updated_by UUID REFERENCES users(id) ON DELETE SET NULL,
@@ -410,6 +411,8 @@ CREATE TABLE areas (
     CONSTRAINT chk_areas_updated_at_after_created_at CHECK (updated_at >= created_at)
 );
 
+CREATE INDEX idx_areas_team_id ON areas(team_id);
+
 -- ============================================================================
 -- 5. THE ITIL HIERARCHY: LEVEL 2 - PROCESSES
 -- ============================================================================
@@ -420,6 +423,7 @@ CREATE TABLE processes (
     title VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
     search_document TEXT NOT NULL DEFAULT '',
+    team_id UUID NOT NULL REFERENCES teams(id) ON DELETE RESTRICT,
     owner_id UUID NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
     created_by UUID REFERENCES users(id) ON DELETE SET NULL,
     updated_by UUID REFERENCES users(id) ON DELETE SET NULL,
@@ -430,6 +434,8 @@ CREATE TABLE processes (
     CONSTRAINT chk_processes_description_not_blank CHECK (btrim(description) <> ''),
     CONSTRAINT chk_processes_updated_at_after_created_at CHECK (updated_at >= created_at)
 );
+
+CREATE INDEX idx_processes_team_id ON processes(team_id);
 
 -- ============================================================================
 -- 6. PROCESS VERSIONING & STATE TRACKING

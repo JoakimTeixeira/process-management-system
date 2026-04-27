@@ -1,0 +1,12 @@
+{
+  "name": "process-management-system",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "concurrently \"npm run start:dev --prefix api\" \"npm start --prefix web/backoffice\" \"npm start --prefix web/public\"",
+    "install:all": "npm install && npm install --prefix api && npm install --prefix web/backoffice && npm install --prefix web/public"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

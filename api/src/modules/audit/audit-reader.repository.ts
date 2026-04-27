@@ -14,6 +14,7 @@ interface AuditLogRow extends QueryRow {
   entity_id: string;
   action: AuditAction;
   actor_id: string | null;
+  actor_name: string | null;
   reason_for_change: string;
   old_data: Record<string, unknown> | null;
   new_data: Record<string, unknown> | null;
@@ -26,6 +27,7 @@ interface VersionStateHistoryRow extends QueryRow {
   from_state: string | null;
   to_state: string;
   actor_id: string | null;
+  actor_name: string | null;
   reason: string | null;
   created_at: Date;
 }
@@ -41,6 +43,7 @@ export interface AuditLogRecord {
   entityId: string;
   action: AuditAction;
   actorId: string | null;
+  actorName: string | null;
   reasonForChange: string;
   oldData: Record<string, unknown> | null;
   newData: Record<string, unknown> | null;
@@ -53,6 +56,7 @@ export interface VersionStateHistoryRecord {
   fromState: string | null;
   toState: string;
   actorId: string | null;
+  actorName: string | null;
   reason: string | null;
   createdAt: Date;
 }
@@ -87,11 +91,13 @@ export class AuditReaderRepository {
           al.entity_id,
           al.action,
           al.actor_id,
+          actor.name AS actor_name,
           al.reason_for_change,
           al.old_data,
           al.new_data,
           al.created_at
         FROM audit_logs al
+        LEFT JOIN users actor ON actor.id = al.actor_id
         WHERE al.entity_type = $1
           AND al.entity_id = $2
         ORDER BY al.created_at ASC, al.id ASC
@@ -114,9 +120,11 @@ export class AuditReaderRepository {
           vsh.from_state,
           vsh.to_state,
           vsh.actor_id,
+          actor.name AS actor_name,
           vsh.reason,
           vsh.created_at
         FROM version_state_history vsh
+        LEFT JOIN users actor ON actor.id = vsh.actor_id
         WHERE vsh.process_version_id = $1
         ORDER BY vsh.created_at ASC, vsh.id ASC
       `,
@@ -210,6 +218,7 @@ export class AuditReaderRepository {
       entityId: row.entity_id,
       action: row.action,
       actorId: row.actor_id,
+      actorName: row.actor_name,
       reasonForChange: row.reason_for_change,
       oldData: row.old_data,
       newData: row.new_data,
@@ -226,6 +235,7 @@ export class AuditReaderRepository {
       fromState: row.from_state,
       toState: row.to_state,
       actorId: row.actor_id,
+      actorName: row.actor_name,
       reason: row.reason,
       createdAt: row.created_at,
     };

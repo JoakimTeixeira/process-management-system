@@ -12,6 +12,7 @@ interface GlossaryTermRow extends QueryRow {
   definition: string;
   category: string | null;
   is_preferred: boolean;
+  created_by: string | null;
 }
 
 interface ItilPracticeRow extends QueryRow {
@@ -29,12 +30,22 @@ async function queryRows<T extends QueryRow>(
   return await dataSource.query(sql, [...parameters]);
 }
 
+async function queryRow<T extends QueryRow>(
+  dataSource: DataSource,
+  sql: string,
+  parameters: readonly unknown[] = [],
+): Promise<T | null> {
+  const rows = await dataSource.query<T[]>(sql, [...parameters]);
+  return rows.length > 0 ? rows[0] : null;
+}
+
 export type GlossaryTermRecord = {
   id: string;
   term: string;
   definition: string;
   category: string | null;
   isPreferred: boolean;
+  createdBy: string | null;
 };
 
 export type GlossaryPracticeRecord = {
@@ -42,6 +53,21 @@ export type GlossaryPracticeRecord = {
   code: string;
   name: string;
   description: string;
+};
+
+export type CreateGlossaryTermInput = {
+  term: string;
+  definition: string;
+  category: string | null;
+  isPreferred: boolean;
+  createdBy: string;
+};
+
+export type UpdateGlossaryTermInput = {
+  term?: string;
+  definition?: string;
+  category?: string | null;
+  isPreferred?: boolean;
 };
 
 @Injectable()
@@ -57,7 +83,8 @@ export class GlossaryRepository {
           gt.term,
           gt.definition,
           gt.category,
-          gt.is_preferred
+          gt.is_preferred,
+          gt.created_by
         FROM glossary_terms gt
         ORDER BY gt.term ASC
       `,
@@ -69,6 +96,7 @@ export class GlossaryRepository {
       definition: row.definition,
       category: row.category,
       isPreferred: row.is_preferred,
+      createdBy: row.created_by,
     }));
   }
 
@@ -92,5 +120,137 @@ export class GlossaryRepository {
       name: row.name,
       description: row.description,
     }));
+  }
+
+  async findById(id: string): Promise<GlossaryTermRecord | null> {
+    const row = await queryRow<GlossaryTermRow>(
+      this.dataSource,
+      `
+        SELECT
+          gt.id,
+          gt.term,
+          gt.definition,
+          gt.category,
+          gt.is_preferred,
+          gt.created_by
+        FROM glossary_terms gt
+        WHERE gt.id = $1
+      `,
+      [id],
+    );
+
+    if (!row) {
+      return null;
+    }
+
+    return {
+      id: row.id,
+      term: row.term,
+      definition: row.definition,
+      category: row.category,
+      isPreferred: row.is_preferred,
+      createdBy: row.created_by,
+    };
+  }
+
+  async create(input: CreateGlossaryTermInput): Promise<GlossaryTermRecord> {
+    const row = await queryRow<GlossaryTermRow>(
+      this.dataSource,
+      `
+        INSERT INTO glossary_terms (term, definition, category, is_preferred, created_by)
+        VALUES ($1, $2, $3, $4, $5)
+        RETURNING id, term, definition, category, is_preferred, created_by
+      `,
+      [
+        input.term,
+        input.definition,
+        input.category,
+        input.isPreferred,
+        input.createdBy,
+      ],
+    );
+
+    if (!row) {
+      throw new Error('Failed to create glossary term');
+    }
+
+    return {
+      id: row.id,
+      term: row.term,
+      definition: row.definition,
+      category: row.category,
+      isPreferred: row.is_preferred,
+      createdBy: row.created_by,
+    };
+  }
+
+  async update(
+    id: string,
+    input: UpdateGlossaryTermInput,
+  ): Promise<GlossaryTermRecord> {
+    const setClauses: string[] = [];
+    const values: unknown[] = [];
+    let paramIndex = 1;
+
+    if (input.term !== undefined) {
+      setClauses.push(`term = $${paramIndex++}`);
+      values.push(input.term);
+    }
+    if (input.definition !== undefined) {
+      setClauses.push(`definition = $${paramIndex++}`);
+      values.push(input.definition);
+    }
+    if (input.category !== undefined) {
+      setClauses.push(`category = $${paramIndex++}`);
+      values.push(input.category);
+    }
+    if (input.isPreferred !== undefined) {
+      setClauses.push(`is_preferred = $${paramIndex++}`);
+      values.push(input.isPreferred);
+    }
+
+    if (setClauses.length === 0) {
+      const existing = await this.findById(id);
+      if (!existing) {
+        throw new Error('Glossary term not found');
+      }
+      return existing;
+    }
+
+    values.push(id);
+
+    const row = await queryRow<GlossaryTermRow>(
+      this.dataSource,
+      `
+        UPDATE glossary_terms
+        SET ${setClauses.join(', ')}
+        WHERE id = $${paramIndex}
+        RETURNING id, term, definition, category, is_preferred, created_by
+      `,
+      values,
+    );
+
+    if (!row) {
+      throw new Error('Glossary term not found');
+    }
+
+    return {
+      id: row.id,
+      term: row.term,
+      definition: row.definition,
+      category: row.category,
+      isPreferred: row.is_preferred,
+      createdBy: row.created_by,
+    };
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.dataSource.query(
+      `
+        DELETE FROM glossary_terms
+        WHERE id = $1
+      `,
+      [id],
+    );
   }
 }

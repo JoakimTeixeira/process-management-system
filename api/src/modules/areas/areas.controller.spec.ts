@@ -43,19 +43,15 @@ describe('AreasController metadata', () => {
     ).toEqual([Role.EDITOR]);
   });
 
-  it('should leave list and getById role-open', () => {
-    expect(
-      Reflect.getMetadata(
-        ROLES_KEY,
-        getControllerMethod(AreasController.prototype, 'list'),
-      ),
-    ).toBeUndefined();
-    expect(
-      Reflect.getMetadata(
-        ROLES_KEY,
-        getControllerMethod(AreasController.prototype, 'getById'),
-      ),
-    ).toBeUndefined();
+  it('should restrict list and getById to EDITOR', () => {
+    for (const methodName of ['list', 'getById']) {
+      expect(
+        Reflect.getMetadata(
+          ROLES_KEY,
+          getControllerMethod(AreasController.prototype, methodName),
+        ),
+      ).toEqual([Role.EDITOR]);
+    }
   });
 });
 
@@ -106,7 +102,6 @@ describe('AreasController', () => {
 
   it('should call areasService.create', async () => {
     const createAreaDto = {
-      code: 'HR',
       title: 'Human Resources',
       ownerId: 'user-1',
       itilPracticeId: 'practice-1',
@@ -195,7 +190,6 @@ describe('AreasController', () => {
 
   it('should throw error when areasService.create fails', async () => {
     const createAreaDto = {
-      code: 'HR',
       title: 'Human Resources',
       ownerId: 'user-1',
       itilPracticeId: 'practice-1',

@@ -60,9 +60,19 @@ async function queryFirstRow<T extends QueryRow>(
   sql: string,
   parameters: readonly unknown[] = [],
 ): Promise<T | null> {
-  const [row] = await queryRows<T>(manager, sql, parameters);
+  const result = await queryRows<T>(manager, sql, parameters);
 
-  return row ?? null;
+  // Handle case where TypeORM returns an array of arrays
+  if (Array.isArray(result) && result.length > 0) {
+    const first = result[0];
+    // If the first element is an array, take its first element
+    if (Array.isArray(first)) {
+      return (first[0] as T) ?? null;
+    }
+    return first ?? null;
+  }
+
+  return null;
 }
 
 async function queryRequiredId(
@@ -197,7 +207,7 @@ async function upsertUser(
     email: string;
     name: string;
     roleId: string;
-    teamId: string | null;
+    teamId: string;
     passwordHash: string;
   },
 ): Promise<string> {
@@ -221,8 +231,7 @@ async function upsertUser(
           role_id = $2,
           team_id = $3,
           name = $4,
-          password_hash = $5,
-          is_active = TRUE
+          password_hash = $5
         WHERE id = $1
         RETURNING id
       `,
@@ -239,8 +248,8 @@ async function upsertUser(
   return queryRequiredId(
     manager,
     `
-      INSERT INTO users (role_id, team_id, name, email, password_hash, is_active)
-      VALUES ($1, $2, $3, $4, $5, TRUE)
+      INSERT INTO users (role_id, team_id, name, email, password_hash)
+      VALUES ($1, $2, $3, $4, $5)
       RETURNING id
     `,
     [
@@ -329,6 +338,7 @@ async function upsertArea(
     title: string;
     description: string;
     itilPracticeId: string;
+    teamId: string;
     ownerId: string;
     authorId: string;
   },
@@ -341,16 +351,18 @@ async function upsertArea(
         code,
         title,
         description,
+        team_id,
         owner_id,
         created_by,
         updated_by
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $6)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $7)
       ON CONFLICT (code)
       DO UPDATE SET
         itil_practice_id = EXCLUDED.itil_practice_id,
         title = EXCLUDED.title,
         description = EXCLUDED.description,
+        team_id = EXCLUDED.team_id,
         owner_id = EXCLUDED.owner_id,
         updated_by = EXCLUDED.updated_by
       RETURNING id
@@ -360,6 +372,7 @@ async function upsertArea(
       params.code,
       params.title,
       params.description,
+      params.teamId,
       params.ownerId,
       params.authorId,
     ],
@@ -373,6 +386,7 @@ async function upsertProcess(
     code: string;
     title: string;
     description: string;
+    teamId: string;
     ownerId: string;
     authorId: string;
   },
@@ -385,16 +399,18 @@ async function upsertProcess(
         code,
         title,
         description,
+        team_id,
         owner_id,
         created_by,
         updated_by
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $6)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $7)
       ON CONFLICT (code)
       DO UPDATE SET
         area_id = EXCLUDED.area_id,
         title = EXCLUDED.title,
         description = EXCLUDED.description,
+        team_id = EXCLUDED.team_id,
         owner_id = EXCLUDED.owner_id,
         updated_by = EXCLUDED.updated_by
       RETURNING id
@@ -404,6 +420,7 @@ async function upsertProcess(
       params.code,
       params.title,
       params.description,
+      params.teamId,
       params.ownerId,
       params.authorId,
     ],
@@ -643,13 +660,13 @@ async function seedUsers(
 ): Promise<void> {
   for (const user of users) {
     const roleId = context.roleIds.get(user.roleName);
-    const teamId = user.teamCode ? context.teamIds.get(user.teamCode) : null;
+    const teamId = context.teamIds.get(user.teamCode);
 
     if (!roleId) {
       throw new Error(`Missing role for seeded user ${user.email}`);
     }
 
-    if (user.teamCode && !teamId) {
+    if (!teamId) {
       throw new Error(`Missing team for seeded user ${user.email}`);
     }
 
@@ -657,7 +674,7 @@ async function seedUsers(
       email: user.email,
       name: user.name,
       roleId,
-      teamId: teamId ?? null,
+      teamId,
       passwordHash,
     });
 
@@ -707,10 +724,11 @@ async function seedAreas(
 ): Promise<void> {
   for (const area of areas) {
     const practiceId = context.practiceIds.get(area.itilPracticeCode);
+    const teamId = context.teamIds.get(area.teamCode);
     const ownerId = context.userIds.get(area.ownerEmail);
     const editorId = context.userIds.get('alice.editor@example.com');
 
-    if (!practiceId || !ownerId || !editorId) {
+    if (!practiceId || !teamId || !ownerId || !editorId) {
       throw new Error(`Missing dependency for area ${area.code}`);
     }
 
@@ -719,6 +737,7 @@ async function seedAreas(
       title: area.title,
       description: area.description,
       itilPracticeId: practiceId,
+      teamId,
       ownerId,
       authorId: editorId,
     });
@@ -733,10 +752,11 @@ async function seedProcesses(
 ): Promise<void> {
   for (const process of processes) {
     const areaId = context.areaIds.get(process.areaCode);
+    const teamId = context.teamIds.get(process.teamCode);
     const ownerId = context.userIds.get(process.ownerEmail);
     const editorId = context.userIds.get('alice.editor@example.com');
 
-    if (!areaId || !ownerId || !editorId) {
+    if (!areaId || !teamId || !ownerId || !editorId) {
       throw new Error(`Missing dependency for process ${process.code}`);
     }
 
@@ -745,6 +765,7 @@ async function seedProcesses(
       code: process.code,
       title: process.title,
       description: process.description,
+      teamId,
       ownerId,
       authorId: editorId,
     });

@@ -11,6 +11,12 @@ interface QueryRow {
 interface ProcedureRow extends QueryRow {
   id: string;
   process_version_id: string;
+  process_id?: string;
+  process_code?: string;
+  process_title?: string;
+  version_number?: number;
+  lifecycle_state?: string;
+  architecture_state?: string;
   code: string;
   title: string;
   utility: string;
@@ -25,6 +31,12 @@ interface ProcedureRow extends QueryRow {
 export interface ProcedureRecord {
   id: string;
   processVersionId: string;
+  processId?: string;
+  processCode?: string;
+  processTitle?: string;
+  versionNumber?: number;
+  lifecycleState?: string;
+  architectureState?: string;
   code: string;
   title: string;
   utility: string;
@@ -51,7 +63,6 @@ interface CreateProcedureInput {
 }
 
 interface UpdateProcedureInput {
-  code?: string;
   title?: string;
   utility?: string;
   warranty?: string;
@@ -128,6 +139,38 @@ export class ProceduresRepository {
     return rows.map((row) => this.mapRecord(row));
   }
 
+  async findAllForBackoffice(): Promise<ProcedureRecord[]> {
+    const rows = await queryRows<ProcedureRow>(
+      this.dataSource,
+      `
+        SELECT
+          pr.id,
+          pr.process_version_id,
+          pv.process_id,
+          p.code AS process_code,
+          p.title AS process_title,
+          pv.version_number,
+          pv.lifecycle_state,
+          pv.architecture_state,
+          pr.code,
+          pr.title,
+          pr.utility,
+          pr.warranty,
+          pr.outcome,
+          pr.policy,
+          pr.activities,
+          pr.inputs,
+          pr.outputs
+        FROM procedures pr
+        INNER JOIN process_versions pv ON pv.id = pr.process_version_id
+        INNER JOIN processes p ON p.id = pv.process_id
+        ORDER BY p.code ASC, pv.version_number DESC, pr.code ASC
+      `,
+    );
+
+    return rows.map((row) => this.mapRecord(row));
+  }
+
   async findByVersionAndCode(
     processVersionId: string,
     code: string,
@@ -156,6 +199,43 @@ export class ProceduresRepository {
     );
 
     return rows[0] ? this.mapRecord(rows[0]) : null;
+  }
+
+  async getNextProcedureCode(processVersionId: string): Promise<string> {
+    const rows = await queryRows<{
+      process_code: string;
+      max_suffix: number | null;
+    }>(
+      this.dataSource,
+      `
+        SELECT
+          p.code AS process_code,
+          MAX(
+            CASE
+              WHEN pr.code ~ ('^' || regexp_replace(p.code, '([.^$*+?()\\[\\]{}|\\\\])', '\\\\\\1', 'g') || '\\.[0-9]+$')
+                THEN split_part(pr.code, '.', 2)::int
+              ELSE NULL
+            END
+          ) AS max_suffix
+        FROM process_versions pv
+        INNER JOIN processes p ON p.id = pv.process_id
+        LEFT JOIN procedures pr ON pr.process_version_id = pv.id
+        WHERE pv.id = $1
+        GROUP BY p.code
+      `,
+      [processVersionId],
+    );
+
+    const processCode = rows[0]?.process_code;
+
+    if (!processCode) {
+      throw new TypeError(
+        `Expected process version "${processVersionId}" to resolve to a process code`,
+      );
+    }
+
+    const nextSuffix = (rows[0]?.max_suffix ?? 0) + 1;
+    return `${processCode}.${nextSuffix}`;
   }
 
   async create(input: CreateProcedureInput): Promise<ProcedureRecord> {
@@ -204,11 +284,6 @@ export class ProceduresRepository {
   ): Promise<ProcedureRecord> {
     const setClauses: string[] = [];
     const parameters: unknown[] = [];
-
-    if (input.code !== undefined) {
-      parameters.push(input.code);
-      setClauses.push(`code = $${parameters.length}`);
-    }
 
     if (input.title !== undefined) {
       parameters.push(input.title);
@@ -296,6 +371,12 @@ export class ProceduresRepository {
     return {
       id: row.id,
       processVersionId: row.process_version_id,
+      processId: row.process_id,
+      processCode: row.process_code,
+      processTitle: row.process_title,
+      versionNumber: row.version_number,
+      lifecycleState: row.lifecycle_state,
+      architectureState: row.architecture_state,
       code: row.code,
       title: row.title,
       utility: row.utility,

@@ -1,4 +1,9 @@
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 
 import { Role } from '../../common/enums/role.enum';
 import { UNIQUE_VIOLATION_ERROR_CODE } from '../../common/utils/postgres-error.util';
@@ -20,6 +25,8 @@ describe('ProcessesService', () => {
       | 'findById'
       | 'getNextProcessCode'
       | 'ownerExists'
+      | 'teamExists'
+      | 'userBelongsToTeam'
       | 'update'
     >
   >;
@@ -51,6 +58,7 @@ describe('ProcessesService', () => {
     code: '1',
     title: 'Human Resources Management',
     description: 'Current process description',
+    teamId: 'team-1',
     ownerId: 'owner-1',
   };
 
@@ -64,6 +72,8 @@ describe('ProcessesService', () => {
       findById: jest.fn(),
       getNextProcessCode: jest.fn(),
       ownerExists: jest.fn(),
+      teamExists: jest.fn(),
+      userBelongsToTeam: jest.fn(),
       update: jest.fn(),
     };
     workflowAuthorizationService = {
@@ -82,6 +92,8 @@ describe('ProcessesService', () => {
 
   it('should create a process when validations pass', async () => {
     repository.ownerExists.mockResolvedValue(true);
+    repository.teamExists.mockResolvedValue(true);
+    repository.userBelongsToTeam.mockResolvedValue(true);
     repository.areaExists.mockResolvedValue(true);
     repository.findByCode.mockResolvedValue(null);
     repository.getNextProcessCode.mockResolvedValue('1');
@@ -91,6 +103,7 @@ describe('ProcessesService', () => {
       service.create(
         {
           areaId: 'area-1',
+          teamId: 'team-1',
           title: 'Human Resources Management',
           ownerId: 'owner-1',
           description: 'Current process description',
@@ -102,15 +115,25 @@ describe('ProcessesService', () => {
     expect(
       workflowAuthorizationService.assertSameTeamAsUser,
     ).toHaveBeenCalledWith('owner-1', currentUser);
+    expect(auditLogWriterService.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        entityType: 'process',
+        entityId: 'process-1',
+        action: 'CREATE',
+        actorId: 'user-1',
+      }),
+    );
   });
 
   it('should reject create when owner does not exist', async () => {
+    repository.teamExists.mockResolvedValue(true);
     repository.ownerExists.mockResolvedValue(false);
 
     await expect(
       service.create(
         {
           areaId: 'area-1',
+          teamId: 'team-1',
           title: 'Human Resources Management',
           ownerId: 'missing-owner',
           description: 'Test description',
@@ -122,6 +145,8 @@ describe('ProcessesService', () => {
 
   it('should reject duplicate code on create', async () => {
     repository.ownerExists.mockResolvedValue(true);
+    repository.teamExists.mockResolvedValue(true);
+    repository.userBelongsToTeam.mockResolvedValue(true);
     repository.areaExists.mockResolvedValue(true);
     repository.getNextProcessCode.mockResolvedValue('1');
     repository.create.mockRejectedValue({
@@ -133,6 +158,7 @@ describe('ProcessesService', () => {
       service.create(
         {
           areaId: 'area-1',
+          teamId: 'team-1',
           title: 'Human Resources Management',
           ownerId: 'owner-1',
           description: 'Test description',
@@ -160,5 +186,87 @@ describe('ProcessesService', () => {
     expect(
       workflowAuthorizationService.assertSameTeamAsProcessOwner,
     ).toHaveBeenCalledWith('process-1', currentUser);
+  });
+
+  it('should write an audit row on update', async () => {
+    repository.findById.mockResolvedValue(existingProcess);
+    repository.update.mockResolvedValue({
+      ...existingProcess,
+      title: 'Updated title',
+    });
+
+    await expect(
+      service.update(
+        'process-1',
+        {
+          title: 'Updated title',
+        },
+        currentUser,
+      ),
+    ).resolves.toEqual({
+      ...existingProcess,
+      title: 'Updated title',
+    });
+
+    expect(auditLogWriterService.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        entityType: 'process',
+        entityId: 'process-1',
+        action: 'UPDATE',
+        actorId: 'user-1',
+      }),
+    );
+  });
+
+  it('should reject create when owner is not in the selected team', async () => {
+    repository.ownerExists.mockResolvedValue(true);
+    repository.teamExists.mockResolvedValue(true);
+    repository.userBelongsToTeam.mockResolvedValue(false);
+
+    await expect(
+      service.create(
+        {
+          areaId: 'area-1',
+          teamId: 'team-1',
+          title: 'Human Resources Management',
+          ownerId: 'owner-9',
+          description: 'Test description',
+        },
+        currentUser,
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('should delete a process and write an audit row', async () => {
+    repository.findById.mockResolvedValue(existingProcess);
+
+    await expect(
+      service.delete('process-1', currentUser),
+    ).resolves.toBeUndefined();
+
+    expect(repository.delete).toHaveBeenCalledWith('process-1');
+    expect(auditLogWriterService.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        entityType: 'process',
+        entityId: 'process-1',
+        action: 'DELETE',
+        actorId: 'user-1',
+      }),
+    );
+  });
+
+  it('should reject non-editor process mutation at the service layer', async () => {
+    await expect(
+      service.create(
+        {
+          areaId: 'area-1',
+          teamId: 'team-1',
+          title: 'Human Resources Management',
+          ownerId: 'owner-1',
+          description: 'Current process description',
+        },
+        { ...currentUser, role: Role.REVIEWER },
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenException);
   });
 });

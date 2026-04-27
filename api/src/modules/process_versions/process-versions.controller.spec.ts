@@ -1,8 +1,82 @@
+import { GUARDS_METADATA } from '@nestjs/common/constants';
+
+import { ROLES_KEY } from '../../common/decorators/roles.decorator';
 import { ProcessVersionsController } from './process-versions.controller';
 import { ProcessVersionsService } from './process-versions.service';
 import type { AuthenticatedUser } from '../auth/interfaces/authenticated-user.interface';
 import { Role } from '../../common/enums/role.enum';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { RolesGuard } from '../../common/guards/roles.guard';
 import type { ProcessVersionRecord } from './process-versions.repository';
+
+type ControllerMethod = (...args: never[]) => unknown;
+
+function getControllerMethod(target: object, key: string): ControllerMethod {
+  const method: unknown = Object.getOwnPropertyDescriptor(target, key)?.value;
+
+  if (typeof method !== 'function') {
+    throw new TypeError(`Expected "${key}" to be a controller method`);
+  }
+
+  return method as ControllerMethod;
+}
+
+describe('ProcessVersionsController metadata', () => {
+  it('protects the controller with JWT and roles guards', () => {
+    expect(
+      Reflect.getMetadata(GUARDS_METADATA, ProcessVersionsController),
+    ).toEqual([JwtAuthGuard, RolesGuard]);
+  });
+
+  it('restricts editor workflow methods to EDITOR', () => {
+    for (const methodName of [
+      'create',
+      'update',
+      'delete',
+      'submitForReview',
+    ]) {
+      expect(
+        Reflect.getMetadata(
+          ROLES_KEY,
+          getControllerMethod(ProcessVersionsController.prototype, methodName),
+        ),
+      ).toEqual([Role.EDITOR]);
+    }
+  });
+
+  it('restricts reviewer lifecycle methods to REVIEWER', () => {
+    for (const methodName of ['approve', 'reject', 'reopen']) {
+      expect(
+        Reflect.getMetadata(
+          ROLES_KEY,
+          getControllerMethod(ProcessVersionsController.prototype, methodName),
+        ),
+      ).toEqual([Role.REVIEWER]);
+    }
+  });
+
+  it('restricts publisher lifecycle methods to PUBLISHER', () => {
+    for (const methodName of ['publish', 'archive', 'promote']) {
+      expect(
+        Reflect.getMetadata(
+          ROLES_KEY,
+          getControllerMethod(ProcessVersionsController.prototype, methodName),
+        ),
+      ).toEqual([Role.PUBLISHER]);
+    }
+  });
+
+  it('restricts version reads to content roles', () => {
+    for (const methodName of ['listByProcessId', 'getById']) {
+      expect(
+        Reflect.getMetadata(
+          ROLES_KEY,
+          getControllerMethod(ProcessVersionsController.prototype, methodName),
+        ),
+      ).toEqual([Role.EDITOR, Role.REVIEWER, Role.PUBLISHER, Role.VIEWER]);
+    }
+  });
+});
 
 describe('ProcessVersionsController', () => {
   let controller: ProcessVersionsController;
@@ -77,7 +151,6 @@ describe('ProcessVersionsController', () => {
     const result = await controller.create(
       { processId: 'process-1' },
       {
-        versionNumber: 1,
         title: 'Test Version',
         architectureState: 'TO-BE',
         changeDescription: 'Test change',
@@ -90,7 +163,6 @@ describe('ProcessVersionsController', () => {
     expect(processVersionsService.create).toHaveBeenCalledWith(
       'process-1',
       {
-        versionNumber: 1,
         title: 'Test Version',
         architectureState: 'TO-BE',
         changeDescription: 'Test change',
@@ -103,23 +175,30 @@ describe('ProcessVersionsController', () => {
   it('should list versions by process ID', async () => {
     processVersionsService.listByProcessId.mockResolvedValue([mockVersion]);
 
-    const result = await controller.listByProcessId({
-      processId: 'process-1',
-    });
+    const result = await controller.listByProcessId(
+      {
+        processId: 'process-1',
+      },
+      mockUser,
+    );
 
     expect(result).toEqual([mockVersion]);
     expect(processVersionsService.listByProcessId).toHaveBeenCalledWith(
       'process-1',
+      mockUser,
     );
   });
 
   it('should get version by ID', async () => {
     processVersionsService.getById.mockResolvedValue(mockVersion);
 
-    const result = await controller.getById({ id: 'version-1' });
+    const result = await controller.getById({ id: 'version-1' }, mockUser);
 
     expect(result).toEqual(mockVersion);
-    expect(processVersionsService.getById).toHaveBeenCalledWith('version-1');
+    expect(processVersionsService.getById).toHaveBeenCalledWith(
+      'version-1',
+      mockUser,
+    );
   });
 
   it('should update a version', async () => {

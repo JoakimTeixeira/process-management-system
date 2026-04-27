@@ -11,6 +11,7 @@ import { PublicPortalModule } from './modules/public_portal/public-portal.module
 import { ProcessVersionsModule } from './modules/process_versions/process-versions.module';
 import { ProcessesModule } from './modules/processes/processes.module';
 import { ProceduresModule } from './modules/procedures/procedures.module';
+import { UsersModule } from './modules/users/users.module';
 import appConfig from './config/app.config';
 import authConfig from './config/auth.config';
 import databaseConfig from './config/database.config';
@@ -45,6 +46,7 @@ import { createTypeOrmModuleOptions } from './database/typeorm-options';
     HealthModule,
     GlossaryModule,
     PublicPortalModule,
+    UsersModule,
   ],
 })
 export class AppModule {}

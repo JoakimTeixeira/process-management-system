@@ -26,6 +26,10 @@ export class UpdateProcessDto {
 
   @IsOptional()
   @IsUUID()
+  teamId?: string;
+
+  @IsOptional()
+  @IsUUID()
   ownerId?: string;
 
   @IsOptional()

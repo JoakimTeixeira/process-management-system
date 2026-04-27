@@ -47,20 +47,39 @@ export class ProceduresController {
     );
   }
 
+  @Roles(Role.EDITOR, Role.REVIEWER, Role.PUBLISHER, Role.VIEWER)
+  @Get('procedures')
+  async listAll(
+    @CurrentUser() currentUser: AuthenticatedUser,
+  ): Promise<ProcedureResponseDto[]> {
+    const procedures = await this.proceduresService.listAll(currentUser);
+
+    return procedures.map((procedure) => this.toDto(procedure));
+  }
+
+  @Roles(Role.EDITOR, Role.REVIEWER, Role.PUBLISHER, Role.VIEWER)
   @Get('process-versions/:processVersionId/procedures')
   async listByProcessVersionId(
     @Param() params: ProcessVersionIdParamDto,
+    @CurrentUser() currentUser: AuthenticatedUser,
   ): Promise<ProcedureResponseDto[]> {
     const procedures = await this.proceduresService.listByProcessVersionId(
       params.processVersionId,
+      currentUser,
     );
 
     return procedures.map((procedure) => this.toDto(procedure));
   }
 
+  @Roles(Role.EDITOR, Role.REVIEWER, Role.PUBLISHER, Role.VIEWER)
   @Get('procedures/:id')
-  async getById(@Param() params: IdParamDto): Promise<ProcedureResponseDto> {
-    return this.toDto(await this.proceduresService.getById(params.id));
+  async getById(
+    @Param() params: IdParamDto,
+    @CurrentUser() currentUser: AuthenticatedUser,
+  ): Promise<ProcedureResponseDto> {
+    return this.toDto(
+      await this.proceduresService.getById(params.id, currentUser),
+    );
   }
 
   @Roles(Role.EDITOR)

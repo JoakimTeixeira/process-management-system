@@ -39,6 +39,7 @@ export class ProcessesController {
     );
   }
 
+  @Roles(Role.EDITOR, Role.REVIEWER, Role.PUBLISHER, Role.VIEWER)
   @Get()
   async list(): Promise<ProcessResponseDto[]> {
     const processes = await this.processesService.list();
@@ -46,6 +47,7 @@ export class ProcessesController {
     return processes.map((process) => this.toDto(process));
   }
 
+  @Roles(Role.EDITOR, Role.REVIEWER, Role.PUBLISHER, Role.VIEWER)
   @Get(':id')
   async getById(@Param() params: IdParamDto): Promise<ProcessResponseDto> {
     return this.toDto(await this.processesService.getById(params.id));

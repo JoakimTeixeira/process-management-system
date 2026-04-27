@@ -14,7 +14,11 @@ export class CreateProcessDto {
   @Transform(trimString)
   @IsString()
   @MinLength(1)
+  @MaxLength(MAX_TEXT_LENGTH)
   description!: string;
+
+  @IsUUID()
+  teamId!: string;
 
   @IsUUID()
   ownerId!: string;

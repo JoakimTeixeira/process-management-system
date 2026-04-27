@@ -1,9 +1,14 @@
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  NotFoundException,
+} from '@nestjs/common';
 
 import { Role } from '../../common/enums/role.enum';
 import type { AuditLogWriterService } from '../audit/audit-log-writer.service';
 import type { AuthenticatedUser } from '../auth/interfaces/authenticated-user.interface';
 import type { ItilPracticesService } from '../itil_practices/itil-practices.service';
+import type { WorkflowAuthorizationService } from '../workflow_support/workflow-authorization.service';
 import type { AreasRepository } from './areas.repository';
 import { AreasService } from './areas.service';
 
@@ -16,11 +21,17 @@ describe('AreasService', () => {
       | 'findAll'
       | 'findByCode'
       | 'findById'
+      | 'getNextAreaCode'
       | 'ownerExists'
+      | 'teamExists'
+      | 'userBelongsToTeam'
       | 'update'
     >
   >;
   let itilPracticesService: jest.Mocked<Pick<ItilPracticesService, 'findById'>>;
+  let workflowAuthorizationService: jest.Mocked<
+    Pick<WorkflowAuthorizationService, 'assertSameTeamAsUser'>
+  >;
   let auditLogWriterService: jest.Mocked<Pick<AuditLogWriterService, 'create'>>;
   let service: AreasService;
 
@@ -30,7 +41,11 @@ describe('AreasService', () => {
     email: 'editor@example.com',
     roleId: 'role-1',
     role: Role.EDITOR,
-    team: null,
+    team: {
+      id: 'team-1',
+      code: 'HR',
+      name: 'Human Resources',
+    },
   };
 
   const existingArea = {
@@ -38,6 +53,7 @@ describe('AreasService', () => {
     code: 'AREA_CHANGE',
     title: 'Change Area',
     description: 'Area description',
+    teamId: 'team-1',
     ownerId: 'owner-1',
     itilPracticeId: 'practice-1',
     itilPracticeName: 'Change control',
@@ -50,11 +66,17 @@ describe('AreasService', () => {
       findAll: jest.fn(),
       findByCode: jest.fn(),
       findById: jest.fn(),
+      getNextAreaCode: jest.fn(),
       ownerExists: jest.fn(),
+      teamExists: jest.fn(),
+      userBelongsToTeam: jest.fn(),
       update: jest.fn(),
     };
     itilPracticesService = {
       findById: jest.fn(),
+    };
+    workflowAuthorizationService = {
+      assertSameTeamAsUser: jest.fn(),
     };
     auditLogWriterService = {
       create: jest.fn(),
@@ -62,26 +84,29 @@ describe('AreasService', () => {
     service = new AreasService(
       repository as unknown as AreasRepository,
       itilPracticesService as unknown as ItilPracticesService,
+      workflowAuthorizationService as unknown as WorkflowAuthorizationService,
       auditLogWriterService as unknown as AuditLogWriterService,
     );
   });
 
   it('should create an area and write an audit row', async () => {
     repository.ownerExists.mockResolvedValue(true);
+    repository.teamExists.mockResolvedValue(true);
+    repository.userBelongsToTeam.mockResolvedValue(true);
     itilPracticesService.findById.mockResolvedValue({
       id: 'practice-1',
       code: 'CHANGE_CONTROL',
       name: 'Change control',
       description: null,
     });
-    repository.findByCode.mockResolvedValue(null);
+    repository.getNextAreaCode.mockResolvedValue('AREA_CHANGE');
     repository.create.mockResolvedValue(existingArea);
 
     await expect(
       service.create(
         {
-          code: 'AREA_CHANGE',
           title: 'Change Area',
+          teamId: 'team-1',
           ownerId: 'owner-1',
           itilPracticeId: 'practice-1',
           description: 'Area description',
@@ -90,6 +115,9 @@ describe('AreasService', () => {
       ),
     ).resolves.toEqual(existingArea);
 
+    expect(
+      workflowAuthorizationService.assertSameTeamAsUser,
+    ).toHaveBeenCalledWith('owner-1', currentUser);
     expect(auditLogWriterService.create).toHaveBeenCalledWith({
       entityType: 'area',
       entityId: 'area-1',
@@ -112,13 +140,15 @@ describe('AreasService', () => {
   });
 
   it('should reject create when owner does not exist', async () => {
+    repository.teamExists.mockResolvedValue(true);
     repository.ownerExists.mockResolvedValue(false);
 
     await expect(
       service.create(
         {
-          code: 'AREA_CHANGE',
           title: 'Change Area',
+          description: 'Area description',
+          teamId: 'team-1',
           ownerId: 'missing-owner',
           itilPracticeId: 'practice-1',
         },
@@ -129,42 +159,22 @@ describe('AreasService', () => {
 
   it('should reject create when ITIL practice does not exist', async () => {
     repository.ownerExists.mockResolvedValue(true);
+    repository.teamExists.mockResolvedValue(true);
+    repository.userBelongsToTeam.mockResolvedValue(true);
     itilPracticesService.findById.mockResolvedValue(null);
 
     await expect(
       service.create(
         {
-          code: 'AREA_CHANGE',
           title: 'Change Area',
+          description: 'Area description',
+          teamId: 'team-1',
           ownerId: 'owner-1',
           itilPracticeId: 'missing-practice',
         },
         currentUser,
       ),
     ).rejects.toBeInstanceOf(NotFoundException);
-  });
-
-  it('should reject duplicate area code on create', async () => {
-    repository.ownerExists.mockResolvedValue(true);
-    itilPracticesService.findById.mockResolvedValue({
-      id: 'practice-1',
-      code: 'CHANGE_CONTROL',
-      name: 'Change control',
-      description: null,
-    });
-    repository.findByCode.mockResolvedValue(existingArea);
-
-    await expect(
-      service.create(
-        {
-          code: 'AREA_CHANGE',
-          title: 'Change Area',
-          ownerId: 'owner-1',
-          itilPracticeId: 'practice-1',
-        },
-        currentUser,
-      ),
-    ).rejects.toBeInstanceOf(ConflictException);
   });
 
   it('should list and get areas', async () => {
@@ -187,6 +197,7 @@ describe('AreasService', () => {
     repository.findById.mockResolvedValue(existingArea);
     repository.findByCode.mockResolvedValue(null);
     repository.ownerExists.mockResolvedValue(true);
+    repository.userBelongsToTeam.mockResolvedValue(true);
     itilPracticesService.findById.mockResolvedValue({
       id: 'practice-2',
       code: 'INCIDENT_MANAGEMENT',
@@ -247,23 +258,18 @@ describe('AreasService', () => {
     ).rejects.toBeInstanceOf(NotFoundException);
   });
 
-  it('should reject duplicate area code on update', async () => {
+  it('should reject attempts to change the backend-generated area code', async () => {
     repository.findById.mockResolvedValue(existingArea);
-    repository.findByCode.mockResolvedValue({
-      ...existingArea,
-      id: 'area-2',
-      code: 'AREA_NEW',
-    });
 
     await expect(
       service.update(
         'area-1',
         {
           code: 'AREA_NEW',
-        },
+        } as never,
         currentUser,
       ),
-    ).rejects.toBeInstanceOf(ConflictException);
+    ).rejects.toBeInstanceOf(BadRequestException);
   });
 
   it('should write an audit row on update', async () => {
@@ -318,6 +324,51 @@ describe('AreasService', () => {
     });
   });
 
+  it('should reject create when owner is not in the selected team', async () => {
+    repository.ownerExists.mockResolvedValue(true);
+    repository.teamExists.mockResolvedValue(true);
+    repository.userBelongsToTeam.mockResolvedValue(false);
+
+    await expect(
+      service.create(
+        {
+          title: 'Change Area',
+          description: 'Area description',
+          teamId: 'team-1',
+          ownerId: 'owner-9',
+          itilPracticeId: 'practice-1',
+        },
+        currentUser,
+      ),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('should reject create when a non-editor attempts to manage areas', async () => {
+    await expect(
+      service.create(
+        {
+          title: 'Change Area',
+          description: 'Area description',
+          teamId: 'team-1',
+          ownerId: 'owner-1',
+          itilPracticeId: 'practice-1',
+        },
+        { ...currentUser, role: Role.REVIEWER },
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('should enforce same-team ownership on update using the effective owner', async () => {
+    repository.findById.mockResolvedValue(existingArea);
+    repository.update.mockResolvedValue(existingArea);
+
+    await service.update('area-1', { title: 'Updated' }, currentUser);
+
+    expect(
+      workflowAuthorizationService.assertSameTeamAsUser,
+    ).toHaveBeenCalledWith('owner-1', currentUser);
+  });
+
   it('should delete an area and write an audit row', async () => {
     repository.findById.mockResolvedValue(existingArea);
 
@@ -325,6 +376,9 @@ describe('AreasService', () => {
       service.delete('area-1', currentUser),
     ).resolves.toBeUndefined();
 
+    expect(
+      workflowAuthorizationService.assertSameTeamAsUser,
+    ).toHaveBeenCalledWith('owner-1', currentUser);
     expect(repository.delete).toHaveBeenCalledWith('area-1');
     expect(auditLogWriterService.create).toHaveBeenCalledWith({
       entityType: 'area',

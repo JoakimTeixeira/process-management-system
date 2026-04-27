@@ -19,6 +19,9 @@ export class AuditLogResponseDto {
   actorId!: string | null;
 
   @Expose()
+  actorName!: string | null;
+
+  @Expose()
   reasonForChange!: string;
 
   @Expose()

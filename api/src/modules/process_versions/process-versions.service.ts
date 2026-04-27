@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -12,6 +13,8 @@ import { AuditLogWriterService } from '../audit/audit-log-writer.service';
 import type { AuthenticatedUser } from '../auth/interfaces/authenticated-user.interface';
 import { ProcessesRepository } from '../processes/processes.repository';
 import { WorkflowAuthorizationService } from '../workflow_support/workflow-authorization.service';
+import { ProcessVersionAction } from '../../common/enums/process-version-action.enum';
+import { Role } from '../../common/enums/role.enum';
 import type { CreateProcessVersionDto } from './dto/create-process-version.dto';
 import type { LifecycleJustificationDto } from './dto/lifecycle-justification.dto';
 import type { PromoteProcessVersionDto } from './dto/promote-process-version.dto';
@@ -41,18 +44,19 @@ export class ProcessVersionsService {
     createProcessVersionDto: CreateProcessVersionDto,
     currentUser: AuthenticatedUser,
   ): Promise<ProcessVersionRecord> {
+    this.assertRole(
+      currentUser,
+      Role.EDITOR,
+      'Only editors can create process versions',
+    );
     await this.ensureProcessExists(processId);
     await this.workflowAuthorizationService.assertSameTeamAsProcessOwner(
       processId,
       currentUser,
     );
-    await this.ensureVersionNumberAvailable(
-      processId,
-      createProcessVersionDto.versionNumber,
-    );
 
     const derivedFromVersion = createProcessVersionDto.derivedFromVersionId
-      ? await this.getById(createProcessVersionDto.derivedFromVersionId)
+      ? await this.getByIdInternal(createProcessVersionDto.derivedFromVersionId)
       : null;
 
     if (derivedFromVersion && derivedFromVersion.processId !== processId) {
@@ -63,11 +67,17 @@ export class ProcessVersionsService {
 
     try {
       return await this.dataSource.transaction(async (manager) => {
+        const nextVersionNumber =
+          await this.processVersionsRepository.getNextVersionNumber(
+            processId,
+            manager,
+          );
         const createdVersion = await this.processVersionsRepository.create(
           this.toCreateInput(
             processId,
             createProcessVersionDto,
             currentUser.id,
+            nextVersionNumber,
           ),
           manager,
         );
@@ -108,13 +118,44 @@ export class ProcessVersionsService {
     }
   }
 
-  async listByProcessId(processId: string): Promise<ProcessVersionRecord[]> {
-    await this.ensureProcessExists(processId);
+  async listByProcessId(
+    processId: string,
+    currentUser: AuthenticatedUser,
+  ): Promise<ProcessVersionRecord[]> {
+    const process = await this.ensureProcessExists(processId);
 
-    return await this.processVersionsRepository.findByProcessId(processId);
+    const versions =
+      await this.processVersionsRepository.findByProcessId(processId);
+
+    const editorCanManageDrafts = this.canManageDraftVersions(
+      process.teamId,
+      currentUser,
+    );
+
+    return versions.map((version) =>
+      this.enrichWithAvailableActions(
+        version,
+        currentUser,
+        editorCanManageDrafts,
+      ),
+    );
   }
 
-  async getById(id: string): Promise<ProcessVersionRecord> {
+  async getById(
+    id: string,
+    currentUser: AuthenticatedUser,
+  ): Promise<ProcessVersionRecord> {
+    const version = await this.getByIdInternal(id);
+    const process = await this.ensureProcessExists(version.processId);
+
+    return this.enrichWithAvailableActions(
+      version,
+      currentUser,
+      this.canManageDraftVersions(process.teamId, currentUser),
+    );
+  }
+
+  private async getByIdInternal(id: string): Promise<ProcessVersionRecord> {
     const version = await this.processVersionsRepository.findById(id);
 
     if (!version) {
@@ -124,12 +165,87 @@ export class ProcessVersionsService {
     return version;
   }
 
+  private enrichWithAvailableActions(
+    version: ProcessVersionRecord,
+    currentUser: AuthenticatedUser,
+    editorCanManageDrafts: boolean,
+  ): ProcessVersionRecord {
+    return {
+      ...version,
+      availableActions: this.getAvailableActions(
+        currentUser.role,
+        version.lifecycleState,
+        version.architectureState,
+        editorCanManageDrafts,
+      ),
+    };
+  }
+
+  private getAvailableActions(
+    userRole: Role,
+    lifecycleState: string,
+    architectureState?: string,
+    editorCanManageDrafts = false,
+  ): ProcessVersionAction[] {
+    const actions: ProcessVersionAction[] = [ProcessVersionAction.VIEW];
+
+    // EDITOR
+    if (
+      userRole === Role.EDITOR &&
+      editorCanManageDrafts &&
+      lifecycleState === 'Draft'
+    ) {
+      actions.push(
+        ProcessVersionAction.EDIT,
+        ProcessVersionAction.UPLOAD_BPMN,
+        ProcessVersionAction.MANAGE_CHECKLIST,
+        ProcessVersionAction.SUBMIT_FOR_REVIEW,
+      );
+    }
+
+    // REVIEWER
+    if (userRole === Role.REVIEWER) {
+      if (lifecycleState === 'In Review') {
+        actions.push(ProcessVersionAction.APPROVE, ProcessVersionAction.REJECT);
+      }
+
+      if (lifecycleState === 'Approved') {
+        actions.push(ProcessVersionAction.REOPEN);
+      }
+    }
+
+    // PUBLISHER
+    if (userRole === Role.PUBLISHER) {
+      if (lifecycleState === 'Approved') {
+        actions.push(ProcessVersionAction.PUBLISH);
+      }
+
+      if (lifecycleState === 'Published') {
+        actions.push(ProcessVersionAction.ARCHIVE);
+
+        if (architectureState === 'TO-BE') {
+          actions.push(ProcessVersionAction.PROMOTE);
+        }
+      }
+    }
+
+    // VIEWER → only view
+    // SYSTEM_ADMIN → no governance actions, only technical admin routes
+
+    return actions;
+  }
+
   async update(
     id: string,
     updateProcessVersionDto: UpdateProcessVersionDto,
     currentUser: AuthenticatedUser,
   ): Promise<ProcessVersionRecord> {
-    const currentVersion = await this.getById(id);
+    this.assertRole(
+      currentUser,
+      Role.EDITOR,
+      'Only editors can update process versions',
+    );
+    const currentVersion = await this.getByIdInternal(id);
 
     await this.workflowAuthorizationService.assertSameTeamAsProcessVersionOwner(
       id,
@@ -141,7 +257,7 @@ export class ProcessVersionsService {
     );
 
     if (updateProcessVersionDto.derivedFromVersionId) {
-      const derivedFromVersion = await this.getById(
+      const derivedFromVersion = await this.getByIdInternal(
         updateProcessVersionDto.derivedFromVersionId,
       );
 
@@ -189,7 +305,12 @@ export class ProcessVersionsService {
   }
 
   async delete(id: string, currentUser: AuthenticatedUser): Promise<void> {
-    const version = await this.getById(id);
+    this.assertRole(
+      currentUser,
+      Role.EDITOR,
+      'Only editors can delete process versions',
+    );
+    const version = await this.getByIdInternal(id);
 
     await this.workflowAuthorizationService.assertSameTeamAsProcessVersionOwner(
       id,
@@ -218,7 +339,12 @@ export class ProcessVersionsService {
     justificationDto: LifecycleJustificationDto,
     currentUser: AuthenticatedUser,
   ): Promise<ProcessVersionRecord> {
-    const version = await this.getById(id);
+    this.assertRole(
+      currentUser,
+      Role.EDITOR,
+      'Only editors can submit versions for review',
+    );
+    const version = await this.getByIdInternal(id);
 
     await this.workflowAuthorizationService.assertSameTeamAsProcessVersionOwner(
       id,
@@ -248,7 +374,12 @@ export class ProcessVersionsService {
     justificationDto: LifecycleJustificationDto,
     currentUser: AuthenticatedUser,
   ): Promise<ProcessVersionRecord> {
-    const version = await this.getById(id);
+    this.assertRole(
+      currentUser,
+      Role.REVIEWER,
+      'Only reviewers can approve versions',
+    );
+    const version = await this.getByIdInternal(id);
 
     this.ensureLifecycle(
       version,
@@ -270,7 +401,12 @@ export class ProcessVersionsService {
     justificationDto: RequiredJustificationDto,
     currentUser: AuthenticatedUser,
   ): Promise<ProcessVersionRecord> {
-    const version = await this.getById(id);
+    this.assertRole(
+      currentUser,
+      Role.REVIEWER,
+      'Only reviewers can reject versions',
+    );
+    const version = await this.getByIdInternal(id);
 
     this.ensureLifecycle(
       version,
@@ -292,7 +428,12 @@ export class ProcessVersionsService {
     justificationDto: RequiredJustificationDto,
     currentUser: AuthenticatedUser,
   ): Promise<ProcessVersionRecord> {
-    const version = await this.getById(id);
+    this.assertRole(
+      currentUser,
+      Role.REVIEWER,
+      'Only reviewers can reopen versions',
+    );
+    const version = await this.getByIdInternal(id);
 
     this.ensureLifecycle(
       version,
@@ -314,7 +455,12 @@ export class ProcessVersionsService {
     justificationDto: LifecycleJustificationDto,
     currentUser: AuthenticatedUser,
   ): Promise<ProcessVersionRecord> {
-    const version = await this.getById(id);
+    this.assertRole(
+      currentUser,
+      Role.PUBLISHER,
+      'Only publishers can publish versions',
+    );
+    const version = await this.getByIdInternal(id);
 
     this.ensureLifecycle(
       version,
@@ -434,7 +580,12 @@ export class ProcessVersionsService {
     justificationDto: RequiredJustificationDto,
     currentUser: AuthenticatedUser,
   ): Promise<ProcessVersionRecord> {
-    const version = await this.getById(id);
+    this.assertRole(
+      currentUser,
+      Role.PUBLISHER,
+      'Only publishers can archive versions',
+    );
+    const version = await this.getByIdInternal(id);
 
     this.ensureLifecycle(
       version,
@@ -456,7 +607,12 @@ export class ProcessVersionsService {
     promoteProcessVersionDto: PromoteProcessVersionDto,
     currentUser: AuthenticatedUser,
   ): Promise<ProcessVersionRecord> {
-    const sourceVersion = await this.getById(id);
+    this.assertRole(
+      currentUser,
+      Role.PUBLISHER,
+      'Only publishers can promote versions',
+    );
+    const sourceVersion = await this.getByIdInternal(id);
 
     this.ensureLifecycle(
       sourceVersion,
@@ -698,29 +854,14 @@ export class ProcessVersionsService {
     }
   }
 
-  private async ensureProcessExists(processId: string): Promise<void> {
-    const processExists = await this.processesRepository.findById(processId);
+  private async ensureProcessExists(processId: string) {
+    const process = await this.processesRepository.findById(processId);
 
-    if (!processExists) {
+    if (!process) {
       throw new NotFoundException('Process not found');
     }
-  }
 
-  private async ensureVersionNumberAvailable(
-    processId: string,
-    versionNumber: number,
-  ): Promise<void> {
-    const existingVersion =
-      await this.processVersionsRepository.findByProcessAndVersionNumber(
-        processId,
-        versionNumber,
-      );
-
-    if (existingVersion) {
-      throw new ConflictException(
-        ProcessVersionsService.DUPLICATE_VERSION_MESSAGE,
-      );
-    }
+    return process;
   }
 
   private async getRequiredVersion(
@@ -745,19 +886,39 @@ export class ProcessVersionsService {
     processId: string,
     dto: CreateProcessVersionDto,
     actorId: string,
+    versionNumber: number,
   ): CreateProcessVersionInput {
     return {
       processId,
-      versionNumber: dto.versionNumber,
+      versionNumber,
       lifecycleState: 'Draft',
       architectureState: dto.architectureState,
       title: dto.title,
-      checklistCompleted: dto.checklistCompleted ?? false,
+      checklistCompleted: false,
       derivedFromVersionId: dto.derivedFromVersionId ?? null,
       changeDescription: dto.changeDescription,
       reasonForChange: dto.reasonForChange,
       createdBy: actorId,
       updatedBy: actorId,
     };
+  }
+
+  private canManageDraftVersions(
+    processTeamId: string,
+    currentUser: AuthenticatedUser,
+  ): boolean {
+    return (
+      currentUser.role === Role.EDITOR && currentUser.team?.id === processTeamId
+    );
+  }
+
+  private assertRole(
+    currentUser: AuthenticatedUser,
+    expectedRole: Role,
+    message: string,
+  ): void {
+    if (currentUser.role !== expectedRole) {
+      throw new ForbiddenException(message);
+    }
   }
 }

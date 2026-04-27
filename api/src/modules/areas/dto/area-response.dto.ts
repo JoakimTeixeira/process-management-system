@@ -22,7 +22,16 @@ export class AreaResponseDto {
   description!: string | null;
 
   @Expose()
+  teamId!: string;
+
+  @Expose()
+  teamName!: string;
+
+  @Expose()
   ownerId!: string;
+
+  @Expose()
+  ownerName!: string;
 
   @Expose()
   itilPracticeId!: string;

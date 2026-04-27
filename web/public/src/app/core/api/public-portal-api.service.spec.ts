@@ -21,7 +21,7 @@ describe('PublicPortalApiService', () => {
     httpMock.verify();
   });
 
-  it('builds public catalog query parameters for search, area, and architectures', () => {
+  it('should build public catalog query parameters for search, area, and architectures', () => {
     service
       .listProcesses({
         search: ' Change ',
@@ -43,7 +43,7 @@ describe('PublicPortalApiService', () => {
     request.flush([]);
   });
 
-  it('builds catalog search parameters for the home search', () => {
+  it('should build catalog search parameters for the home search', () => {
     service.searchCatalog({ search: ' operations ' }).subscribe();
 
     const request = httpMock.expectOne((req) => {
@@ -57,7 +57,7 @@ describe('PublicPortalApiService', () => {
     request.flush([]);
   });
 
-  it('builds public procedure search query parameters', () => {
+  it('should build public procedure search query parameters', () => {
     service.searchProcedures({ search: ' Review ' }).subscribe();
 
     const request = httpMock.expectOne((req) => {
@@ -71,7 +71,7 @@ describe('PublicPortalApiService', () => {
     request.flush([]);
   });
 
-  it('calls the expected public endpoints', () => {
+  it('should call the expected public endpoints', () => {
     service.listAreas().subscribe();
     const areasRequest = httpMock.expectOne('http://localhost:3000/public/areas');
     expect(areasRequest.request.method).toBe('GET');
