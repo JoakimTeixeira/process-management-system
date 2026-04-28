@@ -22,12 +22,40 @@ interface ItilPracticeRow extends QueryRow {
   description: string;
 }
 
+function isQueryRow(value: unknown): value is QueryRow {
+  return typeof value === 'object' && value !== null;
+}
+
+function isQueryRowArray(value: unknown): value is QueryRow[] {
+  return Array.isArray(value) && value.every((item) => isQueryRow(item));
+}
+
+function extractQueryRows(result: unknown): QueryRow[] {
+  if (isQueryRowArray(result)) {
+    return result;
+  }
+
+  if (
+    Array.isArray(result) &&
+    result.length > 0 &&
+    isQueryRowArray(result[0])
+  ) {
+    return result[0];
+  }
+
+  return [];
+}
+
 async function queryRows<T extends QueryRow>(
   dataSource: DataSource,
   sql: string,
   parameters: readonly unknown[] = [],
 ): Promise<T[]> {
-  return await dataSource.query(sql, [...parameters]);
+  const result = await dataSource.query<unknown>(sql, [...parameters]);
+
+  // TypeORM/Postgres can return either a flat row array or a tuple-like
+  // [rows, rowCount] shape for mutation queries with RETURNING.
+  return extractQueryRows(result) as T[];
 }
 
 async function queryRow<T extends QueryRow>(
@@ -35,7 +63,7 @@ async function queryRow<T extends QueryRow>(
   sql: string,
   parameters: readonly unknown[] = [],
 ): Promise<T | null> {
-  const rows = await dataSource.query<T[]>(sql, [...parameters]);
+  const rows = await queryRows<T>(dataSource, sql, parameters);
   return rows.length > 0 ? rows[0] : null;
 }
 
