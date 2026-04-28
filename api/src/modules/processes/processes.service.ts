@@ -240,6 +240,14 @@ export class ProcessesService {
       currentUser,
     );
 
+    const hasNonDraftVersions =
+      await this.processesRepository.hasNonDraftVersions(id);
+    if (hasNonDraftVersions) {
+      throw new ConflictException(
+        'Cannot delete process with non-Draft versions. Only processes with only Draft versions can be deleted.',
+      );
+    }
+
     await this.processesRepository.delete(id);
     await this.auditLogWriterService.create({
       entityType: 'process',

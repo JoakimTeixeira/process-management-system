@@ -26,6 +26,7 @@ describe('AreasService', () => {
       | 'teamExists'
       | 'userBelongsToTeam'
       | 'update'
+      | 'hasProcesses'
     >
   >;
   let itilPracticesService: jest.Mocked<Pick<ItilPracticesService, 'findById'>>;
@@ -73,6 +74,7 @@ describe('AreasService', () => {
       teamExists: jest.fn(),
       userBelongsToTeam: jest.fn(),
       update: jest.fn(),
+      hasProcesses: jest.fn(),
     };
     itilPracticesService = {
       findById: jest.fn(),
@@ -373,6 +375,7 @@ describe('AreasService', () => {
 
   it('should delete an area and write an audit row', async () => {
     repository.findById.mockResolvedValue(existingArea);
+    repository.hasProcesses.mockResolvedValue(false);
 
     await expect(
       service.delete('area-1', currentUser),
@@ -381,6 +384,7 @@ describe('AreasService', () => {
     expect(
       workflowAuthorizationService.assertSameTeamAsUser,
     ).toHaveBeenCalledWith('owner-1', currentUser);
+    expect(repository.hasProcesses).toHaveBeenCalledWith('area-1');
     expect(repository.delete).toHaveBeenCalledWith('area-1');
     expect(auditLogWriterService.create).toHaveBeenCalledWith({
       entityType: 'area',
@@ -401,5 +405,17 @@ describe('AreasService', () => {
         },
       },
     });
+  });
+
+  it('should reject deletion when area has processes', async () => {
+    repository.findById.mockResolvedValue(existingArea);
+    repository.hasProcesses.mockResolvedValue(true);
+
+    await expect(service.delete('area-1', currentUser)).rejects.toThrow(
+      'Cannot delete area that contains processes. Delete or move all processes first.',
+    );
+
+    expect(repository.hasProcesses).toHaveBeenCalledWith('area-1');
+    expect(repository.delete).not.toHaveBeenCalled();
   });
 });

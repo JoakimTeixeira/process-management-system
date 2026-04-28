@@ -274,7 +274,7 @@ describe('ProceduresService', () => {
     ).rejects.toBeInstanceOf(BadRequestException);
   });
 
-  it('should delete only draft procedures and write an audit row', async () => {
+  it('should reject deletion when procedure has a generated code', async () => {
     proceduresRepository.findById.mockResolvedValue({
       id: 'procedure-1',
       processVersionId: 'version-1',
@@ -301,22 +301,11 @@ describe('ProceduresService', () => {
       reasonForChange: 'reason',
     });
 
-    await expect(
-      service.delete('procedure-1', currentUser),
-    ).resolves.toBeUndefined();
-
-    expect(
-      workflowAuthorizationService.assertSameTeamAsProcedureOwner,
-    ).toHaveBeenCalledWith('procedure-1', currentUser);
-    expect(proceduresRepository.delete).toHaveBeenCalledWith('procedure-1');
-    expect(auditLogWriterService.create).toHaveBeenCalledWith(
-      expect.objectContaining({
-        entityType: 'procedure',
-        entityId: 'procedure-1',
-        action: 'DELETE',
-        actorId: currentUser.id,
-      }),
+    await expect(service.delete('procedure-1', currentUser)).rejects.toThrow(
+      'Cannot delete procedure with a generated code. To maintain code continuity, procedures with codes cannot be deleted.',
     );
+
+    expect(proceduresRepository.delete).not.toHaveBeenCalled();
   });
 
   it('should reject non-editor procedure mutation at the service layer', async () => {

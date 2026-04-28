@@ -133,6 +133,14 @@ export class AreasService {
       currentArea.ownerId,
       currentUser,
     );
+
+    const hasProcesses = await this.areasRepository.hasProcesses(id);
+    if (hasProcesses) {
+      throw new ConflictException(
+        'Cannot delete area that contains processes. Delete or move all processes first.',
+      );
+    }
+
     await this.areasRepository.delete(id);
     await this.auditLogWriterService.create({
       entityType: 'area',

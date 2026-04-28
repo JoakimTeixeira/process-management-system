@@ -191,6 +191,12 @@ export class ProceduresService {
     );
     this.ensureDraftLifecycle(processVersion.lifecycleState);
 
+    if (procedure.code) {
+      throw new ConflictException(
+        'Cannot delete procedure with a generated code. To maintain code continuity, procedures with codes cannot be deleted.',
+      );
+    }
+
     await this.proceduresRepository.delete(id);
     await this.auditLogWriterService.create({
       entityType: 'procedure',

@@ -298,6 +298,22 @@ export class AreasRepository {
     return this.findRequiredById(id);
   }
 
+  async hasProcesses(areaId: string): Promise<boolean> {
+    const rows = await queryRows<ExistsRow>(
+      this.dataSource,
+      `
+        SELECT EXISTS (
+          SELECT 1
+          FROM processes p
+          WHERE p.area_id = $1
+        ) AS exists
+      `,
+      [areaId],
+    );
+
+    return rows[0]?.exists ?? false;
+  }
+
   async delete(id: string): Promise<void> {
     await this.dataSource.query(
       `
