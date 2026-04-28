@@ -7,6 +7,8 @@ import {
 import { isUniqueViolationError } from '../../common/utils/postgres-error.util';
 import { AuditLogWriterService } from '../audit/audit-log-writer.service';
 import type { AuthenticatedUser } from '../auth/interfaces/authenticated-user.interface';
+import { CreateGlossaryTermDto } from './dto/create-glossary-term.dto';
+import { UpdateGlossaryTermDto } from './dto/update-glossary-term.dto';
 import {
   GlossaryPracticeRecord,
   GlossaryRepository,
@@ -16,20 +18,6 @@ import {
 export type PublicGlossaryResponse = {
   terms: GlossaryTermRecord[];
   practices: GlossaryPracticeRecord[];
-};
-
-export type CreateGlossaryTermDto = {
-  term: string;
-  definition: string;
-  category?: string | null;
-  isPreferred?: boolean;
-};
-
-export type UpdateGlossaryTermDto = {
-  term?: string;
-  definition?: string;
-  category?: string | null;
-  isPreferred?: boolean;
 };
 
 @Injectable()

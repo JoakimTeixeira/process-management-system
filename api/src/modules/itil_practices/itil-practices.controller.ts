@@ -1,20 +1,46 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '../../common/enums/role.enum';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
+import { SWAGGER_BEARER_AUTH_NAME } from '../../common/swagger/swagger.constants';
 import type { AuthenticatedUser } from '../auth/interfaces/authenticated-user.interface';
 import { CreateItilPracticeDto } from './dto/create-itil-practice.dto';
 import { ItilPracticeResponseDto } from './dto/itil-practice-response.dto';
 import { ItilPracticesService } from './itil-practices.service';
 
+@ApiTags('itil_practices')
+@ApiBearerAuth(SWAGGER_BEARER_AUTH_NAME)
+@ApiUnauthorizedResponse({
+  description: 'JWT bearer token is missing or invalid.',
+})
+@ApiForbiddenResponse({
+  description:
+    'The authenticated user does not have permission to access this endpoint.',
+})
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('itil-practices')
 export class ItilPracticesController {
   constructor(private readonly itilPracticesService: ItilPracticesService) {}
 
+  @ApiOperation({ summary: 'Create an ITIL practice' })
+  @ApiBody({ type: CreateItilPracticeDto })
+  @ApiCreatedResponse({
+    description: 'ITIL practice created successfully.',
+    type: ItilPracticeResponseDto,
+  })
   @Roles(Role.EDITOR)
   @Post()
   async create(
@@ -29,6 +55,12 @@ export class ItilPracticesController {
     return this.toItilPracticeResponseDto(practice);
   }
 
+  @ApiOperation({ summary: 'List ITIL practices' })
+  @ApiOkResponse({
+    description: 'ITIL practices available to the authenticated user.',
+    type: ItilPracticeResponseDto,
+    isArray: true,
+  })
   @Get()
   async list(): Promise<ItilPracticeResponseDto[]> {
     const practices = await this.itilPracticesService.list();

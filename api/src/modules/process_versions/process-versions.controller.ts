@@ -8,6 +8,18 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
 import { IdParamDto, ProcessIdParamDto } from '../../common/dto/uuid-param.dto';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
@@ -15,6 +27,7 @@ import { Roles } from '../../common/decorators/roles.decorator';
 import { Role } from '../../common/enums/role.enum';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
+import { SWAGGER_BEARER_AUTH_NAME } from '../../common/swagger/swagger.constants';
 import type { AuthenticatedUser } from '../auth/interfaces/authenticated-user.interface';
 import { CreateProcessVersionDto } from './dto/create-process-version.dto';
 import { LifecycleJustificationDto } from './dto/lifecycle-justification.dto';
@@ -25,6 +38,15 @@ import { UpdateProcessVersionDto } from './dto/update-process-version.dto';
 import type { ProcessVersionRecord } from './process-versions.repository';
 import { ProcessVersionsService } from './process-versions.service';
 
+@ApiTags('versions')
+@ApiBearerAuth(SWAGGER_BEARER_AUTH_NAME)
+@ApiUnauthorizedResponse({
+  description: 'JWT bearer token is missing or invalid.',
+})
+@ApiForbiddenResponse({
+  description:
+    'The authenticated user does not have permission to access this endpoint.',
+})
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller()
 export class ProcessVersionsController {
@@ -32,6 +54,17 @@ export class ProcessVersionsController {
     private readonly processVersionsService: ProcessVersionsService,
   ) {}
 
+  @ApiOperation({ summary: 'Create a process version' })
+  @ApiParam({
+    name: 'processId',
+    description: 'Parent process UUID.',
+    format: 'uuid',
+  })
+  @ApiBody({ type: CreateProcessVersionDto })
+  @ApiCreatedResponse({
+    description: 'Process version created successfully.',
+    type: ProcessVersionResponseDto,
+  })
   @Roles(Role.EDITOR)
   @Post('processes/:processId/versions')
   async create(
@@ -48,6 +81,17 @@ export class ProcessVersionsController {
     );
   }
 
+  @ApiOperation({ summary: 'List versions for a process' })
+  @ApiParam({
+    name: 'processId',
+    description: 'Parent process UUID.',
+    format: 'uuid',
+  })
+  @ApiOkResponse({
+    description: 'Process versions accessible to the authenticated user.',
+    type: ProcessVersionResponseDto,
+    isArray: true,
+  })
   @Roles(Role.EDITOR, Role.REVIEWER, Role.PUBLISHER, Role.VIEWER)
   @Get('processes/:processId/versions')
   async listByProcessId(
@@ -62,6 +106,17 @@ export class ProcessVersionsController {
     return versions.map((version) => this.toDto(version));
   }
 
+  @ApiOperation({ summary: 'Get a process version by id' })
+  @ApiParam({
+    name: 'id',
+    description: 'Process version UUID.',
+    format: 'uuid',
+  })
+  @ApiOkResponse({
+    description: 'Requested process version record.',
+    type: ProcessVersionResponseDto,
+  })
+  @ApiNotFoundResponse({ description: 'Process version not found.' })
   @Roles(Role.EDITOR, Role.REVIEWER, Role.PUBLISHER, Role.VIEWER)
   @Get('process-versions/:id')
   async getById(
@@ -73,6 +128,18 @@ export class ProcessVersionsController {
     );
   }
 
+  @ApiOperation({ summary: 'Update a process version' })
+  @ApiParam({
+    name: 'id',
+    description: 'Process version UUID.',
+    format: 'uuid',
+  })
+  @ApiBody({ type: UpdateProcessVersionDto })
+  @ApiOkResponse({
+    description: 'Process version updated successfully.',
+    type: ProcessVersionResponseDto,
+  })
+  @ApiNotFoundResponse({ description: 'Process version not found.' })
   @Roles(Role.EDITOR)
   @Patch('process-versions/:id')
   async update(
@@ -89,6 +156,18 @@ export class ProcessVersionsController {
     );
   }
 
+  @ApiOperation({ summary: 'Submit a process version for review' })
+  @ApiParam({
+    name: 'id',
+    description: 'Process version UUID.',
+    format: 'uuid',
+  })
+  @ApiBody({ type: LifecycleJustificationDto })
+  @ApiCreatedResponse({
+    description: 'Process version submitted for review.',
+    type: ProcessVersionResponseDto,
+  })
+  @ApiNotFoundResponse({ description: 'Process version not found.' })
   @Roles(Role.EDITOR)
   @Post('process-versions/:id/submit-for-review')
   async submitForReview(
@@ -105,6 +184,18 @@ export class ProcessVersionsController {
     );
   }
 
+  @ApiOperation({ summary: 'Approve a process version' })
+  @ApiParam({
+    name: 'id',
+    description: 'Process version UUID.',
+    format: 'uuid',
+  })
+  @ApiBody({ type: LifecycleJustificationDto })
+  @ApiCreatedResponse({
+    description: 'Process version approved successfully.',
+    type: ProcessVersionResponseDto,
+  })
+  @ApiNotFoundResponse({ description: 'Process version not found.' })
   @Roles(Role.REVIEWER)
   @Post('process-versions/:id/approve')
   async approve(
@@ -121,6 +212,18 @@ export class ProcessVersionsController {
     );
   }
 
+  @ApiOperation({ summary: 'Reject a process version' })
+  @ApiParam({
+    name: 'id',
+    description: 'Process version UUID.',
+    format: 'uuid',
+  })
+  @ApiBody({ type: RequiredJustificationDto })
+  @ApiCreatedResponse({
+    description: 'Process version rejected successfully.',
+    type: ProcessVersionResponseDto,
+  })
+  @ApiNotFoundResponse({ description: 'Process version not found.' })
   @Roles(Role.REVIEWER)
   @Post('process-versions/:id/reject')
   async reject(
@@ -137,6 +240,18 @@ export class ProcessVersionsController {
     );
   }
 
+  @ApiOperation({ summary: 'Reopen a rejected process version' })
+  @ApiParam({
+    name: 'id',
+    description: 'Process version UUID.',
+    format: 'uuid',
+  })
+  @ApiBody({ type: RequiredJustificationDto })
+  @ApiCreatedResponse({
+    description: 'Process version reopened successfully.',
+    type: ProcessVersionResponseDto,
+  })
+  @ApiNotFoundResponse({ description: 'Process version not found.' })
   @Roles(Role.REVIEWER)
   @Post('process-versions/:id/reopen')
   async reopen(
@@ -153,6 +268,18 @@ export class ProcessVersionsController {
     );
   }
 
+  @ApiOperation({ summary: 'Publish a process version' })
+  @ApiParam({
+    name: 'id',
+    description: 'Process version UUID.',
+    format: 'uuid',
+  })
+  @ApiBody({ type: LifecycleJustificationDto })
+  @ApiCreatedResponse({
+    description: 'Process version published successfully.',
+    type: ProcessVersionResponseDto,
+  })
+  @ApiNotFoundResponse({ description: 'Process version not found.' })
   @Roles(Role.PUBLISHER)
   @Post('process-versions/:id/publish')
   async publish(
@@ -169,6 +296,18 @@ export class ProcessVersionsController {
     );
   }
 
+  @ApiOperation({ summary: 'Archive a process version' })
+  @ApiParam({
+    name: 'id',
+    description: 'Process version UUID.',
+    format: 'uuid',
+  })
+  @ApiBody({ type: RequiredJustificationDto })
+  @ApiCreatedResponse({
+    description: 'Process version archived successfully.',
+    type: ProcessVersionResponseDto,
+  })
+  @ApiNotFoundResponse({ description: 'Process version not found.' })
   @Roles(Role.PUBLISHER)
   @Post('process-versions/:id/archive')
   async archive(
@@ -185,6 +324,18 @@ export class ProcessVersionsController {
     );
   }
 
+  @ApiOperation({ summary: 'Promote a process version' })
+  @ApiParam({
+    name: 'id',
+    description: 'Process version UUID.',
+    format: 'uuid',
+  })
+  @ApiBody({ type: PromoteProcessVersionDto })
+  @ApiCreatedResponse({
+    description: 'Process version promoted successfully.',
+    type: ProcessVersionResponseDto,
+  })
+  @ApiNotFoundResponse({ description: 'Process version not found.' })
   @Roles(Role.PUBLISHER)
   @Post('process-versions/:id/promote')
   async promote(

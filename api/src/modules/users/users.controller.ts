@@ -8,6 +8,18 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiCreatedResponse,
+  ApiForbiddenResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { Roles } from '../../common/decorators/roles.decorator';
@@ -15,6 +27,7 @@ import { IdParamDto } from '../../common/dto/uuid-param.dto';
 import { Role } from '../../common/enums/role.enum';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
+import { SWAGGER_BEARER_AUTH_NAME } from '../../common/swagger/swagger.constants';
 import type { AuthenticatedUser } from '../auth/interfaces/authenticated-user.interface';
 import { CreateUserDto } from './dto/create-user.dto';
 import { OwnerOptionResponseDto } from './dto/owner-option-response.dto';
@@ -25,11 +38,28 @@ import { UserResponseDto } from './dto/user-response.dto';
 import type { UserAdminRecord } from './users.repository';
 import { UsersService } from './users.service';
 
+@ApiTags('users')
+@ApiBearerAuth(SWAGGER_BEARER_AUTH_NAME)
+@ApiUnauthorizedResponse({
+  description: 'JWT bearer token is missing or invalid.',
+})
+@ApiForbiddenResponse({
+  description:
+    'The authenticated user does not have permission to access this endpoint.',
+})
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @ApiOperation({
+    summary: 'List available process owners for the current user',
+  })
+  @ApiOkResponse({
+    description: 'Owner options available to the authenticated user.',
+    type: OwnerOptionResponseDto,
+    isArray: true,
+  })
   @Roles(Role.EDITOR)
   @Get('owner-options')
   async listOwnerOptions(
@@ -42,6 +72,12 @@ export class UsersController {
     );
   }
 
+  @ApiOperation({ summary: 'List all available process owners' })
+  @ApiOkResponse({
+    description: 'All owner options available in the tenant.',
+    type: OwnerOptionResponseDto,
+    isArray: true,
+  })
   @Roles(Role.EDITOR)
   @Get('owner-options/all')
   async listAllOwnerOptions(): Promise<OwnerOptionResponseDto[]> {
@@ -52,6 +88,20 @@ export class UsersController {
     );
   }
 
+  @ApiTags('teams')
+  @ApiOperation({
+    summary: 'List available process owners for a specific team',
+  })
+  @ApiParam({
+    name: 'id',
+    description: 'Team UUID used to filter owner options.',
+    format: 'uuid',
+  })
+  @ApiOkResponse({
+    description: 'Owner options available for the requested team.',
+    type: OwnerOptionResponseDto,
+    isArray: true,
+  })
   @Roles(Role.EDITOR)
   @Get('owner-options/team/:id')
   async listOwnerOptionsByTeamId(
@@ -64,6 +114,15 @@ export class UsersController {
     );
   }
 
+  @ApiTags('teams')
+  @ApiOperation({
+    summary: 'List selectable teams for user and ownership forms',
+  })
+  @ApiOkResponse({
+    description: 'Team options that can be assigned to users or records.',
+    type: TeamOptionResponseDto,
+    isArray: true,
+  })
   @Roles(Role.EDITOR, Role.SYSTEM_ADMIN)
   @Get('team-options')
   async listTeamOptions(): Promise<TeamOptionResponseDto[]> {
@@ -72,6 +131,12 @@ export class UsersController {
     return teams.map((team) => plainToInstance(TeamOptionResponseDto, team));
   }
 
+  @ApiOperation({ summary: 'List technical users' })
+  @ApiOkResponse({
+    description: 'Technical users configured in the system.',
+    type: UserResponseDto,
+    isArray: true,
+  })
   @Roles(Role.SYSTEM_ADMIN)
   @Get()
   async list(): Promise<UserResponseDto[]> {
@@ -80,12 +145,29 @@ export class UsersController {
     return users.map((user) => this.toDto(user));
   }
 
+  @ApiOperation({ summary: 'Get a technical user by id' })
+  @ApiParam({
+    name: 'id',
+    description: 'Technical user UUID.',
+    format: 'uuid',
+  })
+  @ApiOkResponse({
+    description: 'Requested technical user record.',
+    type: UserResponseDto,
+  })
+  @ApiNotFoundResponse({ description: 'Technical user not found.' })
   @Roles(Role.SYSTEM_ADMIN)
   @Get(':id')
   async getById(@Param() params: IdParamDto): Promise<UserResponseDto> {
     return this.toDto(await this.usersService.getById(params.id));
   }
 
+  @ApiOperation({ summary: 'Create a technical user' })
+  @ApiBody({ type: CreateUserDto })
+  @ApiCreatedResponse({
+    description: 'Technical user created successfully.',
+    type: UserResponseDto,
+  })
   @Roles(Role.SYSTEM_ADMIN)
   @Post()
   async create(
@@ -97,6 +179,18 @@ export class UsersController {
     );
   }
 
+  @ApiOperation({ summary: 'Update a technical user' })
+  @ApiParam({
+    name: 'id',
+    description: 'Technical user UUID.',
+    format: 'uuid',
+  })
+  @ApiBody({ type: UpdateUserDto })
+  @ApiOkResponse({
+    description: 'Technical user updated successfully.',
+    type: UserResponseDto,
+  })
+  @ApiNotFoundResponse({ description: 'Technical user not found.' })
   @Roles(Role.SYSTEM_ADMIN)
   @Patch(':id')
   async update(
@@ -109,6 +203,17 @@ export class UsersController {
     );
   }
 
+  @ApiOperation({ summary: 'Deactivate a technical user' })
+  @ApiParam({
+    name: 'id',
+    description: 'Technical user UUID.',
+    format: 'uuid',
+  })
+  @ApiOkResponse({
+    description: 'Technical user deactivated successfully.',
+    type: UserResponseDto,
+  })
+  @ApiNotFoundResponse({ description: 'Technical user not found.' })
   @Roles(Role.SYSTEM_ADMIN)
   @Patch(':id/deactivate')
   async deactivate(
@@ -120,6 +225,18 @@ export class UsersController {
     );
   }
 
+  @ApiOperation({ summary: 'Reset a technical user password' })
+  @ApiParam({
+    name: 'id',
+    description: 'Technical user UUID.',
+    format: 'uuid',
+  })
+  @ApiBody({ type: ResetPasswordDto })
+  @ApiOkResponse({
+    description: 'Technical user password reset successfully.',
+    type: UserResponseDto,
+  })
+  @ApiNotFoundResponse({ description: 'Technical user not found.' })
   @Roles(Role.SYSTEM_ADMIN)
   @Patch(':id/reset-password')
   async resetPassword(
