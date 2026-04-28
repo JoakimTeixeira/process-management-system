@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -76,7 +76,10 @@ import { ProcedureRecord } from '../../core/models/backoffice.models';
       <section class="bo-page-intro page-header">
         <div class="bo-page-intro__copy">
           <h1>Procedures</h1>
-          <p class="muted">Browse procedure content across process versions and jump to the parent version workspace.</p>
+          <p class="muted">
+            Browse procedure content across process versions and jump to the parent version
+            workspace.
+          </p>
         </div>
       </section>
 
@@ -99,16 +102,19 @@ import { ProcedureRecord } from '../../core/models/backoffice.models';
               <ng-container matColumnDef="code">
                 <th mat-header-cell *matHeaderCellDef>Procedure</th>
                 <td mat-cell *matCellDef="let procedure">
-                  <div>{{ procedure.code }}</div>
-                  <div class="muted">{{ procedure.title }}</div>
+                  <div>
+                    {{ procedure.code }}. <span class="muted">{{ procedure.title }}</span>
+                  </div>
                 </td>
               </ng-container>
 
               <ng-container matColumnDef="process">
                 <th mat-header-cell *matHeaderCellDef>Process</th>
                 <td mat-cell *matCellDef="let procedure">
-                  <div>{{ procedure.processCode || '-' }}</div>
-                  <div class="muted">{{ procedure.processTitle || '-' }}</div>
+                  <div>
+                    {{ procedure.processCode }}.
+                    <span class="muted">{{ procedure.processTitle }}</span>
+                  </div>
                 </td>
               </ng-container>
 
@@ -129,7 +135,9 @@ import { ProcedureRecord } from '../../core/models/backoffice.models';
                 <th mat-header-cell *matHeaderCellDef>State</th>
                 <td mat-cell *matCellDef="let procedure">
                   @if (procedure.lifecycleState) {
-                    <mat-chip>{{ procedure.lifecycleState }}</mat-chip>
+                    <mat-chip [ngClass]="'state-' + procedure.lifecycleState.toLowerCase().replace(' ', '-')"
+                      >{{ procedure.lifecycleState }}</mat-chip
+                    >
                   } @else {
                     <span class="muted">-</span>
                   }
@@ -137,8 +145,8 @@ import { ProcedureRecord } from '../../core/models/backoffice.models';
               </ng-container>
 
               <ng-container matColumnDef="actions">
-                <th mat-header-cell *matHeaderCellDef></th>
-                <td mat-cell *matCellDef="let procedure" style="text-align: right;">
+                <th mat-header-cell *matHeaderCellDef>Actions</th>
+                <td mat-cell *matCellDef="let procedure">
                   <a
                     mat-button
                     color="primary"
@@ -152,7 +160,7 @@ import { ProcedureRecord } from '../../core/models/backoffice.models';
               </ng-container>
 
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
             </table>
           </mat-card-content>
         </mat-card>
@@ -160,7 +168,7 @@ import { ProcedureRecord } from '../../core/models/backoffice.models';
     </section>
   `,
 })
-export class ProcedureListPageComponent {
+export class ProcedureListPageComponent implements OnInit {
   private readonly api = inject(BackofficeApiService);
 
   protected readonly procedures = signal<ProcedureRecord[]>([]);
@@ -168,7 +176,7 @@ export class ProcedureListPageComponent {
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly displayedColumns = ['code', 'process', 'version', 'lifecycle', 'actions'];
 
-  constructor() {
+  ngOnInit(): void {
     void this.loadProcedures();
   }
 

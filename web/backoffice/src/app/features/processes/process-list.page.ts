@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -91,139 +98,145 @@ import { ProcessRecord } from '../../core/models/backoffice.models';
         font-weight: 600;
         color: var(--portal-blue);
       }
-
-      .versions-current {
-        font-weight: 600;
-      }
     `,
   ],
   template: `
     <section class="page">
-    <section class="bo-page-intro page-header">
-      <div class="header-row">
-        <div class="bo-page-intro__copy">
-          <h1>Processes</h1>
-          <p class="muted">Browse governed processes and open their version workspaces.</p>
+      <section class="bo-page-intro page-header">
+        <div class="header-row">
+          <div class="bo-page-intro__copy">
+            <h1>Processes</h1>
+            <p class="muted">Browse governed processes and open their version workspaces.</p>
+          </div>
+          @if (canEdit()) {
+            <a mat-flat-button color="primary" routerLink="/processes/new">
+              <mat-icon>add</mat-icon>
+              New process
+            </a>
+          }
         </div>
-        @if (canEdit()) {
-          <a mat-flat-button color="primary" routerLink="/processes/new">
-            <mat-icon>add</mat-icon>
-            New process
-          </a>
-        }
-      </div>
-    </section>
-
-    @if (isLoading()) {
-      <section class="center-state bo-state-card">
-        <mat-progress-spinner mode="indeterminate" />
       </section>
-    } @else if (errorMessage(); as errorMessage) {
-      <mat-card appearance="outlined">
-        <mat-card-content>{{ errorMessage }}</mat-card-content>
-      </mat-card>
-    } @else if (processes().length === 0) {
-      <mat-card appearance="outlined">
-        <mat-card-content>No processes are available yet.</mat-card-content>
-      </mat-card>
-    } @else {
-      <mat-card appearance="outlined">
-        <mat-card-content>
-          <table mat-table [dataSource]="processes()" class="process-table">
-            <ng-container matColumnDef="process">
-              <th mat-header-cell *matHeaderCellDef>Process</th>
-              <td mat-cell *matCellDef="let process">
-                <div>{{ process.code }}</div>
-                <div class="muted">{{ process.title }}</div>
-              </td>
-            </ng-container>
 
-            <ng-container matColumnDef="owner">
-              <th mat-header-cell *matHeaderCellDef>Owner</th>
-              <td mat-cell *matCellDef="let process">
-                <mat-chip>{{ process.ownerName }}</mat-chip>
-              </td>
-            </ng-container>
+      @if (isLoading()) {
+        <section class="center-state bo-state-card">
+          <mat-progress-spinner mode="indeterminate" />
+        </section>
+      } @else if (errorMessage(); as errorMessage) {
+        <mat-card appearance="outlined">
+          <mat-card-content>{{ errorMessage }}</mat-card-content>
+        </mat-card>
+      } @else if (processes().length === 0) {
+        <mat-card appearance="outlined">
+          <mat-card-content>No processes are available yet.</mat-card-content>
+        </mat-card>
+      } @else {
+        <mat-card appearance="outlined">
+          <mat-card-content>
+            <table mat-table [dataSource]="processes()" class="process-table">
+              <ng-container matColumnDef="process">
+                <th mat-header-cell *matHeaderCellDef>Process</th>
+                <td mat-cell *matCellDef="let process">
+                  <div>
+                    {{ process.code }}. <span class="muted">{{ process.title }}</span>
+                  </div>
+                </td>
+              </ng-container>
 
-            <ng-container matColumnDef="state">
-              <th mat-header-cell *matHeaderCellDef>State</th>
-              <td mat-cell *matCellDef="let process">
-                <mat-chip [ngClass]="'state-' + lifecycleState(process).toLowerCase().replace(' ', '-')">{{ lifecycleState(process) }}</mat-chip>
-              </td>
-            </ng-container>
+              <ng-container matColumnDef="state">
+                <th mat-header-cell *matHeaderCellDef>State</th>
+                <td mat-cell *matCellDef="let process">
+                  <mat-chip
+                    color="primary"
+                    [ngClass]="'state-' + lifecycleState(process).toLowerCase().replace(' ', '-')"
+                    >{{ lifecycleState(process) }}</mat-chip
+                  >
+                </td>
+              </ng-container>
 
-            <ng-container matColumnDef="versions">
-              <th mat-header-cell *matHeaderCellDef>Versions</th>
-              <td mat-cell *matCellDef="let process">
-                @if (process.governanceSummary?.activeWorkflowVersion) {
-                  <span class="versions-current">v{{ process.governanceSummary.activeWorkflowVersion.versionNumber }}</span>
-                } @else {
-                  <span class="muted">-</span>
-                }
-              </td>
-            </ng-container>
-
-            <ng-container matColumnDef="waitingFor">
-              <th mat-header-cell *matHeaderCellDef>Waiting For</th>
-              <td mat-cell *matCellDef="let process">
-                @if (isWaitingForCurrentUser(process)) {
-                  <span class="waiting-for-me">Waiting for you</span>
-                } @else {
-                  <span class="muted">{{ waitingForRole(process) }}</span>
-                }
-              </td>
-            </ng-container>
-
-            <ng-container matColumnDef="nextAction">
-              <th mat-header-cell *matHeaderCellDef>Next Action</th>
-              <td mat-cell *matCellDef="let process">{{ nextAction(process) }}</td>
-            </ng-container>
-
-            <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef></th>
-              <td mat-cell *matCellDef="let process" style="text-align: right;">
-                <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Process actions">
-                  <mat-icon>more_vert</mat-icon>
-                </button>
-                <mat-menu #menu>
-                  <a mat-menu-item [routerLink]="openRoute(process)">
-                    <mat-icon>open_in_new</mat-icon>
-                    <span>Open</span>
-                  </a>
-                  @if (workRoute(process); as workRoute) {
-                    <a
-                      mat-menu-item
-                      [routerLink]="workRoute"
-                      [queryParams]="{ tab: 'work' }"
+              <ng-container matColumnDef="versions">
+                <th mat-header-cell *matHeaderCellDef>Version</th>
+                <td mat-cell *matCellDef="let process">
+                  @if (process.governanceSummary?.activeWorkflowVersion) {
+                    <span
+                      >v{{ process.governanceSummary.activeWorkflowVersion.versionNumber }}</span
                     >
-                      <mat-icon>account_tree</mat-icon>
-                      <span>Work</span>
-                    </a>
+                  } @else {
+                    <span class="muted">-</span>
                   }
-                  <a mat-menu-item [routerLink]="['/processes', process.id, 'versions']">
-                    <mat-icon>list</mat-icon>
-                    <span>Versions</span>
-                  </a>
-                  @if (canManageProcess(process)) {
-                    <a mat-menu-item [routerLink]="['/processes', process.id, 'edit']">
-                      <mat-icon>edit</mat-icon>
-                      <span>Edit process</span>
-                    </a>
-                  }
-                </mat-menu>
-              </td>
-            </ng-container>
+                </td>
+              </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-          </table>
-        </mat-card-content>
-      </mat-card>
-    }
+              <ng-container matColumnDef="waitingFor">
+                <th mat-header-cell *matHeaderCellDef>Waiting For</th>
+                <td mat-cell *matCellDef="let process">
+                  @if (isWaitingForCurrentUser(process)) {
+                    <span class="waiting-for-me">Waiting for you</span>
+                  } @else {
+                    <span class="muted">{{ waitingForRole(process) }}</span>
+                  }
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="team">
+                <th mat-header-cell *matHeaderCellDef>Team</th>
+                <td mat-cell *matCellDef="let process">
+                  <mat-chip>{{ process.teamName }}</mat-chip>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="owner">
+                <th mat-header-cell *matHeaderCellDef>Owner</th>
+                <td mat-cell *matCellDef="let process">
+                  <mat-chip>{{ process.ownerName }}</mat-chip>
+                </td>
+              </ng-container>
+
+              <ng-container matColumnDef="nextAction">
+                <th mat-header-cell *matHeaderCellDef>Next Action</th>
+                <td mat-cell *matCellDef="let process">{{ nextAction(process) }}</td>
+              </ng-container>
+
+              <ng-container matColumnDef="actions">
+                <th mat-header-cell *matHeaderCellDef></th>
+                <td mat-cell *matCellDef="let process" style="text-align: right;">
+                  <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Process actions">
+                    <mat-icon>more_vert</mat-icon>
+                  </button>
+                  <mat-menu #menu>
+                    <a mat-menu-item [routerLink]="openRoute(process)">
+                      <mat-icon>open_in_new</mat-icon>
+                      <span>Open</span>
+                    </a>
+                    @if (workRoute(process); as workRoute) {
+                      <a mat-menu-item [routerLink]="workRoute" [queryParams]="{ tab: 'work' }">
+                        <mat-icon>account_tree</mat-icon>
+                        <span>Work</span>
+                      </a>
+                    }
+                    <a mat-menu-item [routerLink]="['/processes', process.id, 'versions']">
+                      <mat-icon>list</mat-icon>
+                      <span>Versions</span>
+                    </a>
+                    @if (canManageProcess(process)) {
+                      <a mat-menu-item [routerLink]="['/processes', process.id, 'edit']">
+                        <mat-icon>edit</mat-icon>
+                        <span>Edit process</span>
+                      </a>
+                    }
+                  </mat-menu>
+                </td>
+              </ng-container>
+
+              <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            </table>
+          </mat-card-content>
+        </mat-card>
+      }
     </section>
   `,
 })
-export class ProcessListPageComponent {
+export class ProcessListPageComponent implements OnInit {
   private readonly api = inject(BackofficeApiService);
   private readonly accessControl = inject(AccessControlUtil);
 
@@ -232,9 +245,16 @@ export class ProcessListPageComponent {
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly canEdit = computed(() => this.accessControl.hasRole('EDITOR'));
   protected readonly currentUserRole = computed(() => this.accessControl.currentUserRole());
-  protected readonly displayedColumns = ['process', 'owner', 'state', 'versions', 'waitingFor', 'nextAction', 'actions'];
+  protected readonly displayedColumns = [
+    'process',
+    'state',
+    'versions',
+    'waitingFor',
+    'nextAction',
+    'actions',
+  ];
 
-  constructor() {
+  ngOnInit(): void {
     void this.loadProcesses();
   }
 
@@ -242,7 +262,7 @@ export class ProcessListPageComponent {
     if (process.governanceSummary?.activeWorkflowVersion) {
       return process.governanceSummary.activeWorkflowVersion.lifecycleState;
     }
-    return 'Up to date';
+    return 'Published';
   }
 
   protected waitingForRole(process: ProcessRecord): string {

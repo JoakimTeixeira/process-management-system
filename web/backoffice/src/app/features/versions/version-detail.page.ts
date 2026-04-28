@@ -737,7 +737,7 @@ type VersionDetailTabId =
                             @for (entry of stateHistory(); track entry.id) {
                               <mat-card appearance="outlined">
                                 <mat-card-content>
-                                  <strong>{{ entry.fromState || 'Start' }} → {{ entry.toState }}</strong>
+                                  <strong>{{ entry.fromState || '' }} {{entry.fromState ? '→' : ''}} {{ entry.toState }}</strong>
                                   <p class="muted">{{ entry.createdAt | date: 'medium' }}</p>
                                   <p>{{ entry.reason || 'No reason provided.' }}</p>
                                   <p class="muted">{{ entry.actorName || entry.actorId || 'Unknown' }}</p>

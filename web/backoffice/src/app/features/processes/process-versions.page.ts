@@ -130,7 +130,9 @@ import { getHttpErrorMessage } from '../../core/http/http-error-message';
                 <ng-container matColumnDef="lifecycleState">
                   <th mat-header-cell *matHeaderCellDef>State</th>
                   <td mat-cell *matCellDef="let version">
-                    <mat-chip>{{ version.lifecycleState }}</mat-chip>
+                    <mat-chip [ngClass]="'state-' + version.lifecycleState.toLowerCase().replace(' ', '-')">
+                      {{ version.lifecycleState }}
+                    </mat-chip>
                   </td>
                 </ng-container>
 

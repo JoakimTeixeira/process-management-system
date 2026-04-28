@@ -82,6 +82,27 @@ import { getHttpErrorMessage } from '../../core/http/http-error-message';
       .user-table.hide-actions td:last-child {
         display: none;
       }
+
+      ::ng-deep {
+        .user-status {
+
+          &.active {
+            background-color: #dcedc8 !important;
+          }
+
+          &.inactive {
+            background-color: #ffcdd2 !important;
+          }
+
+          .mat-mdc-chip-action-label {
+            color: #424242 !important;
+          }
+
+          .mdc-evolution-chip__action--primary::before {
+            border-width: 0 !important;
+          }
+        }
+      }
     `,
   ],
   template: `
@@ -142,7 +163,9 @@ import { getHttpErrorMessage } from '../../core/http/http-error-message';
               <ng-container matColumnDef="isActive">
                 <th mat-header-cell *matHeaderCellDef>Status</th>
                 <td mat-cell *matCellDef="let user">
-                  <mat-chip>{{ user.isActive ? 'Active' : 'Inactive' }}</mat-chip>
+                  <mat-chip class="user-status" [class.active]="user.isActive" [class.inactive]="!user.isActive">
+                    {{ user.isActive ? 'Active' : 'Inactive' }}
+                  </mat-chip>
                 </td>
               </ng-container>
 

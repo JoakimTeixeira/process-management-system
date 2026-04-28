@@ -128,3 +128,35 @@
     color: #ffffff !important;
   }
 }
+
+.state-draft,
+.state-in-review,
+.state-approved,
+.state-published,
+.state-archived {
+  .mat-mdc-chip-action-label {
+    color: #424242 !important;
+  }
+  .mdc-evolution-chip__action--primary::before {
+    border-width: 0 !important;
+  }
+}
+.state-draft {
+  background-color: #d6eaff !important;
+}
+
+.state-in-review {
+  background-color: #fff3cd !important;
+}
+
+.state-approved {
+  background-color: #e3f2fd !important;
+}
+
+.state-published {
+  background-color: #dff3e3 !important;
+}
+
+.state-archived {
+  background-color: #e3e7eb !important;
+}
