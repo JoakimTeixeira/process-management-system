@@ -203,6 +203,53 @@ export class BackofficeApiService {
     );
   }
 
+  createProcedure(
+    processVersionId: string,
+    payload: {
+      title: string;
+      utility: string;
+      warranty: string;
+      outcome: string;
+      policy: string;
+      activities: {
+        resource: string;
+        serviceAction: string;
+        workInstruction: string;
+      }[];
+      inputs: string[];
+      outputs: string[];
+    },
+  ) {
+    return this.http.post<ProcedureRecord>(
+      `${this.baseUrl}/process-versions/${processVersionId}/procedures`,
+      payload,
+    );
+  }
+
+  updateProcedure(
+    id: string,
+    payload: Partial<{
+      title: string;
+      utility: string;
+      warranty: string;
+      outcome: string;
+      policy: string;
+      activities: {
+        resource: string;
+        serviceAction: string;
+        workInstruction: string;
+      }[];
+      inputs: string[];
+      outputs: string[];
+    }>,
+  ) {
+    return this.http.patch<ProcedureRecord>(`${this.baseUrl}/procedures/${id}`, payload);
+  }
+
+  deleteProcedure(id: string) {
+    return this.http.delete<void>(`${this.baseUrl}/procedures/${id}`);
+  }
+
   listAllProcedures() {
     return this.http.get<ProcedureRecord[]>(`${this.baseUrl}/procedures`);
   }

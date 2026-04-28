@@ -1,5 +1,6 @@
 import { Transform, Type } from 'class-transformer';
 import {
+  ArrayMinSize,
   IsArray,
   IsString,
   MaxLength,
@@ -9,6 +10,14 @@ import {
 
 import { MAX_TEXT_LENGTH } from '../../../common/constants/workflow.constants';
 import { trimString } from '../../../common/utils/trim-string-transform.util';
+
+function trimStringArray({ value }: { value: unknown }): unknown {
+  return Array.isArray(value)
+    ? value.map<unknown>((entry: unknown) =>
+        typeof entry === 'string' ? entry.trim() : entry,
+      )
+    : value;
+}
 
 export class ProcedureActivityDto {
   @Transform(trimString)
@@ -55,15 +64,22 @@ export class ProcedureBodyDto {
   policy!: string;
 
   @IsArray()
+  @ArrayMinSize(1)
   @ValidateNested({ each: true })
   @Type(() => ProcedureActivityDto)
   activities!: ProcedureActivityDto[];
 
+  @Transform(trimStringArray)
   @IsArray()
+  @ArrayMinSize(1)
   @IsString({ each: true })
+  @MinLength(1, { each: true })
   inputs!: string[];
 
+  @Transform(trimStringArray)
   @IsArray()
+  @ArrayMinSize(1)
   @IsString({ each: true })
+  @MinLength(1, { each: true })
   outputs!: string[];
 }

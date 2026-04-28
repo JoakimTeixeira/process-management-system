@@ -13,6 +13,8 @@ interface VersionDetailPageTestInstance {
   allChecklistChecked: VersionDetailPageComponent['allChecklistChecked'];
   relatedVersions: VersionDetailPageComponent['relatedVersions'];
   assets: VersionDetailPageComponent['assets'];
+  procedures: VersionDetailPageComponent['procedures'];
+  procedureForm: VersionDetailPageComponent['procedureForm'];
   canEditDraft: VersionDetailPageComponent['canEditDraft'];
   canUploadBpmn: VersionDetailPageComponent['canUploadBpmn'];
   visibleActions: VersionDetailPageComponent['visibleActions'];
@@ -20,6 +22,10 @@ interface VersionDetailPageTestInstance {
   nextActionLabel: VersionDetailPageComponent['nextActionLabel'];
   selectTab: VersionDetailPageComponent['selectTab'];
   saveDraft: VersionDetailPageComponent['saveDraft'];
+  saveProcedure: VersionDetailPageComponent['saveProcedure'];
+  startEditingProcedure: VersionDetailPageComponent['startEditingProcedure'];
+  addProcedureActivity: VersionDetailPageComponent['addProcedureActivity'];
+  procedureActivities: VersionDetailPageComponent['procedureActivities'];
 }
 
 describe('VersionDetailPageComponent', () => {
@@ -42,6 +48,9 @@ describe('VersionDetailPageComponent', () => {
       'listProcessVersions',
       'listAssets',
       'listProcedures',
+      'createProcedure',
+      'updateProcedure',
+      'deleteProcedure',
       'getVersionStateHistory',
       'getAuditLogs',
       'updateVersion',
@@ -290,6 +299,238 @@ describe('VersionDetailPageComponent', () => {
     });
     fixture.detectChanges();
 
+    expect(component.allChecklistChecked()).toBeFalse();
+
+    component.procedures.set([
+      {
+        id: 'procedure-1',
+        processVersionId: 'version-1',
+        code: 'P1.1',
+        title: 'Validate request',
+        utility: 'Ensure the request is complete',
+        warranty: 'Consistent intake',
+        outcome: 'Validated request',
+        policy: 'Follow intake policy',
+        activities: [],
+        inputs: ['Request form'],
+        outputs: ['Validated request'],
+      },
+    ]);
+    fixture.detectChanges();
+
     expect(component.allChecklistChecked()).toBeTrue();
+  });
+
+  it('creates procedures from the draft workspace', async () => {
+    api.createProcedure.and.returnValue(
+      of({
+        id: 'procedure-1',
+        processVersionId: 'version-1',
+        code: 'P1.1',
+        title: 'Validate request',
+        utility: 'Ensure the request is complete',
+        warranty: 'Consistent intake',
+        outcome: 'Validated request',
+        policy: 'Follow intake policy',
+        activities: [
+          {
+            resource: 'Coordinator',
+            service_action: 'Validate request',
+            work_instruction: 'Check the submission fields',
+          },
+        ],
+        inputs: ['Request form'],
+        outputs: ['Validated request'],
+      }),
+    );
+    api.listProcedures.and.returnValues(
+      of([]),
+      of([
+        {
+          id: 'procedure-1',
+          processVersionId: 'version-1',
+          code: 'P1.1',
+          title: 'Validate request',
+          utility: 'Ensure the request is complete',
+          warranty: 'Consistent intake',
+          outcome: 'Validated request',
+          policy: 'Follow intake policy',
+          activities: [
+            {
+              resource: 'Coordinator',
+              service_action: 'Validate request',
+              work_instruction: 'Check the submission fields',
+            },
+          ],
+          inputs: ['Request form'],
+          outputs: ['Validated request'],
+        },
+      ]),
+    );
+
+    const fixture = TestBed.createComponent(VersionDetailPageComponent);
+    fixture.componentRef.setInput('id', 'version-1');
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const component = fixture.componentInstance as unknown as VersionDetailPageTestInstance;
+    component.procedureForm.patchValue({
+      title: 'Validate request',
+      utility: 'Ensure the request is complete',
+      warranty: 'Consistent intake',
+      outcome: 'Validated request',
+      policy: 'Follow intake policy',
+      inputsText: 'Request form',
+      outputsText: 'Validated request',
+    });
+    component.addProcedureActivity();
+    component.procedureActivities().at(0).setValue({
+      resource: 'Coordinator',
+      serviceAction: 'Validate request',
+      workInstruction: 'Check the submission fields',
+    });
+
+    await component.saveProcedure();
+
+    expect(api.createProcedure).toHaveBeenCalledWith('version-1', {
+      title: 'Validate request',
+      utility: 'Ensure the request is complete',
+      warranty: 'Consistent intake',
+      outcome: 'Validated request',
+      policy: 'Follow intake policy',
+      activities: [
+        {
+          resource: 'Coordinator',
+          serviceAction: 'Validate request',
+          workInstruction: 'Check the submission fields',
+        },
+      ],
+      inputs: ['Request form'],
+      outputs: ['Validated request'],
+    });
+    expect(component.procedures().map((procedure: { id: string }) => procedure.id)).toEqual([
+      'procedure-1',
+    ]);
+  });
+
+  it('requires at least one activity, input, and output before saving a procedure', async () => {
+    const fixture = TestBed.createComponent(VersionDetailPageComponent);
+    fixture.componentRef.setInput('id', 'version-1');
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const component = fixture.componentInstance as unknown as VersionDetailPageTestInstance;
+    component.procedureForm.patchValue({
+      title: 'Validate request',
+      utility: 'Ensure the request is complete',
+      warranty: 'Consistent intake',
+      outcome: 'Validated request',
+      policy: 'Follow intake policy',
+      inputsText: '',
+      outputsText: '',
+    });
+
+    await component.saveProcedure();
+
+    expect(api.createProcedure).not.toHaveBeenCalled();
+    expect(component.procedureForm.controls.inputsText.invalid).toBeTrue();
+    expect(component.procedureForm.controls.outputsText.invalid).toBeTrue();
+    expect(component.procedureActivities().hasError('minItems')).toBeTrue();
+  });
+
+  it('updates procedures from the draft workspace', async () => {
+    api.listProcedures.and.returnValues(
+      of([
+        {
+          id: 'procedure-1',
+          processVersionId: 'version-1',
+          code: 'P1.1',
+          title: 'Validate request',
+          utility: 'Ensure the request is complete',
+          warranty: 'Consistent intake',
+          outcome: 'Validated request',
+          policy: 'Follow intake policy',
+          activities: [
+            {
+              resource: 'Coordinator',
+              service_action: 'Validate request',
+              work_instruction: 'Check the submission fields',
+            },
+          ],
+          inputs: ['Request form'],
+          outputs: ['Validated request'],
+        },
+      ]),
+      of([
+        {
+          id: 'procedure-1',
+          processVersionId: 'version-1',
+          code: 'P1.1',
+          title: 'Validate and route request',
+          utility: 'Ensure the request is complete',
+          warranty: 'Consistent intake',
+          outcome: 'Validated request',
+          policy: 'Follow intake policy',
+          activities: [
+            {
+              resource: 'Coordinator',
+              service_action: 'Validate and route request',
+              work_instruction: 'Check the submission fields',
+            },
+          ],
+          inputs: ['Request form'],
+          outputs: ['Validated request'],
+        },
+      ]),
+    );
+    api.updateProcedure.and.returnValue(
+      of({
+        id: 'procedure-1',
+        processVersionId: 'version-1',
+        code: 'P1.1',
+        title: 'Validate and route request',
+        utility: 'Ensure the request is complete',
+        warranty: 'Consistent intake',
+        outcome: 'Validated request',
+        policy: 'Follow intake policy',
+        activities: [
+          {
+            resource: 'Coordinator',
+            service_action: 'Validate and route request',
+            work_instruction: 'Check the submission fields',
+          },
+        ],
+        inputs: ['Request form'],
+        outputs: ['Validated request'],
+      }),
+    );
+
+    const fixture = TestBed.createComponent(VersionDetailPageComponent);
+    fixture.componentRef.setInput('id', 'version-1');
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const component = fixture.componentInstance as unknown as VersionDetailPageTestInstance;
+    component.startEditingProcedure(component.procedures()[0]);
+    component.procedureForm.patchValue({
+      title: 'Validate and route request',
+    });
+    component.procedureActivities().at(0).patchValue({
+      serviceAction: 'Validate and route request',
+    });
+
+    await component.saveProcedure();
+
+    expect(api.updateProcedure).toHaveBeenCalledWith(
+      'procedure-1',
+      jasmine.objectContaining({
+        title: 'Validate and route request',
+        activities: [
+          jasmine.objectContaining({
+            serviceAction: 'Validate and route request',
+          }),
+        ],
+      }),
+    );
   });
 });

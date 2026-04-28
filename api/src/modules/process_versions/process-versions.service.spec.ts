@@ -11,7 +11,7 @@ import type { ProcessVersionsRepository } from './process-versions.repository';
 import { ProcessVersionsService } from './process-versions.service';
 
 describe('ProcessVersionsService', () => {
-  let dataSource: jest.Mocked<Pick<DataSource, 'transaction'>>;
+  let dataSource: jest.Mocked<Pick<DataSource, 'transaction' | 'query'>>;
   let processesRepository: jest.Mocked<Pick<ProcessesRepository, 'findById'>>;
   let processVersionsRepository: jest.Mocked<
     Pick<
@@ -67,6 +67,7 @@ describe('ProcessVersionsService', () => {
 
   beforeEach(() => {
     dataSource = {
+      query: jest.fn().mockResolvedValue([{ exists: true }]),
       transaction: jest
         .fn()
         .mockImplementation(
@@ -114,6 +115,23 @@ describe('ProcessVersionsService', () => {
       lifecycleState: 'Draft',
     });
     processVersionsRepository.countBpmnAssets.mockResolvedValue(0);
+
+    await expect(
+      service.submitForReview(
+        'version-1',
+        { reason: 'submit' },
+        { ...currentUser, role: Role.EDITOR },
+      ),
+    ).rejects.toBeInstanceOf(ConflictException);
+  });
+
+  it('should require at least one procedure before submit for review', async () => {
+    processVersionsRepository.findById.mockResolvedValue({
+      ...approvedVersion,
+      lifecycleState: 'Draft',
+    });
+    processVersionsRepository.countBpmnAssets.mockResolvedValue(1);
+    dataSource.query.mockResolvedValue([{ exists: false }]);
 
     await expect(
       service.submitForReview(
@@ -381,6 +399,7 @@ describe('ProcessVersionsService', () => {
   it('should block publish when the approver and publisher are the same actor', async () => {
     processVersionsRepository.findById.mockResolvedValue(approvedVersion);
     processVersionsRepository.countBpmnAssets.mockResolvedValue(1);
+    dataSource.query.mockResolvedValue([{ exists: true }]);
     processVersionsRepository.findLatestActorForState.mockResolvedValue(
       currentUser.id,
     );
@@ -407,12 +426,27 @@ describe('ProcessVersionsService', () => {
   it('should block publish when approval evidence is missing', async () => {
     processVersionsRepository.findById.mockResolvedValue(approvedVersion);
     processVersionsRepository.countBpmnAssets.mockResolvedValue(1);
+    dataSource.query.mockResolvedValue([{ exists: true }]);
     processVersionsRepository.findLatestActorForState.mockResolvedValue(null);
     processVersionsRepository.findPublishedVersion.mockResolvedValue(null);
 
     await expect(
       service.publish('version-1', { reason: 'publish' }, currentUser),
     ).rejects.toBeInstanceOf(ConflictException);
+  });
+
+  it('should block publish when no procedure is defined', async () => {
+    processVersionsRepository.findById.mockResolvedValue(approvedVersion);
+    processVersionsRepository.countBpmnAssets.mockResolvedValue(1);
+    dataSource.query.mockResolvedValue([{ exists: false }]);
+
+    await expect(
+      service.publish('version-1', { reason: 'publish' }, currentUser),
+    ).rejects.toBeInstanceOf(ConflictException);
+
+    expect(
+      processVersionsRepository.findLatestActorForState,
+    ).not.toHaveBeenCalled();
   });
 
   it('should publish an approved version and automatically archive the previous published version', async () => {
@@ -432,6 +466,7 @@ describe('ProcessVersionsService', () => {
 
     processVersionsRepository.findById.mockResolvedValue(approvedVersion);
     processVersionsRepository.countBpmnAssets.mockResolvedValue(1);
+    dataSource.query.mockResolvedValue([{ exists: true }]);
     processVersionsRepository.findLatestActorForState.mockResolvedValue(
       'reviewer-1',
     );

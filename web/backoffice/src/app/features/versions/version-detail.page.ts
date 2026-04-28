@@ -10,7 +10,15 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormArray,
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom, map } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
@@ -51,6 +59,35 @@ type VersionDetailTabId =
   | 'diagram'
   | 'procedures'
   | 'history';
+
+interface ProcedureActivityFormValue {
+  resource: string;
+  serviceAction: string;
+  workInstruction: string;
+}
+
+function nonEmptyLineListValidator(): ValidatorFn {
+  return (control: AbstractControl<string>): ValidationErrors | null => {
+    const value = control.value ?? '';
+    const entries = value
+      .split('\n')
+      .map((entry) => entry.trim())
+      .filter((entry) => entry.length > 0);
+
+    return entries.length > 0 ? null : { requiredList: true };
+  };
+}
+
+function minItemsValidator(minItems: number): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const value = control.value;
+    const length = Array.isArray(value) ? value.length : 0;
+
+    return length >= minItems
+      ? null
+      : { minItems: { required: minItems, actual: length } };
+  };
+}
 
 @Component({
   selector: 'app-version-detail-page',
@@ -229,6 +266,24 @@ type VersionDetailTabId =
 
       .work-form .card-actions {
         margin-top: auto;
+      }
+
+      .procedure-form-shell {
+        display: grid;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .procedure-activity-list {
+        display: grid;
+        gap: 0.75rem;
+      }
+
+      .procedure-activity-card {
+        padding: 1rem;
+        border: 1px solid var(--portal-border);
+        border-radius: 0.875rem;
+        background: var(--portal-surface-alt);
       }
 
       .work-context {
@@ -517,7 +572,10 @@ type VersionDetailTabId =
                               Change description and reason for change are complete
                             </mat-checkbox>
                             <mat-checkbox [checked]="hasBpmnAsset()" disabled>
-                              BPMN diagram is attached
+                              At least 1 diagram is attached
+                            </mat-checkbox>
+                            <mat-checkbox [checked]="hasProcedure()" disabled>
+                              At least 1 procedure is defined
                             </mat-checkbox>
                             <mat-checkbox formControlName="requirementsChecked">
                               Stakeholder and process-owner requirements are captured
@@ -642,6 +700,167 @@ type VersionDetailTabId =
               <div class="detail-frame__body">
                 <mat-card appearance="outlined">
                   <mat-card-content>
+                    @if (canEditDraft()) {
+                      <div class="procedure-form-shell">
+                        <div class="section-header">
+                          <div>
+                            <h3 class="work-card-title">{{ procedurePanelTitle() }}</h3>
+                            <p class="work-card-copy">
+                              {{
+                                editingProcedure()
+                                  ? 'Update the draft procedure details for this version.'
+                                  : 'Add draft procedures for this version. Codes are generated automatically.'
+                              }}
+                            </p>
+                          </div>
+                        </div>
+
+                        <form class="work-form" [formGroup]="procedureForm" (ngSubmit)="saveProcedure()">
+                          <mat-form-field appearance="outline">
+                            <mat-label>Title</mat-label>
+                            <input matInput formControlName="title" />
+                          </mat-form-field>
+
+                          <mat-form-field appearance="outline">
+                            <mat-label>Utility</mat-label>
+                            <textarea matInput rows="3" formControlName="utility"></textarea>
+                          </mat-form-field>
+
+                          <mat-form-field appearance="outline">
+                            <mat-label>Warranty</mat-label>
+                            <textarea matInput rows="3" formControlName="warranty"></textarea>
+                          </mat-form-field>
+
+                          <mat-form-field appearance="outline">
+                            <mat-label>Outcome</mat-label>
+                            <textarea matInput rows="3" formControlName="outcome"></textarea>
+                          </mat-form-field>
+
+                          <mat-form-field appearance="outline">
+                            <mat-label>Policy</mat-label>
+                            <textarea matInput rows="3" formControlName="policy"></textarea>
+                          </mat-form-field>
+
+                          <div class="procedure-activity-list">
+                            <div class="section-header">
+                              <div>
+                                <strong>Activities</strong>
+                                <p class="muted">Capture each step, resource, and work instruction.</p>
+                              </div>
+                              <button mat-button type="button" (click)="addProcedureActivity()">
+                                <mat-icon>add</mat-icon>
+                                Add activity
+                              </button>
+                            </div>
+
+                            @if (
+                              procedureActivities().touched &&
+                              procedureActivities().hasError('minItems')
+                            ) {
+                              <p class="error-message">Add at least one activity.</p>
+                            }
+
+                            @if (procedureActivities().length === 0) {
+                              <p class="muted">No activities added yet.</p>
+                            } @else {
+                              <div formArrayName="activities" class="procedure-activity-list">
+                                @for (activityGroup of procedureActivities().controls; track $index) {
+                                  <div class="procedure-activity-card" [formGroupName]="$index">
+                                    <div class="section-header">
+                                      <strong>Activity {{ $index + 1 }}</strong>
+                                      <button
+                                        mat-button
+                                        type="button"
+                                        (click)="removeProcedureActivity($index)"
+                                      >
+                                        <mat-icon>delete</mat-icon>
+                                        Remove
+                                      </button>
+                                    </div>
+
+                                    <mat-form-field appearance="outline">
+                                      <mat-label>Service action</mat-label>
+                                      <input matInput formControlName="serviceAction" />
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline">
+                                      <mat-label>Resource</mat-label>
+                                      <input matInput formControlName="resource" />
+                                    </mat-form-field>
+
+                                    <mat-form-field appearance="outline">
+                                      <mat-label>Work instruction</mat-label>
+                                      <textarea
+                                        matInput
+                                        rows="3"
+                                        formControlName="workInstruction"
+                                      ></textarea>
+                                    </mat-form-field>
+                                  </div>
+                                }
+                              </div>
+                            }
+                          </div>
+
+                          <mat-form-field appearance="outline">
+                            <mat-label>Inputs</mat-label>
+                            <textarea
+                              matInput
+                              rows="4"
+                              formControlName="inputsText"
+                            ></textarea>
+                            <mat-hint>Enter one input per line.</mat-hint>
+                            @if (
+                              procedureForm.controls.inputsText.touched &&
+                              procedureForm.controls.inputsText.hasError('requiredList')
+                            ) {
+                              <mat-error>Add at least one input.</mat-error>
+                            }
+                          </mat-form-field>
+
+                          <mat-form-field appearance="outline">
+                            <mat-label>Outputs</mat-label>
+                            <textarea
+                              matInput
+                              rows="4"
+                              formControlName="outputsText"
+                            ></textarea>
+                            <mat-hint>Enter one output per line.</mat-hint>
+                            @if (
+                              procedureForm.controls.outputsText.touched &&
+                              procedureForm.controls.outputsText.hasError('requiredList')
+                            ) {
+                              <mat-error>Add at least one output.</mat-error>
+                            }
+                          </mat-form-field>
+
+                          @if (procedureErrorMessage(); as procedureErrorMessage) {
+                            <p class="error-message">{{ procedureErrorMessage }}</p>
+                          }
+
+                          <div class="card-actions">
+                            <button
+                              mat-flat-button
+                              color="primary"
+                              type="submit"
+                              [disabled]="isSavingProcedure()"
+                            >
+                              <mat-icon>save</mat-icon>
+                              {{ procedureSubmitLabel() }}
+                            </button>
+                            @if (editingProcedure()) {
+                              <button mat-button type="button" (click)="cancelProcedureEdit()">
+                                <mat-icon>close</mat-icon>
+                                Cancel
+                              </button>
+                            }
+                          </div>
+                        </form>
+                      </div>
+
+                      <mat-divider style="margin: 1rem 0;"></mat-divider>
+                    }
+
                     @if (procedures().length === 0) {
                       <p class="muted">No procedures defined for this version yet.</p>
                     } @else {
@@ -704,6 +923,23 @@ type VersionDetailTabId =
                                   </div>
                                 }
                               </div>
+                              @if (canEditDraft()) {
+                                <div class="card-actions">
+                                  <button mat-button type="button" (click)="startEditingProcedure(procedure)">
+                                    <mat-icon>edit</mat-icon>
+                                    Edit
+                                  </button>
+                                  <button
+                                    mat-button
+                                    type="button"
+                                    (click)="deleteProcedure(procedure.id)"
+                                    [disabled]="isDeletingProcedure()"
+                                  >
+                                    <mat-icon>delete</mat-icon>
+                                    Delete
+                                  </button>
+                                </div>
+                              }
                             </div>
                           </div>
                         }
@@ -806,12 +1042,16 @@ export class VersionDetailPageComponent {
   protected readonly isSavingDraft = signal(false);
   protected readonly isActing = signal(false);
   protected readonly isUploading = signal(false);
+  protected readonly isSavingProcedure = signal(false);
+  protected readonly isDeletingProcedure = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly draftErrorMessage = signal<string | null>(null);
   protected readonly actionErrorMessage = signal<string | null>(null);
   protected readonly uploadErrorMessage = signal<string | null>(null);
+  protected readonly procedureErrorMessage = signal<string | null>(null);
   protected readonly selectedFile = signal<File | null>(null);
   protected readonly selectedTab = signal<VersionDetailTabId>('summary');
+  protected readonly editingProcedureId = signal<string | null>(null);
   private readonly requestedTab = toSignal(
     this.route.queryParamMap.pipe(map((params) => this.parseTab(params.get('tab')))),
     { initialValue: null },
@@ -855,6 +1095,7 @@ export class VersionDetailPageComponent {
     return tabs;
   });
   protected readonly hasBpmnAsset = computed(() => this.assets().length > 0);
+  protected readonly hasProcedure = computed(() => this.procedures().length > 0);
   protected readonly allChecklistChecked = computed(() => {
     const checklistState = this.checklistState();
 
@@ -862,7 +1103,8 @@ export class VersionDetailPageComponent {
       checklistState.titleChecked &&
       checklistState.changeChecked &&
       checklistState.requirementsChecked &&
-      this.hasBpmnAsset()
+      this.hasBpmnAsset() &&
+      this.hasProcedure()
     );
   });
   protected readonly selectedFileName = computed(() => this.selectedFile()?.name ?? null);
@@ -939,6 +1181,17 @@ export class VersionDetailPageComponent {
 
     return `v${relatedVersion.versionNumber} - ${relatedVersion.title}`;
   });
+  protected readonly editingProcedure = computed(() =>
+    this.procedures().find((procedure) => procedure.id === this.editingProcedureId()) ?? null,
+  );
+  protected readonly procedurePanelTitle = computed(() =>
+    this.editingProcedure()
+      ? `Edit ${this.editingProcedure()?.code ?? 'procedure'}`
+      : 'Add procedure',
+  );
+  protected readonly procedureSubmitLabel = computed(() =>
+    this.editingProcedure() ? 'Save procedure changes' : 'Create procedure',
+  );
 
   protected readonly draftForm = this.fb.group({
     architectureState: ['AS-IS' as 'AS-IS' | 'TO-BE', [Validators.required]],
@@ -956,6 +1209,17 @@ export class VersionDetailPageComponent {
 
   protected readonly uploadForm = this.fb.group({
     caption: ['', [Validators.required]],
+  });
+
+  protected readonly procedureForm = this.fb.group({
+    title: ['', [Validators.required]],
+    utility: ['', [Validators.required]],
+    warranty: ['', [Validators.required]],
+    outcome: ['', [Validators.required]],
+    policy: ['', [Validators.required]],
+    inputsText: ['', [nonEmptyLineListValidator()]],
+    outputsText: ['', [nonEmptyLineListValidator()]],
+    activities: this.fb.array([], [minItemsValidator(1)]),
   });
 
   protected readonly actionForm = this.fb.group({
@@ -1089,6 +1353,132 @@ export class VersionDetailPageComponent {
     }
   }
 
+  protected procedureActivities(): FormArray {
+    return this.procedureForm.controls.activities;
+  }
+
+  protected addProcedureActivity(
+    activity?: Partial<ProcedureActivityFormValue>,
+  ): void {
+    this.procedureActivities().push(this.createProcedureActivityGroup(activity));
+  }
+
+  protected removeProcedureActivity(index: number): void {
+    this.procedureActivities().removeAt(index);
+  }
+
+  protected startEditingProcedure(procedure: ProcedureRecord): void {
+    this.editingProcedureId.set(procedure.id);
+    this.procedureErrorMessage.set(null);
+    this.procedureForm.reset({
+      title: procedure.title,
+      utility: procedure.utility ?? '',
+      warranty: procedure.warranty ?? '',
+      outcome: procedure.outcome ?? '',
+      policy: procedure.policy ?? '',
+      inputsText: this.stringifyProcedureList(procedure.inputs),
+      outputsText: this.stringifyProcedureList(procedure.outputs),
+    });
+    this.resetProcedureActivities(
+      this.mapProcedureActivitiesToForm(procedure.activities),
+    );
+  }
+
+  protected cancelProcedureEdit(): void {
+    this.editingProcedureId.set(null);
+    this.procedureErrorMessage.set(null);
+    this.resetProcedureForm();
+  }
+
+  protected async saveProcedure(): Promise<void> {
+    const currentVersion = this.version();
+
+    if (!currentVersion || this.procedureForm.invalid) {
+      this.procedureForm.markAllAsTouched();
+      this.procedureErrorMessage.set(
+        'Complete the required procedure fields before saving.',
+      );
+      return;
+    }
+
+    const payload = {
+      title: this.procedureForm.controls.title.getRawValue().trim(),
+      utility: this.procedureForm.controls.utility.getRawValue().trim(),
+      warranty: this.procedureForm.controls.warranty.getRawValue().trim(),
+      outcome: this.procedureForm.controls.outcome.getRawValue().trim(),
+      policy: this.procedureForm.controls.policy.getRawValue().trim(),
+      activities: this.procedureActivities().controls.map((control) => {
+        const value = control.getRawValue() as ProcedureActivityFormValue;
+
+        return {
+          resource: value.resource.trim(),
+          serviceAction: value.serviceAction.trim(),
+          workInstruction: value.workInstruction.trim(),
+        };
+      }),
+      inputs: this.parseProcedureList(
+        this.procedureForm.controls.inputsText.getRawValue(),
+      ),
+      outputs: this.parseProcedureList(
+        this.procedureForm.controls.outputsText.getRawValue(),
+      ),
+    };
+
+    this.isSavingProcedure.set(true);
+    this.procedureErrorMessage.set(null);
+
+    try {
+      if (this.editingProcedureId()) {
+        await firstValueFrom(
+          this.api.updateProcedure(this.editingProcedureId()!, payload),
+        );
+        this.toast.success('Procedure updated successfully');
+      } else {
+        await firstValueFrom(this.api.createProcedure(currentVersion.id, payload));
+        this.toast.success('Procedure created successfully');
+      }
+
+      await this.reloadSupportingData(currentVersion);
+      this.cancelProcedureEdit();
+    } catch (error) {
+      this.procedureErrorMessage.set(
+        getHttpErrorMessage(error, 'Unable to save the procedure.'),
+      );
+      this.toast.error('Failed to save procedure');
+    } finally {
+      this.isSavingProcedure.set(false);
+    }
+  }
+
+  protected async deleteProcedure(id: string): Promise<void> {
+    const currentVersion = this.version();
+
+    if (!currentVersion) {
+      return;
+    }
+
+    this.isDeletingProcedure.set(true);
+    this.procedureErrorMessage.set(null);
+
+    try {
+      await firstValueFrom(this.api.deleteProcedure(id));
+      await this.reloadSupportingData(currentVersion);
+
+      if (this.editingProcedureId() === id) {
+        this.cancelProcedureEdit();
+      }
+
+      this.toast.success('Procedure deleted successfully');
+    } catch (error) {
+      this.procedureErrorMessage.set(
+        getHttpErrorMessage(error, 'Unable to delete the procedure.'),
+      );
+      this.toast.error('Failed to delete procedure');
+    } finally {
+      this.isDeletingProcedure.set(false);
+    }
+  }
+
   protected async runLifecycleAction(action: LifecycleActionDefinition): Promise<void> {
     const currentVersion = this.version();
 
@@ -1112,7 +1502,7 @@ export class VersionDetailPageComponent {
         case 'submit':
           if (!this.allChecklistChecked()) {
             this.actionErrorMessage.set(
-              'Complete the submission checklist and attach a BPMN file before submitting.',
+              'Complete the submission checklist, attach a BPMN file, and define at least one procedure before submitting.',
             );
             return;
           }
@@ -1171,6 +1561,7 @@ export class VersionDetailPageComponent {
     this.draftErrorMessage.set(null);
     this.actionErrorMessage.set(null);
     this.uploadErrorMessage.set(null);
+    this.procedureErrorMessage.set(null);
 
     try {
       const version = await firstValueFrom(this.api.getVersion(versionId));
@@ -1184,6 +1575,7 @@ export class VersionDetailPageComponent {
       this.relatedVersions.set(relatedVersions);
       this.selectedTab.set(this.resolveInitialTab());
       this.patchDraftState(version);
+      this.cancelProcedureEdit();
       await this.reloadSupportingData(version);
     } catch (error) {
       this.errorMessage.set(getHttpErrorMessage(error, 'Unable to load the version detail.'));
@@ -1333,6 +1725,89 @@ export class VersionDetailPageComponent {
       default:
         return null;
     }
+  }
+
+  private createProcedureActivityGroup(
+    activity?: Partial<ProcedureActivityFormValue>,
+  ) {
+    return this.fb.group({
+      resource: [activity?.resource ?? '', [Validators.required]],
+      serviceAction: [activity?.serviceAction ?? '', [Validators.required]],
+      workInstruction: [activity?.workInstruction ?? '', [Validators.required]],
+    });
+  }
+
+  private resetProcedureActivities(
+    activities: ProcedureActivityFormValue[] = [],
+  ): void {
+    this.procedureActivities().clear();
+
+    for (const activity of activities) {
+      this.procedureActivities().push(this.createProcedureActivityGroup(activity));
+    }
+  }
+
+  private resetProcedureForm(): void {
+    this.procedureForm.reset({
+      title: '',
+      utility: '',
+      warranty: '',
+      outcome: '',
+      policy: '',
+      inputsText: '',
+      outputsText: '',
+    });
+    this.resetProcedureActivities();
+  }
+
+  private mapProcedureActivitiesToForm(
+    activities: Record<string, unknown>[] | null | undefined,
+  ): ProcedureActivityFormValue[] {
+    return (activities ?? []).map((activity) => ({
+      resource: this.readProcedureString(activity, ['resource', 'Resource']),
+      serviceAction: this.readProcedureString(activity, [
+        'service_action',
+        'serviceAction',
+        'Service Action',
+      ]),
+      workInstruction: this.readProcedureString(activity, [
+        'work_instruction',
+        'workInstruction',
+        'Work Instruction',
+      ]),
+    }));
+  }
+
+  private stringifyProcedureList(
+    items: unknown[] | null | undefined,
+  ): string {
+    return (items ?? [])
+      .map((item) =>
+        typeof item === 'string' ? item : JSON.stringify(item),
+      )
+      .join('\n');
+  }
+
+  private parseProcedureList(value: string): string[] {
+    return value
+      .split('\n')
+      .map((entry) => entry.trim())
+      .filter((entry) => entry.length > 0);
+  }
+
+  private readProcedureString(
+    activity: Record<string, unknown>,
+    keys: string[],
+  ): string {
+    for (const key of keys) {
+      const value = activity[key];
+
+      if (typeof value === 'string') {
+        return value;
+      }
+    }
+
+    return '';
   }
 
   private async persistDraft(showMessageOnError: boolean): Promise<void> {

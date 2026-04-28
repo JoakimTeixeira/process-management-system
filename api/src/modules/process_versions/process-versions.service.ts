@@ -357,6 +357,7 @@ export class ProcessVersionsService {
     );
     this.ensureMinimumMetadata(version);
     await this.ensureHasBpmnAsset(id);
+    await this.ensureHasProcedure(id);
 
     return await this.transitionVersionState({
       version,
@@ -470,6 +471,7 @@ export class ProcessVersionsService {
     this.ensureMinimumMetadata(version);
     this.ensureChecklistComplete(version);
     await this.ensureHasBpmnAsset(id);
+    await this.ensureHasProcedure(id);
 
     return await this.dataSource.transaction(async (manager) => {
       const lockedVersion = await this.getRequiredVersion(id, manager, true);
@@ -850,6 +852,25 @@ export class ProcessVersionsService {
     if (bpmnAssetCount === 0) {
       throw new ConflictException(
         'At least one BPMN asset must be attached before this transition',
+      );
+    }
+  }
+
+  private async ensureHasProcedure(id: string): Promise<void> {
+    const rows = await this.dataSource.query<{ exists: boolean }[]>(
+      `
+        SELECT EXISTS (
+          SELECT 1
+          FROM procedures pr
+          WHERE pr.process_version_id = $1
+        ) AS exists
+      `,
+      [id],
+    );
+
+    if (!rows[0]?.exists) {
+      throw new ConflictException(
+        'At least one procedure must be defined before this transition',
       );
     }
   }

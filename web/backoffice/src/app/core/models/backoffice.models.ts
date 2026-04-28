@@ -117,8 +117,8 @@ export interface ProcedureRecord {
   outcome: string | null;
   policy: string | null;
   activities: Record<string, unknown>[] | null;
-  inputs: Record<string, unknown>[] | null;
-  outputs: Record<string, unknown>[] | null;
+  inputs: unknown[] | null;
+  outputs: unknown[] | null;
 }
 
 export interface AssetRecord {
