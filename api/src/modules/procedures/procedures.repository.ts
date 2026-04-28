@@ -12,6 +12,7 @@ interface ProcedureRow extends QueryRow {
   id: string;
   process_version_id: string;
   process_id?: string;
+  area_id?: string;
   process_code?: string;
   process_title?: string;
   version_number?: number;
@@ -32,6 +33,7 @@ export interface ProcedureRecord {
   id: string;
   processVersionId: string;
   processId?: string;
+  areaId?: string;
   processCode?: string;
   processTitle?: string;
   versionNumber?: number;

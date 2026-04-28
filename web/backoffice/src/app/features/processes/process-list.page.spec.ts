@@ -12,6 +12,8 @@ interface ProcessListPageTestInstance {
   openRoute: ProcessListPageComponent['openRoute'];
   workRoute: ProcessListPageComponent['workRoute'];
   canManageProcess: ProcessListPageComponent['canManageProcess'];
+  filteredProcesses: ProcessListPageComponent['filteredProcesses'];
+  selectedAreaId: ProcessListPageComponent['selectedAreaId'];
 }
 
 describe('ProcessListPageComponent', () => {
@@ -65,8 +67,37 @@ describe('ProcessListPageComponent', () => {
   beforeEach(async () => {
     api = jasmine.createSpyObj<BackofficeApiService>('BackofficeApiService', [
       'listProcesses',
+      'listAreas',
     ]);
     api.listProcesses.and.returnValue(of([processRecord]));
+    api.listAreas.and.returnValue(
+      of([
+        {
+          id: 'area-1',
+          code: 'A1',
+          title: 'Change Area',
+          description: null,
+          teamId: 'team-1',
+          teamName: 'Operations',
+          ownerId: 'owner-1',
+          ownerName: 'Alice Owner',
+          itilPracticeId: 'practice-1',
+          itilPractice: { id: 'practice-1', name: 'Change Enablement' },
+        },
+        {
+          id: 'area-2',
+          code: 'A2',
+          title: 'Service Desk',
+          description: null,
+          teamId: 'team-1',
+          teamName: 'Operations',
+          ownerId: 'owner-1',
+          ownerName: 'Alice Owner',
+          itilPracticeId: 'practice-2',
+          itilPractice: { id: 'practice-2', name: 'Incident Management' },
+        },
+      ]),
+    );
 
     currentUserState = signal({
       id: 'reviewer-1',
@@ -179,5 +210,38 @@ describe('ProcessListPageComponent', () => {
         teamName: 'Finance',
       }),
     ).toBeFalse();
+  });
+
+  it('filters processes by area', async () => {
+    api.listProcesses.and.returnValue(
+      of([
+        processRecord,
+        {
+          ...processRecord,
+          id: 'process-2',
+          areaId: 'area-2',
+          code: 'P2',
+          title: 'Incident intake',
+        },
+      ]),
+    );
+
+    const fixture = TestBed.createComponent(ProcessListPageComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const component = fixture.componentInstance as unknown as ProcessListPageTestInstance;
+
+    expect(component.filteredProcesses().map((process) => process.id)).toEqual([
+      'process-1',
+      'process-2',
+    ]);
+
+    component.selectedAreaId.set('area-2');
+    fixture.detectChanges();
+
+    expect(component.filteredProcesses().map((process) => process.id)).toEqual([
+      'process-2',
+    ]);
   });
 });
