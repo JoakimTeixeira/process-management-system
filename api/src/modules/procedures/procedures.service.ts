@@ -43,6 +43,7 @@ export class ProceduresService {
       currentUser,
     );
     this.ensureDraftLifecycle(processVersion.lifecycleState);
+    this.ensureCompleteProcedurePayload(createProcedureDto);
     const nextProcedureCode =
       await this.proceduresRepository.getNextProcedureCode(processVersionId);
 
@@ -137,9 +138,7 @@ export class ProceduresService {
       );
     }
 
-    if (Object.keys(updateProcedureDto).length === 0) {
-      return currentProcedure;
-    }
+    this.ensureCompleteProcedurePayload(updateProcedureDto);
 
     try {
       const updatedProcedure = await this.proceduresRepository.update(
@@ -230,6 +229,25 @@ export class ProceduresService {
       service_action: activity.serviceAction,
       work_instruction: activity.workInstruction,
     }));
+  }
+
+  private ensureCompleteProcedurePayload(
+    procedure: UpdateProcedureDto | CreateProcedureDto,
+  ): void {
+    if (
+      procedure.title.trim() === '' ||
+      procedure.utility.trim() === '' ||
+      procedure.warranty.trim() === '' ||
+      procedure.outcome.trim() === '' ||
+      procedure.policy.trim() === '' ||
+      procedure.activities.length === 0 ||
+      procedure.inputs.length === 0 ||
+      procedure.outputs.length === 0
+    ) {
+      throw new BadRequestException(
+        'All procedure fields are required, including at least one activity, input, and output',
+      );
+    }
   }
 
   private assertEditorRole(currentUser: AuthenticatedUser): void {

@@ -101,9 +101,15 @@ describe('ProceduresService', () => {
           warranty: 'Procedure executes correctly',
           outcome: 'Expected result is delivered',
           policy: 'Applies to all draft workflow executions',
-          activities: [],
-          inputs: [],
-          outputs: [],
+          activities: [
+            {
+              resource: 'Coordinator',
+              serviceAction: 'Validate request',
+              workInstruction: 'Check the submission fields',
+            },
+          ],
+          inputs: ['Request form'],
+          outputs: ['Validated request'],
         },
         currentUser,
       ),
@@ -133,9 +139,15 @@ describe('ProceduresService', () => {
       warranty: 'Procedure executes correctly',
       outcome: 'Expected result is delivered',
       policy: 'Applies to all draft workflow executions',
-      activities: [],
-      inputs: [],
-      outputs: [],
+      activities: [
+        {
+          resource: 'Coordinator',
+          service_action: 'Validate request',
+          work_instruction: 'Check the submission fields',
+        },
+      ],
+      inputs: ['Request form'],
+      outputs: ['Validated request'],
     });
 
     const procedure = await service.create(
@@ -146,9 +158,15 @@ describe('ProceduresService', () => {
         warranty: 'Procedure executes correctly',
         outcome: 'Expected result is delivered',
         policy: 'Applies to all draft workflow executions',
-        activities: [],
-        inputs: [],
-        outputs: [],
+        activities: [
+          {
+            resource: 'Coordinator',
+            serviceAction: 'Validate request',
+            workInstruction: 'Check the submission fields',
+          },
+        ],
+        inputs: ['Request form'],
+        outputs: ['Validated request'],
       },
       currentUser,
     );
@@ -202,6 +220,57 @@ describe('ProceduresService', () => {
 
     await expect(
       service.update('procedure-1', { code: '1.9' } as never, currentUser),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('should reject incomplete updates when required procedure content is missing', async () => {
+    proceduresRepository.findById.mockResolvedValue({
+      id: 'procedure-1',
+      processVersionId: 'version-1',
+      code: '1.1',
+      title: 'Procedure',
+      utility: 'Provide workflow functionality',
+      warranty: 'Procedure executes correctly',
+      outcome: 'Expected result is delivered',
+      policy: 'Applies to all draft workflow executions',
+      activities: [
+        {
+          resource: 'Coordinator',
+          service_action: 'Validate request',
+          work_instruction: 'Check the submission fields',
+        },
+      ],
+      inputs: ['Request form'],
+      outputs: ['Validated request'],
+    });
+    processVersionsRepository.findById.mockResolvedValue({
+      id: 'version-1',
+      processId: 'process-1',
+      versionNumber: 1,
+      lifecycleState: 'Draft',
+      architectureState: 'AS-IS',
+      title: 'Draft',
+      checklistCompleted: false,
+      derivedFromVersionId: null,
+      changeDescription: 'change',
+      reasonForChange: 'reason',
+    });
+
+    await expect(
+      service.update(
+        'procedure-1',
+        {
+          title: 'Procedure',
+          utility: 'Provide workflow functionality',
+          warranty: 'Procedure executes correctly',
+          outcome: 'Expected result is delivered',
+          policy: 'Applies to all draft workflow executions',
+          activities: [],
+          inputs: [],
+          outputs: [],
+        },
+        currentUser,
+      ),
     ).rejects.toBeInstanceOf(BadRequestException);
   });
 
@@ -260,9 +329,15 @@ describe('ProceduresService', () => {
           warranty: 'Procedure executes correctly',
           outcome: 'Expected result is delivered',
           policy: 'Applies to all draft workflow executions',
-          activities: [],
-          inputs: [],
-          outputs: [],
+          activities: [
+            {
+              resource: 'Coordinator',
+              serviceAction: 'Validate request',
+              workInstruction: 'Check the submission fields',
+            },
+          ],
+          inputs: ['Request form'],
+          outputs: ['Validated request'],
         },
         { ...currentUser, role: Role.REVIEWER },
       ),

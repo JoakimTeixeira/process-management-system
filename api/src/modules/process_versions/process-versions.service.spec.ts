@@ -67,14 +67,21 @@ describe('ProcessVersionsService', () => {
 
   beforeEach(() => {
     dataSource = {
-      query: jest.fn().mockResolvedValue([{ exists: true }]),
-      transaction: jest
+      query: jest
         .fn()
-        .mockImplementation(
-          async (
-            runInTransaction: (entityManager: unknown) => Promise<unknown>,
-          ) => await runInTransaction({}),
+        .mockImplementation((sql: string) =>
+          Promise.resolve(
+            sql.includes('SELECT EXISTS') ? [{ exists: true }] : [],
+          ),
         ),
+      transaction: jest.fn().mockImplementation(
+        async (
+          runInTransaction: (entityManager: unknown) => Promise<unknown>,
+        ) =>
+          await runInTransaction({
+            query: dataSource.query,
+          }),
+      ),
     };
     processesRepository = {
       findById: jest.fn(),
@@ -131,7 +138,9 @@ describe('ProcessVersionsService', () => {
       lifecycleState: 'Draft',
     });
     processVersionsRepository.countBpmnAssets.mockResolvedValue(1);
-    dataSource.query.mockResolvedValue([{ exists: false }]);
+    dataSource.query.mockImplementation((sql: string) =>
+      Promise.resolve(sql.includes('SELECT EXISTS') ? [{ exists: false }] : []),
+    );
 
     await expect(
       service.submitForReview(
@@ -399,7 +408,6 @@ describe('ProcessVersionsService', () => {
   it('should block publish when the approver and publisher are the same actor', async () => {
     processVersionsRepository.findById.mockResolvedValue(approvedVersion);
     processVersionsRepository.countBpmnAssets.mockResolvedValue(1);
-    dataSource.query.mockResolvedValue([{ exists: true }]);
     processVersionsRepository.findLatestActorForState.mockResolvedValue(
       currentUser.id,
     );
@@ -426,7 +434,6 @@ describe('ProcessVersionsService', () => {
   it('should block publish when approval evidence is missing', async () => {
     processVersionsRepository.findById.mockResolvedValue(approvedVersion);
     processVersionsRepository.countBpmnAssets.mockResolvedValue(1);
-    dataSource.query.mockResolvedValue([{ exists: true }]);
     processVersionsRepository.findLatestActorForState.mockResolvedValue(null);
     processVersionsRepository.findPublishedVersion.mockResolvedValue(null);
 
@@ -438,7 +445,9 @@ describe('ProcessVersionsService', () => {
   it('should block publish when no procedure is defined', async () => {
     processVersionsRepository.findById.mockResolvedValue(approvedVersion);
     processVersionsRepository.countBpmnAssets.mockResolvedValue(1);
-    dataSource.query.mockResolvedValue([{ exists: false }]);
+    dataSource.query.mockImplementation((sql: string) =>
+      Promise.resolve(sql.includes('SELECT EXISTS') ? [{ exists: false }] : []),
+    );
 
     await expect(
       service.publish('version-1', { reason: 'publish' }, currentUser),
@@ -466,7 +475,6 @@ describe('ProcessVersionsService', () => {
 
     processVersionsRepository.findById.mockResolvedValue(approvedVersion);
     processVersionsRepository.countBpmnAssets.mockResolvedValue(1);
-    dataSource.query.mockResolvedValue([{ exists: true }]);
     processVersionsRepository.findLatestActorForState.mockResolvedValue(
       'reviewer-1',
     );
@@ -610,6 +618,7 @@ describe('ProcessVersionsService', () => {
     };
 
     processVersionsRepository.findById.mockResolvedValue(sourceVersion);
+    processVersionsRepository.countBpmnAssets.mockResolvedValue(1);
     processVersionsRepository.findPublishedVersion.mockResolvedValue(
       existingAsIsVersion,
     );
@@ -625,6 +634,48 @@ describe('ProcessVersionsService', () => {
     processVersionsRepository.getNextVersionNumber.mockResolvedValue(4);
     processVersionsRepository.create.mockResolvedValue(promotedVersion);
     processVersionsRepository.insertStateHistory.mockResolvedValue(undefined);
+    dataSource.query.mockImplementation((sql: string) => {
+      if (sql.includes('SELECT EXISTS')) {
+        return Promise.resolve([{ exists: true }]);
+      }
+
+      if (sql.includes('FROM procedures pr')) {
+        return Promise.resolve([
+          {
+            code: 'P1.1',
+            title: 'Validate request',
+            utility: 'Ensure the request is complete',
+            warranty: 'Consistent intake',
+            outcome: 'Validated request',
+            policy: 'Follow intake policy',
+            activities: [
+              {
+                resource: 'Coordinator',
+                service_action: 'Validate request',
+                work_instruction: 'Check the submission fields',
+              },
+            ],
+            inputs: ['Request form'],
+            outputs: ['Validated request'],
+          },
+        ]);
+      }
+
+      if (sql.includes('FROM assets a')) {
+        return Promise.resolve([
+          {
+            caption: 'Draft BPMN',
+            asset_type: 'BPMN',
+            file_path: 'backoffice/bpmn/file.bpmn',
+            mime_type: 'application/xml',
+            checksum: 'abc',
+            size_bytes: 123,
+          },
+        ]);
+      }
+
+      return Promise.resolve([]);
+    });
 
     await service.promote(
       sourceVersion.id,
@@ -661,5 +712,74 @@ describe('ProcessVersionsService', () => {
       }),
       expect.anything(),
     );
+    expect(dataSource.query).toHaveBeenCalledWith(
+      expect.stringContaining('INSERT INTO procedures'),
+      expect.arrayContaining(['promoted-version']),
+    );
+    expect(dataSource.query).toHaveBeenCalledWith(
+      expect.stringContaining('INSERT INTO assets'),
+      expect.arrayContaining(['promoted-version']),
+    );
+  });
+
+  it('should require same-team authorization before approve', async () => {
+    const inReviewVersion = {
+      ...approvedVersion,
+      lifecycleState: 'In Review',
+    };
+
+    processVersionsRepository.findById.mockResolvedValue(inReviewVersion);
+    workflowAuthorizationService.assertSameTeamAsProcessVersionOwner.mockRejectedValueOnce(
+      new ForbiddenException('Forbidden resource'),
+    );
+
+    await expect(
+      service.approve(
+        'version-1',
+        { reason: 'approve' },
+        {
+          ...currentUser,
+          role: Role.REVIEWER,
+        },
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+
+    expect(
+      workflowAuthorizationService.assertSameTeamAsProcessVersionOwner,
+    ).toHaveBeenCalledWith('version-1', {
+      ...currentUser,
+      role: Role.REVIEWER,
+    });
+  });
+
+  it('should require same-team authorization before publish and promote', async () => {
+    const publishedToBeVersion = {
+      ...approvedVersion,
+      lifecycleState: 'Published',
+      architectureState: 'TO-BE',
+    };
+
+    processVersionsRepository.findById.mockResolvedValue(publishedToBeVersion);
+    workflowAuthorizationService.assertSameTeamAsProcessVersionOwner
+      .mockRejectedValueOnce(new ForbiddenException('Forbidden resource'))
+      .mockRejectedValueOnce(new ForbiddenException('Forbidden resource'));
+
+    await expect(
+      service.publish('version-1', { reason: 'publish' }, currentUser),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+    await expect(
+      service.promote(
+        'version-1',
+        { justification: 'TO-BE has been adopted' },
+        currentUser,
+      ),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+
+    expect(
+      workflowAuthorizationService.assertSameTeamAsProcessVersionOwner,
+    ).toHaveBeenNthCalledWith(1, 'version-1', currentUser);
+    expect(
+      workflowAuthorizationService.assertSameTeamAsProcessVersionOwner,
+    ).toHaveBeenNthCalledWith(2, 'version-1', currentUser);
   });
 });

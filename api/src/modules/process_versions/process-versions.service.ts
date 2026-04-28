@@ -26,6 +26,27 @@ import type {
 } from './process-versions.repository';
 import { ProcessVersionsRepository } from './process-versions.repository';
 
+interface ProcedureCloneRow {
+  code: string;
+  title: string;
+  utility: string;
+  warranty: string;
+  outcome: string;
+  policy: string;
+  activities: Record<string, unknown>[];
+  inputs: string[];
+  outputs: string[];
+}
+
+interface AssetCloneRow {
+  caption: string;
+  asset_type: string;
+  file_path: string;
+  mime_type: string;
+  checksum: string;
+  size_bytes: number;
+}
+
 @Injectable()
 export class ProcessVersionsService {
   private static readonly DUPLICATE_VERSION_MESSAGE =
@@ -382,6 +403,11 @@ export class ProcessVersionsService {
     );
     const version = await this.getByIdInternal(id);
 
+    await this.workflowAuthorizationService.assertSameTeamAsProcessVersionOwner(
+      id,
+      currentUser,
+    );
+
     this.ensureLifecycle(
       version,
       'In Review',
@@ -408,6 +434,11 @@ export class ProcessVersionsService {
       'Only reviewers can reject versions',
     );
     const version = await this.getByIdInternal(id);
+
+    await this.workflowAuthorizationService.assertSameTeamAsProcessVersionOwner(
+      id,
+      currentUser,
+    );
 
     this.ensureLifecycle(
       version,
@@ -436,6 +467,11 @@ export class ProcessVersionsService {
     );
     const version = await this.getByIdInternal(id);
 
+    await this.workflowAuthorizationService.assertSameTeamAsProcessVersionOwner(
+      id,
+      currentUser,
+    );
+
     this.ensureLifecycle(
       version,
       'Approved',
@@ -462,6 +498,11 @@ export class ProcessVersionsService {
       'Only publishers can publish versions',
     );
     const version = await this.getByIdInternal(id);
+
+    await this.workflowAuthorizationService.assertSameTeamAsProcessVersionOwner(
+      id,
+      currentUser,
+    );
 
     this.ensureLifecycle(
       version,
@@ -589,6 +630,11 @@ export class ProcessVersionsService {
     );
     const version = await this.getByIdInternal(id);
 
+    await this.workflowAuthorizationService.assertSameTeamAsProcessVersionOwner(
+      id,
+      currentUser,
+    );
+
     this.ensureLifecycle(
       version,
       'Published',
@@ -616,6 +662,11 @@ export class ProcessVersionsService {
     );
     const sourceVersion = await this.getByIdInternal(id);
 
+    await this.workflowAuthorizationService.assertSameTeamAsProcessVersionOwner(
+      id,
+      currentUser,
+    );
+
     this.ensureLifecycle(
       sourceVersion,
       'Published',
@@ -627,6 +678,11 @@ export class ProcessVersionsService {
         'Only published TO-BE versions can be promoted',
       );
     }
+
+    this.ensureMinimumMetadata(sourceVersion);
+    this.ensureChecklistComplete(sourceVersion);
+    await this.ensureHasBpmnAsset(id);
+    await this.ensureHasProcedure(id);
 
     return await this.dataSource.transaction(async (manager) => {
       const lockedSource = await this.getRequiredVersion(id, manager, true);
@@ -725,6 +781,19 @@ export class ProcessVersionsService {
           createdBy: currentUser.id,
           updatedBy: currentUser.id,
         },
+        manager,
+      );
+
+      await this.cloneProceduresForPromotedVersion(
+        lockedSource.id,
+        promotedVersion.id,
+        currentUser.id,
+        manager,
+      );
+      await this.cloneAssetsForPromotedVersion(
+        lockedSource.id,
+        promotedVersion.id,
+        currentUser.id,
         manager,
       );
 
@@ -871,6 +940,131 @@ export class ProcessVersionsService {
     if (!rows[0]?.exists) {
       throw new ConflictException(
         'At least one procedure must be defined before this transition',
+      );
+    }
+  }
+
+  private async cloneProceduresForPromotedVersion(
+    sourceVersionId: string,
+    targetVersionId: string,
+    actorId: string,
+    executor: SqlExecutor,
+  ): Promise<void> {
+    const rows = await executor.query<ProcedureCloneRow[]>(
+      `
+        SELECT
+          pr.code,
+          pr.title,
+          pr.utility,
+          pr.warranty,
+          pr.outcome,
+          pr.policy,
+          pr.activities,
+          pr.inputs,
+          pr.outputs
+        FROM procedures pr
+        WHERE pr.process_version_id = $1
+        ORDER BY pr.code ASC
+      `,
+      [sourceVersionId],
+    );
+
+    for (const row of rows) {
+      await executor.query(
+        `
+          INSERT INTO procedures (
+            process_version_id,
+            code,
+            title,
+            utility,
+            warranty,
+            outcome,
+            policy,
+            activities,
+            inputs,
+            outputs,
+            created_by,
+            updated_by
+          )
+          VALUES (
+            $1,
+            $2,
+            $3,
+            $4,
+            $5,
+            $6,
+            $7,
+            $8::jsonb,
+            $9::jsonb,
+            $10::jsonb,
+            $11,
+            $11
+          )
+        `,
+        [
+          targetVersionId,
+          row.code,
+          row.title,
+          row.utility,
+          row.warranty,
+          row.outcome,
+          row.policy,
+          JSON.stringify(row.activities ?? []),
+          JSON.stringify(row.inputs ?? []),
+          JSON.stringify(row.outputs ?? []),
+          actorId,
+        ],
+      );
+    }
+  }
+
+  private async cloneAssetsForPromotedVersion(
+    sourceVersionId: string,
+    targetVersionId: string,
+    actorId: string,
+    executor: SqlExecutor,
+  ): Promise<void> {
+    const rows = await executor.query<AssetCloneRow[]>(
+      `
+        SELECT
+          a.caption,
+          a.asset_type,
+          a.file_path,
+          a.mime_type,
+          a.checksum,
+          a.size_bytes
+        FROM assets a
+        WHERE a.process_version_id = $1
+        ORDER BY a.created_at ASC
+      `,
+      [sourceVersionId],
+    );
+
+    for (const row of rows) {
+      await executor.query(
+        `
+          INSERT INTO assets (
+            process_version_id,
+            caption,
+            asset_type,
+            file_path,
+            mime_type,
+            checksum,
+            size_bytes,
+            created_by
+          )
+          VALUES ($1, $2, $3::asset_type, $4, $5, $6, $7, $8)
+        `,
+        [
+          targetVersionId,
+          row.caption,
+          row.asset_type,
+          row.file_path,
+          row.mime_type,
+          row.checksum,
+          row.size_bytes,
+          actorId,
+        ],
       );
     }
   }
