@@ -196,7 +196,7 @@ export const users: UserSeed[] = [
     email: 'victor.viewer@example.com',
     name: 'Victor Viewer',
     roleName: 'VIEWER',
-    teamCode: 'HR',
+    teamCode: 'IT',
   },
   {
     email: 'sam.admin@example.com',
@@ -1122,7 +1122,7 @@ export const auditLogs: AuditLogSeed[] = [
       email: 'victor.viewer@example.com',
       name: 'Victor Viewer',
       roleName: 'VIEWER',
-      teamCode: 'HR',
+      teamCode: 'IT',
     },
   },
   {
