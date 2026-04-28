@@ -1,4 +1,3 @@
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
@@ -139,7 +138,7 @@ describe('VersionDetailPageComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [VersionDetailPageComponent, NoopAnimationsModule],
+      imports: [VersionDetailPageComponent],
       providers: [
         { provide: BackofficeApiService, useValue: api },
         { provide: AuthService, useValue: auth },

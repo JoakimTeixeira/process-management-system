@@ -1,4 +1,3 @@
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
@@ -45,7 +44,7 @@ describe('UserFormPageComponent', () => {
     );
 
     await TestBed.configureTestingModule({
-      imports: [UserFormPageComponent, NoopAnimationsModule],
+      imports: [UserFormPageComponent],
       providers: [
         { provide: BackofficeApiService, useValue: api },
         provideRouter([]),

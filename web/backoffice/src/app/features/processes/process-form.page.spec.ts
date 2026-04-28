@@ -1,4 +1,3 @@
-import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
@@ -87,7 +86,7 @@ describe('ProcessFormPageComponent', () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [ProcessFormPageComponent, NoopAnimationsModule],
+      imports: [ProcessFormPageComponent],
       providers: [
         { provide: BackofficeApiService, useValue: api },
         { provide: AuthService, useValue: auth },
