@@ -125,15 +125,24 @@ export class UsersService {
       isActive?: boolean;
     } = {};
 
-    if (updateUserDto.name !== undefined) {
+    if (
+      updateUserDto.name !== undefined &&
+      updateUserDto.name !== currentRecord.name
+    ) {
       updateInput.name = updateUserDto.name;
     }
 
-    if (updateUserDto.email !== undefined) {
+    if (
+      updateUserDto.email !== undefined &&
+      updateUserDto.email !== currentRecord.email
+    ) {
       updateInput.email = updateUserDto.email;
     }
 
-    if (updateUserDto.teamId !== undefined) {
+    if (
+      updateUserDto.teamId !== undefined &&
+      updateUserDto.teamId !== currentRecord.team.id
+    ) {
       await this.ensureTeamExists(updateUserDto.teamId);
       updateInput.teamId = updateUserDto.teamId;
     }
@@ -142,14 +151,24 @@ export class UsersService {
       updateUserDto.roleId !== undefined ||
       updateUserDto.roleName !== undefined
     ) {
-      const role = await this.resolveRole(
-        updateUserDto.roleId,
-        updateUserDto.roleName,
-      );
-      updateInput.roleId = role.id;
+      const requestedRoleId = updateUserDto.roleId;
+      const requestedRoleName = updateUserDto.roleName;
+      const roleChanged =
+        (requestedRoleId !== undefined &&
+          requestedRoleId !== currentRecord.role.id) ||
+        (requestedRoleName !== undefined &&
+          requestedRoleName !== currentRecord.role.name);
+
+      if (roleChanged) {
+        const role = await this.resolveRole(requestedRoleId, requestedRoleName);
+        updateInput.roleId = role.id;
+      }
     }
 
-    if (updateUserDto.isActive !== undefined) {
+    if (
+      updateUserDto.isActive !== undefined &&
+      updateUserDto.isActive !== currentRecord.isActive
+    ) {
       updateInput.isActive = updateUserDto.isActive;
     }
 

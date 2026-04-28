@@ -79,4 +79,109 @@ describe('UserFormPageComponent', () => {
     ]);
     expect(component.resetPasswordForm.controls.newPassword.enabled).toBeTrue();
   });
+
+  it('shows password requirements for create mode and blocks weak passwords', async () => {
+    const fixture = TestBed.createComponent(UserFormPageComponent);
+
+    api.createUser.and.returnValue(
+      of({
+        id: 'user-2',
+        name: 'Alice Editor',
+        email: 'alice@example.com',
+        isActive: true,
+        role: { id: 'role-2', name: 'EDITOR' },
+        team: { id: 'team-2', code: 'HR', name: 'Human Resources' },
+      }),
+    );
+
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance as unknown as UserFormPageTestInstance;
+    const pageText = fixture.nativeElement.textContent as string;
+
+    expect(pageText).toContain('Password requirements');
+    expect(pageText).toContain('At least 15 characters');
+    expect(pageText).toContain('At least 1 uppercase letter');
+    expect(pageText).toContain('At least 1 lowercase letter');
+    expect(pageText).toContain('At least 1 number');
+    expect(pageText).toContain('At least 1 special character');
+
+    component.form.setValue({
+      name: 'Alice Editor',
+      email: 'alice@example.com',
+      roleName: 'EDITOR',
+      teamId: 'team-2',
+      password: 'weakpass',
+      isActive: true,
+    });
+
+    await (fixture.componentInstance as unknown as { submit: () => Promise<void> }).submit();
+    fixture.detectChanges();
+
+    expect(api.createUser).not.toHaveBeenCalled();
+    expect(component.form.controls.password.invalid).toBeTrue();
+  });
+
+  it('shows reset password requirements and blocks weak temporary passwords', async () => {
+    const fixture = TestBed.createComponent(UserFormPageComponent);
+
+    fixture.componentRef.setInput('id', 'user-1');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance as unknown as UserFormPageTestInstance;
+    const pageText = fixture.nativeElement.textContent as string;
+
+    expect(pageText).toContain('Temporary password requirements');
+
+    component.resetPasswordForm.controls.newPassword.setValue('weakpass');
+
+    await (
+      fixture.componentInstance as unknown as { resetPassword: () => Promise<void> }
+    ).resetPassword();
+    fixture.detectChanges();
+
+    expect(api.resetUserPassword).not.toHaveBeenCalled();
+    expect(component.resetPasswordForm.controls.newPassword.invalid).toBeTrue();
+  });
+
+  it('only sends changed fields when reactivating an existing user', async () => {
+    const fixture = TestBed.createComponent(UserFormPageComponent);
+
+    api.getUser.and.returnValue(
+      of({
+        id: 'user-2',
+        name: 'Peter Publisher',
+        email: 'peter.publisher@entity.gov',
+        isActive: false,
+        role: { id: 'role-3', name: 'PUBLISHER' },
+        team: { id: 'team-2', code: 'HR', name: 'Human Resources' },
+      }),
+    );
+    api.updateUser.and.returnValue(
+      of({
+        id: 'user-2',
+        name: 'Peter Publisher',
+        email: 'peter.publisher@entity.gov',
+        isActive: true,
+        role: { id: 'role-3', name: 'PUBLISHER' },
+        team: { id: 'team-2', code: 'HR', name: 'Human Resources' },
+      }),
+    );
+
+    fixture.componentRef.setInput('id', 'user-2');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance as unknown as UserFormPageTestInstance;
+    component.form.patchValue({ isActive: true });
+
+    await (fixture.componentInstance as unknown as { submit: () => Promise<void> }).submit();
+
+    expect(api.updateUser).toHaveBeenCalledWith('user-2', { isActive: true });
+  });
 });

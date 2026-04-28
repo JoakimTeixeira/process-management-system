@@ -12,6 +12,9 @@ interface ProcessListPageTestInstance {
   openRoute: ProcessListPageComponent['openRoute'];
   workRoute: ProcessListPageComponent['workRoute'];
   canManageProcess: ProcessListPageComponent['canManageProcess'];
+  lifecycleState: ProcessListPageComponent['lifecycleState'];
+  waitingForRole: ProcessListPageComponent['waitingForRole'];
+  nextAction: ProcessListPageComponent['nextAction'];
   filteredProcesses: ProcessListPageComponent['filteredProcesses'];
   selectedAreaId: ProcessListPageComponent['selectedAreaId'];
 }
@@ -185,6 +188,30 @@ describe('ProcessListPageComponent', () => {
         },
       }),
     ).toBeNull();
+  });
+
+  it('treats a process with no versions yet as draft setup', async () => {
+    const fixture = TestBed.createComponent(ProcessListPageComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const component = fixture.componentInstance as unknown as ProcessListPageTestInstance;
+    const newProcess = {
+      ...processRecord,
+      governanceSummary: {
+        currentAsIsVersion: null,
+        currentToBeVersion: null,
+        activeWorkflowVersion: null,
+        versionCounts: {
+          total: 0,
+          archived: 0,
+        },
+      },
+    };
+
+    expect(component.lifecycleState(newProcess)).toBe('Draft');
+    expect(component.waitingForRole(newProcess)).toBe('EDITOR');
+    expect(component.nextAction(newProcess)).toBe('Create first version');
   });
 
   it('allows process maintenance only for editors on the same team', async () => {

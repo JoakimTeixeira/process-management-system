@@ -168,6 +168,44 @@ describe('UsersService', () => {
     );
   });
 
+  it('should reactivate a user without re-writing unchanged email, role, or team', async () => {
+    usersRepository.findById.mockResolvedValue({
+      id: 'user-2',
+      name: 'Peter Publisher',
+      email: 'peter.publisher@entity.gov',
+      isActive: false,
+      role: { id: 'role-3', name: Role.PUBLISHER },
+      team: { id: 'team-2', code: 'HR', name: 'Human Resources' },
+    });
+    usersRepository.update.mockResolvedValue({
+      id: 'user-2',
+      name: 'Peter Publisher',
+      email: 'peter.publisher@entity.gov',
+      isActive: true,
+      role: { id: 'role-3', name: Role.PUBLISHER },
+      team: { id: 'team-2', code: 'HR', name: 'Human Resources' },
+    });
+
+    const result = await service.update(
+      'user-2',
+      {
+        name: 'Peter Publisher',
+        email: 'peter.publisher@entity.gov',
+        roleName: Role.PUBLISHER,
+        teamId: 'team-2',
+        isActive: true,
+      },
+      currentUser,
+    );
+
+    expect(result.isActive).toBe(true);
+    expect(usersRepository.teamExists).not.toHaveBeenCalled();
+    expect(usersRepository.findRoleByName).not.toHaveBeenCalled();
+    expect(usersRepository.update).toHaveBeenCalledWith('user-2', {
+      isActive: true,
+    });
+  });
+
   it('should require a role identifier or role name during create', async () => {
     usersRepository.teamExists.mockResolvedValue(true);
 

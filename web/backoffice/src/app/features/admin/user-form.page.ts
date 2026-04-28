@@ -8,7 +8,14 @@ import {
   signal,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  NonNullableFormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
@@ -26,6 +33,59 @@ import { getHttpErrorMessage } from '../../core/http/http-error-message';
 import { ToastService } from '../../core/toast/toast.service';
 
 const USER_ROLES: AppRole[] = ['EDITOR', 'REVIEWER', 'PUBLISHER', 'VIEWER', 'SYSTEM_ADMIN'];
+const MIN_PASSWORD_LENGTH = 15;
+const PASSWORD_REQUIREMENTS_SUMMARY =
+  'Use at least 15 characters with uppercase, lowercase, a number, and a special character.';
+
+interface PasswordRule {
+  readonly key: string;
+  readonly label: string;
+  readonly test: (value: string) => boolean;
+}
+
+const PASSWORD_RULES: readonly PasswordRule[] = [
+  {
+    key: 'minLength',
+    label: 'At least 15 characters',
+    test: (value) => value.length >= MIN_PASSWORD_LENGTH,
+  },
+  {
+    key: 'uppercase',
+    label: 'At least 1 uppercase letter',
+    test: (value) => /[A-Z]/.test(value),
+  },
+  {
+    key: 'lowercase',
+    label: 'At least 1 lowercase letter',
+    test: (value) => /[a-z]/.test(value),
+  },
+  {
+    key: 'number',
+    label: 'At least 1 number',
+    test: (value) => /\d/.test(value),
+  },
+  {
+    key: 'special',
+    label: 'At least 1 special character',
+    test: (value) => /[^A-Za-z0-9]/.test(value),
+  },
+];
+
+function passwordPolicyValidator(): ValidatorFn {
+  return (control: AbstractControl<string>): ValidationErrors | null => {
+    const value = control.value ?? '';
+
+    if (!value) {
+      return null;
+    }
+
+    const unmetRules = PASSWORD_RULES
+      .filter((rule) => !rule.test(value))
+      .map((rule) => rule.key);
+
+    return unmetRules.length > 0 ? { passwordPolicy: unmetRules } : null;
+  };
+}
 
 @Component({
   selector: 'app-user-form-page',
@@ -50,6 +110,44 @@ const USER_ROLES: AppRole[] = ['EDITOR', 'REVIEWER', 'PUBLISHER', 'VIEWER', 'SYS
 
       .page {
         max-width: 52rem;
+      }
+
+      .password-checklist {
+        margin: -0.25rem 0 1rem;
+        padding: 0.9rem 1rem;
+        border: 1px solid rgba(15, 23, 42, 0.12);
+        border-radius: var(--radius-md);
+      }
+
+      .password-checklist p {
+        margin: 0 0 0.6rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+
+      .password-checklist ul {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        gap: 0.45rem;
+      }
+
+      .password-checklist li {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: rgba(15, 23, 42, 0.76);
+      }
+
+      .password-checklist li.met {
+        color: #166534;
+      }
+
+      .password-checklist mat-icon {
+        width: 1rem;
+        height: 1rem;
+        font-size: 1rem;
       }
     `,
   ],
@@ -101,7 +199,26 @@ const USER_ROLES: AppRole[] = ['EDITOR', 'REVIEWER', 'PUBLISHER', 'VIEWER', 'SYS
                 <mat-form-field appearance="outline">
                   <mat-label>Initial password</mat-label>
                   <input matInput type="password" formControlName="password" />
+                  @if (form.controls.password.touched && form.controls.password.invalid) {
+                    <mat-error>{{ passwordRequirementsSummary }}</mat-error>
+                  }
                 </mat-form-field>
+
+                <section class="password-checklist" aria-live="polite">
+                  <p>Password requirements</p>
+                  <ul>
+                    @for (rule of passwordRules; track rule.key) {
+                      <li [class.met]="passwordRuleMet(form.controls.password.getRawValue(), rule)">
+                        <mat-icon>{{
+                          passwordRuleMet(form.controls.password.getRawValue(), rule)
+                            ? 'check_circle'
+                            : 'radio_button_unchecked'
+                        }}</mat-icon>
+                        <span>{{ rule.label }}</span>
+                      </li>
+                    }
+                  </ul>
+                </section>
               }
 
               @if (isEdit()) {
@@ -133,7 +250,33 @@ const USER_ROLES: AppRole[] = ['EDITOR', 'REVIEWER', 'PUBLISHER', 'VIEWER', 'SYS
                 <mat-form-field appearance="outline">
                   <mat-label>Temporary password</mat-label>
                   <input matInput type="password" formControlName="newPassword" />
+                  @if (
+                    resetPasswordForm.controls.newPassword.touched &&
+                    resetPasswordForm.controls.newPassword.invalid
+                  ) {
+                    <mat-error>{{ passwordRequirementsSummary }}</mat-error>
+                  }
                 </mat-form-field>
+
+                <section class="password-checklist" aria-live="polite">
+                  <p>Temporary password requirements</p>
+                  <ul>
+                    @for (rule of passwordRules; track rule.key) {
+                      <li
+                        [class.met]="
+                          passwordRuleMet(resetPasswordForm.controls.newPassword.getRawValue(), rule)
+                        "
+                      >
+                        <mat-icon>{{
+                          passwordRuleMet(resetPasswordForm.controls.newPassword.getRawValue(), rule)
+                            ? 'check_circle'
+                            : 'radio_button_unchecked'
+                        }}</mat-icon>
+                        <span>{{ rule.label }}</span>
+                      </li>
+                    }
+                  </ul>
+                </section>
 
                 @if (resetPasswordErrorMessage(); as resetPasswordErrorMessage) {
                   <p class="error-message">{{ resetPasswordErrorMessage }}</p>
@@ -163,6 +306,8 @@ export class UserFormPageComponent {
   readonly id = input<string>();
 
   protected readonly roles = USER_ROLES;
+  protected readonly passwordRules = PASSWORD_RULES;
+  protected readonly passwordRequirementsSummary = PASSWORD_REQUIREMENTS_SUMMARY;
 
   private readonly api = inject(BackofficeApiService);
   private readonly fb = inject(NonNullableFormBuilder);
@@ -190,13 +335,29 @@ export class UserFormPageComponent {
   });
 
   protected readonly resetPasswordForm = this.fb.group({
-    newPassword: ['', [Validators.required, Validators.minLength(8)]],
+    newPassword: ['', [Validators.required, passwordPolicyValidator()]],
   });
 
   constructor() {
     effect(() => {
+      const passwordControl = this.form.controls.password;
+
+      if (this.isEdit()) {
+        passwordControl.clearValidators();
+      } else {
+        passwordControl.setValidators([Validators.required, passwordPolicyValidator()]);
+      }
+
+      passwordControl.updateValueAndValidity({ emitEvent: false });
+    });
+
+    effect(() => {
       void this.loadPage(this.id());
     });
+  }
+
+  protected passwordRuleMet(value: string, rule: PasswordRule): boolean {
+    return rule.test(value ?? '');
   }
 
   protected async submit(): Promise<void> {
@@ -210,13 +371,7 @@ export class UserFormPageComponent {
 
     try {
       if (this.id()) {
-        const payload = {
-          name: this.form.controls.name.getRawValue(),
-          email: this.form.controls.email.getRawValue(),
-          roleName: this.form.controls.roleName.getRawValue(),
-          teamId: this.form.controls.teamId.getRawValue() || undefined,
-          isActive: this.form.controls.isActive.getRawValue(),
-        };
+        const payload = this.buildUpdatePayload();
         await firstValueFrom(this.api.updateUser(this.id()!, payload));
         this.toast.success('User updated successfully');
       } else {
@@ -238,6 +393,57 @@ export class UserFormPageComponent {
     } finally {
       this.isSaving.set(false);
     }
+  }
+
+  private buildUpdatePayload(): Partial<{
+    name: string;
+    email: string;
+    roleName: AppRole;
+    teamId: string;
+    isActive: boolean;
+  }> {
+    const currentUser = this.user();
+    const formValue = this.form.getRawValue();
+
+    if (!currentUser) {
+      return {
+        name: formValue.name,
+        email: formValue.email,
+        roleName: formValue.roleName,
+        teamId: formValue.teamId || undefined,
+        isActive: formValue.isActive,
+      };
+    }
+
+    const payload: Partial<{
+      name: string;
+      email: string;
+      roleName: AppRole;
+      teamId: string;
+      isActive: boolean;
+    }> = {};
+
+    if (formValue.name !== currentUser.name) {
+      payload.name = formValue.name;
+    }
+
+    if (formValue.email !== currentUser.email) {
+      payload.email = formValue.email;
+    }
+
+    if (formValue.roleName !== currentUser.role.name) {
+      payload.roleName = formValue.roleName;
+    }
+
+    if (formValue.teamId !== currentUser.team.id) {
+      payload.teamId = formValue.teamId || undefined;
+    }
+
+    if (formValue.isActive !== currentUser.isActive) {
+      payload.isActive = formValue.isActive;
+    }
+
+    return payload;
   }
 
   protected async deactivateUser(): Promise<void> {
@@ -264,7 +470,7 @@ export class UserFormPageComponent {
   protected async resetPassword(): Promise<void> {
     if (!this.id() || this.resetPasswordForm.invalid) {
       this.resetPasswordForm.markAllAsTouched();
-      this.resetPasswordErrorMessage.set('Enter a temporary password with at least 8 characters.');
+      this.resetPasswordErrorMessage.set(PASSWORD_REQUIREMENTS_SUMMARY);
       return;
     }
 

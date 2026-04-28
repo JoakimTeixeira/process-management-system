@@ -306,14 +306,33 @@ export class ProcessListPageComponent implements OnInit {
   }
 
   protected lifecycleState(process: ProcessRecord): string {
-    if (process.governanceSummary?.activeWorkflowVersion) {
-      return process.governanceSummary.activeWorkflowVersion.lifecycleState;
+    const governanceSummary = process.governanceSummary;
+
+    if (governanceSummary?.activeWorkflowVersion) {
+      return governanceSummary.activeWorkflowVersion.lifecycleState;
     }
-    return 'Published';
+
+    if (governanceSummary?.currentAsIsVersion || governanceSummary?.currentToBeVersion) {
+      return 'Published';
+    }
+
+    if (
+      governanceSummary &&
+      governanceSummary.versionCounts.total > 0 &&
+      governanceSummary.versionCounts.total === governanceSummary.versionCounts.archived
+    ) {
+      return 'Archived';
+    }
+
+    return 'Draft';
   }
 
   protected waitingForRole(process: ProcessRecord): string {
-    return process.governanceSummary?.activeWorkflowVersion?.waitingForRole ?? '-';
+    if (process.governanceSummary?.activeWorkflowVersion?.waitingForRole) {
+      return process.governanceSummary.activeWorkflowVersion.waitingForRole;
+    }
+
+    return this.hasNoVersions(process) ? 'EDITOR' : '-';
   }
 
   protected isWaitingForCurrentUser(process: ProcessRecord): boolean {
@@ -329,7 +348,11 @@ export class ProcessListPageComponent implements OnInit {
   }
 
   protected nextAction(process: ProcessRecord): string {
-    return process.governanceSummary?.activeWorkflowVersion?.nextAction ?? '-';
+    if (process.governanceSummary?.activeWorkflowVersion?.nextAction) {
+      return process.governanceSummary.activeWorkflowVersion.nextAction;
+    }
+
+    return this.hasNoVersions(process) ? 'Create first version' : '-';
   }
 
   protected openRoute(process: ProcessRecord): string[] {
@@ -354,6 +377,10 @@ export class ProcessListPageComponent implements OnInit {
 
   protected canManageProcess(process: ProcessRecord): boolean {
     return this.accessControl.canManageProcess(process);
+  }
+
+  private hasNoVersions(process: ProcessRecord): boolean {
+    return (process.governanceSummary?.versionCounts.total ?? 0) === 0;
   }
 
   private async loadProcesses(): Promise<void> {

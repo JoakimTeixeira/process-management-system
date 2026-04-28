@@ -9,6 +9,8 @@ import { VersionDetailPageComponent } from './version-detail.page';
 
 interface VersionDetailPageTestInstance {
   draftForm: VersionDetailPageComponent['draftForm'];
+  checklistForm: VersionDetailPageComponent['checklistForm'];
+  allChecklistChecked: VersionDetailPageComponent['allChecklistChecked'];
   relatedVersions: VersionDetailPageComponent['relatedVersions'];
   assets: VersionDetailPageComponent['assets'];
   canEditDraft: VersionDetailPageComponent['canEditDraft'];
@@ -17,6 +19,7 @@ interface VersionDetailPageTestInstance {
   waitingForRoleLabel: VersionDetailPageComponent['waitingForRoleLabel'];
   nextActionLabel: VersionDetailPageComponent['nextActionLabel'];
   selectTab: VersionDetailPageComponent['selectTab'];
+  saveDraft: VersionDetailPageComponent['saveDraft'];
 }
 
 describe('VersionDetailPageComponent', () => {
@@ -226,5 +229,67 @@ describe('VersionDetailPageComponent', () => {
       { label: 'v2' },
       { label: 'Diagram' },
     ]);
+  });
+
+  it('preserves checklist selections after saving a draft when BPMN is still missing', async () => {
+    api.listAssets.and.returnValue(of([]));
+    api.updateVersion.and.returnValue(
+      of({
+        id: 'version-1',
+        processId: 'process-1',
+        versionNumber: 2,
+        lifecycleState: 'Draft',
+        architectureState: 'TO-BE',
+        title: 'Future process',
+        checklistCompleted: false,
+        derivedFromVersionId: 'version-0',
+        changeDescription: 'Draft change',
+        reasonForChange: 'Business request',
+      }),
+    );
+
+    const fixture = TestBed.createComponent(VersionDetailPageComponent);
+    fixture.componentRef.setInput('id', 'version-1');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance as unknown as VersionDetailPageTestInstance;
+
+    component.checklistForm.setValue({
+      titleChecked: true,
+      changeChecked: true,
+      requirementsChecked: true,
+    });
+
+    await component.saveDraft();
+    fixture.detectChanges();
+
+    expect(component.checklistForm.getRawValue()).toEqual({
+      titleChecked: true,
+      changeChecked: true,
+      requirementsChecked: true,
+    });
+  });
+
+  it('recomputes checklist readiness immediately when the checkboxes are ticked', async () => {
+    const fixture = TestBed.createComponent(VersionDetailPageComponent);
+    fixture.componentRef.setInput('id', 'version-1');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const component = fixture.componentInstance as unknown as VersionDetailPageTestInstance;
+
+    expect(component.allChecklistChecked()).toBeFalse();
+
+    component.checklistForm.setValue({
+      titleChecked: true,
+      changeChecked: true,
+      requirementsChecked: true,
+    });
+    fixture.detectChanges();
+
+    expect(component.allChecklistChecked()).toBeTrue();
   });
 });

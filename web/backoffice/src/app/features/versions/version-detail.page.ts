@@ -855,13 +855,16 @@ export class VersionDetailPageComponent {
     return tabs;
   });
   protected readonly hasBpmnAsset = computed(() => this.assets().length > 0);
-  protected readonly allChecklistChecked = computed(
-    () =>
-      this.checklistForm.controls.titleChecked.getRawValue() &&
-      this.checklistForm.controls.changeChecked.getRawValue() &&
-      this.checklistForm.controls.requirementsChecked.getRawValue() &&
-      this.hasBpmnAsset(),
-  );
+  protected readonly allChecklistChecked = computed(() => {
+    const checklistState = this.checklistState();
+
+    return (
+      checklistState.titleChecked &&
+      checklistState.changeChecked &&
+      checklistState.requirementsChecked &&
+      this.hasBpmnAsset()
+    );
+  });
   protected readonly selectedFileName = computed(() => this.selectedFile()?.name ?? null);
   protected readonly showPromoteTitleField = computed(() =>
     this.visibleActions().some((action) => action.key === 'promote'),
@@ -958,6 +961,10 @@ export class VersionDetailPageComponent {
   protected readonly actionForm = this.fb.group({
     reason: [''],
     promotionTitle: [''],
+  });
+
+  private readonly checklistState = toSignal(this.checklistForm.valueChanges, {
+    initialValue: this.checklistForm.getRawValue(),
   });
 
   constructor() {
@@ -1216,7 +1223,16 @@ export class VersionDetailPageComponent {
     }
   }
 
-  private patchDraftState(version: ProcessVersionRecord): void {
+  private patchDraftState(
+    version: ProcessVersionRecord,
+    options?: { preserveChecklistSelections?: boolean },
+  ): void {
+    const preserveChecklistSelections =
+      options?.preserveChecklistSelections ?? false;
+    const currentChecklistState = preserveChecklistSelections
+      ? this.checklistForm.getRawValue()
+      : null;
+
     this.draftForm.reset({
       architectureState: version.architectureState,
       title: version.title,
@@ -1226,9 +1242,10 @@ export class VersionDetailPageComponent {
     });
 
     this.checklistForm.reset({
-      titleChecked: version.checklistCompleted,
-      changeChecked: version.checklistCompleted,
-      requirementsChecked: version.checklistCompleted,
+      titleChecked: currentChecklistState?.titleChecked ?? version.checklistCompleted,
+      changeChecked: currentChecklistState?.changeChecked ?? version.checklistCompleted,
+      requirementsChecked:
+        currentChecklistState?.requirementsChecked ?? version.checklistCompleted,
     });
   }
 
@@ -1347,7 +1364,9 @@ export class VersionDetailPageComponent {
       );
 
       this.version.set(updatedVersion);
-      this.patchDraftState(updatedVersion);
+      this.patchDraftState(updatedVersion, {
+        preserveChecklistSelections: true,
+      });
       if (showMessageOnError) {
         this.toast.success('Draft saved successfully');
       }

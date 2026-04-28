@@ -43,14 +43,14 @@ describe('AreasController metadata', () => {
     ).toEqual([Role.EDITOR]);
   });
 
-  it('should restrict list and getById to EDITOR', () => {
+  it('should restrict list and getById to content roles', () => {
     for (const methodName of ['list', 'getById']) {
       expect(
         Reflect.getMetadata(
           ROLES_KEY,
           getControllerMethod(AreasController.prototype, methodName),
         ),
-      ).toEqual([Role.EDITOR]);
+      ).toEqual([Role.EDITOR, Role.REVIEWER, Role.PUBLISHER, Role.VIEWER]);
     }
   });
 });
