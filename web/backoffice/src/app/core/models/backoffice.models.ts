@@ -130,6 +130,10 @@ export interface AssetRecord {
   mimeType: string;
   checksum: string;
   sizeBytes: number;
+  isCurrent: boolean;
+  supersededAt: string | null;
+  supersededByAssetId: string | null;
+  createdAt: string;
 }
 
 export interface AssetContentRecord {
@@ -179,6 +183,7 @@ export interface OwnerOption {
   id: string;
   name: string;
   teamId: string;
+  isActive: boolean;
 }
 
 export interface TeamOption {

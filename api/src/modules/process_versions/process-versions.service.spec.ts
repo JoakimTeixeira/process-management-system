@@ -18,7 +18,6 @@ describe('ProcessVersionsService', () => {
       ProcessVersionsRepository,
       | 'countBpmnAssets'
       | 'create'
-      | 'delete'
       | 'findById'
       | 'findByProcessId'
       | 'findByProcessAndVersionNumber'
@@ -89,7 +88,6 @@ describe('ProcessVersionsService', () => {
     processVersionsRepository = {
       countBpmnAssets: jest.fn(),
       create: jest.fn(),
-      delete: jest.fn(),
       findById: jest.fn(),
       findByProcessId: jest.fn(),
       findByProcessAndVersionNumber: jest.fn(),
@@ -324,6 +322,40 @@ describe('ProcessVersionsService', () => {
     ).rejects.toBeInstanceOf(ConflictException);
   });
 
+  it('should mark the reviewer checklist complete when a version is approved', async () => {
+    const inReviewVersion = {
+      ...approvedVersion,
+      lifecycleState: 'In Review',
+      checklistCompleted: false,
+    };
+    const approvedWithChecklist = {
+      ...approvedVersion,
+      checklistCompleted: true,
+    };
+
+    processVersionsRepository.findById.mockResolvedValue(inReviewVersion);
+    processVersionsRepository.setLifecycleState.mockResolvedValue(
+      approvedWithChecklist,
+    );
+    processVersionsRepository.insertStateHistory.mockResolvedValue(undefined);
+
+    const result = await service.approve(
+      'version-1',
+      { reason: 'Reviewed and approved' },
+      { ...currentUser, role: Role.REVIEWER },
+    );
+
+    expect(result.lifecycleState).toBe('Approved');
+    expect(result.checklistCompleted).toBe(true);
+    expect(processVersionsRepository.setLifecycleState).toHaveBeenCalledWith(
+      'version-1',
+      'Approved',
+      currentUser.id,
+      expect.anything(),
+      true,
+    );
+  });
+
   it('should transition rejected versions back to Draft and write history plus audit', async () => {
     const inReviewVersion = {
       ...approvedVersion,
@@ -347,6 +379,13 @@ describe('ProcessVersionsService', () => {
     );
 
     expect(result.lifecycleState).toBe('Draft');
+    expect(processVersionsRepository.setLifecycleState).toHaveBeenCalledWith(
+      'version-1',
+      'Draft',
+      currentUser.id,
+      expect.anything(),
+      false,
+    );
     expect(processVersionsRepository.insertStateHistory).toHaveBeenCalledWith(
       expect.objectContaining({
         processVersionId: 'version-1',
@@ -388,6 +427,13 @@ describe('ProcessVersionsService', () => {
     );
 
     expect(result.lifecycleState).toBe('Draft');
+    expect(processVersionsRepository.setLifecycleState).toHaveBeenCalledWith(
+      'version-1',
+      'Draft',
+      currentUser.id,
+      expect.anything(),
+      false,
+    );
     expect(processVersionsRepository.insertStateHistory).toHaveBeenCalledWith(
       expect.objectContaining({
         fromState: 'Approved',

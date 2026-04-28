@@ -28,7 +28,7 @@ describe('ProcessesService', () => {
       | 'teamExists'
       | 'userBelongsToTeam'
       | 'update'
-      | 'hasNonDraftVersions'
+      | 'hasAnyVersions'
     >
   >;
   let workflowAuthorizationService: jest.Mocked<
@@ -78,7 +78,7 @@ describe('ProcessesService', () => {
       teamExists: jest.fn(),
       userBelongsToTeam: jest.fn(),
       update: jest.fn(),
-      hasNonDraftVersions: jest.fn(),
+      hasAnyVersions: jest.fn(),
     };
     workflowAuthorizationService = {
       assertSameTeamAsProcessOwner: jest.fn(),
@@ -243,13 +243,13 @@ describe('ProcessesService', () => {
 
   it('should delete a process and write an audit row', async () => {
     repository.findById.mockResolvedValue(existingProcess);
-    repository.hasNonDraftVersions.mockResolvedValue(false);
+    repository.hasAnyVersions.mockResolvedValue(false);
 
     await expect(
       service.delete('process-1', currentUser),
     ).resolves.toBeUndefined();
 
-    expect(repository.hasNonDraftVersions).toHaveBeenCalledWith('process-1');
+    expect(repository.hasAnyVersions).toHaveBeenCalledWith('process-1');
     expect(repository.delete).toHaveBeenCalledWith('process-1');
     expect(auditLogWriterService.create).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -261,15 +261,15 @@ describe('ProcessesService', () => {
     );
   });
 
-  it('should reject deletion when process has non-Draft versions', async () => {
+  it('should reject deletion when process has any versions', async () => {
     repository.findById.mockResolvedValue(existingProcess);
-    repository.hasNonDraftVersions.mockResolvedValue(true);
+    repository.hasAnyVersions.mockResolvedValue(true);
 
     await expect(service.delete('process-1', currentUser)).rejects.toThrow(
-      'Cannot delete process with non-Draft versions. Only processes with only Draft versions can be deleted.',
+      'Cannot delete process that has versions. Preserve the process for historical traceability and archive versions instead.',
     );
 
-    expect(repository.hasNonDraftVersions).toHaveBeenCalledWith('process-1');
+    expect(repository.hasAnyVersions).toHaveBeenCalledWith('process-1');
     expect(repository.delete).not.toHaveBeenCalled();
   });
 

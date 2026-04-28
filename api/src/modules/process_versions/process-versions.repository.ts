@@ -303,32 +303,26 @@ export class ProcessVersionsRepository {
     lifecycleState: string,
     actorId: string,
     executor: SqlExecutor = this.dataSource,
+    checklistCompleted?: boolean,
   ): Promise<ProcessVersionRecord> {
+    const checklistClause =
+      checklistCompleted === undefined ? '' : ', checklist_completed = $4';
+
     await executor.query(
       `
         UPDATE process_versions
         SET
           lifecycle_state = $2::process_lifecycle_state,
           updated_by = $3
+          ${checklistClause}
         WHERE id = $1
       `,
-      [id, lifecycleState, actorId],
+      checklistCompleted === undefined
+        ? [id, lifecycleState, actorId]
+        : [id, lifecycleState, actorId, checklistCompleted],
     );
 
     return this.findRequiredById(id, executor);
-  }
-
-  async delete(
-    id: string,
-    executor: SqlExecutor = this.dataSource,
-  ): Promise<void> {
-    await executor.query(
-      `
-        DELETE FROM process_versions
-        WHERE id = $1
-      `,
-      [id],
-    );
   }
 
   async countBpmnAssets(

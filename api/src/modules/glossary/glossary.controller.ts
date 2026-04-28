@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   Patch,
@@ -66,15 +65,5 @@ export class GlossaryController {
     @CurrentUser() currentUser: AuthenticatedUser,
   ): Promise<GlossaryTermRecord> {
     return await this.glossaryService.update(params.id, updateDto, currentUser);
-  }
-
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.EDITOR)
-  @Delete('glossary/:id')
-  async delete(
-    @Param() params: IdParamDto,
-    @CurrentUser() currentUser: AuthenticatedUser,
-  ): Promise<void> {
-    await this.glossaryService.delete(params.id, currentUser);
   }
 }

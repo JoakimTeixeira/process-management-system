@@ -278,6 +278,7 @@ CREATE TYPE audit_action AS ENUM (
     'PUBLISH',
     'ARCHIVE',
     'UPLOAD',
+    'SUPERSEDE',
     'PROMOTE',
     'USER_CREATE',
     'USER_UPDATE',
@@ -418,7 +419,7 @@ CREATE INDEX idx_areas_team_id ON areas(team_id);
 -- ============================================================================
 CREATE TABLE processes (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    area_id UUID NOT NULL REFERENCES areas(id) ON DELETE CASCADE,
+    area_id UUID NOT NULL REFERENCES areas(id) ON DELETE RESTRICT,
     code VARCHAR(50) UNIQUE NOT NULL,
     title VARCHAR(255) NOT NULL,
     description TEXT NOT NULL,
@@ -445,7 +446,7 @@ CREATE INDEX idx_processes_team_id ON processes(team_id);
 -- ============================================================================
 CREATE TABLE process_versions (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    process_id UUID NOT NULL REFERENCES processes(id) ON DELETE CASCADE,
+    process_id UUID NOT NULL REFERENCES processes(id) ON DELETE RESTRICT,
     version_number INTEGER NOT NULL CHECK (version_number > 0),
     lifecycle_state process_lifecycle_state NOT NULL DEFAULT 'Draft',
     architecture_state process_architecture_state NOT NULL,
@@ -475,7 +476,7 @@ WHERE lifecycle_state = 'Published';
 -- ============================================================================
 CREATE TABLE version_state_history (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    process_version_id UUID NOT NULL REFERENCES process_versions(id) ON DELETE CASCADE,
+    process_version_id UUID NOT NULL REFERENCES process_versions(id) ON DELETE RESTRICT,
     from_state process_lifecycle_state,
     to_state process_lifecycle_state NOT NULL,
     actor_id UUID REFERENCES users(id) ON DELETE SET NULL,
@@ -527,6 +528,9 @@ CREATE TABLE assets (
     mime_type VARCHAR(100) NOT NULL,
     checksum VARCHAR(128) NOT NULL,
     size_bytes BIGINT NOT NULL CHECK (size_bytes >= 0),
+    is_current BOOLEAN NOT NULL DEFAULT TRUE,
+    superseded_at TIMESTAMP WITH TIME ZONE,
+    superseded_by_asset_id UUID REFERENCES assets(id) ON DELETE SET NULL,
     created_by UUID REFERENCES users(id) ON DELETE SET NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT chk_assets_file_path_not_blank CHECK (btrim(file_path) <> '')
@@ -540,7 +544,7 @@ CREATE TABLE audit_logs (
     entity_type VARCHAR(50) NOT NULL,
     entity_id UUID NOT NULL,
     action audit_action NOT NULL,
-    actor_id UUID REFERENCES users(id) ON DELETE SET NULL,
+    actor_id UUID REFERENCES users(id) ON DELETE RESTRICT,
     reason_for_change TEXT NOT NULL,
     old_data JSONB,
     new_data JSONB,

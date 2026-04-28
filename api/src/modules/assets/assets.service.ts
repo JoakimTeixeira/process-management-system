@@ -75,6 +75,11 @@ export class AssetsService {
       file.mimetype,
     );
 
+    const currentAsset =
+      await this.assetsRepository.findCurrentByProcessVersionId(
+        processVersionId,
+      );
+
     const asset = await this.assetsRepository.createBpmnAsset({
       processVersionId,
       caption: createBpmnAssetDto.caption,
@@ -84,6 +89,20 @@ export class AssetsService {
       sizeBytes: fileMetadata.sizeBytes,
       actorId: currentUser.id,
     });
+
+    if (currentAsset) {
+      await this.assetsRepository.supersedeAsset(currentAsset.id, asset.id);
+
+      await this.auditLogWriterService.create({
+        entityType: 'asset',
+        entityId: currentAsset.id,
+        action: 'SUPERSEDE',
+        actorId: currentUser.id,
+        reasonForChange: 'Superseded BPMN asset by uploading new version',
+        oldData: currentAsset,
+        newData: { supersededByAssetId: asset.id },
+      });
+    }
 
     await this.auditLogWriterService.create({
       entityType: 'asset',
@@ -103,6 +122,16 @@ export class AssetsService {
   ): Promise<AssetRecord[]> {
     this.assertBackofficeContentRole(currentUser);
     return await this.assetsRepository.findByProcessVersionId(processVersionId);
+  }
+
+  async getCurrentByProcessVersionId(
+    processVersionId: string,
+    currentUser: AuthenticatedUser,
+  ): Promise<AssetRecord | null> {
+    this.assertBackofficeContentRole(currentUser);
+    return await this.assetsRepository.findCurrentByProcessVersionId(
+      processVersionId,
+    );
   }
 
   async getAssetContent(
@@ -167,8 +196,7 @@ export class AssetsService {
       checksum: createHash('sha256').update(content).digest('hex'),
       sizeBytes: Buffer.byteLength(content),
       filePath: relativeFilePath,
-      mimeType:
-        mimeType && mimeType.trim() !== '' ? mimeType : 'application/xml',
+      mimeType: this.resolveMimeType(mimeType),
     };
   }
 
@@ -190,6 +218,19 @@ export class AssetsService {
     const extension = extname(originalName ?? '').toLowerCase();
 
     return extension === '.xml' ? '.xml' : '.bpmn';
+  }
+
+  private resolveMimeType(mimeType?: string): string {
+    const normalizedMimeType = mimeType?.trim().toLowerCase();
+
+    if (
+      !normalizedMimeType ||
+      normalizedMimeType === 'application/octet-stream'
+    ) {
+      return 'application/xml';
+    }
+
+    return normalizedMimeType;
   }
 
   private assertEditorRole(currentUser: AuthenticatedUser): void {

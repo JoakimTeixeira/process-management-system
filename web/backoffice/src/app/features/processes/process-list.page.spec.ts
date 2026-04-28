@@ -10,7 +10,9 @@ import { ProcessListPageComponent } from './process-list.page';
 interface ProcessListPageTestInstance {
   canEdit: ProcessListPageComponent['canEdit'];
   openRoute: ProcessListPageComponent['openRoute'];
+  openQueryParams: ProcessListPageComponent['openQueryParams'];
   workRoute: ProcessListPageComponent['workRoute'];
+  workActionLabel: ProcessListPageComponent['workActionLabel'];
   canManageProcess: ProcessListPageComponent['canManageProcess'];
   lifecycleState: ProcessListPageComponent['lifecycleState'];
   waitingForRole: ProcessListPageComponent['waitingForRole'];
@@ -127,7 +129,7 @@ describe('ProcessListPageComponent', () => {
     }).compileComponents();
   });
 
-  it('resolves reviewer navigation routes without editor permissions', async () => {
+  it('should resolve reviewer navigation routes without editor permissions', async () => {
     const fixture = TestBed.createComponent(ProcessListPageComponent);
 
     fixture.detectChanges();
@@ -139,10 +141,12 @@ describe('ProcessListPageComponent', () => {
     expect(component.canEdit()).toBeFalse();
     expect(component.canManageProcess(processRecord)).toBeFalse();
     expect(component.openRoute(processRecord)).toEqual(['/versions', 'version-1']);
+    expect(component.openQueryParams(processRecord)).toEqual({ tab: 'summary' });
     expect(component.workRoute(processRecord)).toEqual(['/versions', 'version-1']);
+    expect(component.workActionLabel(processRecord)).toBe('Review version');
   });
 
-  it('opens the active version when one exists', async () => {
+  it('should open the active version when one exists', async () => {
     const fixture = TestBed.createComponent(ProcessListPageComponent);
     fixture.detectChanges();
     await fixture.whenStable();
@@ -161,9 +165,21 @@ describe('ProcessListPageComponent', () => {
         },
       }),
     ).toEqual(['/versions', 'version-1']);
+    expect(
+      component.openQueryParams({
+        ...processRecord,
+        governanceSummary: {
+          ...processRecord.governanceSummary,
+          activeWorkflowVersion: {
+            ...processRecord.governanceSummary.activeWorkflowVersion,
+            lifecycleState: 'Published',
+          },
+        },
+      }),
+    ).toEqual({ tab: 'summary' });
   });
 
-  it('falls back to the versions workspace when there is no active version', async () => {
+  it('should fall back to the versions workspace when there is no active version', async () => {
     const fixture = TestBed.createComponent(ProcessListPageComponent);
     fixture.detectChanges();
     await fixture.whenStable();
@@ -180,6 +196,15 @@ describe('ProcessListPageComponent', () => {
       }),
     ).toEqual(['/processes', 'process-1', 'versions']);
     expect(
+      component.openQueryParams({
+        ...processRecord,
+        governanceSummary: {
+          ...processRecord.governanceSummary,
+          activeWorkflowVersion: null,
+        },
+      }),
+    ).toBeNull();
+    expect(
       component.workRoute({
         ...processRecord,
         governanceSummary: {
@@ -190,7 +215,43 @@ describe('ProcessListPageComponent', () => {
     ).toBeNull();
   });
 
-  it('treats a process with no versions yet as draft setup', async () => {
+  it('should use role-specific lifecycle labels for the primary action entry', async () => {
+    const fixture = TestBed.createComponent(ProcessListPageComponent);
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const component = fixture.componentInstance as unknown as ProcessListPageTestInstance;
+
+    expect(
+      component.workActionLabel({
+        ...processRecord,
+        governanceSummary: {
+          ...processRecord.governanceSummary,
+          activeWorkflowVersion: {
+            ...processRecord.governanceSummary.activeWorkflowVersion,
+            waitingForRole: 'EDITOR',
+            lifecycleState: 'Draft',
+          },
+        },
+      }),
+    ).toBe('Edit draft');
+
+    expect(
+      component.workActionLabel({
+        ...processRecord,
+        governanceSummary: {
+          ...processRecord.governanceSummary,
+          activeWorkflowVersion: {
+            ...processRecord.governanceSummary.activeWorkflowVersion,
+            waitingForRole: 'PUBLISHER',
+            lifecycleState: 'Approved',
+          },
+        },
+      }),
+    ).toBe('Publish version');
+  });
+
+  it('should treat a process with no versions yet as draft setup', async () => {
     const fixture = TestBed.createComponent(ProcessListPageComponent);
     fixture.detectChanges();
     await fixture.whenStable();
@@ -214,7 +275,7 @@ describe('ProcessListPageComponent', () => {
     expect(component.nextAction(newProcess)).toBe('Create first version');
   });
 
-  it('allows process maintenance only for editors on the same team', async () => {
+  it('should allow process maintenance only for editors on the same team', async () => {
     currentUserState.set({
       id: 'editor-1',
       name: 'Eve Editor',
@@ -239,7 +300,7 @@ describe('ProcessListPageComponent', () => {
     ).toBeFalse();
   });
 
-  it('filters processes by area', async () => {
+  it('should filter processes by area', async () => {
     api.listProcesses.and.returnValue(
       of([
         processRecord,

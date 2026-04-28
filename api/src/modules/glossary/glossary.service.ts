@@ -140,19 +140,4 @@ export class GlossaryService {
       throw error;
     }
   }
-
-  async delete(id: string, currentUser: AuthenticatedUser): Promise<void> {
-    const term = await this.getById(id);
-
-    await this.glossaryRepository.delete(id);
-
-    await this.auditLogWriterService.create({
-      entityType: 'glossary_term',
-      entityId: term.id,
-      action: 'DELETE',
-      actorId: currentUser.id,
-      reasonForChange: 'Deleted glossary term via API',
-      oldData: term,
-    });
-  }
 }

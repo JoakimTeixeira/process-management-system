@@ -42,7 +42,9 @@ export function createTeamOwnerDropdown(
     if (!currentTeamId) {
       return [];
     }
-    return allOwners.filter((owner) => owner.teamId === currentTeamId);
+    return allOwners.filter(
+      (owner) => owner.teamId === currentTeamId && owner.isActive,
+    );
   });
 
   const initialize = (
@@ -59,14 +61,13 @@ export function createTeamOwnerDropdown(
       ownerControl.setValue('', { emitEvent: false });
     }
 
-    const teamSubscription = teamControl.valueChanges.subscribe((teamId) => {
-      const nextTeamId = teamId || '';
-      selectedTeamId.set(nextTeamId);
+    const teamSubscription = teamControl.valueChanges.subscribe((teamId = '') => {
+      selectedTeamId.set(teamId);
       owners.set([]);
 
-      if (nextTeamId) {
+      if (teamId) {
         ownerControl.enable({ emitEvent: false });
-        void onTeamChange?.(nextTeamId);
+        void onTeamChange?.(teamId);
       } else {
         ownerControl.disable({ emitEvent: false });
         ownerControl.setValue('', { emitEvent: false });

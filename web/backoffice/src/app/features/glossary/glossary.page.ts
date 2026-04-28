@@ -5,9 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 
@@ -25,9 +23,7 @@ import { ToastService } from '../../core/toast/toast.service';
     MatButtonModule,
     MatCardModule,
     MatChipsModule,
-    MatDialogModule,
     MatIconModule,
-    MatMenuModule,
     MatProgressSpinnerModule,
     MatTableModule,
   ],
@@ -149,19 +145,9 @@ import { ToastService } from '../../core/toast/toast.service';
                   <th mat-header-cell *matHeaderCellDef></th>
                   <td mat-cell *matCellDef="let term" style="text-align: right;">
                     @if (canEdit()) {
-                      <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Term actions">
-                        <mat-icon>more_vert</mat-icon>
-                      </button>
-                      <mat-menu #menu>
-                        <a mat-menu-item [routerLink]="['/glossary', term.id, 'edit']">
-                          <mat-icon>edit</mat-icon>
-                          <span>Edit term</span>
-                        </a>
-                        <button mat-menu-item (click)="deleteTerm(term.id)">
-                          <mat-icon>delete</mat-icon>
-                          <span>Delete term</span>
-                        </button>
-                      </mat-menu>
+                      <a mat-icon-button [routerLink]="['/glossary', term.id, 'edit']" aria-label="Edit term">
+                        <mat-icon>edit</mat-icon>
+                      </a>
                     }
                   </td>
                 </ng-container>
@@ -179,7 +165,6 @@ import { ToastService } from '../../core/toast/toast.service';
 export class GlossaryPageComponent implements OnInit {
   private readonly api = inject(BackofficeApiService);
   private readonly auth = inject(AuthService);
-  private readonly dialog = inject(MatDialog);
   private readonly toast = inject(ToastService);
 
   protected readonly glossary = signal<GlossaryResponse | null>(null);
@@ -190,26 +175,6 @@ export class GlossaryPageComponent implements OnInit {
 
   ngOnInit() {
     void this.loadGlossary();
-  }
-
-  protected async deleteTerm(id: string): Promise<void> {
-    const dialogRef = this.dialog.open(ConfirmDeleteDialogComponent, {
-      width: '400px',
-    });
-
-    const result = await firstValueFrom(dialogRef.afterClosed());
-    if (!result) {
-      return;
-    }
-
-    try {
-      await firstValueFrom(this.api.deleteGlossaryTerm(id));
-      await this.loadGlossary();
-      this.toast.success('Glossary term deleted successfully');
-    } catch (error) {
-      this.errorMessage.set(getHttpErrorMessage(error, 'Unable to delete the glossary term.'));
-      this.toast.error('Failed to delete glossary term');
-    }
   }
 
   private async loadGlossary(): Promise<void> {
@@ -225,20 +190,3 @@ export class GlossaryPageComponent implements OnInit {
     }
   }
 }
-
-@Component({
-  selector: 'app-confirm-delete-dialog',
-  standalone: true,
-  imports: [MatDialogModule, MatButtonModule],
-  template: `
-    <h2 mat-dialog-title>Delete glossary term</h2>
-    <mat-dialog-content>
-      Are you sure you want to delete this glossary term? This action cannot be undone.
-    </mat-dialog-content>
-    <mat-dialog-actions align="end">
-      <button mat-button [mat-dialog-close]="false">Cancel</button>
-      <button mat-flat-button color="warn" [mat-dialog-close]="true">Delete</button>
-    </mat-dialog-actions>
-  `,
-})
-export class ConfirmDeleteDialogComponent {}

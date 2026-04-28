@@ -8,6 +8,7 @@ import { ProceduresService } from './procedures.service';
 import type { AuthenticatedUser } from '../auth/interfaces/authenticated-user.interface';
 import { Role } from '../../common/enums/role.enum';
 import type { ProcedureRecord } from './procedures.repository';
+import { ProcedureActivityDto } from './dto/shared-procedure.dto';
 
 type ControllerMethod = (...args: never[]) => unknown;
 
@@ -88,7 +89,7 @@ describe('ProceduresController', () => {
     warranty: 'Test warranty',
     outcome: 'Test outcome',
     policy: 'Test policy',
-    activities: [],
+    activities: [] as Record<string, unknown>[],
     inputs: [],
     outputs: [],
   };
@@ -193,14 +194,32 @@ describe('ProceduresController', () => {
 
     const result = await controller.update(
       { id: 'proc-1' },
-      { title: 'Updated' },
+      {
+        title: 'Updated',
+        utility: mockProcedure.utility,
+        warranty: mockProcedure.warranty,
+        outcome: mockProcedure.outcome,
+        policy: mockProcedure.policy,
+        activities: [] as ProcedureActivityDto[],
+        inputs: mockProcedure.inputs,
+        outputs: mockProcedure.outputs,
+      },
       mockUser,
     );
 
     expect(result).toEqual(updatedProcedure);
     expect(proceduresService.update).toHaveBeenCalledWith(
       'proc-1',
-      { title: 'Updated' },
+      {
+        title: 'Updated',
+        utility: mockProcedure.utility,
+        warranty: mockProcedure.warranty,
+        outcome: mockProcedure.outcome,
+        policy: mockProcedure.policy,
+        activities: [] as ProcedureActivityDto[],
+        inputs: mockProcedure.inputs,
+        outputs: mockProcedure.outputs,
+      },
       mockUser,
     );
   });

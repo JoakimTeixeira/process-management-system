@@ -8,6 +8,7 @@ export type AuditAction =
   | 'PUBLISH'
   | 'ARCHIVE'
   | 'UPLOAD'
+  | 'SUPERSEDE'
   | 'PROMOTE'
   | 'USER_CREATE'
   | 'USER_UPDATE'

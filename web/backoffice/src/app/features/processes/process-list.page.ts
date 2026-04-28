@@ -12,6 +12,7 @@ import { firstValueFrom } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -32,6 +33,7 @@ import { AreaRecord, ProcessRecord } from '../../core/models/backoffice.models';
     MatButtonModule,
     MatCardModule,
     MatChipsModule,
+    MatDividerModule,
     MatFormFieldModule,
     MatIconModule,
     MatMenuModule,
@@ -237,16 +239,21 @@ import { AreaRecord, ProcessRecord } from '../../core/models/backoffice.models';
                       <mat-icon>more_vert</mat-icon>
                     </button>
                     <mat-menu #menu>
-                      <a mat-menu-item [routerLink]="openRoute(process)">
-                        <mat-icon>open_in_new</mat-icon>
-                        <span>Open</span>
-                      </a>
-                      @if (workRoute(process); as workRoute) {
-                        <a mat-menu-item [routerLink]="workRoute" [queryParams]="{ tab: 'work' }">
+                      @if (canPerformWorkAction(process); as workRoute) {
+                        <a mat-menu-item [routerLink]="workRoute" [queryParams]="{ tab: 'work' }" style="font-weight: 600;">
                           <mat-icon>account_tree</mat-icon>
-                          <span>Work</span>
+                          <span>{{ workActionLabel(process) }}</span>
                         </a>
+                        <mat-divider></mat-divider>
                       }
+                      <a
+                        mat-menu-item
+                        [routerLink]="openRoute(process)"
+                        [queryParams]="openQueryParams(process)"
+                      >
+                        <mat-icon>open_in_new</mat-icon>
+                        <span>Open version</span>
+                      </a>
                       <a mat-menu-item [routerLink]="['/processes', process.id, 'versions']">
                         <mat-icon>list</mat-icon>
                         <span>Versions</span>
@@ -365,6 +372,14 @@ export class ProcessListPageComponent implements OnInit {
     return ['/processes', process.id, 'versions'];
   }
 
+  protected openQueryParams(
+    process: ProcessRecord,
+  ): Record<string, string> | null {
+    return process.governanceSummary?.activeWorkflowVersion
+      ? { tab: 'summary' }
+      : null;
+  }
+
   protected workRoute(process: ProcessRecord): string[] | null {
     const activeVersion = process.governanceSummary?.activeWorkflowVersion;
 
@@ -375,8 +390,45 @@ export class ProcessListPageComponent implements OnInit {
     return ['/versions', activeVersion.id];
   }
 
+  protected workActionLabel(process: ProcessRecord): string {
+    const activeVersion = process.governanceSummary?.activeWorkflowVersion;
+
+    if (!activeVersion) {
+      return 'Open lifecycle work';
+    }
+
+    switch (activeVersion.waitingForRole) {
+      case 'EDITOR':
+        return 'Edit and submit';
+      case 'REVIEWER':
+        return 'Review version';
+      case 'PUBLISHER':
+        if (activeVersion.lifecycleState === 'Approved') {
+          return 'Publish version';
+        }
+        if (activeVersion.lifecycleState === 'Published') {
+          return 'Archive or promote';
+        }
+        return 'Manage release';
+      default:
+        return 'Open lifecycle work';
+    }
+  }
+
   protected canManageProcess(process: ProcessRecord): boolean {
     return this.accessControl.canManageProcess(process);
+  }
+
+  protected canPerformWorkAction(process: ProcessRecord): string[] | null {
+    const activeVersion = process.governanceSummary?.activeWorkflowVersion;
+    if (!activeVersion) {
+      return null;
+    }
+    const waitingFor = activeVersion.waitingForRole;
+    if (waitingFor !== this.currentUserRole()) {
+      return null;
+    }
+    return ['/versions', activeVersion.id];
   }
 
   private hasNoVersions(process: ProcessRecord): boolean {

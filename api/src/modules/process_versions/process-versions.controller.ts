@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   Patch,
@@ -88,15 +87,6 @@ export class ProcessVersionsController {
         currentUser,
       ),
     );
-  }
-
-  @Roles(Role.EDITOR)
-  @Delete('process-versions/:id')
-  async delete(
-    @Param() params: IdParamDto,
-    @CurrentUser() currentUser: AuthenticatedUser,
-  ): Promise<void> {
-    await this.processVersionsService.delete(params.id, currentUser);
   }
 
   @Roles(Role.EDITOR)

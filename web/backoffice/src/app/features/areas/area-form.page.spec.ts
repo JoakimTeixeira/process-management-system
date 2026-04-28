@@ -32,7 +32,7 @@ describe('AreaFormPageComponent', () => {
       of([{ id: 'team-1', code: 'OPS', name: 'Operations' }]),
     );
     api.listOwnerOptions.and.returnValue(
-      of([{ id: 'owner-1', name: 'Alice Owner', teamId: 'team-1' }]),
+      of([{ id: 'owner-1', name: 'Alice Owner', teamId: 'team-1', isActive: true }]),
     );
     api.listItilPractices.and.returnValue(
       of([{ id: 'practice-1', code: 'PR1', name: 'Incident', description: null }]),
@@ -82,10 +82,10 @@ describe('AreaFormPageComponent', () => {
     });
     expect(component.form.controls.ownerId.enabled).toBeTrue();
     expect(component.owners()).toEqual([
-      { id: 'owner-1', name: 'Alice Owner', teamId: 'team-1' },
+      { id: 'owner-1', name: 'Alice Owner', teamId: 'team-1', isActive: true },
     ]);
     expect(component.filteredOwners()).toEqual([
-      { id: 'owner-1', name: 'Alice Owner', teamId: 'team-1' },
+      { id: 'owner-1', name: 'Alice Owner', teamId: 'team-1', isActive: true },
     ]);
     expect(component.practices().map((practice: { name: string }) => practice.name)).toEqual([
       'Incident',

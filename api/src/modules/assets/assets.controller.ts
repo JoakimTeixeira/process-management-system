@@ -71,6 +71,20 @@ export class AssetsController {
   }
 
   @Roles(Role.EDITOR, Role.REVIEWER, Role.PUBLISHER, Role.VIEWER)
+  @Get('current')
+  async getCurrentByProcessVersionId(
+    @Param() params: ProcessVersionIdParamDto,
+    @CurrentUser() currentUser: AuthenticatedUser,
+  ): Promise<AssetResponseDto | null> {
+    const asset = await this.assetsService.getCurrentByProcessVersionId(
+      params.processVersionId,
+      currentUser,
+    );
+
+    return asset ? this.toDto(asset) : null;
+  }
+
+  @Roles(Role.EDITOR, Role.REVIEWER, Role.PUBLISHER, Role.VIEWER)
   @Get(':assetId/content')
   async getAssetContent(
     @Param() params: ProcessVersionAssetParamDto,

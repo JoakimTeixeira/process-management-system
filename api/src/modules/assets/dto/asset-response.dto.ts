@@ -25,6 +25,18 @@ export class AssetResponseDto {
   @Expose()
   sizeBytes!: number;
 
+  @Expose()
+  isCurrent!: boolean;
+
+  @Expose()
+  supersededAt!: string | null;
+
+  @Expose()
+  supersededByAssetId!: string | null;
+
+  @Expose()
+  createdAt!: string;
+
   constructor(partial: Partial<AssetResponseDto>) {
     Object.assign(this, partial);
   }

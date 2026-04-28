@@ -29,12 +29,7 @@ describe('ProcessVersionsController metadata', () => {
   });
 
   it('restricts editor workflow methods to EDITOR', () => {
-    for (const methodName of [
-      'create',
-      'update',
-      'delete',
-      'submitForReview',
-    ]) {
+    for (const methodName of ['create', 'update', 'submitForReview']) {
       expect(
         Reflect.getMetadata(
           ROLES_KEY,
@@ -87,7 +82,6 @@ describe('ProcessVersionsController', () => {
       | 'listByProcessId'
       | 'getById'
       | 'update'
-      | 'delete'
       | 'submitForReview'
       | 'approve'
       | 'reject'
@@ -130,7 +124,6 @@ describe('ProcessVersionsController', () => {
       listByProcessId: jest.fn(),
       getById: jest.fn(),
       update: jest.fn(),
-      delete: jest.fn(),
       submitForReview: jest.fn(),
       approve: jest.fn(),
       reject: jest.fn(),
@@ -215,17 +208,6 @@ describe('ProcessVersionsController', () => {
     expect(processVersionsService.update).toHaveBeenCalledWith(
       'version-1',
       { title: 'Updated' },
-      mockUser,
-    );
-  });
-
-  it('should delete a version', async () => {
-    processVersionsService.delete.mockResolvedValue(undefined);
-
-    await controller.delete({ id: 'version-1' }, mockUser);
-
-    expect(processVersionsService.delete).toHaveBeenCalledWith(
-      'version-1',
       mockUser,
     );
   });

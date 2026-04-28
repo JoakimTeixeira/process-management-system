@@ -325,36 +325,6 @@ export class ProcessVersionsService {
     });
   }
 
-  async delete(id: string, currentUser: AuthenticatedUser): Promise<void> {
-    this.assertRole(
-      currentUser,
-      Role.EDITOR,
-      'Only editors can delete process versions',
-    );
-    const version = await this.getByIdInternal(id);
-
-    await this.workflowAuthorizationService.assertSameTeamAsProcessVersionOwner(
-      id,
-      currentUser,
-    );
-    this.ensureDraftLifecycle(version, 'Only Draft versions can be deleted');
-
-    await this.dataSource.transaction(async (manager) => {
-      await this.processVersionsRepository.delete(id, manager);
-      await this.auditLogWriterService.create(
-        {
-          entityType: 'process_version',
-          entityId: version.id,
-          action: 'DELETE',
-          actorId: currentUser.id,
-          reasonForChange: 'Deleted process version via API',
-          oldData: version,
-        },
-        manager,
-      );
-    });
-  }
-
   async submitForReview(
     id: string,
     justificationDto: LifecycleJustificationDto,
@@ -385,6 +355,7 @@ export class ProcessVersionsService {
       currentUser,
       toState: 'In Review',
       action: 'STATE_CHANGE',
+      checklistCompleted: false,
       reason:
         justificationDto.reason ??
         'Submitted process version for formal review',
@@ -419,6 +390,7 @@ export class ProcessVersionsService {
       currentUser,
       toState: 'Approved',
       action: 'APPROVE',
+      checklistCompleted: true,
       reason: justificationDto.reason ?? 'Approved process version',
     });
   }
@@ -451,6 +423,7 @@ export class ProcessVersionsService {
       currentUser,
       toState: 'Draft',
       action: 'REJECT',
+      checklistCompleted: false,
       reason: justificationDto.reason,
     });
   }
@@ -483,6 +456,7 @@ export class ProcessVersionsService {
       currentUser,
       toState: 'Draft',
       action: 'STATE_CHANGE',
+      checklistCompleted: false,
       reason: justificationDto.reason,
     });
   }
@@ -833,6 +807,7 @@ export class ProcessVersionsService {
     currentUser: AuthenticatedUser;
     toState: string;
     action: 'STATE_CHANGE' | 'APPROVE' | 'REJECT' | 'ARCHIVE';
+    checklistCompleted?: boolean;
     reason: string;
   }): Promise<ProcessVersionRecord> {
     return await this.dataSource.transaction(async (manager) => {
@@ -847,6 +822,7 @@ export class ProcessVersionsService {
           params.toState,
           params.currentUser.id,
           manager,
+          params.checklistCompleted,
         );
 
       await this.processVersionsRepository.insertStateHistory(

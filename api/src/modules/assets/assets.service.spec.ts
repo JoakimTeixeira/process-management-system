@@ -20,7 +20,11 @@ describe('AssetsService', () => {
   let assetsRepository: jest.Mocked<
     Pick<
       AssetsRepository,
-      'createBpmnAsset' | 'findById' | 'findByProcessVersionId'
+      | 'createBpmnAsset'
+      | 'findById'
+      | 'findByProcessVersionId'
+      | 'findCurrentByProcessVersionId'
+      | 'supersedeAsset'
     >
   >;
   let processVersionsRepository: jest.Mocked<
@@ -51,6 +55,8 @@ describe('AssetsService', () => {
       createBpmnAsset: jest.fn(),
       findById: jest.fn(),
       findByProcessVersionId: jest.fn(),
+      findCurrentByProcessVersionId: jest.fn(),
+      supersedeAsset: jest.fn(),
     };
     processVersionsRepository = {
       findById: jest.fn(),
@@ -126,6 +132,10 @@ describe('AssetsService', () => {
       mimeType: 'application/xml',
       checksum: 'checksum',
       sizeBytes: TEST_FILE_SIZE_BYTES_SMALL,
+      isCurrent: true,
+      supersededAt: null,
+      supersededByAssetId: null,
+      createdAt: '2026-04-28T12:00:00.000Z',
     });
 
     await service.createBpmnAsset(
@@ -201,6 +211,61 @@ describe('AssetsService', () => {
     ).rejects.toBeInstanceOf(ConflictException);
   });
 
+  it('normalizes generic octet-stream BPMN uploads to application/xml metadata', async () => {
+    const mkdirMock = jest.mocked(mkdir);
+    const writeFileMock = jest.mocked(writeFile);
+
+    processVersionsRepository.findById.mockResolvedValue({
+      id: 'version-1',
+      processId: 'process-1',
+      versionNumber: 1,
+      lifecycleState: 'Draft',
+      architectureState: 'AS-IS',
+      title: 'Draft',
+      checklistCompleted: false,
+      derivedFromVersionId: null,
+      changeDescription: 'change',
+      reasonForChange: 'reason',
+    });
+    mkdirMock.mockResolvedValue(undefined);
+    writeFileMock.mockResolvedValue(undefined);
+    assetsRepository.createBpmnAsset.mockResolvedValue({
+      id: 'asset-1',
+      processVersionId: 'version-1',
+      caption: 'Diagram',
+      assetType: 'BPMN',
+      filePath: 'backoffice/bpmn/test.bpmn',
+      mimeType: 'application/xml',
+      checksum: 'checksum',
+      sizeBytes: TEST_FILE_SIZE_BYTES_SMALL,
+      isCurrent: true,
+      supersededAt: null,
+      supersededByAssetId: null,
+      createdAt: '2026-04-28T12:00:00.000Z',
+    });
+
+    await service.createBpmnAsset(
+      'version-1',
+      {
+        caption: 'Diagram',
+      },
+      {
+        buffer: Buffer.from(
+          '<?xml version="1.0"?><bpmn:definitions><bpmn:process id="p1" /></bpmn:definitions>',
+        ),
+        originalname: 'diagram.bpmn',
+        mimetype: 'application/octet-stream',
+      },
+      currentUser,
+    );
+
+    expect(assetsRepository.createBpmnAsset).toHaveBeenCalledWith(
+      expect.objectContaining({
+        mimeType: 'application/xml',
+      }),
+    );
+  });
+
   it('rejects missing BPMN uploads', async () => {
     processVersionsRepository.findById.mockResolvedValue({
       id: 'version-1',
@@ -242,6 +307,10 @@ describe('AssetsService', () => {
       mimeType: 'application/xml',
       checksum: 'checksum',
       sizeBytes: TEST_FILE_SIZE_BYTES_SMALL,
+      isCurrent: true,
+      supersededAt: null,
+      supersededByAssetId: null,
+      createdAt: '2026-04-28T12:00:00.000Z',
     });
     readFileMock.mockResolvedValue('<definitions><process /></definitions>');
 
@@ -278,5 +347,151 @@ describe('AssetsService', () => {
         role: Role.SYSTEM_ADMIN,
       }),
     ).rejects.toBeInstanceOf(ForbiddenException);
+  });
+
+  it('supersedes existing asset when uploading new BPMN for same version', async () => {
+    const mkdirMock = jest.mocked(mkdir);
+    const writeFileMock = jest.mocked(writeFile);
+
+    processVersionsRepository.findById.mockResolvedValue({
+      id: 'version-1',
+      processId: 'process-1',
+      versionNumber: 1,
+      lifecycleState: 'Draft',
+      architectureState: 'AS-IS',
+      title: 'Draft',
+      checklistCompleted: false,
+      derivedFromVersionId: null,
+      changeDescription: 'change',
+      reasonForChange: 'reason',
+    });
+
+    const existingAsset = {
+      id: 'asset-old',
+      processVersionId: 'version-1',
+      caption: 'Old Diagram',
+      assetType: 'BPMN',
+      filePath: 'backoffice/bpmn/old.bpmn',
+      mimeType: 'application/xml',
+      checksum: 'old-checksum',
+      sizeBytes: TEST_FILE_SIZE_BYTES_SMALL,
+      isCurrent: true,
+      supersededAt: null,
+      supersededByAssetId: null,
+      createdAt: '2026-04-28T12:00:00.000Z',
+    };
+
+    const newAsset = {
+      id: 'asset-new',
+      processVersionId: 'version-1',
+      caption: 'New Diagram',
+      assetType: 'BPMN',
+      filePath: 'backoffice/bpmn/new.bpmn',
+      mimeType: 'application/xml',
+      checksum: 'new-checksum',
+      sizeBytes: TEST_FILE_SIZE_BYTES_SMALL,
+      isCurrent: true,
+      supersededAt: null,
+      supersededByAssetId: null,
+      createdAt: '2026-04-28T12:05:00.000Z',
+    };
+
+    assetsRepository.findCurrentByProcessVersionId.mockResolvedValue(
+      existingAsset,
+    );
+    assetsRepository.createBpmnAsset.mockResolvedValue(newAsset);
+    assetsRepository.supersedeAsset.mockResolvedValue(undefined);
+    mkdirMock.mockResolvedValue(undefined);
+    writeFileMock.mockResolvedValue(undefined);
+
+    await service.createBpmnAsset(
+      'version-1',
+      {
+        caption: 'New Diagram',
+      },
+      {
+        buffer: Buffer.from(
+          '<?xml version="1.0"?><bpmn:definitions><bpmn:process id="p1" /></bpmn:definitions>',
+        ),
+        originalname: 'diagram.bpmn',
+        mimetype: 'application/xml',
+      },
+      currentUser,
+    );
+
+    expect(assetsRepository.findCurrentByProcessVersionId).toHaveBeenCalledWith(
+      'version-1',
+    );
+    expect(assetsRepository.supersedeAsset).toHaveBeenCalledWith(
+      'asset-old',
+      'asset-new',
+    );
+    expect(auditLogWriterService.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        entityType: 'asset',
+        entityId: 'asset-old',
+        action: 'SUPERSEDE',
+        actorId: currentUser.id,
+        reasonForChange: 'Superseded BPMN asset by uploading new version',
+      }),
+    );
+  });
+
+  it('does not supersede when no existing asset exists', async () => {
+    const mkdirMock = jest.mocked(mkdir);
+    const writeFileMock = jest.mocked(writeFile);
+
+    processVersionsRepository.findById.mockResolvedValue({
+      id: 'version-1',
+      processId: 'process-1',
+      versionNumber: 1,
+      lifecycleState: 'Draft',
+      architectureState: 'AS-IS',
+      title: 'Draft',
+      checklistCompleted: false,
+      derivedFromVersionId: null,
+      changeDescription: 'change',
+      reasonForChange: 'reason',
+    });
+
+    const newAsset = {
+      id: 'asset-new',
+      processVersionId: 'version-1',
+      caption: 'New Diagram',
+      assetType: 'BPMN',
+      filePath: 'backoffice/bpmn/new.bpmn',
+      mimeType: 'application/xml',
+      checksum: 'new-checksum',
+      sizeBytes: TEST_FILE_SIZE_BYTES_SMALL,
+      isCurrent: true,
+      supersededAt: null,
+      supersededByAssetId: null,
+      createdAt: '2026-04-28T12:00:00.000Z',
+    };
+
+    assetsRepository.findCurrentByProcessVersionId.mockResolvedValue(null);
+    assetsRepository.createBpmnAsset.mockResolvedValue(newAsset);
+    mkdirMock.mockResolvedValue(undefined);
+    writeFileMock.mockResolvedValue(undefined);
+
+    await service.createBpmnAsset(
+      'version-1',
+      {
+        caption: 'New Diagram',
+      },
+      {
+        buffer: Buffer.from(
+          '<?xml version="1.0"?><bpmn:definitions><bpmn:process id="p1" /></bpmn:definitions>',
+        ),
+        originalname: 'diagram.bpmn',
+        mimetype: 'application/xml',
+      },
+      currentUser,
+    );
+
+    expect(assetsRepository.findCurrentByProcessVersionId).toHaveBeenCalledWith(
+      'version-1',
+    );
+    expect(assetsRepository.supersedeAsset).not.toHaveBeenCalled();
   });
 });

@@ -156,43 +156,7 @@ export class ProcessesService {
       currentUser,
     );
 
-    if (
-      updateProcessDto.teamId &&
-      updateProcessDto.teamId !== currentProcess.teamId
-    ) {
-      await this.ensureTeamExists(updateProcessDto.teamId);
-    }
-
-    if (
-      updateProcessDto.ownerId &&
-      updateProcessDto.ownerId !== currentProcess.ownerId
-    ) {
-      await this.ensureOwnerExists(updateProcessDto.ownerId);
-    }
-
-    if (updateProcessDto.teamId && updateProcessDto.ownerId) {
-      await this.ensureOwnerBelongsToTeam(
-        updateProcessDto.ownerId,
-        updateProcessDto.teamId,
-      );
-    } else if (updateProcessDto.teamId && !updateProcessDto.ownerId) {
-      await this.ensureOwnerBelongsToTeam(
-        currentProcess.ownerId,
-        updateProcessDto.teamId,
-      );
-    } else if (!updateProcessDto.teamId && updateProcessDto.ownerId) {
-      await this.ensureOwnerBelongsToTeam(
-        updateProcessDto.ownerId,
-        currentProcess.teamId,
-      );
-    }
-
-    if (
-      updateProcessDto.areaId &&
-      updateProcessDto.areaId !== currentProcess.areaId
-    ) {
-      await this.ensureAreaExists(updateProcessDto.areaId);
-    }
+    await this.validateUpdateTarget(updateProcessDto, currentProcess);
 
     if (Object.keys(updateProcessDto).length === 0) {
       return currentProcess;
@@ -231,6 +195,49 @@ export class ProcessesService {
     }
   }
 
+  private async validateUpdateTarget(
+    updateProcessDto: UpdateProcessDto,
+    currentProcess: ProcessRecord,
+  ): Promise<void> {
+    if (
+      updateProcessDto.teamId &&
+      updateProcessDto.teamId !== currentProcess.teamId
+    ) {
+      await this.ensureTeamExists(updateProcessDto.teamId);
+    }
+
+    if (
+      updateProcessDto.ownerId &&
+      updateProcessDto.ownerId !== currentProcess.ownerId
+    ) {
+      await this.ensureOwnerExists(updateProcessDto.ownerId);
+    }
+
+    if (updateProcessDto.teamId && updateProcessDto.ownerId) {
+      await this.ensureOwnerBelongsToTeam(
+        updateProcessDto.ownerId,
+        updateProcessDto.teamId,
+      );
+    } else if (updateProcessDto.teamId && !updateProcessDto.ownerId) {
+      await this.ensureOwnerBelongsToTeam(
+        currentProcess.ownerId,
+        updateProcessDto.teamId,
+      );
+    } else if (!updateProcessDto.teamId && updateProcessDto.ownerId) {
+      await this.ensureOwnerBelongsToTeam(
+        updateProcessDto.ownerId,
+        currentProcess.teamId,
+      );
+    }
+
+    if (
+      updateProcessDto.areaId &&
+      updateProcessDto.areaId !== currentProcess.areaId
+    ) {
+      await this.ensureAreaExists(updateProcessDto.areaId);
+    }
+  }
+
   async delete(id: string, currentUser: AuthenticatedUser): Promise<void> {
     this.assertEditorRole(currentUser);
     const process = await this.getById(id);
@@ -240,11 +247,10 @@ export class ProcessesService {
       currentUser,
     );
 
-    const hasNonDraftVersions =
-      await this.processesRepository.hasNonDraftVersions(id);
-    if (hasNonDraftVersions) {
+    const hasAnyVersions = await this.processesRepository.hasAnyVersions(id);
+    if (hasAnyVersions) {
       throw new ConflictException(
-        'Cannot delete process with non-Draft versions. Only processes with only Draft versions can be deleted.',
+        'Cannot delete process that has versions. Preserve the process for historical traceability and archive versions instead.',
       );
     }
 

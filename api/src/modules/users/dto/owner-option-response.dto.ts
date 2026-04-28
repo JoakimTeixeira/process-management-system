@@ -10,6 +10,9 @@ export class OwnerOptionResponseDto {
   @Expose()
   teamId!: string;
 
+  @Expose()
+  isActive!: boolean;
+
   constructor(partial: Partial<OwnerOptionResponseDto>) {
     Object.assign(this, partial);
   }

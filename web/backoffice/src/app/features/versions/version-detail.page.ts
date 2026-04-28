@@ -7,6 +7,8 @@ import {
   inject,
   input,
   signal,
+  ViewChild,
+  ElementRef,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
@@ -30,7 +32,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
+import { MatSelect, MatSelectModule } from '@angular/material/select';
 
 import { BackofficeApiService } from '../../core/api/backoffice-api.service';
 import { AccessControlUtil } from '../../core/governance/access-control.util';
@@ -52,6 +54,7 @@ import {
   ProcessVersionRecord,
   VersionStateHistoryRecord,
 } from '../../core/models/backoffice.models';
+import { BackofficeBpmnViewerComponent } from '../../shared/bpmn/backoffice-bpmn-viewer.component';
 
 type VersionDetailTabId =
   | 'summary'
@@ -104,6 +107,7 @@ function minItemsValidator(minItems: number): ValidatorFn {
     MatInputModule,
     MatProgressSpinnerModule,
     MatSelectModule,
+    BackofficeBpmnViewerComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styles: [
@@ -188,6 +192,123 @@ function minItemsValidator(minItems: number): ValidatorFn {
 
       .detail-frame__body {
         padding: 1.5rem;
+      }
+
+      .diagram-workspace {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .version-header-card,
+      .summary-card {
+        border: 1px solid var(--portal-border);
+        border-radius: var(--surface-radius);
+        background: #ffffff;
+      }
+
+      .version-header-meta,
+      .summary-grid {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .summary-grid {
+        grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+      }
+
+      .summary-stat {
+        padding: 1rem;
+        border: 1px solid var(--portal-border);
+        border-radius: calc(var(--surface-radius) * 0.9);
+        background: var(--portal-surface-alt);
+      }
+
+      .summary-stat__label {
+        display: block;
+        margin-bottom: 0.35rem;
+        color: var(--portal-muted);
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .summary-stat p,
+      .summary-stat strong {
+        margin: 0;
+      }
+
+      .upload-shell {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .upload-file-row {
+        display: flex;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        align-items: center;
+      }
+
+      .upload-file-input {
+        display: none;
+      }
+
+      .diagram-viewer-panel,
+      .diagram-revision-panel {
+        border: 1px solid var(--portal-border);
+        border-radius: var(--surface-radius);
+        background: #ffffff;
+        padding: 1rem;
+      }
+
+      .diagram-viewer-panel {
+        display: none;
+      }
+
+      .diagram-preview-meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        align-items: flex-start;
+        flex-wrap: wrap;
+      }
+
+      .diagram-chip-row {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+
+      .diagram-revision-card {
+        border: 1px solid var(--portal-border);
+        border-radius: calc(var(--surface-radius) * 0.9);
+        background: #ffffff;
+        padding: 1rem;
+      }
+
+      .diagram-revision-card--previewing {
+        border-color: rgba(15, 108, 189, 0.35);
+        box-shadow: 0 0 0 1px rgba(15, 108, 189, 0.12);
+      }
+
+      .diagram-preview-block {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--portal-border);
+      }
+
+      .diagram-revision-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-top: 0.75rem;
+      }
+
+      .diagram-xml-block {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--portal-border);
       }
 
       .work-layout {
@@ -333,6 +454,22 @@ function minItemsValidator(minItems: number): ValidatorFn {
         margin-top: 0.5rem;
       }
 
+      .action-link {
+        background: none;
+        border: none;
+        color: var(--portal-primary);
+        cursor: pointer;
+        padding: 0;
+        font-size: inherit;
+        text-decoration: underline;
+        display: inline;
+        margin: 0.25rem 0;
+      }
+
+      .action-link:hover {
+        color: var(--portal-primary-dark);
+      }
+
       .card-actions {
         display: flex;
         gap: 0.75rem;
@@ -363,6 +500,15 @@ function minItemsValidator(minItems: number): ValidatorFn {
       }
 
       @media (max-width: 960px) {
+        .upload-file-row {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        .diagram-preview-meta {
+          flex-direction: column;
+        }
+
         .work-layout {
           grid-template-columns: 1fr;
         }
@@ -386,8 +532,15 @@ function minItemsValidator(minItems: number): ValidatorFn {
       } @else if (version(); as version) {
         <section class="bo-page-intro">
           <div class="bo-page-intro__copy">
-            <h1>{{ version.title }}</h1>
-            <p class="muted">Review the version, complete work, manage diagrams, and trace governance history.</p>
+            <h1>{{ headerTitle() }}</h1>
+            <p class="muted">{{ headerSubtitle() }}</p>
+            <mat-chip-set>
+              <mat-chip>v{{ version.versionNumber }}</mat-chip>
+              <mat-chip>{{ version.lifecycleState }}</mat-chip>
+              <mat-chip>{{ version.architectureState }}</mat-chip>
+              <mat-chip>{{ submissionReadinessLabel() }}</mat-chip>
+              <mat-chip>{{ summaryDiagramStatus() }}</mat-chip>
+            </mat-chip-set>
           </div>
         </section>
 
@@ -413,20 +566,68 @@ function minItemsValidator(minItems: number): ValidatorFn {
 
             @if (selectedTab() === 'summary') {
               <div class="detail-frame__body">
-                <mat-card appearance="outlined" style="margin-bottom: 1rem;">
-                  <mat-card-header>
-                    <mat-card-subtitle>
-                      @if (process(); as process) {
-                        {{ process.code }} - {{ process.title }}
-                      }
-                    </mat-card-subtitle>
-                  </mat-card-header>
-                  <mat-card-content>
+                <mat-card appearance="outlined" class="version-header-card" style="margin-bottom: 1rem;">
+                  <mat-card-content class="version-header-meta">
+                    @if (process(); as process) {
+                      <div>
+                        <p class="work-sidebar-label">Process</p>
+                        <h3 class="work-card-title">{{ process.code }} - {{ process.title }}</h3>
+                        <p class="muted">{{ process.teamName }} team - Owner {{ process.ownerName }}</p>
+                      </div>
+                    }
                     <mat-chip-set>
                       <mat-chip>v{{ version.versionNumber }}</mat-chip>
                       <mat-chip>{{ version.lifecycleState }}</mat-chip>
                       <mat-chip>{{ version.architectureState }}</mat-chip>
+                      <mat-chip>Waiting for {{ waitingForRoleLabel() }}</mat-chip>
                     </mat-chip-set>
+                  </mat-card-content>
+                </mat-card>
+
+                <div class="summary-grid" style="margin-bottom: 1rem;">
+                  <section class="summary-stat">
+                    <span class="summary-stat__label">Lineage</span>
+                    <strong>
+                      @if (derivedFromVersionLabel(); as derivedFromVersionLabel) {
+                        {{ derivedFromVersionLabel }}
+                      } @else {
+                        No earlier linked version
+                      }
+                    </strong>
+                  </section>
+                  <section class="summary-stat">
+                    <span class="summary-stat__label">Readiness</span>
+                    <strong>{{ submissionReadinessLabel() }}</strong>
+                    <p class="muted">Metadata, BPMN, procedures, and review status are tracked live.</p>
+                  </section>
+                  <section class="summary-stat">
+                    <span class="summary-stat__label">Diagram</span>
+                    <strong>{{ summaryDiagramStatus() }}</strong>
+                    <p class="muted">{{ assets().length }} uploaded revision(s)</p>
+                  </section>
+                  <section class="summary-stat">
+                    <span class="summary-stat__label">Procedures</span>
+                    <strong>{{ procedures().length }} procedure(s)</strong>
+                    <p class="muted">{{ hasProcedure() ? 'Procedure set is present' : 'No procedures added yet' }}</p>
+                  </section>
+                </div>
+
+                <mat-card appearance="outlined" class="summary-card">
+                  <mat-card-content>
+                    <div class="work-context">
+                      <div class="work-context__item">
+                        <span class="work-context__eyebrow">Change description</span>
+                        <p>{{ version.changeDescription || 'No change description provided.' }}</p>
+                      </div>
+                      <div class="work-context__item">
+                        <span class="work-context__eyebrow">Reason for change</span>
+                        <p>{{ version.reasonForChange || 'No reason for change provided.' }}</p>
+                      </div>
+                      <div class="work-context__item">
+                        <span class="work-context__eyebrow">Governance summary</span>
+                        <p>{{ governanceSummaryText() }}</p>
+                      </div>
+                    </div>
                   </mat-card-content>
                 </mat-card>
               </div>
@@ -445,7 +646,7 @@ function minItemsValidator(minItems: number): ValidatorFn {
                           <form class="work-form" [formGroup]="draftForm" (ngSubmit)="saveDraft()">
                             <mat-form-field appearance="outline">
                               <mat-label>Architecture state</mat-label>
-                              <mat-select formControlName="architectureState">
+                              <mat-select formControlName="architectureState" #architectureStateInput>
                                 <mat-option value="AS-IS">AS-IS</mat-option>
                                 <mat-option value="TO-BE">TO-BE</mat-option>
                               </mat-select>
@@ -453,7 +654,7 @@ function minItemsValidator(minItems: number): ValidatorFn {
 
                             <mat-form-field appearance="outline">
                               <mat-label>Title</mat-label>
-                              <input matInput formControlName="title" />
+                              <input matInput formControlName="title" #titleInput />
                             </mat-form-field>
 
                             <mat-form-field appearance="outline">
@@ -472,12 +673,12 @@ function minItemsValidator(minItems: number): ValidatorFn {
 
                             <mat-form-field appearance="outline">
                               <mat-label>Change description</mat-label>
-                              <textarea matInput rows="5" formControlName="changeDescription"></textarea>
+                              <textarea matInput rows="5" formControlName="changeDescription" #changeDescriptionInput></textarea>
                             </mat-form-field>
 
                             <mat-form-field appearance="outline">
                               <mat-label>Reason for change</mat-label>
-                              <textarea matInput rows="5" formControlName="reasonForChange"></textarea>
+                              <textarea matInput rows="5" formControlName="reasonForChange" #reasonForChangeInput></textarea>
                             </mat-form-field>
 
                             @if (draftErrorMessage(); as draftErrorMessage) {
@@ -497,7 +698,7 @@ function minItemsValidator(minItems: number): ValidatorFn {
                               <div class="work-context__item">
                                 <span class="work-context__eyebrow">Process</span>
                                 <p><strong>{{ process.code }} - {{ process.title }}</strong></p>
-                                <p class="muted">{{ process.teamName }} team · Owner {{ process.ownerName }}</p>
+                                <p class="muted">{{ process.teamName }} team - Owner {{ process.ownerName }}</p>
                               </div>
                             }
 
@@ -553,7 +754,12 @@ function minItemsValidator(minItems: number): ValidatorFn {
 
                         <div class="work-sidebar-item">
                           <span class="work-sidebar-label">Next action</span>
-                          <p>{{ nextActionLabel() }}</p>
+                          @if (nextChecklistItem(); as nextItem) {
+                            <p>{{ nextItem.label }}</p>
+                            <button type="button" (click)="executeNextChecklistAction()" class="action-link">Go to step</button>
+                          } @else {
+                            <p>{{ nextChecklistCompleteLabel() }}</p>
+                          }
                         </div>
                       </mat-card-content>
                     </mat-card>
@@ -561,29 +767,54 @@ function minItemsValidator(minItems: number): ValidatorFn {
                     @if (canShowChecklist()) {
                       <mat-card appearance="outlined">
                         <mat-card-header>
-                          <mat-card-title>Checklist</mat-card-title>
+                          <mat-card-title>{{ checklistTitle() }}</mat-card-title>
                         </mat-card-header>
                         <mat-card-content>
-                          <form [formGroup]="checklistForm">
-                            <mat-checkbox formControlName="titleChecked">
-                              Version title is complete and accurate
-                            </mat-checkbox>
-                            <mat-checkbox formControlName="changeChecked">
-                              Change description and reason for change are complete
-                            </mat-checkbox>
-                            <mat-checkbox [checked]="hasBpmnAsset()" disabled>
-                              At least 1 diagram is attached
-                            </mat-checkbox>
-                            <mat-checkbox [checked]="hasProcedure()" disabled>
-                              At least 1 procedure is defined
-                            </mat-checkbox>
-                            <mat-checkbox formControlName="requirementsChecked">
-                              Stakeholder and process-owner requirements are captured
-                            </mat-checkbox>
-                          </form>
-                          <p class="muted">
-                            Checklist progress: {{ allChecklistChecked() ? 'Ready for submission' : 'Still incomplete' }}
-                          </p>
+                          @if (canEditDraft()) {
+                            <div class="work-sidebar-summary">
+                              <mat-checkbox [checked]="submissionRequirements().titlePresent" disabled>
+                                Title is present
+                              </mat-checkbox>
+                              <mat-checkbox [checked]="submissionRequirements().changeDescriptionPresent" disabled>
+                                Change description is present
+                              </mat-checkbox>
+                              <mat-checkbox [checked]="submissionRequirements().reasonForChangePresent" disabled>
+                                Reason for change is present
+                              </mat-checkbox>
+                              <mat-checkbox [checked]="submissionRequirements().architectureStateSelected" disabled>
+                                Architecture state is selected
+                              </mat-checkbox>
+                              <mat-checkbox [checked]="submissionRequirements().hasBpmnAsset" disabled>
+                                BPMN diagram is uploaded
+                              </mat-checkbox>
+                              <mat-checkbox [checked]="submissionRequirements().hasProcedure" disabled>
+                                At least 1 procedure is documented
+                              </mat-checkbox>
+                            </div>
+                          } @else if (showReviewChecklist()) {
+                            <form [formGroup]="checklistForm">
+                              <mat-checkbox formControlName="titleChecked">
+                                Title is correct
+                              </mat-checkbox>
+                              <mat-checkbox formControlName="changeChecked">
+                                Change description is correct
+                              </mat-checkbox>
+                              <mat-checkbox formControlName="requirementsChecked">
+                                Reason for change is correct
+                              </mat-checkbox>
+                              <mat-checkbox formControlName="architectureChecked">
+                                Architecture state is correct
+                              </mat-checkbox>
+                              <mat-checkbox formControlName="diagramProceduresChecked">
+                                BPMN diagram reflects the documented procedures
+                              </mat-checkbox>
+                            </form>
+                          }
+                          <div class="checklist-progress">
+                            <p class="muted">
+                              Checklist progress: {{ submissionReadinessLabel() }}
+                            </p>
+                          </div>
                         </mat-card-content>
                       </mat-card>
                     }
@@ -639,13 +870,30 @@ function minItemsValidator(minItems: number): ValidatorFn {
                 <mat-card appearance="outlined">
                   <mat-card-content>
                     @if (canUploadBpmn()) {
-                      <form [formGroup]="uploadForm" (ngSubmit)="uploadAsset()">
+                      <form class="upload-shell" [formGroup]="uploadForm" (ngSubmit)="uploadAsset()">
                         <mat-form-field appearance="outline">
-                          <mat-label>Caption</mat-label>
+                          <mat-label>Asset Caption</mat-label>
                           <input matInput formControlName="caption" />
                         </mat-form-field>
 
-                        <input type="file" accept=".bpmn,.xml,text/xml,application/xml" (change)="onFileSelected($event)" />
+                        <input
+                          #bpmnFileInput
+                          class="upload-file-input"
+                          type="file"
+                          accept=".bpmn,.xml,text/xml,application/xml"
+                          (change)="onFileSelected($event)"
+                        />
+
+                        <div class="upload-file-row">
+                          <button mat-stroked-button type="button" (click)="bpmnFileInput.click()">
+                            <mat-icon>attach_file</mat-icon>
+                            Upload file
+                          </button>
+                          <button mat-flat-button color="primary" type="submit" [disabled]="isUploading()">
+                            <mat-icon>upload_file</mat-icon>
+                            {{ uploadSubmitLabel() }}
+                          </button>
+                        </div>
 
                         @if (selectedFileName(); as selectedFileName) {
                           <p class="muted">Selected file: {{ selectedFileName }}</p>
@@ -655,42 +903,147 @@ function minItemsValidator(minItems: number): ValidatorFn {
                           <p class="error-message">{{ uploadErrorMessage }}</p>
                         }
 
-                        <div class="card-actions">
-                          <button mat-flat-button color="primary" type="submit" [disabled]="isUploading()">
-                            <mat-icon>upload_file</mat-icon>
-                            Upload BPMN
-                          </button>
-                        </div>
                       </form>
 
                       <mat-divider style="margin: 1rem 0;"></mat-divider>
                     }
 
-                    @if (assets().length === 0) {
+                    @if (currentAssets().length === 0) {
                       <p class="muted">No BPMN assets uploaded yet.</p>
                     } @else {
-                      <div class="history-list">
-                        @for (asset of assets(); track asset.id; let last = $last) {
-                          <div [style]="last ? 'padding: 1rem 0;' : 'padding: 1rem 0; border-bottom: 1px solid var(--portal-border);'">
-                            <div class="section-header">
+                      <div class="diagram-workspace">
+                        <section class="diagram-viewer-panel">
+                          @if (previewAsset(); as previewAsset) {
+                            <div class="diagram-preview-meta">
                               <div>
-                                <strong>{{ asset.caption }}</strong>
-                                <p class="muted">{{ asset.mimeType }} - {{ asset.sizeBytes }} bytes</p>
+                                <p class="work-sidebar-label">Current preview</p>
+                                <h3 class="work-card-title">{{ previewAsset.caption }}</h3>
+                                <p class="muted">
+                                  Process version v{{ version.versionNumber }} - Diagram revision
+                                  {{ getAssetRevisionLabel(previewAsset) }} - Uploaded
+                                  {{ previewAsset.createdAt | date: 'medium' }}
+                                </p>
+                                @if (previewAsset.supersededAt) {
+                                  <p class="muted">
+                                    Superseded: {{ previewAsset.supersededAt | date: 'medium' }}
+                                  </p>
+                                }
                               </div>
-                              <button mat-button type="button" (click)="viewAsset(asset)">
-                                <mat-icon>visibility</mat-icon>
-                                View XML
-                              </button>
+                              <div class="diagram-chip-row">
+                                <mat-chip>{{ getAssetRevisionLabel(previewAsset) }}</mat-chip>
+                                <mat-chip>{{
+                                  previewAsset.isCurrent
+                                    ? 'Current revision'
+                                    : 'Superseded revision'
+                                }}</mat-chip>
+                              </div>
                             </div>
-                          </div>
-                        }
-                      </div>
-                    }
+                          }
 
-                    @if (selectedAssetContent(); as selectedAssetContent) {
-                      <div style="margin-top: 1rem;">
-                        <h3>{{ selectedAssetContent.caption }}</h3>
-                        <pre class="bo-xml-preview">{{ selectedAssetContent.content }}</pre>
+                          <app-backoffice-bpmn-viewer
+                            [xml]="diagramPreviewXml()"
+                            [title]="diagramPreviewTitle()"
+                            [subtitle]="diagramPreviewSubtitle()"
+                            emptyMessage="Select a BPMN asset to visualise."
+                          />
+                        </section>
+
+                        <section class="diagram-revision-panel">
+                          <div class="work-card-header">
+                            <h3 class="work-card-title">Diagram revisions</h3>
+                            <p class="work-card-copy">
+                              The current revision starts expanded. Open another preview to switch
+                              the active diagram while keeping XML available inline.
+                            </p>
+                          </div>
+
+                          <div class="history-list">
+                            @for (asset of assetTimeline(); track asset.id) {
+                              <div
+                                class="diagram-revision-card"
+                                [class.diagram-revision-card--previewing]="isPreviewedAsset(asset)"
+                              >
+                                <div class="section-header">
+                                  <div>
+                                    <strong>{{ asset.caption }}</strong>
+                                    <p class="muted">
+                                      Process version v{{ version.versionNumber }} - Diagram revision
+                                      {{ getAssetRevisionLabel(asset) }}
+                                    </p>
+                                    <p class="muted">
+                                      Uploaded {{ asset.createdAt | date: 'medium' }} -
+                                      {{ getAssetMimeTypeLabel(asset) }} - {{ asset.sizeBytes }} bytes
+                                    </p>
+                                    @if (asset.supersededAt) {
+                                      <p class="muted">
+                                        Superseded {{ asset.supersededAt | date: 'medium' }}
+                                      </p>
+                                    }
+                                  </div>
+                                  <div class="diagram-chip-row">
+                                    <mat-chip>{{ getAssetRevisionLabel(asset) }}</mat-chip>
+                                    <mat-chip>{{
+                                      asset.isCurrent ? 'Current revision' : 'Superseded revision'
+                                    }}</mat-chip>
+                                  </div>
+                                </div>
+
+                                <div class="diagram-revision-actions">
+                                  <button mat-button type="button" (click)="toggleAssetPreview(asset)">
+                                    <mat-icon>preview</mat-icon>
+                                    {{
+                                      expandedPreviewAssetId() === asset.id
+                                        ? 'Hide preview'
+                                        : 'Preview'
+                                    }}
+                                  </button>
+                                  <button mat-button type="button" (click)="toggleAssetXml(asset)">
+                                    <mat-icon>code</mat-icon>
+                                    {{
+                                      expandedAssetXmlId() === asset.id ? 'Hide XML' : 'View XML'
+                                    }}
+                                  </button>
+                                </div>
+
+                                @if (
+                                  expandedPreviewAssetId() === asset.id &&
+                                  previewAssetContent()?.id === asset.id
+                                ) {
+                                  <div class="diagram-preview-block">
+                                    <div class="diagram-preview-meta">
+                                      <div>
+                                        <p class="work-sidebar-label">Preview</p>
+                                        <h4 style="margin: 0 0 0.35rem;">
+                                          {{ asset.caption }} - {{ getAssetRevisionLabel(asset) }}
+                                        </h4>
+                                        <p class="muted">
+                                          Process version v{{ version.versionNumber }} - Uploaded
+                                          {{ asset.createdAt | date: 'medium' }}
+                                        </p>
+                                      </div>                                    </div>
+
+                                    <app-backoffice-bpmn-viewer
+                                      [xml]="previewAssetContent()?.content ?? null"
+                                      [title]="asset.caption + ' (' + getAssetRevisionLabel(asset) + ')'"
+                                      [subtitle]="'Process version v' + version.versionNumber + ' - Diagram preview'"
+                                      emptyMessage="Select a BPMN asset to visualise."
+                                    />
+                                  </div>
+                                }
+
+                                @if (
+                                  expandedAssetXmlId() === asset.id &&
+                                  expandedAssetXmlContent()?.id === asset.id
+                                ) {
+                                  <div class="diagram-xml-block">
+                                    <h4>{{ asset.caption }} XML</h4>
+                                    <pre class="bo-xml-preview">{{ expandedAssetXmlContent()?.content }}</pre>
+                                  </div>
+                                }
+                              </div>
+                            }
+                          </div>
+                        </section>
                       </div>
                     }
                   </mat-card-content>
@@ -1005,6 +1358,37 @@ function minItemsValidator(minItems: number): ValidatorFn {
                           </div>
                         }
                       </div>
+
+                      <mat-divider style="margin: 2.5rem 0;"></mat-divider>
+
+                      <div class="work-card-header">
+                        <h3 class="work-card-title">Asset supersede history</h3>
+                        @if (supersededAssets().length === 0) {
+                          <p class="muted">No asset supersede history.</p>
+                        } @else {
+                          <div class="history-list">
+                            @for (asset of supersededAssets(); track asset.id) {
+                              <mat-card appearance="outlined">
+                                <mat-card-content>
+                                  <strong>
+                                    {{ getAssetRevisionLabel(asset) }} - {{ asset.caption }}
+                                  </strong>
+                                  <p class="muted">
+                                    Process version v{{ version.versionNumber }} - Uploaded
+                                    {{ asset.createdAt | date: 'medium' }}
+                                  </p>
+                                  <p class="muted">
+                                    {{ getAssetMimeTypeLabel(asset) }} - {{ asset.sizeBytes }} bytes
+                                  </p>
+                                  @if (asset.supersededAt) {
+                                    <p class="muted">Superseded: {{ asset.supersededAt | date: 'medium' }}</p>
+                                  }
+                                </mat-card-content>
+                              </mat-card>
+                            }
+                          </div>
+                        }
+                      </div>
                     }
                   </mat-card-content>
                 </mat-card>
@@ -1030,12 +1414,24 @@ export class VersionDetailPageComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly breadcrumbOwner = Symbol('version-detail-page');
 
+  @ViewChild('titleInput', { static: false })
+  private readonly titleInput?: ElementRef<HTMLInputElement>;
+  @ViewChild('changeDescriptionInput', { static: false })
+  private readonly changeDescriptionInput?: ElementRef<HTMLTextAreaElement>;
+  @ViewChild('reasonForChangeInput', { static: false })
+  private readonly reasonForChangeInput?: ElementRef<HTMLTextAreaElement>;
+  @ViewChild('architectureStateInput', { static: false })
+  private readonly architectureStateInput?: MatSelect;
+
   protected readonly version = signal<ProcessVersionRecord | null>(null);
   protected readonly process = signal<ProcessRecord | null>(null);
   protected readonly relatedVersions = signal<ProcessVersionRecord[]>([]);
   protected readonly assets = signal<AssetRecord[]>([]);
   protected readonly procedures = signal<ProcedureRecord[]>([]);
-  protected readonly selectedAssetContent = signal<AssetContentRecord | null>(null);
+  protected readonly previewAssetContent = signal<AssetContentRecord | null>(null);
+  protected readonly expandedPreviewAssetId = signal<string | null>(null);
+  protected readonly expandedAssetXmlContent = signal<AssetContentRecord | null>(null);
+  protected readonly expandedAssetXmlId = signal<string | null>(null);
   protected readonly stateHistory = signal<VersionStateHistoryRecord[]>([]);
   protected readonly auditLogs = signal<AuditLogRecord[]>([]);
   protected readonly isLoading = signal(true);
@@ -1075,13 +1471,40 @@ export class VersionDetailPageComponent {
   });
   protected readonly canEditDraft = computed(() => this.editorCanManageVersion());
   protected readonly canUploadBpmn = computed(() => this.editorCanManageVersion());
-  protected readonly canShowChecklist = computed(() => this.canEditDraft());
+  protected readonly primaryActionTabLabel = computed(() => {
+    const version = this.version();
+
+    if (!version) {
+      return 'Action';
+    }
+
+    if (this.canEditDraft()) {
+      return 'Edit draft';
+    }
+
+    if (this.showReviewChecklist()) {
+      return 'Review';
+    }
+
+    if (this.currentUserRole() === 'PUBLISHER') {
+      return version.lifecycleState === 'Approved' ? 'Publish' : 'Release actions';
+    }
+
+    return 'Context';
+  });
+  protected readonly showReviewChecklist = computed(() => {
+    const version = this.version();
+    return this.currentUserRole() === 'REVIEWER' && version?.lifecycleState === 'In Review';
+  });
+  protected readonly canShowChecklist = computed(
+    () => this.canEditDraft() || this.showReviewChecklist(),
+  );
   protected readonly tabs = computed(() => {
     const tabs: { id: VersionDetailTabId; label: string }[] = [
       { id: 'summary', label: 'Summary' },
     ];
 
-    tabs.push({ id: 'work', label: 'Work' });
+    tabs.push({ id: 'work', label: this.primaryActionTabLabel() });
 
     tabs.push(
       { id: 'diagram', label: 'Diagram' },
@@ -1095,16 +1518,165 @@ export class VersionDetailPageComponent {
     return tabs;
   });
   protected readonly hasBpmnAsset = computed(() => this.assets().length > 0);
-  protected readonly hasProcedure = computed(() => this.procedures().length > 0);
-  protected readonly allChecklistChecked = computed(() => {
-    const checklistState = this.checklistState();
+  protected readonly currentAssets = computed(() =>
+    this.assets().filter((asset) => asset.isCurrent),
+  );
+  protected readonly supersededAssets = computed(() =>
+    this.assets().filter((asset) => !asset.isCurrent),
+  );
+  protected readonly assetTimeline = computed(() => [...this.assets()].reverse());
+  protected readonly previewAsset = computed(() => {
+    const previewAssetId =
+      this.expandedPreviewAssetId() ?? this.previewAssetContent()?.id;
 
     return (
-      checklistState.titleChecked &&
-      checklistState.changeChecked &&
-      checklistState.requirementsChecked &&
-      this.hasBpmnAsset() &&
-      this.hasProcedure()
+      this.assets().find((asset) => asset.id === previewAssetId) ??
+      this.currentAssets()[0] ??
+      this.assetTimeline()[0] ??
+      null
+    );
+  });
+  protected readonly diagramPreviewXml = computed(
+    () => this.previewAssetContent()?.content ?? null,
+  );
+  protected readonly currentAsset = computed(() => this.currentAssets()[0] ?? null);
+  protected readonly uploadSubmitLabel = computed(() =>
+    this.selectedFile() ? 'Submit asset' : 'Upload BPMN',
+  );
+  protected readonly diagramPreviewTitle = computed(() => {
+    const asset = this.previewAsset();
+
+    if (!asset) {
+      return 'Visualize the BPMN diagram';
+    }
+
+    return `${asset.caption} (${this.getAssetRevisionLabel(asset)})`;
+  });
+  protected readonly diagramPreviewSubtitle = computed(() => {
+    const asset = this.previewAsset();
+    const version = this.version();
+
+    if (!asset || !version) {
+      return 'Use the controls to fit, zoom, and inspect the selected BPMN revision.';
+    }
+
+    return `Process version v${version.versionNumber} - ${this.getAssetRevisionLabel(asset)} - ${
+      asset.isCurrent ? 'Current uploaded revision' : 'Superseded uploaded revision'
+    }.`;
+  });
+  protected readonly hasProcedure = computed(() => this.procedures().length > 0);
+  protected readonly architectureStateSelected = computed(() => {
+    const architectureState = this.draftForm.controls.architectureState.value;
+    return architectureState === 'AS-IS' || architectureState === 'TO-BE';
+  });
+  protected readonly submissionRequirements = computed(() => ({
+    titlePresent: this.draftForm.controls.title.getRawValue().trim().length > 0,
+    changeDescriptionPresent:
+      this.draftForm.controls.changeDescription.getRawValue().trim().length > 0,
+    reasonForChangePresent:
+      this.draftForm.controls.reasonForChange.getRawValue().trim().length > 0,
+    architectureStateSelected: this.architectureStateSelected(),
+    hasBpmnAsset: this.hasBpmnAsset(),
+    hasProcedure: this.hasProcedure(),
+  }));
+  protected readonly nextChecklistItem = computed(() => {
+    if (this.showReviewChecklist()) {
+      const checklistState = this.checklistState();
+
+      if (!checklistState.titleChecked) {
+        return {
+          label: 'Confirm the title is correct',
+          action: () => this.selectTabAndFocus('work', 'title'),
+        };
+      }
+      if (!checklistState.changeChecked) {
+        return {
+          label: 'Confirm the change description is correct',
+          action: () => this.selectTabAndFocus('work', 'changeDescription'),
+        };
+      }
+      if (!checklistState.requirementsChecked) {
+        return {
+          label: 'Confirm the reason for change is correct',
+          action: () => this.selectTabAndFocus('work', 'reasonForChange'),
+        };
+      }
+      if (!checklistState.architectureChecked) {
+        return {
+          label: 'Confirm the architecture state is correct',
+          action: () => this.selectTabAndFocus('work', 'architectureState'),
+        };
+      }
+      if (!checklistState.diagramProceduresChecked) {
+        return {
+          label: 'Check that the BPMN diagram reflects the documented procedures',
+          action: () => this.selectTab('diagram'),
+        };
+      }
+      return null;
+    }
+
+    if (!this.canEditDraft()) {
+      return null;
+    }
+
+    const submissionRequirements = this.submissionRequirements();
+
+    if (!submissionRequirements.titlePresent) {
+      return { label: 'Fill in the title', action: () => this.selectTabAndFocus('work', 'title') };
+    }
+    if (!submissionRequirements.changeDescriptionPresent) {
+      return {
+        label: 'Fill in the change description',
+        action: () => this.selectTabAndFocus('work', 'changeDescription'),
+      };
+    }
+    if (!submissionRequirements.reasonForChangePresent) {
+      return {
+        label: 'Fill in the reason for change',
+        action: () => this.selectTabAndFocus('work', 'reasonForChange'),
+      };
+    }
+    if (!submissionRequirements.architectureStateSelected) {
+      return {
+        label: 'Select the architecture state',
+        action: () => this.selectTabAndFocus('work', 'architectureState'),
+      };
+    }
+    if (!submissionRequirements.hasBpmnAsset) {
+      return { label: 'Upload the BPMN diagram', action: () => this.selectTab('diagram') };
+    }
+    if (!submissionRequirements.hasProcedure) {
+      return { label: 'Add at least 1 procedure', action: () => this.selectTab('procedures') };
+    }
+    return null;
+  });
+  protected readonly allChecklistChecked = computed(() => {
+    if (this.showReviewChecklist()) {
+      const checklistState = this.checklistState();
+
+      return (
+        checklistState.titleChecked &&
+        checklistState.changeChecked &&
+        checklistState.requirementsChecked &&
+        checklistState.architectureChecked &&
+        checklistState.diagramProceduresChecked
+      );
+    }
+
+    if (this.version()?.lifecycleState !== 'Draft') {
+      return this.version()?.checklistCompleted ?? false;
+    }
+
+    const submissionRequirements = this.submissionRequirements();
+
+    return (
+      submissionRequirements.titlePresent &&
+      submissionRequirements.changeDescriptionPresent &&
+      submissionRequirements.reasonForChangePresent &&
+      submissionRequirements.architectureStateSelected &&
+      submissionRequirements.hasBpmnAsset &&
+      submissionRequirements.hasProcedure
     );
   });
   protected readonly selectedFileName = computed(() => this.selectedFile()?.name ?? null);
@@ -1158,7 +1730,7 @@ export class VersionDetailPageComponent {
 
     switch (this.currentUserRole()) {
       case 'REVIEWER':
-        return 'Use this evidence to validate the draft and record your review decision.';
+        return 'Use this evidence to validate the draft, complete the review checklist, and record your decision.';
       case 'PUBLISHER':
         return 'Use this context to confirm release readiness before you publish, archive, or promote.';
       default:
@@ -1180,6 +1752,99 @@ export class VersionDetailPageComponent {
     }
 
     return `v${relatedVersion.versionNumber} - ${relatedVersion.title}`;
+  });
+  protected readonly headerTitle = computed(() => {
+    const version = this.version();
+    const process = this.process();
+
+    if (!version || !process) {
+      return 'Version detail';
+    }
+
+    return `${process.code} - ${version.title}`;
+  });
+  protected readonly headerSubtitle = computed(() => {
+    const process = this.process();
+    const version = this.version();
+
+    if (!process || !version) {
+      return 'Review the version, complete work, manage diagrams, and trace governance history.';
+    }
+
+    return `${process.title} - ${process.teamName} team - Owner ${process.ownerName} - Version v${version.versionNumber}`;
+  });
+  protected readonly checklistTitle = computed(() =>
+    this.canEditDraft() ? 'Submission readiness' : 'Review checklist',
+  );
+  protected readonly submissionReadinessLabel = computed(() => {
+    const version = this.version();
+
+    if (this.showReviewChecklist()) {
+      return this.allChecklistChecked() ? 'Ready to approve' : 'Review still incomplete';
+    }
+
+    if (version?.lifecycleState === 'Draft') {
+      return this.allChecklistChecked() ? 'Ready for review' : 'Still incomplete';
+    }
+
+    if (version?.lifecycleState === 'In Review') {
+      return 'In review';
+    }
+
+    return version?.checklistCompleted ? 'Reviewer checklist complete' : 'Checklist pending';
+  });
+  protected readonly nextChecklistCompleteLabel = computed(() => {
+    const version = this.version();
+
+    if (this.showReviewChecklist()) {
+      return 'Review checklist complete. Ready to approve.';
+    }
+
+    if (this.canEditDraft()) {
+      return 'All requirements met. Ready to submit.';
+    }
+
+    if (this.currentUserRole() === 'PUBLISHER' && version?.lifecycleState === 'Approved') {
+      return 'Verify it is ready for publishing, then click Publish.';
+    }
+
+    if (this.currentUserRole() === 'PUBLISHER' && version?.lifecycleState === 'Published') {
+      return 'Review the release status and use archive or promote when needed.';
+    }
+
+    return 'Review the version context and use the available decision action.';
+  });
+  protected readonly governanceSummaryText = computed(() => {
+    const version = this.version();
+
+    if (!version) {
+      return '';
+    }
+
+    if (version.lifecycleState === 'Draft') {
+      return `This version is draft in ${version.architectureState} state and ${
+        this.allChecklistChecked()
+          ? 'meets the draft submission requirements.'
+          : 'does not yet meet the draft submission requirements.'
+      }`;
+    }
+
+    return `This version is ${version.lifecycleState.toLowerCase()} in ${
+      version.architectureState
+    } state and ${
+      version.checklistCompleted
+        ? 'has completed reviewer verification.'
+        : 'is still awaiting reviewer verification.'
+    }`;
+  });
+  protected readonly summaryDiagramStatus = computed(() => {
+    const currentAsset = this.currentAsset();
+
+    if (!currentAsset) {
+      return 'No BPMN uploaded yet';
+    }
+
+    return `${this.getAssetRevisionLabel(currentAsset)} current revision uploaded`;
   });
   protected readonly editingProcedure = computed(() =>
     this.procedures().find((procedure) => procedure.id === this.editingProcedureId()) ?? null,
@@ -1205,6 +1870,8 @@ export class VersionDetailPageComponent {
     titleChecked: [false],
     changeChecked: [false],
     requirementsChecked: [false],
+    architectureChecked: [false],
+    diagramProceduresChecked: [false],
   });
 
   protected readonly uploadForm = this.fb.group({
@@ -1227,7 +1894,7 @@ export class VersionDetailPageComponent {
     promotionTitle: [''],
   });
 
-  private readonly checklistState = toSignal(this.checklistForm.valueChanges, {
+  protected readonly checklistState = toSignal(this.checklistForm.valueChanges, {
     initialValue: this.checklistForm.getRawValue(),
   });
 
@@ -1300,6 +1967,40 @@ export class VersionDetailPageComponent {
     });
   }
 
+  protected selectTabAndFocus(tabId: VersionDetailTabId, inputId: string): void {
+    this.selectTab(tabId);
+
+    // Use setTimeout to wait for the tab transition to complete
+    setTimeout(() => {
+      let focusTarget: { focus: () => void } | undefined;
+      switch (inputId) {
+        case 'title':
+          focusTarget = this.titleInput?.nativeElement;
+          break;
+        case 'changeDescription':
+          focusTarget = this.changeDescriptionInput?.nativeElement;
+          break;
+        case 'reasonForChange':
+          focusTarget = this.reasonForChangeInput?.nativeElement;
+          break;
+        case 'architectureState':
+          focusTarget = this.architectureStateInput;
+          break;
+      }
+
+      if (focusTarget) {
+        focusTarget.focus();
+      }
+    }, 100);
+  }
+
+  protected executeNextChecklistAction(): void {
+    const nextItem = this.nextChecklistItem();
+    if (nextItem) {
+      nextItem.action();
+    }
+  }
+
   protected onFileSelected(event: Event): void {
     const file = (event.target as HTMLInputElement | null)?.files?.[0] ?? null;
     this.selectedFile.set(file);
@@ -1329,6 +2030,10 @@ export class VersionDetailPageComponent {
 
       this.uploadForm.reset({ caption: '' });
       this.selectedFile.set(null);
+      this.previewAssetContent.set(null);
+      this.expandedPreviewAssetId.set(null);
+      this.expandedAssetXmlContent.set(null);
+      this.expandedAssetXmlId.set(null);
       await this.reloadSupportingData(currentVersion);
       this.toast.success('BPMN asset uploaded successfully');
     } catch (error) {
@@ -1341,14 +2046,62 @@ export class VersionDetailPageComponent {
     }
   }
 
-  protected async viewAsset(asset: AssetRecord): Promise<void> {
+  protected isPreviewedAsset(asset: AssetRecord): boolean {
+    return this.expandedPreviewAssetId() === asset.id;
+  }
+
+  protected getAssetRevisionLabel(asset: AssetRecord): string {
+    return `v${this.getAssetRevisionNumber(asset)}`;
+  }
+
+  protected getAssetMimeTypeLabel(asset: AssetRecord): string {
+    if (
+      asset.mimeType === 'application/octet-stream' &&
+      /\.(bpmn|xml)$/i.test(asset.filePath)
+    ) {
+      return 'application/xml';
+    }
+
+    return asset.mimeType;
+  }
+
+  protected async toggleAssetPreview(asset: AssetRecord): Promise<void> {
+    if (this.expandedPreviewAssetId() === asset.id) {
+      this.expandedPreviewAssetId.set(null);
+      return;
+    }
+
     try {
-      this.selectedAssetContent.set(
-        await firstValueFrom(this.api.getAssetContent(asset.processVersionId, asset.id)),
-      );
+      this.previewAssetContent.set(await this.loadAssetContent(asset));
+      this.expandedPreviewAssetId.set(asset.id);
+
+      if (this.expandedAssetXmlId() && this.expandedAssetXmlId() !== asset.id) {
+        this.expandedAssetXmlId.set(null);
+      }
     } catch (error) {
       this.uploadErrorMessage.set(
         getHttpErrorMessage(error, 'Unable to load the BPMN asset preview.'),
+      );
+    }
+  }
+
+  protected async previewAssetRevision(asset: AssetRecord): Promise<void> {
+    await this.toggleAssetPreview(asset);
+  }
+
+  protected async toggleAssetXml(asset: AssetRecord): Promise<void> {
+    if (this.expandedAssetXmlId() === asset.id) {
+      this.expandedAssetXmlId.set(null);
+      this.expandedAssetXmlContent.set(null);
+      return;
+    }
+
+    try {
+      this.expandedAssetXmlContent.set(await this.loadAssetContent(asset));
+      this.expandedAssetXmlId.set(asset.id);
+    } catch (error) {
+      this.uploadErrorMessage.set(
+        getHttpErrorMessage(error, 'Unable to load the BPMN asset XML.'),
       );
     }
   }
@@ -1502,7 +2255,7 @@ export class VersionDetailPageComponent {
         case 'submit':
           if (!this.allChecklistChecked()) {
             this.actionErrorMessage.set(
-              'Complete the submission checklist, attach a BPMN file, and define at least one procedure before submitting.',
+              'Complete the draft metadata, upload a BPMN diagram, and define at least one procedure before submitting.',
             );
             return;
           }
@@ -1514,6 +2267,11 @@ export class VersionDetailPageComponent {
           this.toast.success('Version submitted for review');
           break;
         case 'approve':
+          if (!this.allChecklistChecked()) {
+            this.actionErrorMessage.set('Complete the review checklist before approving.');
+            return;
+          }
+
           await firstValueFrom(this.api.approveVersion(currentVersion.id, reason || undefined));
           this.toast.success('Version approved');
           break;
@@ -1575,6 +2333,7 @@ export class VersionDetailPageComponent {
       this.relatedVersions.set(relatedVersions);
       this.selectedTab.set(this.resolveInitialTab());
       this.patchDraftState(version);
+      this.resetChecklistState();
       this.cancelProcedureEdit();
       await this.reloadSupportingData(version);
     } catch (error) {
@@ -1610,21 +2369,72 @@ export class VersionDetailPageComponent {
       this.auditLogs.set([]);
     }
 
-    if (!assets.some((asset) => asset.id === this.selectedAssetContent()?.id)) {
-      this.selectedAssetContent.set(null);
+    if (!assets.some((asset) => asset.id === this.previewAssetContent()?.id)) {
+      this.previewAssetContent.set(null);
+    }
+
+    if (!assets.some((asset) => asset.id === this.expandedPreviewAssetId())) {
+      this.expandedPreviewAssetId.set(null);
+    }
+
+    if (!assets.some((asset) => asset.id === this.expandedAssetXmlId())) {
+      this.expandedAssetXmlId.set(null);
+      this.expandedAssetXmlContent.set(null);
+    }
+
+    await this.ensurePreviewAssetContent(assets);
+  }
+
+  private getAssetRevisionNumber(asset: AssetRecord): number {
+    const index = this.assets().findIndex(
+      (candidateAsset) => candidateAsset.id === asset.id,
+    );
+
+    return index >= 0 ? index + 1 : this.assets().length;
+  }
+
+  private async loadAssetContent(asset: AssetRecord): Promise<AssetContentRecord> {
+    const currentPreview = this.previewAssetContent();
+
+    if (currentPreview?.id === asset.id) {
+      return currentPreview;
+    }
+
+    return await firstValueFrom(
+      this.api.getAssetContent(asset.processVersionId, asset.id),
+    );
+  }
+
+  private async ensurePreviewAssetContent(assets: AssetRecord[]): Promise<void> {
+    if (assets.length === 0) {
+      this.previewAssetContent.set(null);
+      this.expandedPreviewAssetId.set(null);
+      return;
+    }
+
+    const currentPreviewId =
+      this.expandedPreviewAssetId() ?? this.previewAssetContent()?.id;
+    const assetToPreview =
+      (currentPreviewId
+        ? assets.find((asset) => asset.id === currentPreviewId)
+        : null) ??
+      assets.find((asset) => asset.isCurrent) ??
+      assets[assets.length - 1] ??
+      null;
+
+    if (!assetToPreview || this.previewAssetContent()?.id === assetToPreview.id) {
+      return;
+    }
+
+    try {
+      this.previewAssetContent.set(await this.loadAssetContent(assetToPreview));
+      this.expandedPreviewAssetId.set(assetToPreview.id);
+    } catch {
+      this.previewAssetContent.set(null);
     }
   }
 
-  private patchDraftState(
-    version: ProcessVersionRecord,
-    options?: { preserveChecklistSelections?: boolean },
-  ): void {
-    const preserveChecklistSelections =
-      options?.preserveChecklistSelections ?? false;
-    const currentChecklistState = preserveChecklistSelections
-      ? this.checklistForm.getRawValue()
-      : null;
-
+  private patchDraftState(version: ProcessVersionRecord): void {
     this.draftForm.reset({
       architectureState: version.architectureState,
       title: version.title,
@@ -1632,12 +2442,15 @@ export class VersionDetailPageComponent {
       changeDescription: version.changeDescription,
       reasonForChange: version.reasonForChange,
     });
+  }
 
+  private resetChecklistState(): void {
     this.checklistForm.reset({
-      titleChecked: currentChecklistState?.titleChecked ?? version.checklistCompleted,
-      changeChecked: currentChecklistState?.changeChecked ?? version.checklistCompleted,
-      requirementsChecked:
-        currentChecklistState?.requirementsChecked ?? version.checklistCompleted,
+      titleChecked: false,
+      changeChecked: false,
+      requirementsChecked: false,
+      architectureChecked: false,
+      diagramProceduresChecked: false,
     });
   }
 
@@ -1694,7 +2507,7 @@ export class VersionDetailPageComponent {
       case 'Draft':
         return 'Complete the draft and submit it for review.';
       case 'In Review':
-        return 'Approve or reject the version.';
+        return 'Complete the review checklist, then approve or reject the version.';
       case 'Approved':
         return 'Publish the version or reopen it if more changes are needed.';
       case 'Published':
@@ -1834,14 +2647,11 @@ export class VersionDetailPageComponent {
           derivedFromVersionId: this.draftForm.controls.derivedFromVersionId.getRawValue() || null,
           changeDescription: this.draftForm.controls.changeDescription.getRawValue(),
           reasonForChange: this.draftForm.controls.reasonForChange.getRawValue(),
-          checklistCompleted: this.allChecklistChecked(),
         }),
       );
 
       this.version.set(updatedVersion);
-      this.patchDraftState(updatedVersion, {
-        preserveChecklistSelections: true,
-      });
+      this.patchDraftState(updatedVersion);
       if (showMessageOnError) {
         this.toast.success('Draft saved successfully');
       }

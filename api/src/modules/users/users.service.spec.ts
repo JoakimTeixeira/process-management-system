@@ -78,11 +78,11 @@ describe('UsersService', () => {
   it('should return same-team owner options', async () => {
     usersRepository.teamExists.mockResolvedValue(true);
     usersRepository.findOwnerOptionsByTeamId.mockResolvedValue([
-      { id: 'owner-1', name: 'Alice Owner', teamId: 'team-1' },
+      { id: 'owner-1', name: 'Alice Owner', teamId: 'team-1', isActive: true },
     ]);
 
     await expect(service.listOwnerOptions(currentUser)).resolves.toEqual([
-      { id: 'owner-1', name: 'Alice Owner', teamId: 'team-1' },
+      { id: 'owner-1', name: 'Alice Owner', teamId: 'team-1', isActive: true },
     ]);
     expect(usersRepository.findOwnerOptionsByTeamId).toHaveBeenCalledWith(
       'team-1',
@@ -92,11 +92,11 @@ describe('UsersService', () => {
   it('should return owner options for a selected team', async () => {
     usersRepository.teamExists.mockResolvedValue(true);
     usersRepository.findOwnerOptionsByTeamId.mockResolvedValue([
-      { id: 'owner-2', name: 'Bob Owner', teamId: 'team-2' },
+      { id: 'owner-2', name: 'Bob Owner', teamId: 'team-2', isActive: true },
     ]);
 
     await expect(service.listOwnerOptionsByTeamId('team-2')).resolves.toEqual([
-      { id: 'owner-2', name: 'Bob Owner', teamId: 'team-2' },
+      { id: 'owner-2', name: 'Bob Owner', teamId: 'team-2', isActive: true },
     ]);
     expect(usersRepository.teamExists).toHaveBeenCalledWith('team-2');
     expect(usersRepository.findOwnerOptionsByTeamId).toHaveBeenCalledWith(

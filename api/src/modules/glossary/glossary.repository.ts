@@ -271,14 +271,4 @@ export class GlossaryRepository {
       createdBy: row.created_by,
     };
   }
-
-  async delete(id: string): Promise<void> {
-    await this.dataSource.query(
-      `
-        DELETE FROM glossary_terms
-        WHERE id = $1
-      `,
-      [id],
-    );
-  }
 }

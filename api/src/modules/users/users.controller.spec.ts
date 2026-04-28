@@ -121,7 +121,7 @@ describe('UsersController', () => {
 
   it('should delegate owner options lookup', async () => {
     usersService.listOwnerOptions.mockResolvedValue([
-      { id: 'u1', name: 'Alice', teamId: 'team-1' },
+      { id: 'u1', name: 'Alice', teamId: 'team-1', isActive: true },
     ]);
 
     await controller.listOwnerOptions(currentUser);
@@ -131,7 +131,7 @@ describe('UsersController', () => {
 
   it('should delegate team-scoped owner options lookup', async () => {
     usersService.listOwnerOptionsByTeamId.mockResolvedValue([
-      { id: 'u2', name: 'Bob', teamId: 'team-2' },
+      { id: 'u2', name: 'Bob', teamId: 'team-2', isActive: true },
     ]);
 
     await controller.listOwnerOptionsByTeamId({ id: 'team-2' });

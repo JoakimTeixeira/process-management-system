@@ -24,6 +24,7 @@ interface OwnerOptionRow extends QueryRow {
   id: string;
   name: string;
   team_id: string;
+  is_active: boolean;
 }
 
 interface TeamOptionRow extends QueryRow {
@@ -61,6 +62,7 @@ export interface OwnerOptionRecord {
   id: string;
   name: string;
   teamId: string;
+  isActive: boolean;
 }
 
 export interface TeamOptionRecord {
@@ -104,7 +106,8 @@ export class UsersRepository {
         SELECT
           u.id,
           u.name,
-          u.team_id
+          u.team_id,
+          u.is_active
         FROM users u
         WHERE u.team_id = $1
           AND u.is_active = TRUE
@@ -117,6 +120,7 @@ export class UsersRepository {
       id: row.id,
       name: row.name,
       teamId: row.team_id,
+      isActive: row.is_active,
     }));
   }
 
@@ -127,7 +131,8 @@ export class UsersRepository {
         SELECT
           u.id,
           u.name,
-          u.team_id
+          u.team_id,
+          u.is_active
         FROM users u
         WHERE u.is_active = TRUE
         ORDER BY u.name ASC
@@ -138,6 +143,7 @@ export class UsersRepository {
       id: row.id,
       name: row.name,
       teamId: row.team_id,
+      isActive: row.is_active,
     }));
   }
 

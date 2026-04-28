@@ -84,6 +84,10 @@ describe('AssetsController', () => {
     mimeType: 'application/xml',
     checksum: 'abc123',
     sizeBytes: TEST_FILE_SIZE_BYTES,
+    isCurrent: true,
+    supersededAt: null,
+    supersededByAssetId: null,
+    createdAt: '2026-04-28T12:00:00.000Z',
   };
 
   beforeEach(() => {

@@ -305,10 +305,6 @@ export class BackofficeApiService {
     return this.http.patch(`${this.baseUrl}/glossary/${id}`, payload);
   }
 
-  deleteGlossaryTerm(id: string) {
-    return this.http.delete(`${this.baseUrl}/glossary/${id}`);
-  }
-
   listOwnerOptions(teamId: string) {
     return this.http.get<OwnerOption[]>(
       `${this.baseUrl}/users/owner-options/team/${teamId}`,

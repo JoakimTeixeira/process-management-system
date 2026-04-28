@@ -60,7 +60,7 @@ describe('ProcessFormPageComponent', () => {
       of([{ id: 'team-1', code: 'OPS', name: 'Operations' }]),
     );
     api.listOwnerOptions.and.returnValue(
-      of([{ id: 'owner-2', name: 'Bob Owner', teamId: 'team-1' }]),
+      of([{ id: 'owner-2', name: 'Bob Owner', teamId: 'team-1', isActive: true }]),
     );
     api.getProcess.and.returnValue(
       of({
@@ -124,10 +124,10 @@ describe('ProcessFormPageComponent', () => {
     expect(component.form.controls.teamId.disabled).toBeTrue();
     expect(component.form.controls.ownerId.enabled).toBeTrue();
     expect(component.owners()).toEqual([
-      { id: 'owner-2', name: 'Bob Owner', teamId: 'team-1' },
+      { id: 'owner-2', name: 'Bob Owner', teamId: 'team-1', isActive: true },
     ]);
     expect(component.filteredOwners()).toEqual([
-      { id: 'owner-2', name: 'Bob Owner', teamId: 'team-1' },
+      { id: 'owner-2', name: 'Bob Owner', teamId: 'team-1', isActive: true },
     ]);
     expect(component.processCode()).toBe('P1');
   });

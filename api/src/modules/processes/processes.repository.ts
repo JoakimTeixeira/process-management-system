@@ -460,7 +460,7 @@ export class ProcessesRepository {
     return this.findRequiredById(id);
   }
 
-  async hasNonDraftVersions(processId: string): Promise<boolean> {
+  async hasAnyVersions(processId: string): Promise<boolean> {
     const rows = await queryRows<ExistsRow>(
       this.dataSource,
       `
@@ -468,7 +468,6 @@ export class ProcessesRepository {
           SELECT 1
           FROM process_versions pv
           WHERE pv.process_id = $1
-            AND pv.lifecycle_state != 'Draft'
         ) AS exists
       `,
       [processId],
