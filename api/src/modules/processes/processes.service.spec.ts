@@ -59,7 +59,9 @@ describe('ProcessesService', () => {
     title: 'Human Resources Management',
     description: 'Current process description',
     teamId: 'team-1',
+    teamName: 'Human Resources',
     ownerId: 'owner-1',
+    ownerName: 'Owner Name',
   };
 
   beforeEach(() => {

@@ -14,6 +14,7 @@ describe('GlossaryController', () => {
           definition: 'Managed service component',
           category: 'ITSM',
           isPreferred: true,
+          createdBy: 'user-1',
         },
       ],
       practices: [

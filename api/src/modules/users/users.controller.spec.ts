@@ -113,7 +113,7 @@ describe('UsersController', () => {
 
   it('should delegate owner options lookup', async () => {
     usersService.listOwnerOptions.mockResolvedValue([
-      { id: 'u1', name: 'Alice' },
+      { id: 'u1', name: 'Alice', teamId: 'team-1' },
     ]);
 
     await controller.listOwnerOptions(currentUser);

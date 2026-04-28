@@ -78,6 +78,9 @@ describe('ProcessesController', () => {
     description: 'Test description',
     areaId: 'area-1',
     ownerId: 'owner-1',
+    teamId: 'IT',
+    teamName: 'Information Technology',
+    ownerName: 'Test User',
   };
 
   beforeEach(() => {
@@ -103,6 +106,7 @@ describe('ProcessesController', () => {
         title: 'Test Process',
         ownerId: 'owner-1',
         description: 'Test description',
+        teamId: 'IT',
       },
       mockUser,
     );
@@ -114,6 +118,7 @@ describe('ProcessesController', () => {
         title: 'Test Process',
         ownerId: 'owner-1',
         description: 'Test description',
+        teamId: 'IT',
       },
       mockUser,
     );

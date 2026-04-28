@@ -10,6 +10,8 @@ describe('HealthController', () => {
   beforeEach(() => {
     healthService = {
       getStatus: jest.fn(),
+    } as HealthService & {
+      getStatus: jest.Mock;
     };
 
     controller = new HealthController(healthService);

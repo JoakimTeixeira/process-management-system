@@ -103,6 +103,8 @@ describe('AreasController', () => {
   it('should call areasService.create', async () => {
     const createAreaDto = {
       title: 'Human Resources',
+      description: 'Test description',
+      teamId: 'team-1',
       ownerId: 'user-1',
       itilPracticeId: 'practice-1',
     };
@@ -191,6 +193,8 @@ describe('AreasController', () => {
   it('should throw error when areasService.create fails', async () => {
     const createAreaDto = {
       title: 'Human Resources',
+      description: 'Test description',
+      teamId: 'team-1',
       ownerId: 'user-1',
       itilPracticeId: 'practice-1',
     };

@@ -1,5 +1,6 @@
 import type { GlossaryRepository } from './glossary.repository';
 import { GlossaryService } from './glossary.service';
+import type { AuditLogWriterService } from '../audit/audit-log-writer.service';
 
 describe('GlossaryService', () => {
   it('returns glossary terms and practices together', async () => {
@@ -13,6 +14,7 @@ describe('GlossaryService', () => {
           definition: 'Managed service component',
           category: 'ITSM',
           isPreferred: true,
+          createdBy: 'user-1',
         },
       ]),
       listPractices: jest.fn().mockResolvedValue([
@@ -25,8 +27,15 @@ describe('GlossaryService', () => {
       ]),
     };
 
+    const auditLogWriterService: jest.Mocked<
+      Pick<AuditLogWriterService, 'create'>
+    > = {
+      create: jest.fn(),
+    };
+
     const service = new GlossaryService(
       repository as unknown as GlossaryRepository,
+      auditLogWriterService as unknown as AuditLogWriterService,
     );
 
     await expect(service.getPublicGlossary()).resolves.toEqual({

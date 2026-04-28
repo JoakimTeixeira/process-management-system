@@ -54,7 +54,9 @@ describe('AreasService', () => {
     title: 'Change Area',
     description: 'Area description',
     teamId: 'team-1',
+    teamName: 'Human Resources',
     ownerId: 'owner-1',
+    ownerName: 'Owner Name',
     itilPracticeId: 'practice-1',
     itilPracticeName: 'Change control',
   };

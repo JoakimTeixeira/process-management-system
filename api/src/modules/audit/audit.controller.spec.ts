@@ -2,6 +2,7 @@ import { AuditController } from './audit.controller';
 import { AuditReaderService } from './audit-reader.service';
 import type { AuthenticatedUser } from '../auth/interfaces/authenticated-user.interface';
 import { Role } from '../../common/enums/role.enum';
+import type { AuditAction } from './types/audit-action.type';
 
 describe('AuditController', () => {
   let controller: AuditController;
@@ -28,6 +29,7 @@ describe('AuditController', () => {
     fromState: 'Draft',
     toState: 'Approved',
     actorId: 'user-1',
+    actorName: 'Test User',
     reason: 'Test reason',
     createdAt: new Date(),
   };
@@ -36,9 +38,12 @@ describe('AuditController', () => {
     id: 'log-1',
     entityType: 'process',
     entityId: 'process-1',
-    action: 'CREATE',
+    action: 'CREATE' as AuditAction,
     actorId: 'user-1',
+    actorName: 'Test User',
     reasonForChange: 'Test',
+    oldData: null,
+    newData: null,
     createdAt: new Date(),
   };
 
