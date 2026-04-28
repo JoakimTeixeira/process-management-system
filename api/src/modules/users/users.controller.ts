@@ -64,7 +64,7 @@ export class UsersController {
     );
   }
 
-  @Roles(Role.EDITOR)
+  @Roles(Role.EDITOR, Role.SYSTEM_ADMIN)
   @Get('team-options')
   async listTeamOptions(): Promise<TeamOptionResponseDto[]> {
     const teams = await this.usersService.listTeamOptions();

@@ -33,7 +33,6 @@ describe('UsersController metadata', () => {
       'listOwnerOptions',
       'listAllOwnerOptions',
       'listOwnerOptionsByTeamId',
-      'listTeamOptions',
     ]) {
       expect(
         Reflect.getMetadata(
@@ -42,6 +41,15 @@ describe('UsersController metadata', () => {
         ),
       ).toEqual([Role.EDITOR]);
     }
+  });
+
+  it('should expose team options to EDITOR and SYSTEM_ADMIN', () => {
+    expect(
+      Reflect.getMetadata(
+        ROLES_KEY,
+        getControllerMethod(UsersController.prototype, 'listTeamOptions'),
+      ),
+    ).toEqual([Role.EDITOR, Role.SYSTEM_ADMIN]);
   });
 
   it('should expose user admin methods to SYSTEM_ADMIN only', () => {
