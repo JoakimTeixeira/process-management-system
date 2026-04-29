@@ -443,6 +443,11 @@ function minItemsValidator(minItems: number): ValidatorFn {
         gap: 1rem;
       }
 
+      .work-sidebar-checklist {
+        gap: 0;
+        margin: 1rem 0;
+      }
+
       .work-sidebar-item {
         padding-bottom: 1rem;
         border-bottom: 1px solid var(--portal-border);
@@ -774,7 +779,7 @@ function minItemsValidator(minItems: number): ValidatorFn {
                         </mat-card-header>
                         <mat-card-content>
                           @if (canEditDraft()) {
-                            <div class="work-sidebar-summary">
+                            <div class="work-sidebar-checklist">
                               <mat-checkbox [checked]="submissionRequirements().titlePresent" disabled>
                                 Title is present
                               </mat-checkbox>
@@ -795,7 +800,7 @@ function minItemsValidator(minItems: number): ValidatorFn {
                               </mat-checkbox>
                             </div>
                           } @else if (showReviewChecklist()) {
-                            <form [formGroup]="checklistForm">
+                            <form [formGroup]="checklistForm" class="work-sidebar-checklist">
                               <mat-checkbox formControlName="titleChecked">
                                 Title is correct
                               </mat-checkbox>
