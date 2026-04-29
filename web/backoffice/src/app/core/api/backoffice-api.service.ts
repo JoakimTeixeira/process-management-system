@@ -255,9 +255,6 @@ export class BackofficeApiService {
     return this.http.patch<ProcedureRecord>(`${this.baseUrl}/procedures/${id}`, payload);
   }
 
-  deleteProcedure(id: string) {
-    return this.http.delete<void>(`${this.baseUrl}/procedures/${id}`);
-  }
 
   listAllProcedures() {
     return this.http.get<ProcedureRecord[]>(`${this.baseUrl}/procedures`);

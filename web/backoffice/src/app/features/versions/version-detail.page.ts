@@ -46,7 +46,6 @@ import {
 import { getHttpErrorMessage } from '../../core/http/http-error-message';
 import { BreadcrumbService } from '../../core/navigation/breadcrumb.service';
 import { ToastService } from '../../core/toast/toast.service';
-import { ConfirmDeleteDialogComponent } from '../../shared/confirm-delete-dialog.component';
 import {
   AssetContentRecord,
   AssetRecord,
@@ -1290,15 +1289,6 @@ function minItemsValidator(minItems: number): ValidatorFn {
                                     <mat-icon>edit</mat-icon>
                                     Edit
                                   </button>
-                                  <button
-                                    mat-button
-                                    type="button"
-                                    (click)="confirmDeleteProcedure(procedure)"
-                                    [disabled]="isDeletingProcedure()"
-                                  >
-                                    <mat-icon>delete</mat-icon>
-                                    Delete
-                                  </button>
                                 </div>
                               }
                             </div>
@@ -1448,7 +1438,6 @@ export class VersionDetailPageComponent {
   protected readonly isActing = signal(false);
   protected readonly isUploading = signal(false);
   protected readonly isSavingProcedure = signal(false);
-  protected readonly isDeletingProcedure = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly draftErrorMessage = signal<string | null>(null);
   protected readonly actionErrorMessage = signal<string | null>(null);
@@ -1618,7 +1607,7 @@ export class VersionDetailPageComponent {
     const nextItem = submissionChecklistItems.find((item) => !item.present);
     return nextItem ? { label: nextItem.label, action: nextItem.action } : null;
   });
-  
+
   protected readonly allChecklistChecked = computed(() => {
     if (this.showReviewChecklist()) {
       const checklistState = this.checklistState();
@@ -2171,54 +2160,6 @@ export class VersionDetailPageComponent {
     }
   }
 
-  protected async deleteProcedure(id: string): Promise<void> {
-    const currentVersion = this.version();
-
-    if (!currentVersion) {
-      return;
-    }
-
-    this.isDeletingProcedure.set(true);
-    this.procedureErrorMessage.set(null);
-
-    try {
-      await firstValueFrom(this.api.deleteProcedure(id));
-      await this.reloadSupportingData(currentVersion);
-
-      if (this.editingProcedureId() === id) {
-        this.cancelProcedureEdit();
-      }
-
-      this.toast.success('Procedure deleted successfully');
-    } catch (error) {
-      this.procedureErrorMessage.set(
-        getHttpErrorMessage(error, 'Unable to delete the procedure.'),
-      );
-      this.toast.error('Failed to delete procedure');
-    } finally {
-      this.isDeletingProcedure.set(false);
-    }
-  }
-
-  protected async confirmDeleteProcedure(procedure: ProcedureRecord): Promise<void> {
-    const confirmed = await firstValueFrom(
-      this.dialog
-        .open(ConfirmDeleteDialogComponent, {
-          data: {
-            title: 'Delete procedure',
-            message: `Delete procedure "${procedure.code} - ${procedure.title}"? This removes the draft procedure from the current version and cannot be undone.`,
-            confirmLabel: 'Delete procedure',
-          },
-        })
-        .afterClosed(),
-    );
-
-    if (!confirmed) {
-      return;
-    }
-
-    await this.deleteProcedure(procedure.id);
-  }
 
   protected async runLifecycleAction(action: LifecycleActionDefinition): Promise<void> {
     const currentVersion = this.version();
