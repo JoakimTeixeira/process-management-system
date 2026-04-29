@@ -88,7 +88,6 @@ export class UsersController {
     );
   }
 
-  @ApiTags('teams')
   @ApiOperation({
     summary: 'List available process owners for an active team',
   })
@@ -114,7 +113,6 @@ export class UsersController {
     );
   }
 
-  @ApiTags('teams')
   @ApiOperation({
     summary: 'List selectable active teams for user and ownership forms',
   })
