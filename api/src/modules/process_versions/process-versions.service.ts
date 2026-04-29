@@ -915,7 +915,8 @@ export class ProcessVersionsService {
 
     if (!rows[0]?.exists) {
       throw new ConflictException(
-        'At least one procedure must be defined before this transition',
+        'At least one procedure must be defined before publishing. ' +
+          'Contact the REVIEWER to reopen this version to Draft so procedures can be added.',
       );
     }
   }

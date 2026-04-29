@@ -256,6 +256,13 @@ import { ConfirmDeleteDialogComponent, ConfirmDeleteDialogData } from '../../sha
                         </a>
                         <mat-divider></mat-divider>
                       }
+                      @if (canPerformReopenAction(process); as reopenRoute) {
+                        <a mat-menu-item [routerLink]="reopenRoute" [queryParams]="{ tab: 'work' }" style="font-weight: 600;">
+                          <mat-icon>restart_alt</mat-icon>
+                          <span>Reopen version</span>
+                        </a>
+                        <mat-divider></mat-divider>
+                      }
                       <a
                         mat-menu-item
                         [routerLink]="openRoute(process)"
@@ -445,6 +452,25 @@ export class ProcessListPageComponent implements OnInit {
     }
     const waitingFor = activeVersion.waitingForRole;
     if (waitingFor !== this.currentUserRole()) {
+      return null;
+    }
+    return ['/versions', activeVersion.id];
+  }
+
+  protected canPerformReopenAction(process: ProcessRecord): string[] | null {
+    const activeVersion = process.governanceSummary?.activeWorkflowVersion;
+    if (!activeVersion) {
+      return null;
+    }
+    // Only REVIEWERs can reopen, and only when version is Approved
+    if (this.currentUserRole() !== 'REVIEWER') {
+      return null;
+    }
+    if (activeVersion.lifecycleState !== 'Approved') {
+      return null;
+    }
+    // Must be same team
+    if (!this.accessControl.canReviewVersion(process)) {
       return null;
     }
     return ['/versions', activeVersion.id];

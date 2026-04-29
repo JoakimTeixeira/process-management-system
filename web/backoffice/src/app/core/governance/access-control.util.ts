@@ -29,7 +29,7 @@ export class AccessControlUtil {
    * Only same-team EDITORs may manage processes in the backoffice.
    */
   canManageProcess(process: ProcessRecord | null): boolean {
-    return this.isSameTeamEditor(process);
+    return this.currentUserRole() === 'EDITOR' && this.isSameTeam(process);
   }
 
   /**
@@ -37,7 +37,7 @@ export class AccessControlUtil {
    * Only same-team EDITORs may create versions.
    */
   canCreateVersion(process: ProcessRecord | null): boolean {
-    return this.isSameTeamEditor(process);
+    return this.currentUserRole() === 'EDITOR' && this.isSameTeam(process);
   }
 
   /**
@@ -48,7 +48,19 @@ export class AccessControlUtil {
     process: ProcessRecord | null,
     version: Pick<ProcessVersionRecord, 'lifecycleState'> | null,
   ): boolean {
-    return this.isSameTeamEditor(process) && version?.lifecycleState === 'Draft';
+    return (
+      this.currentUserRole() === 'EDITOR' &&
+      this.isSameTeam(process) &&
+      version?.lifecycleState === 'Draft'
+    );
+  }
+
+  /**
+   * Check whether the current user may perform review actions on a version.
+   * Review actions are limited to same-team REVIEWERs.
+   */
+  canReviewVersion(process: ProcessRecord | null): boolean {
+    return this.currentUserRole() === 'REVIEWER' && this.isSameTeam(process);
   }
 
   /**
@@ -86,11 +98,10 @@ export class AccessControlUtil {
     return currentRole ? roles.includes(currentRole) : false;
   }
 
-  private isSameTeamEditor(process: ProcessRecord | null): boolean {
+  private isSameTeam(process: ProcessRecord | null): boolean {
     const currentUserTeamId = this.currentUserTeamId();
-    const role = this.currentUserRole();
 
-    if (!currentUserTeamId || role !== 'EDITOR') {
+    if (!currentUserTeamId) {
       return false;
     }
 

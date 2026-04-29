@@ -1471,6 +1471,10 @@ export class VersionDetailPageComponent {
       return [];
     }
 
+    if (role === 'REVIEWER' && !this.accessControl.canReviewVersion(this.process())) {
+      return [];
+    }
+
     return getVisibleLifecycleActions(role, this.version());
   });
   protected readonly canEditDraft = computed(() => this.editorCanManageVersion());
