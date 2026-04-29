@@ -3,12 +3,12 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start:all": "concurrently \"npm run start:dev --prefix api\" \"npm start --prefix web/backoffice\" \"npm start --prefix web/public\" \"npm run start:swagger --prefix web/backoffice\"",
-    "install:all": "npm install && npm install --prefix api && npm install --prefix web/backoffice && npm install --prefix web/public\"",
+    "start:all": "concurrently --kill-others-on-fail \"npm run start:dev --prefix api\" \"npm run start --prefix web/backoffice\" \"npm run start --prefix web/public\" \"wait-on http://localhost:3000/health && npm run swagger --prefix api\"",
     "test": "jest",
     "test:all": "concurrently \"npm run test --prefix api\" \"npm run test:headless --prefix web/backoffice\" \"npm run test:headless --prefix web/public\""
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "wait-on": "^9.0.5"
   }
 }
