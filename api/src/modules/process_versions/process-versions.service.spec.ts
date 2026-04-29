@@ -768,6 +768,143 @@ describe('ProcessVersionsService', () => {
     );
   });
 
+  it('should reject promote when source version is not Published', async () => {
+    const draftVersion = {
+      ...approvedVersion,
+      id: 'to-be-version',
+      lifecycleState: 'Draft',
+      architectureState: 'TO-BE',
+    };
+
+    processVersionsRepository.findById.mockResolvedValue(draftVersion);
+
+    await expect(
+      service.promote(
+        draftVersion.id,
+        { justification: 'TO-BE has been adopted' },
+        currentUser,
+      ),
+    ).rejects.toBeInstanceOf(ConflictException);
+  });
+
+  it('should reject promote when source version is not TO-BE', async () => {
+    const asIsVersion = {
+      ...approvedVersion,
+      id: 'as-is-version',
+      lifecycleState: 'Published',
+      architectureState: 'AS-IS',
+    };
+
+    processVersionsRepository.findById.mockResolvedValue(asIsVersion);
+
+    await expect(
+      service.promote(
+        asIsVersion.id,
+        { justification: 'Attempt to promote AS-IS' },
+        currentUser,
+      ),
+    ).rejects.toBeInstanceOf(ConflictException);
+  });
+
+  it('should validate that procedures and assets are copied during promotion', async () => {
+    const sourceVersion = {
+      ...approvedVersion,
+      id: 'to-be-version',
+      lifecycleState: 'Published',
+      architectureState: 'TO-BE',
+    };
+    const existingAsIsVersion = {
+      ...approvedVersion,
+      id: 'as-is-version',
+      lifecycleState: 'Published',
+      architectureState: 'AS-IS',
+    };
+    const promotedVersion = {
+      ...sourceVersion,
+      id: 'promoted-version',
+      versionNumber: 4,
+      architectureState: 'AS-IS',
+      derivedFromVersionId: sourceVersion.id,
+    };
+
+    processVersionsRepository.findById.mockResolvedValue(sourceVersion);
+    processVersionsRepository.countBpmnAssets.mockResolvedValue(1);
+    processVersionsRepository.findPublishedVersion.mockResolvedValue(
+      existingAsIsVersion,
+    );
+    processVersionsRepository.setLifecycleState
+      .mockResolvedValueOnce({
+        ...existingAsIsVersion,
+        lifecycleState: 'Archived',
+      })
+      .mockResolvedValueOnce({
+        ...sourceVersion,
+        lifecycleState: 'Archived',
+      });
+    processVersionsRepository.getNextVersionNumber.mockResolvedValue(4);
+    processVersionsRepository.create.mockResolvedValue(promotedVersion);
+    processVersionsRepository.insertStateHistory.mockResolvedValue(undefined);
+    dataSource.query.mockImplementation((sql: string) => {
+      if (sql.includes('SELECT EXISTS')) {
+        return Promise.resolve([{ exists: true }]);
+      }
+
+      if (sql.includes('FROM procedures pr')) {
+        return Promise.resolve([
+          {
+            code: 'P1.1',
+            title: 'Validate request',
+            utility: 'Ensure the request is complete',
+            warranty: 'Consistent intake',
+            outcome: 'Validated request',
+            policy: 'Follow intake policy',
+            activities: [
+              {
+                resource: 'Coordinator',
+                service_action: 'Validate request',
+                work_instruction: 'Check the submission fields',
+              },
+            ],
+            inputs: ['Request form'],
+            outputs: ['Validated request'],
+          },
+        ]);
+      }
+
+      if (sql.includes('FROM assets a')) {
+        return Promise.resolve([
+          {
+            caption: 'Draft BPMN',
+            asset_type: 'BPMN',
+            file_path: 'backoffice/bpmn/file.bpmn',
+            mime_type: 'application/xml',
+            checksum: 'abc',
+            size_bytes: 123,
+          },
+        ]);
+      }
+
+      return Promise.resolve([]);
+    });
+
+    await service.promote(
+      sourceVersion.id,
+      { justification: 'TO-BE has been adopted' },
+      currentUser,
+    );
+
+    // Verify procedures were copied from source
+    expect(dataSource.query).toHaveBeenCalledWith(
+      expect.stringContaining('INSERT INTO procedures'),
+      expect.arrayContaining(['promoted-version']),
+    );
+    // Verify assets were copied from source
+    expect(dataSource.query).toHaveBeenCalledWith(
+      expect.stringContaining('INSERT INTO assets'),
+      expect.arrayContaining(['promoted-version']),
+    );
+  });
+
   it('should require same-team authorization before approve', async () => {
     const inReviewVersion = {
       ...approvedVersion,
