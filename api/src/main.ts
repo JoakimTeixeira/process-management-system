@@ -14,6 +14,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { GlossaryModule } from './modules/glossary/glossary.module';
 import { HealthModule } from './modules/health/health.module';
 import { ItilPracticesModule } from './modules/itil_practices/itil-practices.module';
+import { PublicPortalModule } from './modules/public_portal/public-portal.module';
 import { ProcessVersionsModule } from './modules/process_versions/process-versions.module';
 import { ProcessesModule } from './modules/processes/processes.module';
 import { ProceduresModule } from './modules/procedures/procedures.module';
@@ -92,6 +93,10 @@ async function bootstrap() {
       'itil_practices',
       'ITIL practice reference data used across the process catalogue.',
     )
+    .addTag(
+      'public',
+      'Public portal catalogue, search, and published process content.',
+    )
     .addTag('processes', 'Process records owned by teams and areas.')
     .addTag(
       'procedures',
@@ -115,6 +120,7 @@ async function bootstrap() {
       AreasModule,
       ItilPracticesModule,
       GlossaryModule,
+      PublicPortalModule,
       ProcessesModule,
       ProcessVersionsModule,
       ProceduresModule,
