@@ -55,6 +55,18 @@ export const routes: Routes = [
         },
       },
       {
+        path: 'areas/:id',
+        loadComponent: () =>
+          import('./features/areas/area-detail.page').then(
+            (m) => m.AreaDetailPageComponent,
+          ),
+        canActivate: [roleGuard],
+        data: {
+          roles: CONTENT_ROLES,
+          breadcrumb: [{ label: 'Areas', url: '/areas' }, { label: 'Area details' }],
+        },
+      },
+      {
         path: 'areas/:id/edit',
         loadComponent: () =>
           import('./features/areas/area-form.page').then(
@@ -192,6 +204,51 @@ export const routes: Routes = [
           roles: ['SYSTEM_ADMIN'] satisfies AppRole[],
           breadcrumb: [{ label: 'Admin' }, { label: 'Users' }],
           breadcrumbVisible: false,
+        },
+      },
+      {
+        path: 'admin/teams',
+        loadComponent: () =>
+          import('./features/admin/team-list.page').then(
+            (m) => m.TeamListPageComponent,
+          ),
+        canActivate: [roleGuard],
+        data: {
+          roles: ['SYSTEM_ADMIN'] satisfies AppRole[],
+          breadcrumb: [{ label: 'Admin' }, { label: 'Teams' }],
+          breadcrumbVisible: false,
+        },
+      },
+      {
+        path: 'admin/teams/new',
+        loadComponent: () =>
+          import('./features/admin/team-form.page').then(
+            (m) => m.TeamFormPageComponent,
+          ),
+        canActivate: [roleGuard],
+        data: {
+          roles: ['SYSTEM_ADMIN'] satisfies AppRole[],
+          breadcrumb: [
+            { label: 'Admin' },
+            { label: 'Teams', url: '/admin/teams' },
+            { label: 'Create team' },
+          ],
+        },
+      },
+      {
+        path: 'admin/teams/:id/edit',
+        loadComponent: () =>
+          import('./features/admin/team-form.page').then(
+            (m) => m.TeamFormPageComponent,
+          ),
+        canActivate: [roleGuard],
+        data: {
+          roles: ['SYSTEM_ADMIN'] satisfies AppRole[],
+          breadcrumb: [
+            { label: 'Admin' },
+            { label: 'Teams', url: '/admin/teams' },
+            { label: 'Edit team' },
+          ],
         },
       },
       {

@@ -176,7 +176,10 @@ export class BackofficeShellComponent {
           { label: 'Glossary', icon: 'menu_book', href: '/glossary' },
         ];
       case 'SYSTEM_ADMIN':
-        return [{ label: 'Admin', icon: 'admin_panel_settings', href: '/admin/users' }];
+        return [
+          { label: 'Users', icon: 'person', href: '/admin/users' },
+          { label: 'Teams', icon: 'groups', href: '/admin/teams' },
+        ];
       default:
         return [];
     }

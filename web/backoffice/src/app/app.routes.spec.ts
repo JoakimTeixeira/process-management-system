@@ -50,6 +50,9 @@ describe('backoffice routes', () => {
 
     for (const path of [
       'admin/users',
+      'admin/teams',
+      'admin/teams/new',
+      'admin/teams/:id/edit',
       'admin/users/new',
       'admin/users/:id/edit',
     ]) {
@@ -79,6 +82,9 @@ describe('backoffice routes', () => {
       'glossary/new',
       'glossary/:id/edit',
       'admin/users',
+      'admin/teams',
+      'admin/teams/new',
+      'admin/teams/:id/edit',
       'admin/users/new',
       'admin/users/:id/edit',
     ]) {
@@ -97,6 +103,7 @@ describe('backoffice routes', () => {
       'procedures',
       'glossary',
       'admin/users',
+      'admin/teams',
     ]) {
       expect(shellChildren.find((route) => route.path === path)?.data?.['breadcrumbVisible']).toBeFalse();
     }
@@ -111,6 +118,8 @@ describe('backoffice routes', () => {
       'glossary/:id/edit',
       'admin/users/new',
       'admin/users/:id/edit',
+      'admin/teams/new',
+      'admin/teams/:id/edit',
     ]) {
       expect(shellChildren.find((route) => route.path === path)?.data?.['breadcrumbVisible']).not.toBeFalse();
     }

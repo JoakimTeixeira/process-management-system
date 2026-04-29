@@ -14,6 +14,7 @@ import { routes } from './app.routes';
 import { AuthService } from './core/auth/auth.service';
 import { authErrorInterceptor } from './core/http/auth-error.interceptor';
 import { authTokenInterceptor } from './core/http/auth-token.interceptor';
+import { ConfirmDeleteDialogComponent } from './shared/confirm-delete-dialog.component';
 
 export const appConfig: ApplicationConfig = {
   providers: [

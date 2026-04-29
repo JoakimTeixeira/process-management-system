@@ -3,8 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "concurrently \"npm run start:dev --prefix api\" \"npm start --prefix web/backoffice\" \"npm start --prefix web/public\"",
-    "install:all": "npm install && npm install --prefix api && npm install --prefix web/backoffice && npm install --prefix web/public"
+    "start:all": "concurrently \"npm run start:dev --prefix api\" \"npm start --prefix web/backoffice\" \"npm start --prefix web/public\" \"npm run start:swagger --prefix web/backoffice\"",
+    "install:all": "npm install && npm install --prefix api && npm install --prefix web/backoffice && npm install --prefix web/public\"",
+    "test": "jest",
+    "test:all": "concurrently \"npm run test --prefix api\" \"npm run test:headless --prefix web/backoffice\" \"npm run test:headless --prefix web/public\""
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

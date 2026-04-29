@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   Patch,
@@ -14,7 +13,6 @@ import {
   ApiBody,
   ApiCreatedResponse,
   ApiForbiddenResponse,
-  ApiConflictResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -172,31 +170,6 @@ export class ProceduresController {
         currentUser,
       ),
     );
-  }
-
-  @ApiOperation({
-    summary: 'Delete a procedure',
-    description:
-      'Deletes a procedure only while its parent version is in Draft and the procedure has not yet been assigned a generated code. This operation is audited and returns 409 otherwise.',
-  })
-  @ApiParam({
-    name: 'id',
-    description: 'Procedure UUID.',
-    format: 'uuid',
-  })
-  @ApiOkResponse({ description: 'Procedure deleted successfully.' })
-  @ApiNotFoundResponse({ description: 'Procedure not found.' })
-  @ApiConflictResponse({
-    description:
-      'Procedure cannot be deleted unless the parent version is Draft and the procedure has no generated code.',
-  })
-  @Roles(Role.EDITOR)
-  @Delete('procedures/:id')
-  async delete(
-    @Param() params: IdParamDto,
-    @CurrentUser() currentUser: AuthenticatedUser,
-  ): Promise<void> {
-    await this.proceduresService.delete(params.id, currentUser);
   }
 
   private toDto(procedure: ProcedureRecord): ProcedureResponseDto {

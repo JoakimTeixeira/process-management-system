@@ -79,5 +79,18 @@ describe('BackofficeShellComponent', () => {
       'Procedures',
       'Glossary',
     ]);
+
+    currentUserState.set({
+      id: 'admin-1',
+      name: 'Sam Admin',
+      email: 'sam@example.com',
+      role: { id: 'role-5', name: 'SYSTEM_ADMIN' },
+      team: { id: 'team-1', code: 'OPS', name: 'Operations' },
+    });
+
+    expect(component.navItems().map((item) => item.label)).toEqual([
+      'Users',
+      'Teams',
+    ]);
   });
 });

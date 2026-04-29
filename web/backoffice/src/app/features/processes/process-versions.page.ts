@@ -149,11 +149,10 @@ import { getHttpErrorMessage } from '../../core/http/http-error-message';
                 </ng-container>
 
                 <ng-container matColumnDef="actions">
-                  <th mat-header-cell *matHeaderCellDef>Actions</th>
+                  <th mat-header-cell *matHeaderCellDef style="text-align: right;">Actions</th>
                   <td mat-cell *matCellDef="let version" style="text-align: right;">
-                    <a mat-button [routerLink]="['/versions', version.id]">
+                    <a mat-icon-button [routerLink]="['/versions', version.id]" aria-label="Open version detail">
                       <mat-icon>open_in_new</mat-icon>
-                      Open detail
                     </a>
                   </td>
                 </ng-container>

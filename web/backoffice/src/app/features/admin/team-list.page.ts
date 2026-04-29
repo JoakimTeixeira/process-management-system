@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -10,12 +10,11 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 
 import { BackofficeApiService } from '../../core/api/backoffice-api.service';
-import { AuthService } from '../../core/auth/auth.service';
-import { AdminUser } from '../../core/models/backoffice.models';
+import { TeamRecord } from '../../core/models/backoffice.models';
 import { getHttpErrorMessage } from '../../core/http/http-error-message';
 
 @Component({
-  selector: 'app-user-list-page',
+  selector: 'app-team-list-page',
   imports: [
     CommonModule,
     RouterLink,
@@ -56,42 +55,37 @@ import { getHttpErrorMessage } from '../../core/http/http-error-message';
         color: #5f6368;
       }
 
-      .user-table {
+      .team-table {
         width: 100%;
         border-collapse: collapse;
         background: white;
       }
 
-      .user-table th,
-      .user-table td {
+      .team-table th,
+      .team-table td {
         padding: 0.75rem 1rem;
         text-align: left;
         border-bottom: 1px solid #e0e0e0;
+        vertical-align: top;
       }
 
-      .user-table th {
+      .team-table th {
         font-weight: 600;
         color: #5f6368;
       }
 
-      .user-table tr:last-child td {
+      .team-table tr:last-child td {
         border-bottom: none;
       }
 
-      .user-table.hide-actions th:last-child,
-      .user-table.hide-actions td:last-child {
-        display: none;
-      }
-
       ::ng-deep {
-        .user-status {
-
+        .team-status {
           &.active {
             background-color: #dcedc8 !important;
           }
 
           &.inactive {
-            background-color: #ffcdd2 !important;
+            background-color: #e0e0e0 !important;
           }
 
           .mat-mdc-chip-action-label {
@@ -108,16 +102,20 @@ import { getHttpErrorMessage } from '../../core/http/http-error-message';
   template: `
     <section class="page">
       <section class="bo-page-intro">
-      <div class="header-row">
-        <div class="bo-page-intro__copy">
-          <h1>User administration</h1>
-          <p class="muted">Technical-only administration for roles, teams, activation state, and password reset.</p>
+        <div class="header-row">
+          <div class="bo-page-intro__copy">
+            <h1>Team administration</h1>
+            <p class="muted">
+              Create, update, and deactivate the reference teams used across user and governance
+              forms.
+            </p>
+          </div>
+
+          <a mat-flat-button color="primary" routerLink="/admin/teams/new">
+            <mat-icon>group_add</mat-icon>
+            New team
+          </a>
         </div>
-        <a mat-flat-button color="primary" routerLink="/admin/users/new">
-          <mat-icon>person_add</mat-icon>
-          New user
-        </a>
-      </div>
       </section>
 
       @if (isLoading()) {
@@ -128,58 +126,49 @@ import { getHttpErrorMessage } from '../../core/http/http-error-message';
         <mat-card appearance="outlined">
           <mat-card-content>{{ errorMessage }}</mat-card-content>
         </mat-card>
-      } @else if (users().length === 0) {
+      } @else if (teams().length === 0) {
         <mat-card appearance="outlined">
-          <mat-card-content>No users are available yet.</mat-card-content>
+          <mat-card-content>No teams are available yet.</mat-card-content>
         </mat-card>
       } @else {
         <mat-card appearance="outlined">
           <mat-card-content>
-            <table mat-table [dataSource]="users()" [class.hide-actions]="!canEdit()" class="user-table">
+            <table mat-table [dataSource]="teams()" class="team-table">
+              <ng-container matColumnDef="code">
+                <th mat-header-cell *matHeaderCellDef>Code</th>
+                <td mat-cell *matCellDef="let team">{{ team.code }}</td>
+              </ng-container>
+
               <ng-container matColumnDef="name">
                 <th mat-header-cell *matHeaderCellDef>Name</th>
-                <td mat-cell *matCellDef="let user">{{ user.name }}</td>
+                <td mat-cell *matCellDef="let team">{{ team.name }}</td>
               </ng-container>
 
-              <ng-container matColumnDef="email">
-                <th mat-header-cell *matHeaderCellDef>Email</th>
-                <td mat-cell *matCellDef="let user">{{ user.email }}</td>
-              </ng-container>
-
-              <ng-container matColumnDef="role">
-                <th mat-header-cell *matHeaderCellDef>Role</th>
-                <td mat-cell *matCellDef="let user">
-                  <mat-chip>{{ formatRoleName(user.role.name) }}</mat-chip>
-                </td>
-              </ng-container>
-
-              <ng-container matColumnDef="team">
-                <th mat-header-cell *matHeaderCellDef>Team</th>
-                <td mat-cell *matCellDef="let user">
-                  <mat-chip>{{ user.team.code }} - {{ user.team.name }}</mat-chip>
-                </td>
+              <ng-container matColumnDef="description">
+                <th mat-header-cell *matHeaderCellDef>Description</th>
+                <td mat-cell *matCellDef="let team">{{ team.description }}</td>
               </ng-container>
 
               <ng-container matColumnDef="isActive">
                 <th mat-header-cell *matHeaderCellDef>Status</th>
-                <td mat-cell *matCellDef="let user">
-                  <mat-chip class="user-status" [class.active]="user.isActive" [class.inactive]="!user.isActive">
-                    {{ user.isActive ? 'Active' : 'Inactive' }}
+                <td mat-cell *matCellDef="let team">
+                  <mat-chip class="team-status" [class.active]="team.isActive" [class.inactive]="!team.isActive">
+                    {{ team.isActive ? 'Active' : 'Inactive' }}
                   </mat-chip>
                 </td>
               </ng-container>
 
               <ng-container matColumnDef="actions">
                 <th mat-header-cell *matHeaderCellDef style="text-align: right;">Actions</th>
-                <td mat-cell *matCellDef="let user" style="text-align: right;">
-                  <a mat-icon-button [routerLink]="['/admin/users', user.id, 'edit']" aria-label="Edit user">
+                <td mat-cell *matCellDef="let team" style="text-align: right;">
+                  <a mat-icon-button [routerLink]="['/admin/teams', team.id, 'edit']" aria-label="Edit team">
                     <mat-icon>edit</mat-icon>
                   </a>
                 </td>
               </ng-container>
 
               <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
             </table>
           </mat-card-content>
         </mat-card>
@@ -187,39 +176,28 @@ import { getHttpErrorMessage } from '../../core/http/http-error-message';
     </section>
   `,
 })
-export class UserListPageComponent implements OnInit {
+export class TeamListPageComponent {
   private readonly api = inject(BackofficeApiService);
-  private readonly auth = inject(AuthService);
 
-  protected readonly users = signal<AdminUser[]>([]);
+  protected readonly teams = signal<TeamRecord[]>([]);
   protected readonly isLoading = signal(true);
   protected readonly errorMessage = signal<string | null>(null);
-  protected readonly canEdit = computed(() => this.auth.currentUser()?.role.name === 'SYSTEM_ADMIN');
-  protected readonly displayedColumns = ['name', 'email', 'role', 'team', 'isActive', 'actions'];
+  protected readonly displayedColumns = ['code', 'name', 'description', 'isActive', 'actions'];
 
-  ngOnInit(): void {
-    void this.loadUsers();
+  constructor() {
+    void this.loadTeams();
   }
 
-  private async loadUsers(): Promise<void> {
+  private async loadTeams(): Promise<void> {
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
     try {
-      this.users.set(await firstValueFrom(this.api.listUsers()));
+      this.teams.set(await firstValueFrom(this.api.listTeams()));
     } catch (error) {
-      this.errorMessage.set(getHttpErrorMessage(error, 'Unable to load users.'));
+      this.errorMessage.set(getHttpErrorMessage(error, 'Unable to load the teams.'));
     } finally {
       this.isLoading.set(false);
     }
-  }
-
-  protected formatRoleName(roleName: string): string {
-    // Convert role names from underscores to spaces (e.g., "SYSTEM_ADMIN" -> "System Admin")
-    return roleName
-      .toLowerCase()
-      .split('_')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
   }
 }

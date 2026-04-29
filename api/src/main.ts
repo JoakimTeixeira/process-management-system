@@ -17,6 +17,7 @@ import { ItilPracticesModule } from './modules/itil_practices/itil-practices.mod
 import { ProcessVersionsModule } from './modules/process_versions/process-versions.module';
 import { ProcessesModule } from './modules/processes/processes.module';
 import { ProceduresModule } from './modules/procedures/procedures.module';
+import { TeamsModule } from './modules/teams/teams.module';
 import { UsersModule } from './modules/users/users.module';
 
 async function bootstrap() {
@@ -96,10 +97,7 @@ async function bootstrap() {
       'procedures',
       'Operational procedures attached to governed process versions.',
     )
-    .addTag(
-      'teams',
-      'Team selection endpoints exposed through technical user management.',
-    )
+    .addTag('teams', 'Team administration and active-selection endpoints.')
     .addTag(
       'users',
       'Technical user-management endpoints for access administration.',
@@ -120,6 +118,7 @@ async function bootstrap() {
       ProcessesModule,
       ProcessVersionsModule,
       ProceduresModule,
+      TeamsModule,
       AssetsModule,
       AuditModule,
       HealthModule,

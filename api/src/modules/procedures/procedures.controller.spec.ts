@@ -30,8 +30,8 @@ describe('ProceduresController metadata', () => {
     ]);
   });
 
-  it('restricts create, update, and delete to EDITOR', () => {
-    for (const methodName of ['create', 'update', 'delete']) {
+  it('restricts create and update to EDITOR', () => {
+    for (const methodName of ['create', 'update']) {
       expect(
         Reflect.getMetadata(
           ROLES_KEY,
@@ -58,12 +58,7 @@ describe('ProceduresController', () => {
   let proceduresService: jest.Mocked<
     Pick<
       ProceduresService,
-      | 'create'
-      | 'listAll'
-      | 'listByProcessVersionId'
-      | 'getById'
-      | 'update'
-      | 'delete'
+      'create' | 'listAll' | 'listByProcessVersionId' | 'getById' | 'update'
     >
   >;
 
@@ -101,7 +96,6 @@ describe('ProceduresController', () => {
       listByProcessVersionId: jest.fn(),
       getById: jest.fn(),
       update: jest.fn(),
-      delete: jest.fn(),
     };
 
     controller = new ProceduresController(
@@ -222,13 +216,5 @@ describe('ProceduresController', () => {
       },
       mockUser,
     );
-  });
-
-  it('should delete a procedure', async () => {
-    proceduresService.delete.mockResolvedValue(undefined);
-
-    await controller.delete({ id: 'proc-1' }, mockUser);
-
-    expect(proceduresService.delete).toHaveBeenCalledWith('proc-1', mockUser);
   });
 });

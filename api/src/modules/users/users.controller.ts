@@ -90,15 +90,15 @@ export class UsersController {
 
   @ApiTags('teams')
   @ApiOperation({
-    summary: 'List available process owners for a specific team',
+    summary: 'List available process owners for an active team',
   })
   @ApiParam({
     name: 'id',
-    description: 'Team UUID used to filter owner options.',
+    description: 'Active team UUID used to filter owner options.',
     format: 'uuid',
   })
   @ApiOkResponse({
-    description: 'Owner options available for the requested team.',
+    description: 'Owner options available for the requested active team.',
     type: OwnerOptionResponseDto,
     isArray: true,
   })
@@ -116,10 +116,11 @@ export class UsersController {
 
   @ApiTags('teams')
   @ApiOperation({
-    summary: 'List selectable teams for user and ownership forms',
+    summary: 'List selectable active teams for user and ownership forms',
   })
   @ApiOkResponse({
-    description: 'Team options that can be assigned to users or records.',
+    description:
+      'Active team options that can be assigned to users or records.',
     type: TeamOptionResponseDto,
     isArray: true,
   })

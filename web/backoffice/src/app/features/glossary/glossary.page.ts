@@ -142,7 +142,7 @@ import { ToastService } from '../../core/toast/toast.service';
                 </ng-container>
 
                 <ng-container matColumnDef="actions">
-                  <th mat-header-cell *matHeaderCellDef></th>
+                  <th mat-header-cell *matHeaderCellDef style="text-align: right;">Actions</th>
                   <td mat-cell *matCellDef="let term" style="text-align: right;">
                     @if (canEdit()) {
                       <a mat-icon-button [routerLink]="['/glossary', term.id, 'edit']" aria-label="Edit term">

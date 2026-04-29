@@ -181,7 +181,7 @@ function passwordPolicyValidator(): ValidatorFn {
                 <mat-label>Role</mat-label>
                 <mat-select formControlName="roleName">
                   @for (role of roles; track role) {
-                    <mat-option [value]="role">{{ role }}</mat-option>
+                    <mat-option [value]="role">{{ formatRoleName(role) }}</mat-option>
                   }
                 </mat-select>
               </mat-form-field>
@@ -523,5 +523,14 @@ export class UserFormPageComponent {
     } finally {
       this.isLoading.set(false);
     }
+  }
+
+  protected formatRoleName(roleName: string): string {
+    // Convert role names from underscores to spaces (e.g., "SYSTEM_ADMIN" -> "System Admin")
+    return roleName
+      .toLowerCase()
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   }
 }

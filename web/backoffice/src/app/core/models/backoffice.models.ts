@@ -192,6 +192,11 @@ export interface TeamOption {
   name: string;
 }
 
+export interface TeamRecord extends TeamOption {
+  description: string;
+  isActive: boolean;
+}
+
 export interface AdminUser {
   id: string;
   name: string;

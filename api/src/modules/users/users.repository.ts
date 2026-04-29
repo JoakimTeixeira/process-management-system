@@ -156,6 +156,7 @@ export class UsersRepository {
           t.code,
           t.name
         FROM teams t
+        WHERE t.is_active = TRUE
         ORDER BY t.name ASC
       `,
     );
@@ -299,6 +300,7 @@ export class UsersRepository {
           SELECT 1
           FROM teams t
           WHERE t.id = $1
+            AND t.is_active = TRUE
         ) AS exists
       `,
       [teamId],

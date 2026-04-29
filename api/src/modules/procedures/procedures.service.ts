@@ -178,36 +178,6 @@ export class ProceduresService {
     }
   }
 
-  async delete(id: string, currentUser: AuthenticatedUser): Promise<void> {
-    this.assertEditorRole(currentUser);
-    const procedure = await this.getById(id, currentUser);
-    const processVersion = await this.getRequiredVersion(
-      procedure.processVersionId,
-    );
-
-    await this.workflowAuthorizationService.assertSameTeamAsProcedureOwner(
-      id,
-      currentUser,
-    );
-    this.ensureDraftLifecycle(processVersion.lifecycleState);
-
-    if (procedure.code) {
-      throw new ConflictException(
-        'Cannot delete procedure with a generated code. To maintain code continuity, procedures with codes cannot be deleted.',
-      );
-    }
-
-    await this.proceduresRepository.delete(id);
-    await this.auditLogWriterService.create({
-      entityType: 'procedure',
-      entityId: procedure.id,
-      action: 'DELETE',
-      actorId: currentUser.id,
-      reasonForChange: 'Deleted procedure via API',
-      oldData: procedure,
-    });
-  }
-
   private async getRequiredVersion(processVersionId: string) {
     const processVersion =
       await this.processVersionsRepository.findById(processVersionId);

@@ -274,40 +274,6 @@ describe('ProceduresService', () => {
     ).rejects.toBeInstanceOf(BadRequestException);
   });
 
-  it('should reject deletion when procedure has a generated code', async () => {
-    proceduresRepository.findById.mockResolvedValue({
-      id: 'procedure-1',
-      processVersionId: 'version-1',
-      code: '1.1',
-      title: 'Procedure',
-      utility: 'Provide workflow functionality',
-      warranty: 'Procedure executes correctly',
-      outcome: 'Expected result is delivered',
-      policy: 'Applies to all draft workflow executions',
-      activities: [],
-      inputs: [],
-      outputs: [],
-    });
-    processVersionsRepository.findById.mockResolvedValue({
-      id: 'version-1',
-      processId: 'process-1',
-      versionNumber: 1,
-      lifecycleState: 'Draft',
-      architectureState: 'AS-IS',
-      title: 'Draft',
-      checklistCompleted: false,
-      derivedFromVersionId: null,
-      changeDescription: 'change',
-      reasonForChange: 'reason',
-    });
-
-    await expect(service.delete('procedure-1', currentUser)).rejects.toThrow(
-      'Cannot delete procedure with a generated code. To maintain code continuity, procedures with codes cannot be deleted.',
-    );
-
-    expect(proceduresRepository.delete).not.toHaveBeenCalled();
-  });
-
   it('should reject non-editor procedure mutation at the service layer', async () => {
     await expect(
       service.create(

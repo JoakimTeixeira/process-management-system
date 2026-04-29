@@ -185,19 +185,21 @@ async function upsertTeam(
   code: string,
   name: string,
   description: string,
+  isActive: boolean,
 ): Promise<string> {
   return queryRequiredId(
     manager,
     `
-      INSERT INTO teams (code, name, description)
-      VALUES ($1, $2, $3)
+      INSERT INTO teams (code, name, description, is_active)
+      VALUES ($1, $2, $3, $4)
       ON CONFLICT (code)
       DO UPDATE SET
         name = EXCLUDED.name,
-        description = EXCLUDED.description
+        description = EXCLUDED.description,
+        is_active = EXCLUDED.is_active
       RETURNING id
     `,
-    [code, name, description],
+    [code, name, description, isActive],
   );
 }
 
@@ -614,6 +616,7 @@ async function seedTeams(
       team.code,
       team.name,
       team.description,
+      team.isActive,
     );
     context.teamIds.set(team.code, teamId);
   }

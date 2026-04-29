@@ -234,7 +234,7 @@ describe('ProcessListPageComponent', () => {
           },
         },
       }),
-    ).toBe('Edit draft');
+    ).toBe('Edit and submit');
 
     expect(
       component.workActionLabel({

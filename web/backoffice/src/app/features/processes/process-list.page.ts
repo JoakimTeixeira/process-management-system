@@ -13,6 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -24,6 +25,9 @@ import { BackofficeApiService } from '../../core/api/backoffice-api.service';
 import { AccessControlUtil } from '../../core/governance/access-control.util';
 import { getHttpErrorMessage } from '../../core/http/http-error-message';
 import { AreaRecord, ProcessRecord } from '../../core/models/backoffice.models';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { ConfirmDeleteDialogComponent, ConfirmDeleteDialogData } from '../../shared/confirm-delete-dialog.component';
 
 @Component({
   selector: 'app-process-list-page',
@@ -34,6 +38,7 @@ import { AreaRecord, ProcessRecord } from '../../core/models/backoffice.models';
     MatCardModule,
     MatChipsModule,
     MatDividerModule,
+    MatDialogModule,
     MatFormFieldModule,
     MatIconModule,
     MatMenuModule,
@@ -233,11 +238,16 @@ import { AreaRecord, ProcessRecord } from '../../core/models/backoffice.models';
                 </ng-container>
 
                 <ng-container matColumnDef="actions">
-                  <th mat-header-cell *matHeaderCellDef></th>
+                  <th mat-header-cell *matHeaderCellDef style="text-align: right;">Actions</th>
                   <td mat-cell *matCellDef="let process" style="text-align: right;">
-                    <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Process actions">
-                      <mat-icon>more_vert</mat-icon>
-                    </button>
+                    <div style="position: relative; display: inline-block;">
+                      <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="Process actions">
+                        <mat-icon>more_vert</mat-icon>
+                      </button>
+                      @if (canDeleteProcess(process)) {
+                        <div style="position: absolute; top: 6px; right: 6px; width: 8px; height: 8px; background-color: #f44336; border-radius: 50%; border: 1px solid white;"></div>
+                      }
+                    </div>
                     <mat-menu #menu>
                       @if (canPerformWorkAction(process); as workRoute) {
                         <a mat-menu-item [routerLink]="workRoute" [queryParams]="{ tab: 'work' }" style="font-weight: 600;">
@@ -264,6 +274,13 @@ import { AreaRecord, ProcessRecord } from '../../core/models/backoffice.models';
                           <span>Edit process</span>
                         </a>
                       }
+                      @if (canDeleteProcess(process)) {
+                        <mat-divider></mat-divider>
+                        <button mat-menu-item (click)="deleteProcess(process)" color="warn">
+                          <mat-icon>delete</mat-icon>
+                          <span>Delete process</span>
+                        </button>
+                      }
                     </mat-menu>
                   </td>
                 </ng-container>
@@ -281,6 +298,8 @@ import { AreaRecord, ProcessRecord } from '../../core/models/backoffice.models';
 export class ProcessListPageComponent implements OnInit {
   private readonly api = inject(BackofficeApiService);
   private readonly accessControl = inject(AccessControlUtil);
+  private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
 
   protected readonly processes = signal<ProcessRecord[]>([]);
   protected readonly areas = signal<AreaRecord[]>([]);
@@ -433,6 +452,48 @@ export class ProcessListPageComponent implements OnInit {
 
   private hasNoVersions(process: ProcessRecord): boolean {
     return (process.governanceSummary?.versionCounts.total ?? 0) === 0;
+  }
+
+  protected canDeleteProcess(process: ProcessRecord): boolean {
+    // Only allow deletion if user can manage the process and it has no versions
+    return this.canManageProcess(process) && this.hasNoVersions(process);
+  }
+
+  protected async deleteProcess(process: ProcessRecord): Promise<void> {
+    const dialogData: ConfirmDeleteDialogData = {
+      title: 'Delete Process',
+      message: `Are you sure you want to delete the process "${process.code} - ${process.title}"? This action cannot be undone.`,
+      confirmLabel: 'Delete Process',
+    };
+
+    const confirmed = await firstValueFrom(
+      this.dialog.open(ConfirmDeleteDialogComponent, { data: dialogData }).afterClosed()
+    );
+
+    if (confirmed) {
+      try {
+        await firstValueFrom(this.api.deleteProcess(process.id));
+        // Refresh the process list
+        await this.loadProcesses();
+        // Show success toast
+        this.snackBar.open(`Process "${process.code}" deleted successfully`, 'Close', {
+          duration: 3000,
+          horizontalPosition: 'end',
+          verticalPosition: 'top',
+          panelClass: ['toast-success'],
+        });
+      } catch (error) {
+        const errorMessage = getHttpErrorMessage(error, 'Unable to delete process.');
+        this.errorMessage.set(errorMessage);
+        // Show error toast
+        this.snackBar.open(errorMessage, 'Close', {
+          duration: 5000,
+          horizontalPosition: 'end',
+          verticalPosition: 'top',
+          panelClass: ['toast-error'],
+        });
+      }
+    }
   }
 
   private async loadProcesses(): Promise<void> {

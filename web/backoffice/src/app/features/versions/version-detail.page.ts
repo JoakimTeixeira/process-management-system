@@ -28,6 +28,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
@@ -45,6 +46,7 @@ import {
 import { getHttpErrorMessage } from '../../core/http/http-error-message';
 import { BreadcrumbService } from '../../core/navigation/breadcrumb.service';
 import { ToastService } from '../../core/toast/toast.service';
+import { ConfirmDeleteDialogComponent } from '../../shared/confirm-delete-dialog.component';
 import {
   AssetContentRecord,
   AssetRecord,
@@ -102,6 +104,7 @@ function minItemsValidator(minItems: number): ValidatorFn {
     MatCheckboxModule,
     MatChipsModule,
     MatDividerModule,
+    MatDialogModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
@@ -1285,7 +1288,7 @@ function minItemsValidator(minItems: number): ValidatorFn {
                                   <button
                                     mat-button
                                     type="button"
-                                    (click)="deleteProcedure(procedure.id)"
+                                    (click)="confirmDeleteProcedure(procedure)"
                                     [disabled]="isDeletingProcedure()"
                                   >
                                     <mat-icon>delete</mat-icon>
@@ -1409,6 +1412,7 @@ export class VersionDetailPageComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
+  private readonly dialog = inject(MatDialog);
   private readonly accessControl = inject(AccessControlUtil);
   private readonly breadcrumbs = inject(BreadcrumbService);
   private readonly destroyRef = inject(DestroyRef);
@@ -2230,6 +2234,26 @@ export class VersionDetailPageComponent {
     } finally {
       this.isDeletingProcedure.set(false);
     }
+  }
+
+  protected async confirmDeleteProcedure(procedure: ProcedureRecord): Promise<void> {
+    const confirmed = await firstValueFrom(
+      this.dialog
+        .open(ConfirmDeleteDialogComponent, {
+          data: {
+            title: 'Delete procedure',
+            message: `Delete procedure "${procedure.code} - ${procedure.title}"? This removes the draft procedure from the current version and cannot be undone.`,
+            confirmLabel: 'Delete procedure',
+          },
+        })
+        .afterClosed(),
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    await this.deleteProcedure(procedure.id);
   }
 
   protected async runLifecycleAction(action: LifecycleActionDefinition): Promise<void> {

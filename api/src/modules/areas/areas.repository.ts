@@ -173,6 +173,7 @@ export class AreasRepository {
           SELECT 1
           FROM teams t
           WHERE t.id = $1
+            AND t.is_active = TRUE
         ) AS exists
       `,
       [teamId],

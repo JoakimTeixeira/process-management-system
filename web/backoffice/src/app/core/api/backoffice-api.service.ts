@@ -16,6 +16,7 @@ import {
   ProcedureRecord,
   ProcessRecord,
   ProcessVersionRecord,
+  TeamRecord,
   TeamOption,
   VersionStateHistoryRecord,
 } from '../models/backoffice.models';
@@ -53,6 +54,10 @@ export class BackofficeApiService {
     itilPracticeId: string;
   }) {
     return this.http.post<AreaRecord>(`${this.baseUrl}/areas`, payload);
+  }
+
+  deleteArea(id: string) {
+    return this.http.delete<void>(`${this.baseUrl}/areas/${id}`);
   }
 
   updateArea(
@@ -97,6 +102,10 @@ export class BackofficeApiService {
     }>,
   ) {
     return this.http.patch<ProcessRecord>(`${this.baseUrl}/processes/${id}`, payload);
+  }
+
+  deleteProcess(id: string) {
+    return this.http.delete<void>(`${this.baseUrl}/processes/${id}`);
   }
 
   listProcessVersions(processId: string) {
@@ -321,6 +330,37 @@ export class BackofficeApiService {
 
   listTeamOptions() {
     return this.http.get<TeamOption[]>(`${this.baseUrl}/users/team-options`);
+  }
+
+  listTeams() {
+    return this.http.get<TeamRecord[]>(`${this.baseUrl}/teams`);
+  }
+
+  getTeam(id: string) {
+    return this.http.get<TeamRecord>(`${this.baseUrl}/teams/${id}`);
+  }
+
+  createTeam(payload: {
+    code: string;
+    name: string;
+    description: string;
+  }) {
+    return this.http.post<TeamRecord>(`${this.baseUrl}/teams`, payload);
+  }
+
+  updateTeam(
+    id: string,
+    payload: Partial<{
+      code: string;
+      name: string;
+      description: string;
+    }>,
+  ) {
+    return this.http.patch<TeamRecord>(`${this.baseUrl}/teams/${id}`, payload);
+  }
+
+  deactivateTeam(id: string) {
+    return this.http.patch<TeamRecord>(`${this.baseUrl}/teams/${id}/deactivate`, {});
   }
 
   createUser(payload: {

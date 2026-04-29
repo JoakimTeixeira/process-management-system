@@ -12,15 +12,21 @@ import { firstValueFrom } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 
 import { BackofficeApiService } from '../../core/api/backoffice-api.service';
+import { AccessControlUtil } from '../../core/governance/access-control.util';
 import { getHttpErrorMessage } from '../../core/http/http-error-message';
 import { AreaRecord, ProcedureRecord, ProcessRecord } from '../../core/models/backoffice.models';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-procedure-list-page',
@@ -30,8 +36,11 @@ import { AreaRecord, ProcedureRecord, ProcessRecord } from '../../core/models/ba
     MatButtonModule,
     MatCardModule,
     MatChipsModule,
+    MatDialogModule,
+    MatDividerModule,
     MatFormFieldModule,
     MatIconModule,
+    MatMenuModule,
     MatProgressSpinnerModule,
     MatSelectModule,
     MatTableModule,
@@ -199,17 +208,21 @@ import { AreaRecord, ProcedureRecord, ProcessRecord } from '../../core/models/ba
                 </ng-container>
 
                 <ng-container matColumnDef="actions">
-                  <th mat-header-cell *matHeaderCellDef>Actions</th>
-                  <td mat-cell *matCellDef="let procedure">
-                    <a
-                      mat-button
-                      color="primary"
-                      [routerLink]="['/versions', procedure.processVersionId]"
-                      [queryParams]="{ tab: 'procedures' }"
-                    >
-                      <mat-icon>open_in_new</mat-icon>
-                      Open version
-                    </a>
+                  <th mat-header-cell *matHeaderCellDef style="text-align: right;">Actions</th>
+                  <td mat-cell *matCellDef="let procedure" style="text-align: right;">
+                    <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+                      <!-- Always show Open version -->
+                      <a
+                        mat-icon-button
+                        color="primary"
+                        [routerLink]="['/versions', procedure.processVersionId]"
+                        [queryParams]="{ tab: 'procedures' }"
+                        aria-label="Open version"
+                      >
+                        <mat-icon>open_in_new</mat-icon>
+                      </a>
+
+                    </div>
                   </td>
                 </ng-container>
 
@@ -225,6 +238,9 @@ import { AreaRecord, ProcedureRecord, ProcessRecord } from '../../core/models/ba
 })
 export class ProcedureListPageComponent implements OnInit {
   private readonly api = inject(BackofficeApiService);
+  private readonly accessControl = inject(AccessControlUtil);
+  private readonly dialog = inject(MatDialog);
+  private readonly snackBar = inject(MatSnackBar);
 
   protected readonly procedures = signal<ProcedureRecord[]>([]);
   protected readonly processes = signal<ProcessRecord[]>([]);
@@ -233,16 +249,16 @@ export class ProcedureListPageComponent implements OnInit {
   protected readonly selectedProcessId = signal('');
   protected readonly isLoading = signal(true);
   protected readonly errorMessage = signal<string | null>(null);
+  protected readonly canEdit = computed(() => this.accessControl.hasRole('EDITOR'));
+  protected readonly currentUserRole = computed(() => this.accessControl.currentUserRole());
   protected readonly areaOptions = computed(() =>
     [...this.areas()].sort((left, right) => left.title.localeCompare(right.title)),
   );
-  protected readonly processOptions = computed(() => {
-    const selectedAreaId = this.selectedAreaId();
-
-    return [...this.processes()]
-      .filter((process) => selectedAreaId.length === 0 || process.areaId === selectedAreaId)
-      .sort((left, right) => left.code.localeCompare(right.code));
-  });
+  protected readonly processOptions = computed(() =>
+    [...this.processes()]
+      .filter((process) => !this.selectedAreaId() || process.areaId === this.selectedAreaId())
+      .sort((left, right) => left.title.localeCompare(right.title)),
+  );
   protected readonly filteredProcedures = computed(() => {
     const selectedAreaId = this.selectedAreaId();
     const selectedProcessId = this.selectedProcessId();
@@ -280,6 +296,8 @@ export class ProcedureListPageComponent implements OnInit {
       this.selectedProcessId.set('');
     }
   }
+
+
 
   private async loadProcedures(): Promise<void> {
     this.isLoading.set(true);
