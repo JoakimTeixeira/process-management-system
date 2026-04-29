@@ -1515,14 +1515,10 @@ export class VersionDetailPageComponent {
   protected readonly tabs = computed(() => {
     const tabs: { id: VersionDetailTabId; label: string }[] = [
       { id: 'summary', label: 'Summary' },
-    ];
-
-    tabs.push({ id: 'work', label: this.primaryActionTabLabel() });
-
-    tabs.push(
+      { id: 'work', label: this.primaryActionTabLabel() },
       { id: 'diagram', label: 'Diagram' },
       { id: 'procedures', label: 'Procedures' },
-    );
+    ];
 
     if (this.historyAvailable()) {
       tabs.push({ id: 'history', label: 'History' });
@@ -1595,38 +1591,15 @@ export class VersionDetailPageComponent {
   protected readonly nextChecklistItem = computed(() => {
     if (this.showReviewChecklist()) {
       const checklistState = this.checklistState();
-
-      if (!checklistState.titleChecked) {
-        return {
-          label: 'Confirm the title is correct',
-          action: () => this.selectTabAndFocus('work', 'title'),
-        };
-      }
-      if (!checklistState.changeChecked) {
-        return {
-          label: 'Confirm the change description is correct',
-          action: () => this.selectTabAndFocus('work', 'changeDescription'),
-        };
-      }
-      if (!checklistState.requirementsChecked) {
-        return {
-          label: 'Confirm the reason for change is correct',
-          action: () => this.selectTabAndFocus('work', 'reasonForChange'),
-        };
-      }
-      if (!checklistState.architectureChecked) {
-        return {
-          label: 'Confirm the architecture state is correct',
-          action: () => this.selectTabAndFocus('work', 'architectureState'),
-        };
-      }
-      if (!checklistState.diagramProceduresChecked) {
-        return {
-          label: 'Check that the BPMN diagram reflects the documented procedures',
-          action: () => this.selectTab('diagram'),
-        };
-      }
-      return null;
+      const reviewChecklistItems = [
+        { checked: checklistState.titleChecked, label: 'Confirm the title is correct', action: () => this.selectTabAndFocus('work', 'title') },
+        { checked: checklistState.changeChecked, label: 'Confirm the change description is correct', action: () => this.selectTabAndFocus('work', 'changeDescription') },
+        { checked: checklistState.requirementsChecked, label: 'Confirm the reason for change is correct', action: () => this.selectTabAndFocus('work', 'reasonForChange') },
+        { checked: checklistState.architectureChecked, label: 'Confirm the architecture state is correct', action: () => this.selectTabAndFocus('work', 'architectureState') },
+        { checked: checklistState.diagramProceduresChecked, label: 'Check that the BPMN diagram reflects the documented procedures', action: () => this.selectTab('diagram') },
+      ];
+      const nextItem = reviewChecklistItems.find((item) => !item.checked);
+      return nextItem ? { label: nextItem.label, action: nextItem.action } : null;
     }
 
     if (!this.canEditDraft()) {
@@ -1634,36 +1607,18 @@ export class VersionDetailPageComponent {
     }
 
     const submissionRequirements = this.submissionRequirements();
-
-    if (!submissionRequirements.titlePresent) {
-      return { label: 'Fill in the title', action: () => this.selectTabAndFocus('work', 'title') };
-    }
-    if (!submissionRequirements.changeDescriptionPresent) {
-      return {
-        label: 'Fill in the change description',
-        action: () => this.selectTabAndFocus('work', 'changeDescription'),
-      };
-    }
-    if (!submissionRequirements.reasonForChangePresent) {
-      return {
-        label: 'Fill in the reason for change',
-        action: () => this.selectTabAndFocus('work', 'reasonForChange'),
-      };
-    }
-    if (!submissionRequirements.architectureStateSelected) {
-      return {
-        label: 'Select the architecture state',
-        action: () => this.selectTabAndFocus('work', 'architectureState'),
-      };
-    }
-    if (!submissionRequirements.hasBpmnAsset) {
-      return { label: 'Upload the BPMN diagram', action: () => this.selectTab('diagram') };
-    }
-    if (!submissionRequirements.hasProcedure) {
-      return { label: 'Add at least 1 procedure', action: () => this.selectTab('procedures') };
-    }
-    return null;
+    const submissionChecklistItems = [
+      { present: submissionRequirements.titlePresent, label: 'Fill in the title', action: () => this.selectTabAndFocus('work', 'title') },
+      { present: submissionRequirements.changeDescriptionPresent, label: 'Fill in the change description', action: () => this.selectTabAndFocus('work', 'changeDescription') },
+      { present: submissionRequirements.reasonForChangePresent, label: 'Fill in the reason for change', action: () => this.selectTabAndFocus('work', 'reasonForChange') },
+      { present: submissionRequirements.architectureStateSelected, label: 'Select the architecture state', action: () => this.selectTabAndFocus('work', 'architectureState') },
+      { present: submissionRequirements.hasBpmnAsset, label: 'Upload the BPMN diagram', action: () => this.selectTab('diagram') },
+      { present: submissionRequirements.hasProcedure, label: 'Add at least 1 procedure', action: () => this.selectTab('procedures') },
+    ];
+    const nextItem = submissionChecklistItems.find((item) => !item.present);
+    return nextItem ? { label: nextItem.label, action: nextItem.action } : null;
   });
+  
   protected readonly allChecklistChecked = computed(() => {
     if (this.showReviewChecklist()) {
       const checklistState = this.checklistState();
@@ -1700,7 +1655,7 @@ export class VersionDetailPageComponent {
     const currentVersion = this.version();
     const activeWorkflowVersion = this.process()?.governanceSummary?.activeWorkflowVersion;
 
-    if (!currentVersion || !activeWorkflowVersion || activeWorkflowVersion.id !== currentVersion.id) {
+    if (!currentVersion || !activeWorkflowVersion || activeWorkflowVersion?.id !== currentVersion?.id) {
       return null;
     }
 
@@ -2452,7 +2407,7 @@ export class VersionDetailPageComponent {
         ? assets.find((asset) => asset.id === currentPreviewId)
         : null) ??
       assets.find((asset) => asset.isCurrent) ??
-      assets[assets.length - 1] ??
+      assets.at(-1) ??
       null;
 
     if (!assetToPreview || this.previewAssetContent()?.id === assetToPreview.id) {

@@ -12,7 +12,6 @@ import { firstValueFrom } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatDialogModule } from '@angular/material/dialog';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -25,7 +24,7 @@ import { BackofficeApiService } from '../../core/api/backoffice-api.service';
 import { AccessControlUtil } from '../../core/governance/access-control.util';
 import { getHttpErrorMessage } from '../../core/http/http-error-message';
 import { AreaRecord, ProcedureRecord, ProcessRecord } from '../../core/models/backoffice.models';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
