@@ -3,7 +3,9 @@ FROM node:20-bookworm-slim AS builder
 WORKDIR /app
 
 COPY package*.json ./
-RUN npm ci
+# npm 10.8.2 in node:20-bookworm-slim rejects this lockfile, while npm 11 installs it
+# successfully. Pin npm in the build stage so Docker builds stay reproducible.
+RUN npm install -g npm@11.13.0 && npm ci
 
 COPY . .
 RUN npm run build
