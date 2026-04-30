@@ -32,12 +32,23 @@ services:
       - ./.env
     environment:
       DB_HOST: postgres
-    ports:
-      - '3000:3000'
+    expose:
+      - '3000'
     volumes:
       - ./api/uploads:/app/uploads
     depends_on:
       postgres:
+        condition: service_healthy
+
+  api-lb:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - '3000:80'
+    volumes:
+      - ./docker/api-lb/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      api:
         condition: service_healthy
 
   web-public:
@@ -46,11 +57,22 @@ services:
       context: ./web/public
       dockerfile: Dockerfile
     restart: unless-stopped
+    expose:
+      - '80'
+    depends_on:
+      api-lb:
+        condition: service_started
+
+  public-lb:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
     ports:
       - '8080:80'
+    volumes:
+      - ./docker/public-lb/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
-      api:
-        condition: service_healthy
+      web-public:
+        condition: service_started
 
   web-backoffice:
     image: process-management-system-web-backoffice:latest
@@ -58,11 +80,22 @@ services:
       context: ./web/backoffice
       dockerfile: Dockerfile
     restart: unless-stopped
+    expose:
+      - '80'
+    depends_on:
+      api-lb:
+        condition: service_started
+
+  backoffice-lb:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
     ports:
       - '8081:80'
+    volumes:
+      - ./docker/backoffice-lb/nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
-      api:
-        condition: service_healthy
+      web-backoffice:
+        condition: service_started
 
 volumes:
   pgdata:
