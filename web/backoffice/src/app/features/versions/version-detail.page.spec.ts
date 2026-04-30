@@ -68,7 +68,6 @@ describe('VersionDetailPageComponent', () => {
       'listAssets',
       'listProcedures',
       'updateProcedure',
-      'deleteProcedure',
       'getVersionStateHistory',
       'getAuditLogs',
       'updateVersion',
@@ -181,7 +180,6 @@ describe('VersionDetailPageComponent', () => {
     );
     api.getVersionStateHistory.and.returnValue(of([]));
     api.getAuditLogs.and.returnValue(of([]));
-    api.deleteProcedure.and.returnValue(of(void 0));
 
     auth = {
       hasRole: jasmine.createSpy('hasRole').and.callFake((role: string) => role === 'EDITOR'),

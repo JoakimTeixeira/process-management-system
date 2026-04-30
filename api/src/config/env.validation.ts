@@ -14,7 +14,7 @@ export interface EnvironmentVariables {
   DB_PASSWORD: string;
   DB_NAME: string;
   DB_SSL: boolean;
-  AUTH_PASSWORD_PEPPER: string;
+  PASSWORD_PEPPER: string;
   JWT_SECRET: string;
   JWT_EXPIRES_IN: string;
 }
@@ -30,7 +30,7 @@ const environmentSchema = Joi.object<EnvironmentVariables>({
   DB_PASSWORD: Joi.string().required(),
   DB_NAME: Joi.string().required(),
   DB_SSL: Joi.boolean().default(false),
-  AUTH_PASSWORD_PEPPER: Joi.string().min(1).required(),
+  PASSWORD_PEPPER: Joi.string().min(1).required(),
   JWT_SECRET: Joi.string().min(1).required(),
   JWT_EXPIRES_IN: Joi.string()
     .pattern(/^\d+[smhd]$/)

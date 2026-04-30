@@ -1,19 +1,34 @@
+type LocationLike = Pick<Location, 'hostname' | 'port'>;
+
+const DOCKER_WEB_PORTS = new Set(['8080', '8081']);
+
 function isLocalDevelopmentHost(hostname: string): boolean {
   return hostname === 'localhost' || hostname === '127.0.0.1';
 }
 
-export function getPublicApiBaseUrl(): string {
-  if (typeof window === 'undefined') {
+export function getPublicApiBaseUrl(
+  location: LocationLike | null =
+    typeof window === 'undefined' ? null : window.location,
+): string {
+  if (!location) {
     return 'http://localhost:3000';
   }
 
-  const { hostname, port } = window.location;
+  const { hostname, port } = location;
 
-  if (isLocalDevelopmentHost(hostname) && port !== '3000') {
-    return `http://${hostname}:3000`;
+  if (isLocalDevelopmentHost(hostname)) {
+    if (DOCKER_WEB_PORTS.has(port)) {
+      return '/api';
+    }
+
+    if (port !== '3000') {
+      return `http://${hostname}:3000`;
+    }
+
+    return '';
   }
 
-  return '';
+  return '/api';
 }
 
 export const PUBLIC_API_BASE_URL = getPublicApiBaseUrl();

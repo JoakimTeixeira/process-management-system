@@ -16,6 +16,7 @@ import { UsersModule } from './modules/users/users.module';
 import appConfig from './config/app.config';
 import authConfig from './config/auth.config';
 import databaseConfig from './config/database.config';
+import { getEnvFilePaths } from './config/env-paths';
 import { validateEnvironment } from './config/env.validation';
 import { createTypeOrmModuleOptions } from './database/typeorm-options';
 
@@ -23,12 +24,7 @@ import { createTypeOrmModuleOptions } from './database/typeorm-options';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: [
-        `.env.${process.env.NODE_ENV ?? 'development'}.local`,
-        `.env.${process.env.NODE_ENV ?? 'development'}`,
-        '.env.local',
-        '.env',
-      ],
+      envFilePath: getEnvFilePaths(),
       load: [appConfig, authConfig, databaseConfig],
       validate: validateEnvironment,
     }),

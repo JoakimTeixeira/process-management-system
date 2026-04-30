@@ -1,11 +1,10 @@
-import 'dotenv/config';
-
 import * as argon2 from 'argon2';
 import { createHash } from 'node:crypto';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { DataSource, EntityManager } from 'typeorm';
 
+import { loadProjectEnvironment } from '../src/config/env-paths';
 import dataSource from '../src/database/typeorm.datasource';
 import {
   areas,
@@ -22,6 +21,8 @@ import {
   users,
   versionStateHistory,
 } from './seed-data';
+
+loadProjectEnvironment();
 
 type SqlExecutor = Pick<EntityManager, 'query'>;
 
@@ -89,14 +90,18 @@ async function queryRequiredId(
   return row.id;
 }
 
-function getRequiredEnv(name: string): string {
-  const value = process.env[name];
+function getRequiredEnv(...names: string[]): string {
+  for (const name of names) {
+    const value = process.env[name];
 
-  if (!value) {
-    throw new Error(`Missing required environment variable: ${name}`);
+    if (value) {
+      return value;
+    }
   }
 
-  return value;
+  throw new Error(
+    `Missing required environment variable: ${names.join(' or ')}`,
+  );
 }
 
 function getBpmnFilename(processCode: string, versionNumber: number): string {
@@ -1117,8 +1122,8 @@ async function reseedAuditLogs(
 }
 
 async function hashDemoPassword(): Promise<string> {
-  const pepper = getRequiredEnv('AUTH_PASSWORD_PEPPER');
-  const demoPassword = getRequiredEnv('DEMO_PASSWORD');
+  const pepper = getRequiredEnv('PASSWORD_PEPPER');
+  const demoPassword = getRequiredEnv('DEMO_USER_PASSWORD');
 
   return argon2.hash(demoPassword, {
     type: argon2.argon2id,

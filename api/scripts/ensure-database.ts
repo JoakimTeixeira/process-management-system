@@ -1,8 +1,9 @@
-import 'dotenv/config';
-
 import { Client } from 'pg';
 
 import { buildDatabaseConfig } from '../src/config/database.config';
+import { loadProjectEnvironment } from '../src/config/env-paths';
+
+loadProjectEnvironment();
 
 const MAINTENANCE_DATABASE_NAME = 'postgres';
 const PROCESS_EXIT_FAILURE_CODE = 1;

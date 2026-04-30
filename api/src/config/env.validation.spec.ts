@@ -28,7 +28,7 @@ describe('env.validation', () => {
         DB_PASSWORD: 'password',
         DB_NAME: 'test-db',
         DB_SSL: false,
-        AUTH_PASSWORD_PEPPER: 'pepper',
+        PASSWORD_PEPPER: 'pepper',
         JWT_SECRET: 'secret',
         JWT_EXPIRES_IN: '1h',
       };
@@ -44,7 +44,7 @@ describe('env.validation', () => {
         DB_USERNAME: 'user',
         DB_PASSWORD: 'password',
         DB_NAME: 'test-db',
-        AUTH_PASSWORD_PEPPER: 'pepper',
+        PASSWORD_PEPPER: 'pepper',
         JWT_SECRET: 'secret',
         JWT_EXPIRES_IN: '1h',
       };
@@ -63,7 +63,7 @@ describe('env.validation', () => {
         DB_USERNAME: 'user',
         DB_PASSWORD: 'password',
         DB_NAME: 'test-db',
-        AUTH_PASSWORD_PEPPER: 'pepper',
+        PASSWORD_PEPPER: 'pepper',
         JWT_SECRET: 'secret',
         JWT_EXPIRES_IN: '1h',
       };
@@ -78,7 +78,7 @@ describe('env.validation', () => {
         DB_USERNAME: 'user',
         DB_PASSWORD: 'password',
         DB_NAME: 'test-db',
-        AUTH_PASSWORD_PEPPER: 'pepper',
+        PASSWORD_PEPPER: 'pepper',
         JWT_SECRET: 'secret',
         JWT_EXPIRES_IN: '1h',
       };
@@ -92,9 +92,22 @@ describe('env.validation', () => {
         DB_USERNAME: 'user',
         DB_PASSWORD: 'password',
         DB_NAME: 'test-db',
-        AUTH_PASSWORD_PEPPER: 'pepper',
+        PASSWORD_PEPPER: 'pepper',
         JWT_SECRET: 'secret',
         JWT_EXPIRES_IN: 'invalid',
+      };
+
+      expect(() => validateEnvironment(config)).toThrow();
+    });
+
+    it('should throw error when PASSWORD_PEPPER is missing', () => {
+      const config = {
+        DB_HOST: 'localhost',
+        DB_USERNAME: 'user',
+        DB_PASSWORD: 'password',
+        DB_NAME: 'test-db',
+        JWT_SECRET: 'secret',
+        JWT_EXPIRES_IN: '1h',
       };
 
       expect(() => validateEnvironment(config)).toThrow();
@@ -107,7 +120,7 @@ describe('env.validation', () => {
       process.env.DB_USERNAME = 'user';
       process.env.DB_PASSWORD = 'password';
       process.env.DB_NAME = 'test-db';
-      process.env.AUTH_PASSWORD_PEPPER = 'pepper';
+      process.env.PASSWORD_PEPPER = 'pepper';
       process.env.JWT_SECRET = 'secret';
       process.env.JWT_EXPIRES_IN = '1h';
 

@@ -26,7 +26,7 @@ describe('auth.config', () => {
       DB_PASSWORD: 'pass',
       DB_NAME: 'db',
       DB_SSL: false,
-      AUTH_PASSWORD_PEPPER: 'pepper',
+      PASSWORD_PEPPER: 'pepper',
       JWT_SECRET: 'secret',
       JWT_EXPIRES_IN: '15m',
     });
@@ -44,7 +44,7 @@ describe('auth.config', () => {
 
   it('should parse JWT expiration in seconds', () => {
     (getValidatedEnvironment as jest.Mock).mockReturnValue({
-      AUTH_PASSWORD_PEPPER: 'pepper',
+      PASSWORD_PEPPER: 'pepper',
       JWT_SECRET: 'secret',
       JWT_EXPIRES_IN: '30s',
     });
@@ -56,7 +56,7 @@ describe('auth.config', () => {
 
   it('should parse JWT expiration in minutes', () => {
     (getValidatedEnvironment as jest.Mock).mockReturnValue({
-      AUTH_PASSWORD_PEPPER: 'pepper',
+      PASSWORD_PEPPER: 'pepper',
       JWT_SECRET: 'secret',
       JWT_EXPIRES_IN: '15m',
     });
@@ -68,7 +68,7 @@ describe('auth.config', () => {
 
   it('should parse JWT expiration in hours', () => {
     (getValidatedEnvironment as jest.Mock).mockReturnValue({
-      AUTH_PASSWORD_PEPPER: 'pepper',
+      PASSWORD_PEPPER: 'pepper',
       JWT_SECRET: 'secret',
       JWT_EXPIRES_IN: '2h',
     });
@@ -80,7 +80,7 @@ describe('auth.config', () => {
 
   it('should parse JWT expiration in days', () => {
     (getValidatedEnvironment as jest.Mock).mockReturnValue({
-      AUTH_PASSWORD_PEPPER: 'pepper',
+      PASSWORD_PEPPER: 'pepper',
       JWT_SECRET: 'secret',
       JWT_EXPIRES_IN: '1d',
     });
@@ -92,7 +92,7 @@ describe('auth.config', () => {
 
   it('should throw error for invalid JWT_EXPIRES_IN format', () => {
     (getValidatedEnvironment as jest.Mock).mockReturnValue({
-      AUTH_PASSWORD_PEPPER: 'pepper',
+      PASSWORD_PEPPER: 'pepper',
       JWT_SECRET: 'secret',
       JWT_EXPIRES_IN: 'invalid',
     });
@@ -104,7 +104,7 @@ describe('auth.config', () => {
 
   it('should throw error for JWT_EXPIRES_IN without unit', () => {
     (getValidatedEnvironment as jest.Mock).mockReturnValue({
-      AUTH_PASSWORD_PEPPER: 'pepper',
+      PASSWORD_PEPPER: 'pepper',
       JWT_SECRET: 'secret',
       JWT_EXPIRES_IN: '15',
     });

@@ -40,7 +40,7 @@ export function buildAuthConfig(): AuthConfig {
   const env = getValidatedEnvironment();
 
   return {
-    passwordPepper: env.AUTH_PASSWORD_PEPPER,
+    passwordPepper: env.PASSWORD_PEPPER,
     jwtSecret: env.JWT_SECRET,
     jwtExpiresIn: env.JWT_EXPIRES_IN,
     jwtExpiresInSeconds: parseJwtExpiresIn(env.JWT_EXPIRES_IN),

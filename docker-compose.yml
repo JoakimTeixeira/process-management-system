@@ -1,0 +1,68 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          'CMD-SHELL',
+          'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -h 127.0.0.1',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  api:
+    image: process-management-system-api:latest
+    build:
+      context: ./api
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    init: true
+    env_file:
+      - ./.env
+    environment:
+      DB_HOST: postgres
+    ports:
+      - '3000:3000'
+    volumes:
+      - ./api/uploads:/app/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  web-public:
+    image: process-management-system-web-public:latest
+    build:
+      context: ./web/public
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - '8080:80'
+    depends_on:
+      api:
+        condition: service_healthy
+
+  web-backoffice:
+    image: process-management-system-web-backoffice:latest
+    build:
+      context: ./web/backoffice
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - '8081:80'
+    depends_on:
+      api:
+        condition: service_healthy
+
+volumes:
+  pgdata:
