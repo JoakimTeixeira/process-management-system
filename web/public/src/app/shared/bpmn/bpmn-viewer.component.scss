@@ -177,6 +177,14 @@
 
 .viewer-shell {
   background: #ffffff;
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.viewer-shell:active {
+  cursor: grabbing;
 }
 
 .viewer-state {

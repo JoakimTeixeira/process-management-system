@@ -43,16 +43,23 @@
         </p>
       </div>
       <div class="viewer-actions">
-        <button class="viewer-action-button" type="button" (click)="fitViewport()">Fit</button>
-        <button class="viewer-action-button" type="button" (click)="zoom(-0.1)">-</button>
-        <button class="viewer-action-button" type="button" (click)="zoom(0.1)">+</button>
+        <button class="viewer-action-button" type="button" (click)="fitViewport()" matTooltip="Fit to viewport">
+          <mat-icon>fit_screen</mat-icon>
+        </button>
+        <button class="viewer-action-button" type="button" (click)="zoom(-0.1)" matTooltip="Zoom out">
+          <mat-icon>remove</mat-icon>
+        </button>
+        <button class="viewer-action-button" type="button" (click)="zoom(0.1)" matTooltip="Zoom in">
+          <mat-icon>add</mat-icon>
+        </button>
         <button
           class="viewer-action-button"
           type="button"
           (click)="toggleFullscreen()"
           [disabled]="!canFullscreen"
+          matTooltip="Fullscreen"
         >
-          Fullscreen
+          <mat-icon>fullscreen</mat-icon>
         </button>
       </div>
     </div>

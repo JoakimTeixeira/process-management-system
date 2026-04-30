@@ -6,6 +6,7 @@ import {
   Component,
   DestroyRef,
   ElementRef,
+  HostListener,
   Input,
   OnChanges,
   OnDestroy,
@@ -15,14 +16,29 @@ import {
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import BpmnViewer from 'bpmn-js/lib/NavigatedViewer';
 
 import { BpmnXmlService } from './bpmn-xml.service';
 
 interface BpmnCanvas {
   zoom(level?: number): number;
-  zoom(value: 'fit-viewport'): void;
+  zoom(value: 'fit-viewport', center?: { x: number; y: number }): number;
+  viewbox(): BpmnViewbox;
+  resized(): void;
+}
+
+interface BpmnViewbox {
+  inner: {
+    width: number;
+    height: number;
+  };
+  outer: {
+    width: number;
+    height: number;
+  };
 }
 
 function isBpmnCanvas(obj: unknown): obj is BpmnCanvas {
@@ -32,7 +48,7 @@ function isBpmnCanvas(obj: unknown): obj is BpmnCanvas {
 @Component({
   selector: 'app-bpmn-viewer',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, MatButtonModule, MatProgressSpinnerModule],
+  imports: [CommonModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule, MatTooltipModule],
   templateUrl: './bpmn-viewer.component.html',
   styleUrl: './bpmn-viewer.component.scss',
 })
@@ -47,6 +63,7 @@ export class BpmnViewerComponent implements AfterViewInit, OnChanges, OnDestroy 
   private readonly bpmnXmlService = inject(BpmnXmlService);
   private viewer: BpmnViewer | null = null;
   private loadRequestToken = 0;
+  private wasStageFullscreen = false;
 
   protected loading = false;
   protected errorMessage: string | null = null;
@@ -80,14 +97,23 @@ export class BpmnViewerComponent implements AfterViewInit, OnChanges, OnDestroy 
     }
 
     const currentZoom = canvas.zoom();
-    canvas.zoom(currentZoom + delta);
+    const nextZoom = currentZoom + delta;
+    const fitZoom = this.getFitViewportZoom(canvas);
+
+    if (delta < 0 && fitZoom !== null && nextZoom <= fitZoom + 0.001) {
+      this.fitViewport();
+      return;
+    }
+
+    canvas.zoom(nextZoom);
   }
 
   protected fitViewport(): void {
     const canvas = this.viewer?.get('canvas');
+    const center = this.getViewportCenter();
 
     if (canvas && isBpmnCanvas(canvas)) {
-      canvas.zoom('fit-viewport');
+      canvas.zoom('fit-viewport', center);
     }
   }
 
@@ -96,12 +122,23 @@ export class BpmnViewerComponent implements AfterViewInit, OnChanges, OnDestroy 
       return;
     }
 
-    if (document.fullscreenElement) {
+    if (this.isStageFullscreen()) {
       await document.exitFullscreen();
       return;
     }
 
     await this.stage.nativeElement.requestFullscreen();
+  }
+
+  @HostListener('document:fullscreenchange')
+  protected handleFullscreenChange(): void {
+    const isStageFullscreen = this.isStageFullscreen();
+
+    if (isStageFullscreen || this.wasStageFullscreen) {
+      this.scheduleFitViewport();
+    }
+
+    this.wasStageFullscreen = isStageFullscreen;
   }
 
   private tryLoadDiagram(): void {
@@ -162,5 +199,52 @@ export class BpmnViewerComponent implements AfterViewInit, OnChanges, OnDestroy 
           this.cdr.markForCheck();
         },
       });
+  }
+
+  private getViewportCenter(): { x: number; y: number } | undefined {
+    const stage = this.stage?.nativeElement;
+
+    if (!stage || !stage.clientWidth || !stage.clientHeight) {
+      return undefined;
+    }
+
+    return {
+      x: stage.clientWidth / 2,
+      y: stage.clientHeight / 2,
+    };
+  }
+
+  private getFitViewportZoom(canvas: BpmnCanvas): number | null {
+    const viewbox = canvas.viewbox();
+    const { inner, outer } = viewbox;
+
+    if (!inner.width || !inner.height || !outer.width || !outer.height) {
+      return null;
+    }
+
+    return Math.min(1, outer.width / inner.width, outer.height / inner.height);
+  }
+
+  private scheduleFitViewport(): void {
+    const rerenderViewport = () => {
+      const canvas = this.viewer?.get('canvas');
+
+      if (canvas && isBpmnCanvas(canvas)) {
+        canvas.resized();
+      }
+
+      this.fitViewport();
+    };
+
+    if (typeof requestAnimationFrame === 'function') {
+      requestAnimationFrame(() => requestAnimationFrame(rerenderViewport));
+      return;
+    }
+
+    rerenderViewport();
+  }
+
+  private isStageFullscreen(): boolean {
+    return !!this.stage?.nativeElement && document.fullscreenElement === this.stage.nativeElement;
   }
 }
