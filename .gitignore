@@ -3,3 +3,5 @@
 /.env.*
 !/.env.example
 /**/*/*.env
+/verification/db_queries/DB*
+/verification/logs/backoffice*

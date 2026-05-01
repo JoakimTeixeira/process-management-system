@@ -450,6 +450,27 @@ async function upsertProcessVersion(
     updatedBy: string;
   },
 ): Promise<string> {
+  if (params.lifecycleState === 'Published') {
+    await queryRows(
+      manager,
+      `
+        UPDATE process_versions
+        SET lifecycle_state = 'Archived'::process_lifecycle_state,
+            updated_by = $4
+        WHERE process_id = $1
+          AND architecture_state = $2::process_architecture_state
+          AND lifecycle_state = 'Published'::process_lifecycle_state
+          AND version_number <> $3
+      `,
+      [
+        params.processId,
+        params.architectureState,
+        params.versionNumber,
+        params.updatedBy,
+      ],
+    );
+  }
+
   return queryRequiredId(
     manager,
     `
