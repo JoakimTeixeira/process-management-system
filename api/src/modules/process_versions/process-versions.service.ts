@@ -455,7 +455,7 @@ export class ProcessVersionsService {
       version,
       currentUser,
       toState: 'Draft',
-      action: 'STATE_CHANGE',
+      action: 'REOPEN',
       checklistCompleted: false,
       reason: justificationDto.reason,
     });
@@ -806,7 +806,7 @@ export class ProcessVersionsService {
     version: ProcessVersionRecord;
     currentUser: AuthenticatedUser;
     toState: string;
-    action: 'STATE_CHANGE' | 'APPROVE' | 'REJECT' | 'ARCHIVE';
+    action: 'STATE_CHANGE' | 'REOPEN' | 'APPROVE' | 'REJECT' | 'ARCHIVE';
     checklistCompleted?: boolean;
     reason: string;
   }): Promise<ProcessVersionRecord> {

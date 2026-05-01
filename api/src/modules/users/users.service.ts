@@ -117,6 +117,8 @@ export class UsersService {
     currentUser: AuthenticatedUser,
   ): Promise<UserAdminRecord> {
     const currentRecord = await this.getById(id);
+    let roleChanged = false;
+    let teamChanged = false;
     const updateInput: {
       name?: string;
       email?: string;
@@ -145,6 +147,7 @@ export class UsersService {
     ) {
       await this.ensureTeamExists(updateUserDto.teamId);
       updateInput.teamId = updateUserDto.teamId;
+      teamChanged = true;
     }
 
     if (
@@ -153,15 +156,16 @@ export class UsersService {
     ) {
       const requestedRoleId = updateUserDto.roleId;
       const requestedRoleName = updateUserDto.roleName;
-      const roleChanged =
+      const hasRoleChanged =
         (requestedRoleId !== undefined &&
           requestedRoleId !== currentRecord.role.id) ||
         (requestedRoleName !== undefined &&
           requestedRoleName !== currentRecord.role.name);
 
-      if (roleChanged) {
+      if (hasRoleChanged) {
         const role = await this.resolveRole(requestedRoleId, requestedRoleName);
         updateInput.roleId = role.id;
+        roleChanged = true;
       }
     }
 
@@ -174,16 +178,13 @@ export class UsersService {
 
     try {
       const updatedUser = await this.usersRepository.update(id, updateInput);
-
-      await this.auditLogWriterService.create({
-        entityType: 'user',
-        entityId: updatedUser.id,
-        action: 'USER_UPDATE',
-        actorId: currentUser.id,
-        reasonForChange: 'Updated user via SYSTEM_ADMIN',
-        oldData: currentRecord,
-        newData: updatedUser,
-      });
+      await this.writeUpdateAuditLogs(
+        currentRecord,
+        updatedUser,
+        currentUser,
+        roleChanged,
+        teamChanged,
+      );
 
       return updatedUser;
     } catch (error: unknown) {
@@ -283,5 +284,54 @@ export class UsersService {
     return await argon2.hash(password, {
       secret: Buffer.from(this.authConfiguration.passwordPepper, 'utf8'),
     });
+  }
+
+  private async writeUpdateAuditLogs(
+    currentRecord: UserAdminRecord,
+    updatedUser: UserAdminRecord,
+    currentUser: AuthenticatedUser,
+    roleChanged: boolean,
+    teamChanged: boolean,
+  ): Promise<void> {
+    const profileChanged =
+      currentRecord.name !== updatedUser.name ||
+      currentRecord.email !== updatedUser.email ||
+      currentRecord.isActive !== updatedUser.isActive;
+
+    if (profileChanged || (!roleChanged && !teamChanged)) {
+      await this.auditLogWriterService.create({
+        entityType: 'user',
+        entityId: updatedUser.id,
+        action: 'USER_UPDATE',
+        actorId: currentUser.id,
+        reasonForChange: 'Updated user via SYSTEM_ADMIN',
+        oldData: currentRecord,
+        newData: updatedUser,
+      });
+    }
+
+    if (roleChanged) {
+      await this.auditLogWriterService.create({
+        entityType: 'user',
+        entityId: updatedUser.id,
+        action: 'ROLE_ASSIGN',
+        actorId: currentUser.id,
+        reasonForChange: 'Changed user role via SYSTEM_ADMIN',
+        oldData: currentRecord,
+        newData: updatedUser,
+      });
+    }
+
+    if (teamChanged) {
+      await this.auditLogWriterService.create({
+        entityType: 'user',
+        entityId: updatedUser.id,
+        action: 'TEAM_CHANGE',
+        actorId: currentUser.id,
+        reasonForChange: 'Changed user team via SYSTEM_ADMIN',
+        oldData: currentRecord,
+        newData: updatedUser,
+      });
+    }
   }
 }

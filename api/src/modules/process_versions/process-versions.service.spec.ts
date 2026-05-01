@@ -444,7 +444,7 @@ describe('ProcessVersionsService', () => {
     );
     expect(auditLogWriterService.create).toHaveBeenCalledWith(
       expect.objectContaining({
-        action: 'STATE_CHANGE',
+        action: 'REOPEN',
         reasonForChange: 'Formal rework required',
       }),
       expect.anything(),

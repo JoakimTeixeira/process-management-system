@@ -206,6 +206,127 @@ describe('UsersService', () => {
     });
   });
 
+  it('should write ROLE_ASSIGN when only the role changes', async () => {
+    usersRepository.findById.mockResolvedValue({
+      id: 'user-2',
+      name: 'Alice',
+      email: 'alice@example.com',
+      isActive: true,
+      role: { id: 'role-2', name: Role.EDITOR },
+      team: { id: 'team-2', code: 'HR', name: 'Human Resources' },
+    });
+    usersRepository.findRoleByName.mockResolvedValue({
+      id: 'role-3',
+      name: Role.PUBLISHER,
+    });
+    usersRepository.update.mockResolvedValue({
+      id: 'user-2',
+      name: 'Alice',
+      email: 'alice@example.com',
+      isActive: true,
+      role: { id: 'role-3', name: Role.PUBLISHER },
+      team: { id: 'team-2', code: 'HR', name: 'Human Resources' },
+    });
+
+    await service.update('user-2', { roleName: Role.PUBLISHER }, currentUser);
+
+    expect(auditLogWriterService.create).toHaveBeenCalledTimes(1);
+    expect(auditLogWriterService.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: 'ROLE_ASSIGN',
+        reasonForChange: 'Changed user role via SYSTEM_ADMIN',
+      }),
+    );
+  });
+
+  it('should write TEAM_CHANGE when only the team changes', async () => {
+    usersRepository.findById.mockResolvedValue({
+      id: 'user-2',
+      name: 'Alice',
+      email: 'alice@example.com',
+      isActive: true,
+      role: { id: 'role-2', name: Role.EDITOR },
+      team: { id: 'team-2', code: 'HR', name: 'Human Resources' },
+    });
+    usersRepository.teamExists.mockResolvedValue(true);
+    usersRepository.update.mockResolvedValue({
+      id: 'user-2',
+      name: 'Alice',
+      email: 'alice@example.com',
+      isActive: true,
+      role: { id: 'role-2', name: Role.EDITOR },
+      team: { id: 'team-3', code: 'FIN', name: 'Finance' },
+    });
+
+    await service.update('user-2', { teamId: 'team-3' }, currentUser);
+
+    expect(auditLogWriterService.create).toHaveBeenCalledTimes(1);
+    expect(auditLogWriterService.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        action: 'TEAM_CHANGE',
+        reasonForChange: 'Changed user team via SYSTEM_ADMIN',
+      }),
+    );
+  });
+
+  it('should write separate audit rows when profile, role, and team all change', async () => {
+    usersRepository.findById.mockResolvedValue({
+      id: 'user-2',
+      name: 'Alice',
+      email: 'alice@example.com',
+      isActive: true,
+      role: { id: 'role-2', name: Role.EDITOR },
+      team: { id: 'team-2', code: 'HR', name: 'Human Resources' },
+    });
+    usersRepository.teamExists.mockResolvedValue(true);
+    usersRepository.findRoleByName.mockResolvedValue({
+      id: 'role-3',
+      name: Role.PUBLISHER,
+    });
+    usersRepository.update.mockResolvedValue({
+      id: 'user-2',
+      name: 'Alicia',
+      email: 'alicia@example.com',
+      isActive: true,
+      role: { id: 'role-3', name: Role.PUBLISHER },
+      team: { id: 'team-3', code: 'FIN', name: 'Finance' },
+    });
+
+    await service.update(
+      'user-2',
+      {
+        name: 'Alicia',
+        email: 'alicia@example.com',
+        roleName: Role.PUBLISHER,
+        teamId: 'team-3',
+      },
+      currentUser,
+    );
+
+    expect(auditLogWriterService.create).toHaveBeenCalledTimes(3);
+    expect(auditLogWriterService.create).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        action: 'USER_UPDATE',
+        reasonForChange: 'Updated user via SYSTEM_ADMIN',
+      }),
+    );
+    expect(auditLogWriterService.create).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        action: 'ROLE_ASSIGN',
+        reasonForChange: 'Changed user role via SYSTEM_ADMIN',
+      }),
+    );
+    expect(auditLogWriterService.create).toHaveBeenNthCalledWith(
+      3,
+      expect.objectContaining({
+        action: 'TEAM_CHANGE',
+        reasonForChange: 'Changed user team via SYSTEM_ADMIN',
+      }),
+    );
+  });
+
   it('should require a role identifier or role name during create', async () => {
     usersRepository.teamExists.mockResolvedValue(true);
 
@@ -213,8 +334,7 @@ describe('UsersService', () => {
       name: 'Alice',
       email: 'alice@example.com',
       teamId: 'team-2',
-      password: 'password',
-      hasValidRoleName: () => false,
+      password: 'ValidPassword123!',
     };
 
     await expect(

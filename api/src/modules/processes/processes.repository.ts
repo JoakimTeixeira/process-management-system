@@ -564,20 +564,20 @@ export class ProcessesRepository {
   }
 
   async getNextProcessCode(): Promise<string> {
-    const rows = await queryRows<{ max_code: string | null }>(
+    const rows = await queryRows<{ max_code_number: number | null }>(
       this.dataSource,
       `
-        SELECT MAX(code) AS max_code
+        SELECT MAX(code::integer) AS max_code_number
         FROM processes
       `,
     );
 
-    const maxCode = rows[0]?.max_code;
-    if (!maxCode) {
+    const maxCodeNumber = rows[0]?.max_code_number;
+    if (!maxCodeNumber) {
       return '1';
     }
 
-    const nextNumber = Number.parseInt(maxCode, 10) + 1;
+    const nextNumber = maxCodeNumber + 1;
     return nextNumber.toString();
   }
 }

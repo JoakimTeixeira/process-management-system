@@ -232,21 +232,20 @@ export class AreasRepository {
   }
 
   async getNextAreaCode(): Promise<string> {
-    const rows = await queryRows<{ max_code: string | null }>(
+    const rows = await queryRows<{ max_code_number: number | null }>(
       this.dataSource,
       `
-        SELECT MAX(code) AS max_code
+        SELECT MAX(SUBSTRING(code FROM 2)::integer) AS max_code_number
         FROM areas
       `,
     );
 
-    const maxCode = rows[0]?.max_code;
-
-    if (!maxCode) {
+    const maxCodeNumber = rows[0]?.max_code_number;
+    if (!maxCodeNumber) {
       return 'A1';
     }
 
-    const nextNumber = Number.parseInt(maxCode.replace(/^A/i, ''), 10) + 1;
+    const nextNumber = maxCodeNumber + 1;
     return `A${nextNumber}`;
   }
 
