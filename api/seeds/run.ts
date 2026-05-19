@@ -44,6 +44,12 @@ interface SeedContext {
   versionIds: Map<string, string>;
 }
 
+const TEAM_IS_ACTIVE = true;
+
+const seededUserTeamCodes = new Map(
+  users.map((user) => [user.email, user.teamCode] as const),
+);
+
 function buildVersionKey(processCode: string, versionNumber: number): string {
   return `${processCode}@${versionNumber}`;
 }
@@ -642,7 +648,7 @@ async function seedTeams(
       team.code,
       team.name,
       team.description,
-      team.isActive,
+      TEAM_IS_ACTIVE,
     );
     context.teamIds.set(team.code, teamId);
   }
@@ -753,7 +759,8 @@ async function seedAreas(
 ): Promise<void> {
   for (const area of areas) {
     const practiceId = context.practiceIds.get(area.itilPracticeCode);
-    const teamId = context.teamIds.get(area.teamCode);
+    const ownerTeamCode = seededUserTeamCodes.get(area.ownerEmail);
+    const teamId = ownerTeamCode ? context.teamIds.get(ownerTeamCode) : null;
     const ownerId = context.userIds.get(area.ownerEmail);
     const editorId = context.userIds.get('alice.editor@example.com');
 
@@ -781,7 +788,8 @@ async function seedProcesses(
 ): Promise<void> {
   for (const process of processes) {
     const areaId = context.areaIds.get(process.areaCode);
-    const teamId = context.teamIds.get(process.teamCode);
+    const ownerTeamCode = seededUserTeamCodes.get(process.ownerEmail);
+    const teamId = ownerTeamCode ? context.teamIds.get(ownerTeamCode) : null;
     const ownerId = context.userIds.get(process.ownerEmail);
     const editorId = context.userIds.get('alice.editor@example.com');
 
