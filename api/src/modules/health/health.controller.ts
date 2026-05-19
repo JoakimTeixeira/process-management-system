@@ -18,10 +18,26 @@ export class HealthController {
   @ApiOkResponse({
     description: 'API and database connectivity are healthy.',
     type: HealthStatusResponseDto,
+    schema: {
+      example: {
+        status: 'UP',
+        checks: {
+          database: 'UP',
+        },
+      },
+    },
   })
   @ApiServiceUnavailableResponse({
     description: 'One or more health checks failed.',
     type: HealthStatusResponseDto,
+    schema: {
+      example: {
+        status: 'DOWN',
+        checks: {
+          database: 'DOWN',
+        },
+      },
+    },
   })
   @Get()
   getHealth(): Promise<HealthStatusResponseDto> {
