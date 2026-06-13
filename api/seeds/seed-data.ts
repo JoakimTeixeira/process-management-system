@@ -532,8 +532,7 @@ export const procedures: ProcedureSeed[] = [
       'Relocation completed within 5 business days, with zero data loss, and compliant with organization security policies.',
     outcome:
       'The employee is fully operational at their new location with configured IT equipment and workspace.',
-    policy:
-      'Applies to staff transfers between supported office locations.',
+    policy: 'Applies to staff transfers between supported office locations.',
     activities: comparisonActivities,
     inputs: ['Approved transfer request from department head'],
     outputs: [
@@ -551,8 +550,7 @@ export const procedures: ProcedureSeed[] = [
       'Relocation completed within 3 business days, with zero data loss, and compliant with organization security policies.',
     outcome:
       'The employee is activated at the destination office on the planned date with all services operational.',
-    policy:
-      'Applies to staff transfers between supported office locations.',
+    policy: 'Applies to staff transfers between supported office locations.',
     activities: targetActivities,
     inputs: [
       'Approved transfer request',
