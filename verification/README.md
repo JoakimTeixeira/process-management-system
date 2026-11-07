@@ -1,40 +1,63 @@
-# Verification Assets
+# Automated Verification
 
-This directory contains reusable verification scripts and the generated outputs they produce.
+`npm run verify` is the release-level critical-flow gate. From a clean checkout it:
 
-- [scripts](scripts)
-  Verification runners and shared shell helpers.
-- [fixtures](fixtures)
-  Static files used by the verification scripts, such as a BPMN upload sample.
-- [logs](logs)
-  Generated request and response captures from verification runs.
-- [db_queries](db_queries)
-  Generated PostgreSQL query exports tied to a verification run.
+1. validates Docker, Compose, Bash, `.env`, and the Compose configuration;
+2. removes only the dedicated `process-management-system-verify` Compose project;
+3. builds the API image and waits for PostgreSQL health;
+4. applies migrations and seeds deterministic demo data;
+5. starts the API/load balancer and waits for `/health` to report `UP`;
+6. runs the existing curl suite, including negative authentication/RBAC and unpublished-content assertions;
+7. asserts lifecycle and audit evidence directly in PostgreSQL; and
+8. removes the dedicated containers, network, and volume, even after a failure.
 
-Generated logs and query exports can be refreshed at any time from the scripts in `verification/scripts/`.
+## Prerequisites
 
-The BPMN fixture in `verification/fixtures/` is intentionally committed so the backoffice verification flow can exercise asset upload end to end without relying on a developer to provide a local file at runtime.
+- Docker Desktop (or Docker Engine) with `docker compose` available and running.
+- Node.js 20 or newer.
+- A POSIX Bash shell. On Windows, Git for Windows is detected automatically; set `BASH_PATH` if it is installed elsewhere.
+- A repository-root `.env` containing the values described by `.env.example`.
+- Verification-only ports `3100` (API) and `55432` (PostgreSQL) available to Docker. Override them with `VERIFY_API_PORT` and `VERIFY_DB_PORT`.
 
-## Recommended Workflow
-
-1. `scripts/backoffice_validation_curl_commands.sh`
-   Runs the end-to-end backoffice verification flow and writes a new run directory to `logs/backoffice-validation-{timestamp}/`.
-   That run directory includes a `backoffice-validation.runtime.env` file containing the non-sensitive IDs and codes created or resolved during that specific run.
-2. `scripts/refresh_db_queries.sh`
-   Connects to the live PostgreSQL database inside the Docker `postgres` container and rewrites the outputs in `db_queries/`.
-   It uses `backoffice-validation.runtime.env` only to know which run-specific IDs to query.
-
-Typical refresh flow:
+Run the gate from the repository root:
 
 ```bash
-./scripts/backoffice_validation_curl_commands.sh
-./scripts/refresh_db_queries.sh
+npm run verify
 ```
 
-## Notes
+The command is intentionally fail-fast. Its API image uses the separate `process-management-system-api-verify` tag. Generated, redacted request/response captures remain under `verification/logs/backoffice-validation-{timestamp}/`; the database and Compose resources do not.
 
-- Generated verification runs are gitignored and intended to be refreshed locally rather than committed.
-- `scripts/refresh_db_queries.sh` can be pointed at a specific `backoffice-validation.runtime.env` file when a particular capture run must be reused.
-- The live Docker database is the source of truth for verification data. `backoffice-validation.runtime.env` is only a lookup file for the run-specific IDs.
-- If the BPMN fixture is ever removed, the backoffice verification script will need to either generate a temporary BPMN file or skip BPMN upload coverage.
-- Additional capture scripts can be added later if the verification scope expands.
+## Diagnostics and cleanup
+
+Set `VERIFY_KEEP_STACK=1` to retain the dedicated stack after a failure:
+
+```bash
+VERIFY_KEEP_STACK=1 npm run verify
+```
+
+PowerShell equivalent:
+
+```powershell
+$env:VERIFY_KEEP_STACK = '1'
+npm run verify
+Remove-Item Env:VERIFY_KEEP_STACK
+```
+
+Inspect or clean that exact project with:
+
+```bash
+docker compose --project-name process-management-system-verify --file docker-compose.yml --file verification/scripts/docker-compose.verify.yml ps
+docker compose --project-name process-management-system-verify --file docker-compose.yml --file verification/scripts/docker-compose.verify.yml logs --tail 100 api postgres api-lb
+docker compose --project-name process-management-system-verify --file docker-compose.yml --file verification/scripts/docker-compose.verify.yml down --volumes --remove-orphans
+```
+
+`VERIFY_COMPOSE_PROJECT` may override the project name using lowercase letters, numbers, underscores, and hyphens. This is useful for isolated local runs; cleanup remains scoped to that exact project.
+
+## Verification artifacts
+
+- `scripts/backoffice_validation_curl_commands.sh` exercises the HTTP critical flows and writes a run-specific runtime env file.
+- `scripts/curl_test_lib.sh` captures and sanitizes request/response artifacts.
+- `scripts/refresh_db_queries.sh [runtime-env-file]` optionally exports human-readable query evidence while the retained verification stack is running. It honors `VERIFY_COMPOSE_PROJECT`.
+- `fixtures/validation-process.bpmn` is the committed BPMN upload fixture.
+
+The runtime env contains only non-sensitive IDs/codes needed to correlate DB evidence. Access tokens and passwords are redacted from generated artifacts.

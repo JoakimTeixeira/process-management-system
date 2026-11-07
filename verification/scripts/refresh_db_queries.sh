@@ -69,8 +69,13 @@ run_psql_to_file() {
   local sql="$1"
   local output_file="$2"
 
-  docker compose exec -T postgres \
-    psql -U postgres -d process_management_system -c "$sql" \
+  docker compose \
+    --project-name "${VERIFY_COMPOSE_PROJECT:-process-management-system-verify}" \
+    --file "$REPO_ROOT/docker-compose.yml" \
+    --file "$SCRIPT_DIR/docker-compose.verify.yml" \
+    exec -T postgres \
+    sh -c 'psql -v ON_ERROR_STOP=1 -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "$1"' \
+    refresh-query "$sql" \
     > "$output_file"
 }
 

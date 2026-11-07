@@ -1,0 +1,11 @@
+services:
+  api:
+    image: process-management-system-api-verify:latest
+
+  postgres:
+    ports: !override
+      - '${VERIFY_DB_PORT:-55432}:5432'
+
+  api-lb:
+    ports: !override
+      - '${VERIFY_API_PORT:-3100}:80'

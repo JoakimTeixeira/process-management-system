@@ -17,7 +17,6 @@ ADMIN_EMAIL="${ADMIN_EMAIL:-sam.admin@example.com}"
 VIEWER_EMAIL="${VIEWER_EMAIL:-victor.viewer@example.com}"
 SEED_TEAM_CODE_PRIMARY="${SEED_TEAM_CODE_PRIMARY:-HR}"
 SEED_TEAM_CODE_SECONDARY="${SEED_TEAM_CODE_SECONDARY:-IT}"
-SEED_TEAM_CODE_ADMIN="${SEED_TEAM_CODE_ADMIN:-OPS}"
 SEED_AREA_TITLE="${SEED_AREA_TITLE:-Global Management}"
 SEED_PROCESS_TITLE="${SEED_PROCESS_TITLE:-Employee Workplace Relocation}"
 SEED_ITIL_PRACTICE_CODE="${SEED_ITIL_PRACTICE_CODE:-APO07}"
@@ -254,7 +253,6 @@ get_request "List teams" 200 "$API_BASE_URL/teams" "$ADMIN_TOKEN"
 TEAMS_FILE="$LAST_BODY_FILE"
 assign_json_value HR_TEAM_ID "$TEAMS_FILE" "data.find((item) => item.code === '$SEED_TEAM_CODE_PRIMARY').id" "Unable to resolve the seeded HR team."
 assign_json_value IT_TEAM_ID "$TEAMS_FILE" "data.find((item) => item.code === '$SEED_TEAM_CODE_SECONDARY').id" "Unable to resolve the seeded IT team."
-assign_json_value OPS_TEAM_ID "$TEAMS_FILE" "data.find((item) => item.code === '$SEED_TEAM_CODE_ADMIN').id" "Unable to resolve the seeded OPS team."
 
 get_request "List owner options" 200 "$API_BASE_URL/users/owner-options" "$EDITOR_TOKEN"
 get_request "List all owner options" 200 "$API_BASE_URL/users/owner-options/all" "$EDITOR_TOKEN"
@@ -626,6 +624,11 @@ post_json \
   "{\"reason\":\"This request should be denied.\"}"
 
 get_request "Unauthenticated area access is denied" 401 "$API_BASE_URL/areas"
+
+get_request \
+  "Draft BPMN is not publicly visible" \
+  404 \
+  "$PUBLIC_BASE_URL/process-versions/$WORKFLOW_NEGATIVE_VERSION_ID/bpmn"
 
 post_json \
   "Publisher cannot publish a Draft version" \

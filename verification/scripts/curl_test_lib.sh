@@ -269,14 +269,8 @@ NODE
 json_expect_file() {
   local file_path="$1"
   local expression="$2"
-  local message="$3"
 
-  local value
-  if ! value="$(json_eval_file "$file_path" "$expression")"; then
-    fail_with "Seed/data assumption issue" "$message"
-  fi
-
-  printf '%s' "$value"
+  json_eval_file "$file_path" "$expression"
 }
 
 assign_json_value() {
@@ -286,7 +280,9 @@ assign_json_value() {
   local message="$4"
 
   local value
-  value="$(json_expect_file "$file_path" "$expression" "$message")"
+  if ! value="$(json_expect_file "$file_path" "$expression")"; then
+    fail_with "Seed/data assumption issue" "$message"
+  fi
   printf -v "$variable_name" '%s' "$value"
   export "$variable_name"
 }
@@ -615,7 +611,9 @@ login_and_load_profile() {
   post_json "Auth login for $alias_name" 201 "$base_url/auth/login" "" "$payload"
 
   local token
-  token="$(json_expect_file "$LAST_BODY_FILE" "data.accessToken" "Unable to extract access token for $alias_name login.")"
+  if ! token="$(json_expect_file "$LAST_BODY_FILE" "data.accessToken")"; then
+    fail_with "Seed/data assumption issue" "Unable to extract access token for $alias_name login."
+  fi
   printf -v "${alias_name}_TOKEN" '%s' "$token"
   export "${alias_name}_TOKEN"
 

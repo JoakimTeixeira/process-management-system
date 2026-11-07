@@ -94,13 +94,13 @@ A1 → A11 ───────────────┘───────
 **Tests/Gate:** integration/full — lifecycle/public/RBAC/procedure+asset clone assertions pass  
 **Done when:** real SQL, not only mocked `query`, proves the identified critical paths.
 
-### A11 — Automate curl and DB verification
+### A11 — Automate curl and DB verification ✅
 
 **Where:** root scripts, `verification/scripts/`, `verification/README.md`  
 **Depends on:** A1  
 **Requirement:** PYR-01  
 **Tests/Gate:** e2e/full — `npm run verify`  
-**Done when:** compose/migrate/seed/curl/DB assertions run unattended, fail fast, and are rerunnable.
+**Done when:** compose/migrate/seed/curl/DB assertions run unattended, fail fast, and are rerunnable. **Complete: 2026-11-07; `npm run verify` passed twice from clean state, covering migrations, deterministic seed, critical HTTP/RBAC/visibility flows, lifecycle/audit database evidence, and scoped container/network/volume cleanup.**
 
 ### A12 — Finalize root pyramid scripts and docs
 
