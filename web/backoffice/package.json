@@ -9,6 +9,8 @@
     "test": "ng test",
     "test:cov": "ng test --code-coverage",
     "test:headless": "ng test --watch=false --browsers=ChromeHeadless",
+    "contract:generate": "openapi-typescript ../../api/openapi/openapi.json -o src/app/core/api/generated/api.types.ts",
+    "contract:check": "openapi-typescript ../../api/openapi/openapi.json -o src/app/core/api/generated/api.types.ts --check",
     "lint": "ng lint"
   },
   "prettier": {
@@ -52,6 +54,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "openapi-typescript": "^7.13.0",
     "typescript": "~5.9.2",
     "typescript-eslint": "8.46.4"
   }

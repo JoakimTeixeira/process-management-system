@@ -5,6 +5,7 @@ import { of } from 'rxjs';
 
 import { BackofficeApiService } from '../../core/api/backoffice-api.service';
 import { AuthService } from '../../core/auth/auth.service';
+import { ProcessRecord } from '../../core/models/backoffice.models';
 import { ProcessListPageComponent } from './process-list.page';
 
 interface ProcessListPageTestInstance {
@@ -67,7 +68,7 @@ describe('ProcessListPageComponent', () => {
         archived: 0,
       },
     },
-  };
+  } satisfies ProcessRecord;
 
   beforeEach(async () => {
     api = jasmine.createSpyObj<BackofficeApiService>('BackofficeApiService', [

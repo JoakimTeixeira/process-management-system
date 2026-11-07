@@ -8,6 +8,8 @@ import {
   AssetContentRecord,
   AssetRecord,
   AuditLogRecord,
+  CreateGlossaryTermPayload,
+  CreateGlossaryTermResponse,
   CurrentUser,
   GlossaryResponse,
   ItilPractice,
@@ -18,6 +20,8 @@ import {
   ProcessVersionRecord,
   TeamRecord,
   TeamOption,
+  UpdateGlossaryTermPayload,
+  UpdateGlossaryTermResponse,
   VersionStateHistoryRecord,
 } from '../models/backoffice.models';
 
@@ -293,22 +297,15 @@ export class BackofficeApiService {
     return this.http.get<GlossaryResponse>(`${this.baseUrl}/public/glossary`);
   }
 
-  createGlossaryTerm(payload: {
-    term: string;
-    definition: string;
-    category: string | null;
-    isPreferred: boolean;
-  }) {
-    return this.http.post(`${this.baseUrl}/glossary`, payload);
+  createGlossaryTerm(payload: CreateGlossaryTermPayload) {
+    return this.http.post<CreateGlossaryTermResponse>(`${this.baseUrl}/glossary`, payload);
   }
 
-  updateGlossaryTerm(id: string, payload: {
-    term: string;
-    definition: string;
-    category: string | null;
-    isPreferred: boolean;
-  }) {
-    return this.http.patch(`${this.baseUrl}/glossary/${id}`, payload);
+  updateGlossaryTerm(id: string, payload: UpdateGlossaryTermPayload) {
+    return this.http.patch<UpdateGlossaryTermResponse>(
+      `${this.baseUrl}/glossary/${id}`,
+      payload,
+    );
   }
 
   listOwnerOptions(teamId: string) {

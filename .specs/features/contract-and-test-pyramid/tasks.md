@@ -54,13 +54,13 @@ A1 → A11 ───────────────┘───────
 **Tests/Gate:** unit+contract/full — public suite/build  
 **Done when:** contract fields alias generated schemas and presentation adapters remain thin. **Complete: 2026-11-07; generated types/check added, 23 public tests and production build passed.**
 
-### A6 — Generate and adopt backoffice contract types [P]
+### A6 — Generate and adopt backoffice contract types [P] ✅
 
 **Where:** `web/backoffice/src/app/core/api/generated/`, backoffice models/API service/specs  
 **Depends on:** A4  
 **Requirement:** TERM-01, CONTRACT-01  
 **Tests/Gate:** unit+contract/full — backoffice suite/build  
-**Done when:** covered DTO fields and role/state unions come from generated schemas.
+**Done when:** covered DTO fields and role/state unions come from generated schemas. **Complete: 2026-11-07; generated operation/schema aliases added, 69 backoffice tests and production build passed.**
 
 ### A7 — Add contract/schema gate
 
