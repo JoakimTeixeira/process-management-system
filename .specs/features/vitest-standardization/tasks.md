@@ -30,13 +30,13 @@ A1 → B4 ──────┘
 **Tests/Gate:** unit+e2e/full — API unit count does not decrease; `/health` Supertest passes  
 **Done when:** API scripts use Vitest and Jest/ts-jest configuration/dependencies are removed.
 
-### B3 — Migrate public and add page characterization [P]
+### B3 — Migrate public and add page characterization [P] ✅
 
 **Where:** public Angular config/package/tsconfig and feature/route specs  
 **Depends on:** A1  
 **Requirement:** TEST-01  
 **Tests/Gate:** unit/full — existing 22 plus new characterization tests pass under Vitest; build passes  
-**Done when:** process list/detail, procedure detail, glossary, and navigation/query behavior are pinned.
+**Done when:** process list/detail, procedure detail, glossary, and navigation/query behavior are pinned. **Complete: 2026-11-07; Angular-native Vitest runs 14 files / 37 tests (11 new), V8 coverage reports 71.71% statements/lines, and lint, contract, and production-build gates pass.**
 
 ### B4 — Migrate backoffice and expand characterization [P] ✅
 

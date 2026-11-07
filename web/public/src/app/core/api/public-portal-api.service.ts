@@ -12,12 +12,12 @@ import {
   PublicProcedureDetail,
   PublicProcedureSummary,
 } from '../models/public-portal.models';
-import { PUBLIC_API_BASE_URL } from './public-api-base-url';
+import { getPublicApiBaseUrl } from './public-api-base-url';
 
 @Injectable({ providedIn: 'root' })
 export class PublicPortalApiService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = PUBLIC_API_BASE_URL;
+  private readonly baseUrl = getPublicApiBaseUrl();
 
   listAreas() {
     return this.http.get<PublicAreaSummary[]>(`${this.baseUrl}/public/areas`);

@@ -2,11 +2,13 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 
+import { getPublicApiBaseUrl } from './public-api-base-url';
 import { PublicPortalApiService } from './public-portal-api.service';
 
 describe('PublicPortalApiService', () => {
   let service: PublicPortalApiService;
   let httpMock: HttpTestingController;
+  const baseUrl = getPublicApiBaseUrl();
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -32,7 +34,7 @@ describe('PublicPortalApiService', () => {
 
     const request = httpMock.expectOne((req) => {
       return (
-        req.url === 'http://localhost:3000/public/processes' &&
+        req.url === `${baseUrl}/public/processes` &&
         req.params.get('search') === 'Change' &&
         req.params.get('areaId') === 'area-1' &&
         req.params.get('architectures') === 'AS-IS,TO-BE'
@@ -47,10 +49,7 @@ describe('PublicPortalApiService', () => {
     service.searchCatalog({ search: ' operations ' }).subscribe();
 
     const request = httpMock.expectOne((req) => {
-      return (
-        req.url === 'http://localhost:3000/public/search' &&
-        req.params.get('search') === 'operations'
-      );
+      return req.url === `${baseUrl}/public/search` && req.params.get('search') === 'operations';
     });
 
     expect(request.request.method).toBe('GET');
@@ -61,10 +60,7 @@ describe('PublicPortalApiService', () => {
     service.searchProcedures({ search: ' Review ' }).subscribe();
 
     const request = httpMock.expectOne((req) => {
-      return (
-        req.url === 'http://localhost:3000/public/procedures' &&
-        req.params.get('search') === 'Review'
-      );
+      return req.url === `${baseUrl}/public/procedures` && req.params.get('search') === 'Review';
     });
 
     expect(request.request.method).toBe('GET');
@@ -73,31 +69,27 @@ describe('PublicPortalApiService', () => {
 
   it('should call the expected public endpoints', () => {
     service.listAreas().subscribe();
-    const areasRequest = httpMock.expectOne('http://localhost:3000/public/areas');
+    const areasRequest = httpMock.expectOne(`${baseUrl}/public/areas`);
     expect(areasRequest.request.method).toBe('GET');
     areasRequest.flush([]);
 
     service.getProcessDetail('process-1').subscribe();
-    const processRequest = httpMock.expectOne('http://localhost:3000/public/processes/process-1');
+    const processRequest = httpMock.expectOne(`${baseUrl}/public/processes/process-1`);
     expect(processRequest.request.method).toBe('GET');
     processRequest.flush({});
 
     service.getProcessVersions('process-1').subscribe();
-    const versionsRequest = httpMock.expectOne(
-      'http://localhost:3000/public/processes/process-1/versions',
-    );
+    const versionsRequest = httpMock.expectOne(`${baseUrl}/public/processes/process-1/versions`);
     expect(versionsRequest.request.method).toBe('GET');
     versionsRequest.flush([]);
 
     service.getProcedureDetail('procedure-1').subscribe();
-    const procedureRequest = httpMock.expectOne(
-      'http://localhost:3000/public/procedures/procedure-1',
-    );
+    const procedureRequest = httpMock.expectOne(`${baseUrl}/public/procedures/procedure-1`);
     expect(procedureRequest.request.method).toBe('GET');
     procedureRequest.flush({});
 
     service.getGlossary().subscribe();
-    const glossaryRequest = httpMock.expectOne('http://localhost:3000/public/glossary');
+    const glossaryRequest = httpMock.expectOne(`${baseUrl}/public/glossary`);
     expect(glossaryRequest.request.method).toBe('GET');
     glossaryRequest.flush({});
   });
