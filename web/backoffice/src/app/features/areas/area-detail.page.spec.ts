@@ -1,10 +1,9 @@
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
+import { provideRouter } from '@angular/router';
 import { Subject } from 'rxjs';
 
 import { createSpyObject, type SpyObject } from '../../../testing/spy-object';
 import { BackofficeApiService } from '../../core/api/backoffice-api.service';
-import { AccessControlUtil } from '../../core/governance/access-control.util';
 import { AreaRecord, ProcessRecord } from '../../core/models/backoffice.models';
 import { AreaDetailPageComponent } from './area-detail.page';
 
@@ -28,20 +27,13 @@ describe('AreaDetailPageComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [AreaDetailPageComponent],
-      providers: [
-        provideRouter([]),
-        { provide: BackofficeApiService, useValue: api },
-        { provide: AccessControlUtil, useValue: { hasRole: () => true } },
-        {
-          provide: ActivatedRoute,
-          useValue: { snapshot: { paramMap: convertToParamMap({ id: 'area-1' }) } },
-        },
-      ],
+      providers: [provideRouter([]), { provide: BackofficeApiService, useValue: api }],
     }).compileComponents();
   });
 
   it('keeps the loading state visible until both area and process requests resolve', async () => {
     const fixture = TestBed.createComponent(AreaDetailPageComponent);
+    fixture.componentRef.setInput('id', 'area-1');
     fixture.detectChanges();
 
     const component = fixture.componentInstance as unknown as AreaDetailPageTestInstance;

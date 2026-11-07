@@ -2,16 +2,14 @@ import { CommonModule } from '@angular/common';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   ElementRef,
-  HostListener,
-  Input,
   OnChanges,
   OnDestroy,
   SimpleChanges,
   ViewChild,
-  inject,
+  input,
+  signal,
 } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -44,22 +42,40 @@ function isBpmnCanvas(obj: unknown): obj is BpmnCanvas {
   selector: 'app-backoffice-bpmn-viewer',
   imports: [CommonModule, MatIconModule, MatProgressSpinnerModule, MatTooltipModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '(document:fullscreenchange)': 'handleFullscreenChange()',
+  },
   template: `
     <section class="viewer-card">
       <div class="viewer-toolbar">
         <div>
           <p class="viewer-kicker">Diagram</p>
-          <span class="viewer-title">{{ title }}</span>
-          <p class="viewer-subtitle">{{ subtitle }}</p>
+          <span class="viewer-title">{{ title() }}</span>
+          <p class="viewer-subtitle">{{ subtitle() }}</p>
         </div>
         <div class="viewer-actions">
-          <button class="viewer-action-button" type="button" (click)="fitViewport()" matTooltip="Fit to viewport">
+          <button
+            class="viewer-action-button"
+            type="button"
+            (click)="fitViewport()"
+            matTooltip="Fit to viewport"
+          >
             <mat-icon>fit_screen</mat-icon>
           </button>
-          <button class="viewer-action-button" type="button" (click)="zoom(-0.1)" matTooltip="Zoom out">
+          <button
+            class="viewer-action-button"
+            type="button"
+            (click)="zoom(-0.1)"
+            matTooltip="Zoom out"
+          >
             <mat-icon>remove</mat-icon>
           </button>
-          <button class="viewer-action-button" type="button" (click)="zoom(0.1)" matTooltip="Zoom in">
+          <button
+            class="viewer-action-button"
+            type="button"
+            (click)="zoom(0.1)"
+            matTooltip="Zoom in"
+          >
             <mat-icon>add</mat-icon>
           </button>
           <button
@@ -79,12 +95,12 @@ function isBpmnCanvas(obj: unknown): obj is BpmnCanvas {
 
         @if (showStatePanel) {
           <div class="viewer-state">
-            @if (loading) {
+            @if (loading()) {
               <mat-spinner diameter="36"></mat-spinner>
             } @else {
               <div class="viewer-state__message">
                 <strong>Diagram unavailable</strong>
-                <span>{{ errorMessage }}</span>
+                <span>{{ errorMessage() }}</span>
               </div>
             }
           </div>
@@ -241,14 +257,11 @@ function isBpmnCanvas(obj: unknown): obj is BpmnCanvas {
     `,
   ],
 })
-export class BackofficeBpmnViewerComponent
-  implements AfterViewInit, OnChanges, OnDestroy
-{
-  private readonly cdr = inject(ChangeDetectorRef);
-  @Input() xml: string | null = null;
-  @Input() title = 'Visualize the BPMN diagram';
-  @Input() subtitle = 'Use the controls to fit, zoom, and inspect the latest model.';
-  @Input() emptyMessage = 'Select a BPMN asset to visualise.';
+export class BackofficeBpmnViewerComponent implements AfterViewInit, OnChanges, OnDestroy {
+  readonly xml = input<string | null>(null);
+  readonly title = input('Visualize the BPMN diagram');
+  readonly subtitle = input('Use the controls to fit, zoom, and inspect the latest model.');
+  readonly emptyMessage = input('Select a BPMN asset to visualise.');
   @ViewChild('canvas') private readonly canvas?: ElementRef<HTMLDivElement>;
   @ViewChild('stage') private readonly stage?: ElementRef<HTMLDivElement>;
 
@@ -256,13 +269,13 @@ export class BackofficeBpmnViewerComponent
   private renderRequestToken = 0;
   private wasStageFullscreen = false;
 
-  protected loading = false;
-  protected errorMessage: string | null = null;
+  protected readonly loading = signal(false);
+  protected readonly errorMessage = signal<string | null>(null);
   protected readonly canFullscreen =
     typeof document !== 'undefined' && !!document.documentElement.requestFullscreen;
 
   get showStatePanel(): boolean {
-    return this.loading || !!this.errorMessage || !this.xml;
+    return this.loading() || !!this.errorMessage() || !this.xml();
   }
 
   ngAfterViewInit(): void {
@@ -321,7 +334,6 @@ export class BackofficeBpmnViewerComponent
     await this.stage.nativeElement.requestFullscreen();
   }
 
-  @HostListener('document:fullscreenchange')
   protected handleFullscreenChange(): void {
     const isStageFullscreen = this.isStageFullscreen();
 
@@ -337,41 +349,39 @@ export class BackofficeBpmnViewerComponent
       return;
     }
 
-    if (!this.xml) {
-      this.loading = false;
-      this.errorMessage = this.emptyMessage;
-      this.cdr.markForCheck();
+    const xml = this.xml();
+
+    if (!xml) {
+      this.loading.set(false);
+      this.errorMessage.set(this.emptyMessage());
       return;
     }
 
     const requestToken = ++this.renderRequestToken;
-    this.loading = true;
-    this.errorMessage = null;
-    this.cdr.markForCheck();
+    this.loading.set(true);
+    this.errorMessage.set(null);
 
     this.viewer ??= new BpmnViewer({
       container: this.canvas.nativeElement,
     });
 
     try {
-      await this.viewer.importXML(this.xml);
+      await this.viewer.importXML(xml);
 
       if (requestToken !== this.renderRequestToken) {
         return;
       }
 
       this.fitViewport();
-      this.loading = false;
-      this.errorMessage = null;
-      this.cdr.markForCheck();
+      this.loading.set(false);
+      this.errorMessage.set(null);
     } catch {
       if (requestToken !== this.renderRequestToken) {
         return;
       }
 
-      this.loading = false;
-      this.errorMessage = 'The BPMN diagram could not be rendered.';
-      this.cdr.markForCheck();
+      this.loading.set(false);
+      this.errorMessage.set('The BPMN diagram could not be rendered.');
     }
   }
 

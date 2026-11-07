@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -10,7 +10,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 
 import { BackofficeApiService } from '../../core/api/backoffice-api.service';
-import { AccessControlUtil } from '../../core/governance/access-control.util';
 import { AreaRecord, ProcessRecord } from '../../core/models/backoffice.models';
 import { getHttpErrorMessage } from '../../core/http/http-error-message';
 
@@ -206,14 +205,24 @@ import { getHttpErrorMessage } from '../../core/http/http-error-message';
                 <ng-container matColumnDef="actions">
                   <th mat-header-cell *matHeaderCellDef>Actions</th>
                   <td mat-cell *matCellDef="let process">
-                    <a mat-icon-button [routerLink]="['/processes', process.id, 'versions']" aria-label="View processes">
+                    <a
+                      mat-icon-button
+                      [routerLink]="['/processes', process.id, 'versions']"
+                      aria-label="View processes"
+                    >
                       <mat-icon>open_in_new</mat-icon>
                     </a>
                   </td>
                 </ng-container>
 
-                <tr mat-header-row *matHeaderRowDef="['title', 'code', 'description', 'actions']"></tr>
-                <tr mat-row *matRowDef="let row; columns: ['title', 'code', 'description', 'actions']"></tr>
+                <tr
+                  mat-header-row
+                  *matHeaderRowDef="['title', 'code', 'description', 'actions']"
+                ></tr>
+                <tr
+                  mat-row
+                  *matRowDef="let row; columns: ['title', 'code', 'description', 'actions']"
+                ></tr>
               </table>
             }
           </mat-card>
@@ -222,40 +231,42 @@ import { getHttpErrorMessage } from '../../core/http/http-error-message';
     </section>
   `,
 })
-export class AreaDetailPageComponent implements OnInit {
+export class AreaDetailPageComponent {
+  readonly id = input<string>();
+
   private readonly api = inject(BackofficeApiService);
-  private readonly accessControl = inject(AccessControlUtil);
-  private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
 
   protected readonly area = signal<AreaRecord | null>(null);
   protected readonly processes = signal<ProcessRecord[]>([]);
   protected readonly isLoading = signal(true);
   protected readonly errorMessage = signal<string | null>(null);
-  protected readonly canEdit = computed(() => this.accessControl.hasRole('EDITOR'));
 
-  ngOnInit(): void {
-    void this.loadAreaData();
+  constructor() {
+    effect(() => {
+      const areaId = this.id();
+
+      if (!areaId) {
+        this.errorMessage.set('Area ID not provided');
+        this.isLoading.set(false);
+        return;
+      }
+
+      void this.loadAreaData(areaId);
+    });
   }
 
-  private async loadAreaData(): Promise<void> {
+  private async loadAreaData(areaId: string): Promise<void> {
     this.isLoading.set(true);
     this.errorMessage.set(null);
 
     try {
-      const areaId = this.route.snapshot.paramMap.get('id');
-      if (!areaId) {
-        this.errorMessage.set('Area ID not provided');
-        return;
-      }
-
       const [area, processes] = await Promise.all([
         firstValueFrom(this.api.getArea(areaId)),
         firstValueFrom(this.api.listProcesses()),
       ]);
 
       this.area.set(area);
-      this.processes.set(processes.filter(process => process.areaId === areaId));
+      this.processes.set(processes.filter((process) => process.areaId === areaId));
     } catch (error) {
       this.errorMessage.set(getHttpErrorMessage(error, 'Unable to load area information.'));
     } finally {

@@ -33,13 +33,15 @@ A5  + B3 → C5 → C6 → C7
 **Tests/Gate:** docs review; any implementation receives its own tested task/commit  
 **Done when:** versioning, exception filter, and caching each have implement/defer/reject rationale and no speculative code is added.
 
-### C3 — Modernize backoffice BPMN and area detail
+### C3 — Modernize backoffice BPMN and area detail ✅
 
 **Where:** backoffice BPMN viewer, area-detail, touched unused imports, specs  
 **Depends on:** A6, B4  
 **Requirement:** REF-01  
 **Tests/Gate:** unit/full — backoffice suite/build plus verify  
 **Done when:** signal inputs/host metadata/route input-signals replace audited legacy patterns without changing observed rendering/loading/navigation.
+
+**Complete:** 2026-11-07 — route-bound area IDs and BPMN inputs/state now use signals and component host metadata. Focused tests, all 71 backoffice tests, lint, production build, and the database-backed critical-flow verification gate pass.
 
 ### C4 — Decompose backoffice version detail
 
