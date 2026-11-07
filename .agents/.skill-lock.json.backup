@@ -6,10 +6,33 @@
       "source": "local",
       "contentHash": "69867b0e19be1fb556d2e697f0f18f1de0363d1aa2de9d36754d5b107156357c",
       "installedAt": "2026-06-13T23:13:00.861Z",
-      "updatedAt": "2026-06-13T23:13:00.913Z",
+      "updatedAt": "2026-06-13T23:13:00.972Z",
       "agents": [
-        "cursor",
-        "claude-code"
+        "devin"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "the-fool": {
+      "name": "the-fool",
+      "source": "local",
+      "contentHash": "4468f89ea05bfdea7a9346bebae5358bcf80ff4a51e6f59195b7312186fe0718",
+      "installedAt": "2026-11-07T17:03:01.035Z",
+      "updatedAt": "2026-11-07T17:03:01.094Z",
+      "agents": [
+        "devin"
+      ],
+      "method": "copy",
+      "global": false
+    },
+    "the-jury": {
+      "name": "the-jury",
+      "source": "local",
+      "contentHash": "04b3931496ca41463620a960aee92babac280987d7621a9ab80f7d9ee158d229",
+      "installedAt": "2026-11-07T17:03:09.969Z",
+      "updatedAt": "2026-11-07T17:03:09.994Z",
+      "agents": [
+        "devin"
       ],
       "method": "copy",
       "global": false
