@@ -43,13 +43,15 @@ A5  + B3 → C5 → C6 → C7
 
 **Complete:** 2026-11-07 — route-bound area IDs and BPMN inputs/state now use signals and component host metadata. Focused tests, all 71 backoffice tests, lint, production build, and the database-backed critical-flow verification gate pass.
 
-### C4 — Decompose backoffice version detail
+### C4 — Decompose backoffice version detail ✅
 
 **Where:** version-detail and focused child components/facade/specs  
 **Depends on:** C3  
 **Requirement:** REF-01  
 **Tests/Gate:** unit/full after each extraction — backoffice suite/build plus verify  
 **Done when:** lifecycle, asset, procedure, and history/audit UI/orchestration has focused ownership; page shell is materially smaller; all behavior remains covered.
+
+**Complete:** 2026-11-07 — lifecycle, asset/revision, procedure, and history/audit rendering and event dispatch now belong to four focused panels while the page retains API and transactional orchestration. The shell shrank from 2,600 to 1,888 lines (27.4%); all 21 backoffice test files / 75 tests, lint, and production build pass.
 
 ### C5 — Make public routes lazy and bind component inputs ✅
 

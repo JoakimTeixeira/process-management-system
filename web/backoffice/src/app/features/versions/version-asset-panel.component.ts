@@ -1,0 +1,265 @@
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { DatePipe } from '@angular/common';
+import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
+
+import {
+  AssetContentRecord,
+  AssetRecord,
+  ProcessVersionRecord,
+} from '../../core/models/backoffice.models';
+import { BackofficeBpmnViewerComponent } from '../../shared/bpmn/backoffice-bpmn-viewer.component';
+
+export function getAssetRevisionLabel(asset: AssetRecord, assets: AssetRecord[]): string {
+  const index = assets.findIndex((candidate) => candidate.id === asset.id);
+  return `v${index >= 0 ? index + 1 : assets.length}`;
+}
+
+export function getAssetMimeTypeLabel(asset: AssetRecord): string {
+  if (asset.mimeType === 'application/octet-stream' && /\.(bpmn|xml)$/i.test(asset.filePath)) {
+    return 'application/xml';
+  }
+
+  return asset.mimeType;
+}
+
+@Component({
+  selector: 'app-version-asset-panel',
+  imports: [
+    DatePipe,
+    ReactiveFormsModule,
+    MatButtonModule,
+    MatCardModule,
+    MatChipsModule,
+    MatDividerModule,
+    MatFormFieldModule,
+    MatIconModule,
+    MatInputModule,
+    BackofficeBpmnViewerComponent,
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  template: `
+    <div class="detail-frame__body">
+      <mat-card appearance="outlined">
+        <mat-card-content>
+          @if (canUploadBpmn()) {
+            <form
+              class="upload-shell"
+              [formGroup]="uploadForm()"
+              (ngSubmit)="uploadRequested.emit()"
+            >
+              <mat-form-field appearance="outline">
+                <mat-label>Asset Caption</mat-label>
+                <input matInput formControlName="caption" />
+              </mat-form-field>
+
+              <input
+                #bpmnFileInput
+                class="upload-file-input"
+                type="file"
+                accept=".bpmn,.xml,text/xml,application/xml"
+                (change)="fileSelected.emit($event)"
+              />
+
+              <div class="upload-file-row">
+                <button mat-stroked-button type="button" (click)="bpmnFileInput.click()">
+                  <mat-icon>attach_file</mat-icon>
+                  Upload file
+                </button>
+                <button mat-flat-button color="primary" type="submit" [disabled]="isUploading()">
+                  <mat-icon>upload_file</mat-icon>
+                  {{ uploadSubmitLabel() }}
+                </button>
+              </div>
+
+              @if (selectedFileName(); as selectedFileName) {
+                <p class="muted">Selected file: {{ selectedFileName }}</p>
+              }
+
+              @if (uploadErrorMessage(); as uploadErrorMessage) {
+                <p class="error-message">{{ uploadErrorMessage }}</p>
+              }
+            </form>
+
+            <mat-divider style="margin: 1rem 0;"></mat-divider>
+          }
+
+          @if (currentAssets().length === 0) {
+            <p class="muted">No BPMN assets uploaded yet.</p>
+          } @else {
+            <div class="diagram-workspace">
+              <section class="diagram-viewer-panel">
+                @if (previewAsset(); as previewAsset) {
+                  <div class="diagram-preview-meta">
+                    <div>
+                      <p class="work-sidebar-label">Current preview</p>
+                      <h3 class="work-card-title">{{ previewAsset.caption }}</h3>
+                      <p class="muted">
+                        Process version v{{ version().versionNumber }} - Diagram revision
+                        {{ revisionLabel(previewAsset) }} - Uploaded
+                        {{ previewAsset.createdAt | date: 'medium' }}
+                      </p>
+                      @if (previewAsset.supersededAt) {
+                        <p class="muted">
+                          Superseded: {{ previewAsset.supersededAt | date: 'medium' }}
+                        </p>
+                      }
+                    </div>
+                    <div class="diagram-chip-row">
+                      <mat-chip>{{ revisionLabel(previewAsset) }}</mat-chip>
+                      <mat-chip>{{
+                        previewAsset.isCurrent ? 'Current revision' : 'Superseded revision'
+                      }}</mat-chip>
+                    </div>
+                  </div>
+                }
+
+                <app-backoffice-bpmn-viewer
+                  [xml]="diagramPreviewXml()"
+                  [title]="diagramPreviewTitle()"
+                  [subtitle]="diagramPreviewSubtitle()"
+                  emptyMessage="Select a BPMN asset to visualise."
+                />
+              </section>
+
+              <section class="diagram-revision-panel">
+                <div class="work-card-header">
+                  <h3 class="work-card-title">Diagram revisions</h3>
+                  <p class="work-card-copy">
+                    The current revision starts expanded. Open another preview to switch the active
+                    diagram while keeping XML available inline.
+                  </p>
+                </div>
+
+                <div class="history-list">
+                  @for (asset of assetTimeline(); track asset.id) {
+                    <div
+                      class="diagram-revision-card"
+                      [class.diagram-revision-card--previewing]="
+                        expandedPreviewAssetId() === asset.id
+                      "
+                    >
+                      <div class="section-header">
+                        <div>
+                          <strong>{{ asset.caption }}</strong>
+                          <p class="muted">
+                            Process version v{{ version().versionNumber }} - Diagram revision
+                            {{ revisionLabel(asset) }}
+                          </p>
+                          <p class="muted">
+                            Uploaded {{ asset.createdAt | date: 'medium' }} -
+                            {{ mimeTypeLabel(asset) }} - {{ asset.sizeBytes }} bytes
+                          </p>
+                          @if (asset.supersededAt) {
+                            <p class="muted">
+                              Superseded {{ asset.supersededAt | date: 'medium' }}
+                            </p>
+                          }
+                        </div>
+                        <div class="diagram-chip-row">
+                          <mat-chip>{{ revisionLabel(asset) }}</mat-chip>
+                          <mat-chip>{{
+                            asset.isCurrent ? 'Current revision' : 'Superseded revision'
+                          }}</mat-chip>
+                        </div>
+                      </div>
+
+                      <div class="diagram-revision-actions">
+                        <button mat-button type="button" (click)="previewToggled.emit(asset)">
+                          <mat-icon>preview</mat-icon>
+                          {{ expandedPreviewAssetId() === asset.id ? 'Hide preview' : 'Preview' }}
+                        </button>
+                        <button mat-button type="button" (click)="xmlToggled.emit(asset)">
+                          <mat-icon>code</mat-icon>
+                          {{ expandedAssetXmlId() === asset.id ? 'Hide XML' : 'View XML' }}
+                        </button>
+                      </div>
+
+                      @if (
+                        expandedPreviewAssetId() === asset.id &&
+                        previewAssetContent()?.id === asset.id
+                      ) {
+                        <div class="diagram-preview-block">
+                          <div class="diagram-preview-meta">
+                            <div>
+                              <p class="work-sidebar-label">Preview</p>
+                              <h4 style="margin: 0 0 0.35rem;">
+                                {{ asset.caption }} - {{ revisionLabel(asset) }}
+                              </h4>
+                              <p class="muted">
+                                Process version v{{ version().versionNumber }} - Uploaded
+                                {{ asset.createdAt | date: 'medium' }}
+                              </p>
+                            </div>
+                          </div>
+
+                          <app-backoffice-bpmn-viewer
+                            [xml]="previewAssetContent()?.content ?? null"
+                            [title]="asset.caption + ' (' + revisionLabel(asset) + ')'"
+                            [subtitle]="
+                              'Process version v' + version().versionNumber + ' - Diagram preview'
+                            "
+                            emptyMessage="Select a BPMN asset to visualise."
+                          />
+                        </div>
+                      }
+
+                      @if (
+                        expandedAssetXmlId() === asset.id &&
+                        expandedAssetXmlContent()?.id === asset.id
+                      ) {
+                        <div class="diagram-xml-block">
+                          <h4>{{ asset.caption }} XML</h4>
+                          <pre class="bo-xml-preview">{{ expandedAssetXmlContent()?.content }}</pre>
+                        </div>
+                      }
+                    </div>
+                  }
+                </div>
+              </section>
+            </div>
+          }
+        </mat-card-content>
+      </mat-card>
+    </div>
+  `,
+})
+export class VersionAssetPanelComponent {
+  readonly version = input.required<ProcessVersionRecord>();
+  readonly canUploadBpmn = input.required<boolean>();
+  readonly uploadForm = input.required<FormGroup>();
+  readonly selectedFileName = input<string | null>(null);
+  readonly uploadErrorMessage = input<string | null>(null);
+  readonly isUploading = input.required<boolean>();
+  readonly uploadSubmitLabel = input.required<string>();
+  readonly assets = input.required<AssetRecord[]>();
+  readonly currentAssets = input.required<AssetRecord[]>();
+  readonly previewAsset = input<AssetRecord | null>(null);
+  readonly assetTimeline = input.required<AssetRecord[]>();
+  readonly expandedPreviewAssetId = input<string | null>(null);
+  readonly previewAssetContent = input<AssetContentRecord | null>(null);
+  readonly expandedAssetXmlId = input<string | null>(null);
+  readonly expandedAssetXmlContent = input<AssetContentRecord | null>(null);
+  readonly diagramPreviewXml = input<string | null>(null);
+  readonly diagramPreviewTitle = input.required<string>();
+  readonly diagramPreviewSubtitle = input.required<string>();
+
+  readonly fileSelected = output<Event>();
+  readonly uploadRequested = output<void>();
+  readonly previewToggled = output<AssetRecord>();
+  readonly xmlToggled = output<AssetRecord>();
+
+  protected revisionLabel(asset: AssetRecord): string {
+    return getAssetRevisionLabel(asset, this.assets());
+  }
+
+  protected mimeTypeLabel(asset: AssetRecord): string {
+    return getAssetMimeTypeLabel(asset);
+  }
+}

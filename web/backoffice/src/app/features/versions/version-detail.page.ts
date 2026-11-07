@@ -8,32 +8,23 @@ import {
   input,
   signal,
   ViewChild,
-  ElementRef,
+  ViewEncapsulation,
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { CommonModule } from '@angular/common';
 import {
   AbstractControl,
   FormArray,
   NonNullableFormBuilder,
-  ReactiveFormsModule,
   ValidationErrors,
   ValidatorFn,
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { firstValueFrom, map } from 'rxjs';
-import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatIconModule } from '@angular/material/icon';
-import { MatInputModule } from '@angular/material/input';
+import { MatDialog } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelect, MatSelectModule } from '@angular/material/select';
 
 import { BackofficeApiService } from '../../core/api/backoffice-api.service';
 import { AccessControlUtil } from '../../core/governance/access-control.util';
@@ -55,14 +46,16 @@ import {
   ProcessVersionRecord,
   VersionStateHistoryRecord,
 } from '../../core/models/backoffice.models';
-import { BackofficeBpmnViewerComponent } from '../../shared/bpmn/backoffice-bpmn-viewer.component';
+import {
+  getAssetMimeTypeLabel,
+  getAssetRevisionLabel,
+  VersionAssetPanelComponent,
+} from './version-asset-panel.component';
+import { VersionHistoryPanelComponent } from './version-history-panel.component';
+import { VersionLifecyclePanelComponent } from './version-lifecycle-panel.component';
+import { VersionProcedurePanelComponent } from './version-procedure-panel.component';
 
-type VersionDetailTabId =
-  | 'summary'
-  | 'work'
-  | 'diagram'
-  | 'procedures'
-  | 'history';
+type VersionDetailTabId = 'summary' | 'work' | 'diagram' | 'procedures' | 'history';
 
 interface ProcedureActivityFormValue {
   resource: string;
@@ -87,441 +80,433 @@ function minItemsValidator(minItems: number): ValidatorFn {
     const value = control.value;
     const length = Array.isArray(value) ? value.length : 0;
 
-    return length >= minItems
-      ? null
-      : { minItems: { required: minItems, actual: length } };
+    return length >= minItems ? null : { minItems: { required: minItems, actual: length } };
   };
 }
 
 @Component({
   selector: 'app-version-detail-page',
   imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatButtonModule,
     MatCardModule,
-    MatCheckboxModule,
     MatChipsModule,
-    MatDividerModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatIconModule,
-    MatInputModule,
     MatProgressSpinnerModule,
-    MatSelectModule,
-    BackofficeBpmnViewerComponent,
+    VersionAssetPanelComponent,
+    VersionHistoryPanelComponent,
+    VersionLifecyclePanelComponent,
+    VersionProcedurePanelComponent,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  encapsulation: ViewEncapsulation.None,
   styles: [
     `
-      :host {
+      app-version-detail-page {
         display: block;
-      }
 
-      .page {
-        max-width: 80rem;
-      }
-
-      .content-grid {
-        grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
-      }
-
-      .wide-card {
-        grid-column: 1 / -1;
-      }
-
-      .history-card {
-        overflow: hidden;
-      }
-
-      mat-card {
-        background-color: #ffffff;
-      }
-
-      .detail-frame {
-        border: 1px solid var(--portal-border);
-        border-radius: var(--surface-radius);
-        background: var(--portal-surface);
-        box-shadow: var(--shadow-sm);
-      }
-
-      .detail-frame__tabs {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .detail-tab-shell {
-        border-bottom: 1px solid var(--portal-border);
-        background: var(--portal-surface-alt);
-      }
-
-      .detail-tab-shell__inner {
-        display: flex;
-        overflow-x: auto;
-        padding: 0 1rem;
-      }
-
-      .detail-tab-nav {
-        display: flex;
-        gap: 0.25rem;
-      }
-
-      .detail-tab-button {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.75rem 1rem;
-        border: none;
-        background: transparent;
-        color: var(--portal-ink);
-        font-size: 0.875rem;
-        font-weight: 500;
-        cursor: pointer;
-        border-bottom: 2px solid transparent;
-        transition: all 0.2s ease;
-        white-space: nowrap;
-      }
-
-      .detail-tab-button:hover {
-        background: rgba(0, 0, 0, 0.04);
-      }
-
-      .detail-tab-button--active {
-        color: var(--portal-blue);
-        border-bottom-color: var(--portal-blue);
-        background: rgba(21, 101, 192, 0.08);
-      }
-
-      .detail-frame__body {
-        padding: 1.5rem;
-      }
-
-      .diagram-workspace {
-        display: grid;
-        gap: 1rem;
-      }
-
-      .version-header-card,
-      .summary-card {
-        border: 1px solid var(--portal-border);
-        border-radius: var(--surface-radius);
-        background: #ffffff;
-      }
-
-      .version-header-meta,
-      .summary-grid {
-        display: grid;
-        gap: 1rem;
-      }
-
-      .summary-grid {
-        grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-      }
-
-      .summary-stat {
-        padding: 1rem;
-        border: 1px solid var(--portal-border);
-        border-radius: calc(var(--surface-radius) * 0.9);
-        background: var(--portal-surface-alt);
-      }
-
-      .summary-stat__label {
-        display: block;
-        margin-bottom: 0.35rem;
-        color: var(--portal-muted);
-        font-size: 0.75rem;
-        font-weight: 700;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-      }
-
-      .summary-stat p,
-      .summary-stat strong {
-        margin: 0;
-      }
-
-      .upload-shell {
-        display: grid;
-        gap: 1rem;
-      }
-
-      .upload-file-row {
-        display: flex;
-        gap: 0.75rem;
-        flex-wrap: wrap;
-        align-items: center;
-      }
-
-      .upload-file-input {
-        display: none;
-      }
-
-      .diagram-viewer-panel,
-      .diagram-revision-panel {
-        border: 1px solid var(--portal-border);
-        border-radius: var(--surface-radius);
-        background: #ffffff;
-        padding: 1rem;
-      }
-
-      .diagram-viewer-panel {
-        display: none;
-      }
-
-      .diagram-preview-meta {
-        display: flex;
-        justify-content: space-between;
-        gap: 1rem;
-        align-items: flex-start;
-        flex-wrap: wrap;
-      }
-
-      .diagram-chip-row {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-      }
-
-      .diagram-revision-card {
-        border: 1px solid var(--portal-border);
-        border-radius: calc(var(--surface-radius) * 0.9);
-        background: #ffffff;
-        padding: 1rem;
-      }
-
-      .diagram-revision-card--previewing {
-        border-color: rgba(15, 108, 189, 0.35);
-        box-shadow: 0 0 0 1px rgba(15, 108, 189, 0.12);
-      }
-
-      .diagram-preview-block {
-        margin-top: 1rem;
-        padding-top: 1rem;
-        border-top: 1px solid var(--portal-border);
-      }
-
-      .diagram-revision-actions {
-        display: flex;
-        gap: 0.5rem;
-        flex-wrap: wrap;
-        margin-top: 0.75rem;
-      }
-
-      .diagram-xml-block {
-        margin-top: 1rem;
-        padding-top: 1rem;
-        border-top: 1px solid var(--portal-border);
-      }
-
-      .work-layout {
-        display: grid;
-        grid-template-columns: minmax(0, 2.3fr) minmax(18rem, 1fr);
-        gap: 1.5rem;
-        align-items: stretch;
-      }
-
-      .work-main {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-      }
-
-      .work-main mat-card {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-      }
-
-      .work-main mat-card mat-card-content {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .work-sidebar {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        position: sticky;
-        top: 1rem;
-      }
-
-      .work-sidebar mat-card {
-        display: flex;
-        flex-direction: column;
-      }
-
-      .work-sidebar mat-card mat-card-content {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .work-sidebar mat-card:nth-child(2) {
-        flex: 1;
-      }
-
-      .work-card-header {
-        margin-bottom: 2.5rem;
-      }
-
-      .work-card-title {
-        margin: 0 0 0.5rem;
-        font-size: 1.25rem;
-        font-weight: 600;
-      }
-
-      .work-card-copy {
-        margin: 0.25rem 0 0;
-        color: var(--portal-muted);
-      }
-
-      .work-form {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        flex: 1;
-      }
-
-      .work-form mat-form-field {
-        width: 100%;
-      }
-
-      .work-form .card-actions {
-        margin-top: auto;
-      }
-
-      .procedure-form-shell {
-        display: grid;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-      }
-
-      .procedure-activity-list {
-        display: grid;
-        gap: 0.75rem;
-      }
-
-      .procedure-activity-card {
-        padding: 1rem;
-        border: 1px solid var(--portal-border);
-        border-radius: 0.875rem;
-        background: var(--portal-surface-alt);
-      }
-
-      .work-context {
-        display: grid;
-        gap: 1rem;
-      }
-
-      .work-context__item {
-        padding: 1rem;
-        border: 1px solid var(--portal-border);
-        border-radius: 0.875rem;
-        background: var(--portal-surface-alt);
-      }
-
-      .work-context__eyebrow,
-      .work-sidebar-label {
-        display: block;
-        margin-bottom: 0.35rem;
-        color: var(--portal-muted);
-        font-size: 0.75rem;
-        font-weight: 700;
-        letter-spacing: 0.04em;
-        text-transform: uppercase;
-      }
-
-      .work-context__item p,
-      .work-sidebar-item p {
-        margin: 0;
-      }
-
-      .work-sidebar-summary {
-        display: grid;
-        gap: 1rem;
-      }
-
-      .work-sidebar-checklist {
-        gap: 0;
-        margin: 1rem 0;
-      }
-
-      .work-sidebar-item {
-        padding-bottom: 1rem;
-        border-bottom: 1px solid var(--portal-border);
-      }
-
-      .work-sidebar-item:last-child {
-        padding-bottom: 0;
-        border-bottom: none;
-      }
-
-      .work-status-badge {
-        margin-top: 0.5rem;
-      }
-
-      .action-link {
-        background: none;
-        border: none;
-        color: var(--portal-primary);
-        cursor: pointer;
-        padding: 0;
-        font-size: inherit;
-        text-decoration: underline;
-        display: inline;
-        margin: 0.25rem 0;
-      }
-
-      .action-link:hover {
-        color: var(--portal-primary-dark);
-      }
-
-      .card-actions {
-        display: flex;
-        gap: 0.75rem;
-      }
-
-      .work-action-form {
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-        flex: 1;
-      }
-
-      .work-action-form mat-form-field {
-        width: 100%;
-      }
-
-      .work-action-form .work-action-list {
-        margin-top: auto;
-      }
-
-      .work-action-list {
-        display: flex;
-        gap: 0.75rem;
-      }
-
-      .work-action-list button {
-        justify-content: flex-start;
-      }
-
-      @media (max-width: 960px) {
-        .upload-file-row {
-          align-items: stretch;
+        .page {
+          max-width: 80rem;
+        }
+
+        .content-grid {
+          grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+        }
+
+        .wide-card {
+          grid-column: 1 / -1;
+        }
+
+        .history-card {
+          overflow: hidden;
+        }
+
+        mat-card {
+          background-color: #ffffff;
+        }
+
+        .detail-frame {
+          border: 1px solid var(--portal-border);
+          border-radius: var(--surface-radius);
+          background: var(--portal-surface);
+          box-shadow: var(--shadow-sm);
+        }
+
+        .detail-frame__tabs {
+          display: flex;
           flex-direction: column;
+        }
+
+        .detail-tab-shell {
+          border-bottom: 1px solid var(--portal-border);
+          background: var(--portal-surface-alt);
+        }
+
+        .detail-tab-shell__inner {
+          display: flex;
+          overflow-x: auto;
+          padding: 0 1rem;
+        }
+
+        .detail-tab-nav {
+          display: flex;
+          gap: 0.25rem;
+        }
+
+        .detail-tab-button {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.75rem 1rem;
+          border: none;
+          background: transparent;
+          color: var(--portal-ink);
+          font-size: 0.875rem;
+          font-weight: 500;
+          cursor: pointer;
+          border-bottom: 2px solid transparent;
+          transition: all 0.2s ease;
+          white-space: nowrap;
+        }
+
+        .detail-tab-button:hover {
+          background: rgba(0, 0, 0, 0.04);
+        }
+
+        .detail-tab-button--active {
+          color: var(--portal-blue);
+          border-bottom-color: var(--portal-blue);
+          background: rgba(21, 101, 192, 0.08);
+        }
+
+        .detail-frame__body {
+          padding: 1.5rem;
+        }
+
+        .diagram-workspace {
+          display: grid;
+          gap: 1rem;
+        }
+
+        .version-header-card,
+        .summary-card {
+          border: 1px solid var(--portal-border);
+          border-radius: var(--surface-radius);
+          background: #ffffff;
+        }
+
+        .version-header-meta,
+        .summary-grid {
+          display: grid;
+          gap: 1rem;
+        }
+
+        .summary-grid {
+          grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+        }
+
+        .summary-stat {
+          padding: 1rem;
+          border: 1px solid var(--portal-border);
+          border-radius: calc(var(--surface-radius) * 0.9);
+          background: var(--portal-surface-alt);
+        }
+
+        .summary-stat__label {
+          display: block;
+          margin-bottom: 0.35rem;
+          color: var(--portal-muted);
+          font-size: 0.75rem;
+          font-weight: 700;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+        }
+
+        .summary-stat p,
+        .summary-stat strong {
+          margin: 0;
+        }
+
+        .upload-shell {
+          display: grid;
+          gap: 1rem;
+        }
+
+        .upload-file-row {
+          display: flex;
+          gap: 0.75rem;
+          flex-wrap: wrap;
+          align-items: center;
+        }
+
+        .upload-file-input {
+          display: none;
+        }
+
+        .diagram-viewer-panel,
+        .diagram-revision-panel {
+          border: 1px solid var(--portal-border);
+          border-radius: var(--surface-radius);
+          background: #ffffff;
+          padding: 1rem;
+        }
+
+        .diagram-viewer-panel {
+          display: none;
         }
 
         .diagram-preview-meta {
-          flex-direction: column;
+          display: flex;
+          justify-content: space-between;
+          gap: 1rem;
+          align-items: flex-start;
+          flex-wrap: wrap;
+        }
+
+        .diagram-chip-row {
+          display: flex;
+          gap: 0.5rem;
+          flex-wrap: wrap;
+        }
+
+        .diagram-revision-card {
+          border: 1px solid var(--portal-border);
+          border-radius: calc(var(--surface-radius) * 0.9);
+          background: #ffffff;
+          padding: 1rem;
+        }
+
+        .diagram-revision-card--previewing {
+          border-color: rgba(15, 108, 189, 0.35);
+          box-shadow: 0 0 0 1px rgba(15, 108, 189, 0.12);
+        }
+
+        .diagram-preview-block {
+          margin-top: 1rem;
+          padding-top: 1rem;
+          border-top: 1px solid var(--portal-border);
+        }
+
+        .diagram-revision-actions {
+          display: flex;
+          gap: 0.5rem;
+          flex-wrap: wrap;
+          margin-top: 0.75rem;
+        }
+
+        .diagram-xml-block {
+          margin-top: 1rem;
+          padding-top: 1rem;
+          border-top: 1px solid var(--portal-border);
         }
 
         .work-layout {
-          grid-template-columns: 1fr;
+          display: grid;
+          grid-template-columns: minmax(0, 2.3fr) minmax(18rem, 1fr);
+          gap: 1.5rem;
+          align-items: stretch;
+        }
+
+        .work-main {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .work-main mat-card {
+          display: flex;
+          flex-direction: column;
+          flex: 1;
+        }
+
+        .work-main mat-card mat-card-content {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
         }
 
         .work-sidebar {
-          position: static;
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+          position: sticky;
+          top: 1rem;
+        }
+
+        .work-sidebar mat-card {
+          display: flex;
+          flex-direction: column;
+        }
+
+        .work-sidebar mat-card mat-card-content {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+        }
+
+        .work-sidebar mat-card:nth-child(2) {
+          flex: 1;
+        }
+
+        .work-card-header {
+          margin-bottom: 2.5rem;
+        }
+
+        .work-card-title {
+          margin: 0 0 0.5rem;
+          font-size: 1.25rem;
+          font-weight: 600;
+        }
+
+        .work-card-copy {
+          margin: 0.25rem 0 0;
+          color: var(--portal-muted);
+        }
+
+        .work-form {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+          flex: 1;
+        }
+
+        .work-form mat-form-field {
+          width: 100%;
+        }
+
+        .work-form .card-actions {
+          margin-top: auto;
+        }
+
+        .procedure-form-shell {
+          display: grid;
+          gap: 1rem;
+          margin-bottom: 1.5rem;
+        }
+
+        .procedure-activity-list {
+          display: grid;
+          gap: 0.75rem;
+        }
+
+        .procedure-activity-card {
+          padding: 1rem;
+          border: 1px solid var(--portal-border);
+          border-radius: 0.875rem;
+          background: var(--portal-surface-alt);
+        }
+
+        .work-context {
+          display: grid;
+          gap: 1rem;
+        }
+
+        .work-context__item {
+          padding: 1rem;
+          border: 1px solid var(--portal-border);
+          border-radius: 0.875rem;
+          background: var(--portal-surface-alt);
+        }
+
+        .work-context__eyebrow,
+        .work-sidebar-label {
+          display: block;
+          margin-bottom: 0.35rem;
+          color: var(--portal-muted);
+          font-size: 0.75rem;
+          font-weight: 700;
+          letter-spacing: 0.04em;
+          text-transform: uppercase;
+        }
+
+        .work-context__item p,
+        .work-sidebar-item p {
+          margin: 0;
+        }
+
+        .work-sidebar-summary {
+          display: grid;
+          gap: 1rem;
+        }
+
+        .work-sidebar-checklist {
+          gap: 0;
+          margin: 1rem 0;
+        }
+
+        .work-sidebar-item {
+          padding-bottom: 1rem;
+          border-bottom: 1px solid var(--portal-border);
+        }
+
+        .work-sidebar-item:last-child {
+          padding-bottom: 0;
+          border-bottom: none;
+        }
+
+        .work-status-badge {
+          margin-top: 0.5rem;
+        }
+
+        .action-link {
+          background: none;
+          border: none;
+          color: var(--portal-primary);
+          cursor: pointer;
+          padding: 0;
+          font-size: inherit;
+          text-decoration: underline;
+          display: inline;
+          margin: 0.25rem 0;
+        }
+
+        .action-link:hover {
+          color: var(--portal-primary-dark);
+        }
+
+        .card-actions {
+          display: flex;
+          gap: 0.75rem;
+        }
+
+        .work-action-form {
+          display: flex;
+          flex-direction: column;
+          gap: 1rem;
+          flex: 1;
+        }
+
+        .work-action-form mat-form-field {
+          width: 100%;
+        }
+
+        .work-action-form .work-action-list {
+          margin-top: auto;
+        }
+
+        .work-action-list {
+          display: flex;
+          gap: 0.75rem;
+        }
+
+        .work-action-list button {
+          justify-content: flex-start;
+        }
+
+        @media (max-width: 960px) {
+          .upload-file-row {
+            align-items: stretch;
+            flex-direction: column;
+          }
+
+          .diagram-preview-meta {
+            flex-direction: column;
+          }
+
+          .work-layout {
+            grid-template-columns: 1fr;
+          }
+
+          .work-sidebar {
+            position: static;
+          }
         }
       }
     `,
@@ -573,13 +558,19 @@ function minItemsValidator(minItems: number): ValidatorFn {
 
             @if (selectedTab() === 'summary') {
               <div class="detail-frame__body">
-                <mat-card appearance="outlined" class="version-header-card" style="margin-bottom: 1rem;">
+                <mat-card
+                  appearance="outlined"
+                  class="version-header-card"
+                  style="margin-bottom: 1rem;"
+                >
                   <mat-card-content class="version-header-meta">
                     @if (process(); as process) {
                       <div>
                         <p class="work-sidebar-label">Process</p>
                         <h3 class="work-card-title">{{ process.code }} - {{ process.title }}</h3>
-                        <p class="muted">{{ process.teamName }} team - Owner {{ process.ownerName }}</p>
+                        <p class="muted">
+                          {{ process.teamName }} team - Owner {{ process.ownerName }}
+                        </p>
                       </div>
                     }
                     <mat-chip-set>
@@ -605,7 +596,9 @@ function minItemsValidator(minItems: number): ValidatorFn {
                   <section class="summary-stat">
                     <span class="summary-stat__label">Readiness</span>
                     <strong>{{ submissionReadinessLabel() }}</strong>
-                    <p class="muted">Metadata, BPMN, procedures, and review status are tracked live.</p>
+                    <p class="muted">
+                      Metadata, BPMN, procedures, and review status are tracked live.
+                    </p>
                   </section>
                   <section class="summary-stat">
                     <span class="summary-stat__label">Diagram</span>
@@ -615,7 +608,9 @@ function minItemsValidator(minItems: number): ValidatorFn {
                   <section class="summary-stat">
                     <span class="summary-stat__label">Procedures</span>
                     <strong>{{ procedures().length }} procedure(s)</strong>
-                    <p class="muted">{{ hasProcedure() ? 'Procedure set is present' : 'No procedures added yet' }}</p>
+                    <p class="muted">
+                      {{ hasProcedure() ? 'Procedure set is present' : 'No procedures added yet' }}
+                    </p>
                   </section>
                 </div>
 
@@ -639,758 +634,87 @@ function minItemsValidator(minItems: number): ValidatorFn {
                 </mat-card>
               </div>
             } @else if (selectedTab() === 'work') {
-              <div class="detail-frame__body">
-                <div class="work-layout">
-                  <div class="work-main">
-                    <mat-card appearance="outlined">
-                      <mat-card-content>
-                        <div class="work-card-header">
-                          <h3 class="work-card-title">{{ workPanelTitle() }}</h3>
-                          <p class="work-card-copy">{{ workPanelDescription() }}</p>
-                        </div>
-
-                        @if (canEditDraft()) {
-                          <form class="work-form" [formGroup]="draftForm" (ngSubmit)="saveDraft()">
-                            <mat-form-field appearance="outline">
-                              <mat-label>Architecture state</mat-label>
-                              <mat-select formControlName="architectureState" #architectureStateInput>
-                                <mat-option value="AS-IS">AS-IS</mat-option>
-                                <mat-option value="TO-BE">TO-BE</mat-option>
-                              </mat-select>
-                            </mat-form-field>
-
-                            <mat-form-field appearance="outline">
-                              <mat-label>Title</mat-label>
-                              <input matInput formControlName="title" #titleInput />
-                            </mat-form-field>
-
-                            <mat-form-field appearance="outline">
-                              <mat-label>Derived from version</mat-label>
-                              <mat-select formControlName="derivedFromVersionId">
-                                <mat-option value="">None</mat-option>
-                                @for (relatedVersion of relatedVersions(); track relatedVersion.id) {
-                                  @if (relatedVersion.id !== version.id) {
-                                    <mat-option [value]="relatedVersion.id">
-                                      v{{ relatedVersion.versionNumber }} - {{ relatedVersion.title }}
-                                    </mat-option>
-                                  }
-                                }
-                              </mat-select>
-                            </mat-form-field>
-
-                            <mat-form-field appearance="outline">
-                              <mat-label>Change description</mat-label>
-                              <textarea matInput rows="5" formControlName="changeDescription" #changeDescriptionInput></textarea>
-                            </mat-form-field>
-
-                            <mat-form-field appearance="outline">
-                              <mat-label>Reason for change</mat-label>
-                              <textarea matInput rows="5" formControlName="reasonForChange" #reasonForChangeInput></textarea>
-                            </mat-form-field>
-
-                            @if (draftErrorMessage(); as draftErrorMessage) {
-                              <p class="error-message">{{ draftErrorMessage }}</p>
-                            }
-
-                            <div class="card-actions">
-                              <button mat-flat-button color="primary" type="submit" [disabled]="isSavingDraft()">
-                                <mat-icon>save</mat-icon>
-                                Save draft changes
-                              </button>
-                            </div>
-                          </form>
-                        } @else {
-                          <div class="work-context">
-                            @if (process(); as process) {
-                              <div class="work-context__item">
-                                <span class="work-context__eyebrow">Process</span>
-                                <p><strong>{{ process.code }} - {{ process.title }}</strong></p>
-                                <p class="muted">{{ process.teamName }} team - Owner {{ process.ownerName }}</p>
-                              </div>
-                            }
-
-                            <div class="work-context__item">
-                              <span class="work-context__eyebrow">Change description</span>
-                              <p>{{ version.changeDescription || 'No change description provided.' }}</p>
-                            </div>
-
-                            <div class="work-context__item">
-                              <span class="work-context__eyebrow">Reason for change</span>
-                              <p>{{ version.reasonForChange || 'No reason for change provided.' }}</p>
-                            </div>
-
-                            <div class="work-context__item">
-                              <span class="work-context__eyebrow">Version lineage</span>
-                              <p>
-                                @if (derivedFromVersionLabel(); as derivedFromVersionLabel) {
-                                  Derived from {{ derivedFromVersionLabel }}
-                                } @else {
-                                  This version is not linked to an earlier version.
-                                }
-                              </p>
-                            </div>
-                          </div>
-                        }
-                      </mat-card-content>
-                    </mat-card>
-                  </div>
-
-                  <aside class="work-sidebar">
-                    <mat-card appearance="outlined">
-                      <mat-card-header>
-                        <mat-card-title>Your responsibility</mat-card-title>
-                      </mat-card-header>
-                      <mat-card-content class="work-sidebar-summary">
-                        <div class="work-sidebar-item">
-                          <span class="work-sidebar-label">Current state</span>
-                          <mat-chip-set>
-                            <mat-chip>{{ version.lifecycleState }}</mat-chip>
-                            <mat-chip>{{ version.architectureState }}</mat-chip>
-                          </mat-chip-set>
-                        </div>
-
-                        <div class="work-sidebar-item">
-                          <span class="work-sidebar-label">Waiting for role</span>
-                          <p>{{ waitingForRoleLabel() }}</p>
-                          @if (isWaitingForCurrentUser()) {
-                            <div class="work-status-badge">
-                              <mat-chip highlighted>Waiting for you</mat-chip>
-                            </div>
-                          }
-                        </div>
-
-                        <div class="work-sidebar-item">
-                          <span class="work-sidebar-label">Next action</span>
-                          @if (nextChecklistItem(); as nextItem) {
-                            <p>{{ nextItem.label }}</p>
-                            <button type="button" (click)="executeNextChecklistAction()" class="action-link">Go to step</button>
-                          } @else {
-                            <p>{{ nextChecklistCompleteLabel() }}</p>
-                          }
-                        </div>
-                      </mat-card-content>
-                    </mat-card>
-
-                    @if (canShowChecklist()) {
-                      <mat-card appearance="outlined">
-                        <mat-card-header>
-                          <mat-card-title>{{ checklistTitle() }}</mat-card-title>
-                        </mat-card-header>
-                        <mat-card-content>
-                          @if (canEditDraft()) {
-                            <div class="work-sidebar-checklist">
-                              <mat-checkbox [checked]="submissionRequirements().titlePresent" disabled>
-                                Title is present
-                              </mat-checkbox>
-                              <mat-checkbox [checked]="submissionRequirements().changeDescriptionPresent" disabled>
-                                Change description is present
-                              </mat-checkbox>
-                              <mat-checkbox [checked]="submissionRequirements().reasonForChangePresent" disabled>
-                                Reason for change is present
-                              </mat-checkbox>
-                              <mat-checkbox [checked]="submissionRequirements().architectureStateSelected" disabled>
-                                Architecture state is selected
-                              </mat-checkbox>
-                              <mat-checkbox [checked]="submissionRequirements().hasBpmnAsset" disabled>
-                                BPMN diagram is uploaded
-                              </mat-checkbox>
-                              <mat-checkbox [checked]="submissionRequirements().hasProcedure" disabled>
-                                At least 1 procedure is documented
-                              </mat-checkbox>
-                            </div>
-                          } @else if (showReviewChecklist()) {
-                            <form [formGroup]="checklistForm" class="work-sidebar-checklist">
-                              <mat-checkbox formControlName="titleChecked">
-                                Title is correct
-                              </mat-checkbox>
-                              <mat-checkbox formControlName="changeChecked">
-                                Change description is correct
-                              </mat-checkbox>
-                              <mat-checkbox formControlName="requirementsChecked">
-                                Reason for change is correct
-                              </mat-checkbox>
-                              <mat-checkbox formControlName="architectureChecked">
-                                Architecture state is correct
-                              </mat-checkbox>
-                              <mat-checkbox formControlName="diagramProceduresChecked">
-                                BPMN diagram reflects the documented procedures
-                              </mat-checkbox>
-                            </form>
-                          }
-                          <div class="checklist-progress">
-                            <p class="muted">
-                              Checklist progress: {{ submissionReadinessLabel() }}
-                            </p>
-                          </div>
-                        </mat-card-content>
-                      </mat-card>
-                    }
-
-                    <mat-card appearance="outlined">
-                      <mat-card-header>
-                        <mat-card-title>Decision</mat-card-title>
-                      </mat-card-header>
-                      <mat-card-content>
-                        @if (visibleActions().length === 0) {
-                          <p class="muted">No actions are available for your role in this state.</p>
-                        } @else {
-                          <form class="work-action-form" [formGroup]="actionForm">
-                            <mat-form-field appearance="outline">
-                              <mat-label>Justification</mat-label>
-                              <textarea matInput rows="3" formControlName="reason"></textarea>
-                            </mat-form-field>
-
-                            @if (showPromoteTitleField()) {
-                              <mat-form-field appearance="outline">
-                                <mat-label>Promoted title (optional)</mat-label>
-                                <input matInput formControlName="promotionTitle" />
-                              </mat-form-field>
-                            }
-
-                            @if (actionErrorMessage(); as actionErrorMessage) {
-                              <p class="error-message">{{ actionErrorMessage }}</p>
-                            }
-
-                            <div class="work-action-list">
-                              @for (action of visibleActions(); track action.key) {
-                                <button
-                                  mat-flat-button
-                                  color="primary"
-                                  type="button"
-                                  [disabled]="isActing()"
-                                  (click)="runLifecycleAction(action)"
-                                >
-                                  <mat-icon>{{ action.icon }}</mat-icon>
-                                  {{ action.label }}
-                                </button>
-                              }
-                            </div>
-                          </form>
-                        }
-                      </mat-card-content>
-                    </mat-card>
-                  </aside>
-                </div>
-              </div>
+              <app-version-lifecycle-panel
+                [version]="version"
+                [process]="process()"
+                [relatedVersions]="relatedVersions()"
+                [draftForm]="draftForm"
+                [checklistForm]="checklistForm"
+                [actionForm]="actionForm"
+                [panelTitle]="workPanelTitle()"
+                [panelDescription]="workPanelDescription()"
+                [canEditDraft]="canEditDraft()"
+                [derivedFromVersionLabel]="derivedFromVersionLabel()"
+                [draftErrorMessage]="draftErrorMessage()"
+                [isSavingDraft]="isSavingDraft()"
+                [waitingForRoleLabel]="waitingForRoleLabel()"
+                [isWaitingForCurrentUser]="isWaitingForCurrentUser()"
+                [nextChecklistLabel]="nextChecklistItem()?.label ?? null"
+                [nextChecklistCompleteLabel]="nextChecklistCompleteLabel()"
+                [canShowChecklist]="canShowChecklist()"
+                [checklistTitle]="checklistTitle()"
+                [submissionRequirements]="submissionRequirements()"
+                [showReviewChecklist]="showReviewChecklist()"
+                [submissionReadinessLabel]="submissionReadinessLabel()"
+                [visibleActions]="visibleActions()"
+                [showPromoteTitleField]="showPromoteTitleField()"
+                [actionErrorMessage]="actionErrorMessage()"
+                [isActing]="isActing()"
+                (saveDraftRequested)="saveDraft()"
+                (nextChecklistRequested)="executeNextChecklistAction()"
+                (lifecycleActionRequested)="runLifecycleAction($event)"
+              />
             } @else if (selectedTab() === 'diagram') {
-              <div class="detail-frame__body">
-                <mat-card appearance="outlined">
-                  <mat-card-content>
-                    @if (canUploadBpmn()) {
-                      <form class="upload-shell" [formGroup]="uploadForm" (ngSubmit)="uploadAsset()">
-                        <mat-form-field appearance="outline">
-                          <mat-label>Asset Caption</mat-label>
-                          <input matInput formControlName="caption" />
-                        </mat-form-field>
-
-                        <input
-                          #bpmnFileInput
-                          class="upload-file-input"
-                          type="file"
-                          accept=".bpmn,.xml,text/xml,application/xml"
-                          (change)="onFileSelected($event)"
-                        />
-
-                        <div class="upload-file-row">
-                          <button mat-stroked-button type="button" (click)="bpmnFileInput.click()">
-                            <mat-icon>attach_file</mat-icon>
-                            Upload file
-                          </button>
-                          <button mat-flat-button color="primary" type="submit" [disabled]="isUploading()">
-                            <mat-icon>upload_file</mat-icon>
-                            {{ uploadSubmitLabel() }}
-                          </button>
-                        </div>
-
-                        @if (selectedFileName(); as selectedFileName) {
-                          <p class="muted">Selected file: {{ selectedFileName }}</p>
-                        }
-
-                        @if (uploadErrorMessage(); as uploadErrorMessage) {
-                          <p class="error-message">{{ uploadErrorMessage }}</p>
-                        }
-
-                      </form>
-
-                      <mat-divider style="margin: 1rem 0;"></mat-divider>
-                    }
-
-                    @if (currentAssets().length === 0) {
-                      <p class="muted">No BPMN assets uploaded yet.</p>
-                    } @else {
-                      <div class="diagram-workspace">
-                        <section class="diagram-viewer-panel">
-                          @if (previewAsset(); as previewAsset) {
-                            <div class="diagram-preview-meta">
-                              <div>
-                                <p class="work-sidebar-label">Current preview</p>
-                                <h3 class="work-card-title">{{ previewAsset.caption }}</h3>
-                                <p class="muted">
-                                  Process version v{{ version.versionNumber }} - Diagram revision
-                                  {{ getAssetRevisionLabel(previewAsset) }} - Uploaded
-                                  {{ previewAsset.createdAt | date: 'medium' }}
-                                </p>
-                                @if (previewAsset.supersededAt) {
-                                  <p class="muted">
-                                    Superseded: {{ previewAsset.supersededAt | date: 'medium' }}
-                                  </p>
-                                }
-                              </div>
-                              <div class="diagram-chip-row">
-                                <mat-chip>{{ getAssetRevisionLabel(previewAsset) }}</mat-chip>
-                                <mat-chip>{{
-                                  previewAsset.isCurrent
-                                    ? 'Current revision'
-                                    : 'Superseded revision'
-                                }}</mat-chip>
-                              </div>
-                            </div>
-                          }
-
-                          <app-backoffice-bpmn-viewer
-                            [xml]="diagramPreviewXml()"
-                            [title]="diagramPreviewTitle()"
-                            [subtitle]="diagramPreviewSubtitle()"
-                            emptyMessage="Select a BPMN asset to visualise."
-                          />
-                        </section>
-
-                        <section class="diagram-revision-panel">
-                          <div class="work-card-header">
-                            <h3 class="work-card-title">Diagram revisions</h3>
-                            <p class="work-card-copy">
-                              The current revision starts expanded. Open another preview to switch
-                              the active diagram while keeping XML available inline.
-                            </p>
-                          </div>
-
-                          <div class="history-list">
-                            @for (asset of assetTimeline(); track asset.id) {
-                              <div
-                                class="diagram-revision-card"
-                                [class.diagram-revision-card--previewing]="isPreviewedAsset(asset)"
-                              >
-                                <div class="section-header">
-                                  <div>
-                                    <strong>{{ asset.caption }}</strong>
-                                    <p class="muted">
-                                      Process version v{{ version.versionNumber }} - Diagram revision
-                                      {{ getAssetRevisionLabel(asset) }}
-                                    </p>
-                                    <p class="muted">
-                                      Uploaded {{ asset.createdAt | date: 'medium' }} -
-                                      {{ getAssetMimeTypeLabel(asset) }} - {{ asset.sizeBytes }} bytes
-                                    </p>
-                                    @if (asset.supersededAt) {
-                                      <p class="muted">
-                                        Superseded {{ asset.supersededAt | date: 'medium' }}
-                                      </p>
-                                    }
-                                  </div>
-                                  <div class="diagram-chip-row">
-                                    <mat-chip>{{ getAssetRevisionLabel(asset) }}</mat-chip>
-                                    <mat-chip>{{
-                                      asset.isCurrent ? 'Current revision' : 'Superseded revision'
-                                    }}</mat-chip>
-                                  </div>
-                                </div>
-
-                                <div class="diagram-revision-actions">
-                                  <button mat-button type="button" (click)="toggleAssetPreview(asset)">
-                                    <mat-icon>preview</mat-icon>
-                                    {{
-                                      expandedPreviewAssetId() === asset.id
-                                        ? 'Hide preview'
-                                        : 'Preview'
-                                    }}
-                                  </button>
-                                  <button mat-button type="button" (click)="toggleAssetXml(asset)">
-                                    <mat-icon>code</mat-icon>
-                                    {{
-                                      expandedAssetXmlId() === asset.id ? 'Hide XML' : 'View XML'
-                                    }}
-                                  </button>
-                                </div>
-
-                                @if (
-                                  expandedPreviewAssetId() === asset.id &&
-                                  previewAssetContent()?.id === asset.id
-                                ) {
-                                  <div class="diagram-preview-block">
-                                    <div class="diagram-preview-meta">
-                                      <div>
-                                        <p class="work-sidebar-label">Preview</p>
-                                        <h4 style="margin: 0 0 0.35rem;">
-                                          {{ asset.caption }} - {{ getAssetRevisionLabel(asset) }}
-                                        </h4>
-                                        <p class="muted">
-                                          Process version v{{ version.versionNumber }} - Uploaded
-                                          {{ asset.createdAt | date: 'medium' }}
-                                        </p>
-                                      </div>                                    </div>
-
-                                    <app-backoffice-bpmn-viewer
-                                      [xml]="previewAssetContent()?.content ?? null"
-                                      [title]="asset.caption + ' (' + getAssetRevisionLabel(asset) + ')'"
-                                      [subtitle]="'Process version v' + version.versionNumber + ' - Diagram preview'"
-                                      emptyMessage="Select a BPMN asset to visualise."
-                                    />
-                                  </div>
-                                }
-
-                                @if (
-                                  expandedAssetXmlId() === asset.id &&
-                                  expandedAssetXmlContent()?.id === asset.id
-                                ) {
-                                  <div class="diagram-xml-block">
-                                    <h4>{{ asset.caption }} XML</h4>
-                                    <pre class="bo-xml-preview">{{ expandedAssetXmlContent()?.content }}</pre>
-                                  </div>
-                                }
-                              </div>
-                            }
-                          </div>
-                        </section>
-                      </div>
-                    }
-                  </mat-card-content>
-                </mat-card>
-              </div>
+              <app-version-asset-panel
+                [version]="version"
+                [canUploadBpmn]="canUploadBpmn()"
+                [uploadForm]="uploadForm"
+                [selectedFileName]="selectedFileName()"
+                [uploadErrorMessage]="uploadErrorMessage()"
+                [isUploading]="isUploading()"
+                [uploadSubmitLabel]="uploadSubmitLabel()"
+                [assets]="assets()"
+                [currentAssets]="currentAssets()"
+                [previewAsset]="previewAsset()"
+                [assetTimeline]="assetTimeline()"
+                [expandedPreviewAssetId]="expandedPreviewAssetId()"
+                [previewAssetContent]="previewAssetContent()"
+                [expandedAssetXmlId]="expandedAssetXmlId()"
+                [expandedAssetXmlContent]="expandedAssetXmlContent()"
+                [diagramPreviewXml]="diagramPreviewXml()"
+                [diagramPreviewTitle]="diagramPreviewTitle()"
+                [diagramPreviewSubtitle]="diagramPreviewSubtitle()"
+                (fileSelected)="onFileSelected($event)"
+                (uploadRequested)="uploadAsset()"
+                (previewToggled)="toggleAssetPreview($event)"
+                (xmlToggled)="toggleAssetXml($event)"
+              />
             } @else if (selectedTab() === 'procedures') {
-              <div class="detail-frame__body">
-                <mat-card appearance="outlined">
-                  <mat-card-content>
-                    @if (canEditDraft()) {
-                      <div class="procedure-form-shell">
-                        <div class="section-header">
-                          <div>
-                            <h3 class="work-card-title">{{ procedurePanelTitle() }}</h3>
-                            <p class="work-card-copy">
-                              {{
-                                editingProcedure()
-                                  ? 'Update the draft procedure details for this version.'
-                                  : 'Add draft procedures for this version. Codes are generated automatically.'
-                              }}
-                            </p>
-                          </div>
-                        </div>
-
-                        <form class="work-form" [formGroup]="procedureForm" (ngSubmit)="saveProcedure()">
-                          <mat-form-field appearance="outline">
-                            <mat-label>Title</mat-label>
-                            <input matInput formControlName="title" />
-                          </mat-form-field>
-
-                          <mat-form-field appearance="outline">
-                            <mat-label>Utility</mat-label>
-                            <textarea matInput rows="3" formControlName="utility"></textarea>
-                          </mat-form-field>
-
-                          <mat-form-field appearance="outline">
-                            <mat-label>Warranty</mat-label>
-                            <textarea matInput rows="3" formControlName="warranty"></textarea>
-                          </mat-form-field>
-
-                          <mat-form-field appearance="outline">
-                            <mat-label>Outcome</mat-label>
-                            <textarea matInput rows="3" formControlName="outcome"></textarea>
-                          </mat-form-field>
-
-                          <mat-form-field appearance="outline">
-                            <mat-label>Policy</mat-label>
-                            <textarea matInput rows="3" formControlName="policy"></textarea>
-                          </mat-form-field>
-
-                          <div class="procedure-activity-list">
-                            <div class="section-header">
-                              <div>
-                                <strong>Activities</strong>
-                                <p class="muted">Capture each step, resource, and work instruction.</p>
-                              </div>
-                              <button mat-button type="button" (click)="addProcedureActivity()">
-                                <mat-icon>add</mat-icon>
-                                Add activity
-                              </button>
-                            </div>
-
-                            @if (
-                              procedureActivities().touched &&
-                              procedureActivities().hasError('minItems')
-                            ) {
-                              <p class="error-message">Add at least one activity.</p>
-                            }
-
-                            @if (procedureActivities().length === 0) {
-                              <p class="muted">No activities added yet.</p>
-                            } @else {
-                              <div formArrayName="activities" class="procedure-activity-list">
-                                @for (activityGroup of procedureActivities().controls; track $index) {
-                                  <div class="procedure-activity-card" [formGroupName]="$index">
-                                    <div class="section-header">
-                                      <strong>Activity {{ $index + 1 }}</strong>
-                                      <button
-                                        mat-button
-                                        type="button"
-                                        (click)="removeProcedureActivity($index)"
-                                      >
-                                        <mat-icon>delete</mat-icon>
-                                        Remove
-                                      </button>
-                                    </div>
-
-                                    <mat-form-field appearance="outline">
-                                      <mat-label>Service action</mat-label>
-                                      <input matInput formControlName="serviceAction" />
-                                    </mat-form-field>
-
-                                    <mat-form-field appearance="outline">
-                                      <mat-label>Resource</mat-label>
-                                      <input matInput formControlName="resource" />
-                                    </mat-form-field>
-
-                                    <mat-form-field appearance="outline">
-                                      <mat-label>Work instruction</mat-label>
-                                      <textarea
-                                        matInput
-                                        rows="3"
-                                        formControlName="workInstruction"
-                                      ></textarea>
-                                    </mat-form-field>
-                                  </div>
-                                }
-                              </div>
-                            }
-                          </div>
-
-                          <mat-form-field appearance="outline">
-                            <mat-label>Inputs</mat-label>
-                            <textarea
-                              matInput
-                              rows="4"
-                              formControlName="inputsText"
-                            ></textarea>
-                            <mat-hint>Enter one input per line.</mat-hint>
-                            @if (
-                              procedureForm.controls.inputsText.touched &&
-                              procedureForm.controls.inputsText.hasError('requiredList')
-                            ) {
-                              <mat-error>Add at least one input.</mat-error>
-                            }
-                          </mat-form-field>
-
-                          <mat-form-field appearance="outline">
-                            <mat-label>Outputs</mat-label>
-                            <textarea
-                              matInput
-                              rows="4"
-                              formControlName="outputsText"
-                            ></textarea>
-                            <mat-hint>Enter one output per line.</mat-hint>
-                            @if (
-                              procedureForm.controls.outputsText.touched &&
-                              procedureForm.controls.outputsText.hasError('requiredList')
-                            ) {
-                              <mat-error>Add at least one output.</mat-error>
-                            }
-                          </mat-form-field>
-
-                          @if (procedureErrorMessage(); as procedureErrorMessage) {
-                            <p class="error-message">{{ procedureErrorMessage }}</p>
-                          }
-
-                          <div class="card-actions">
-                            <button
-                              mat-flat-button
-                              color="primary"
-                              type="submit"
-                              [disabled]="isSavingProcedure()"
-                            >
-                              <mat-icon>save</mat-icon>
-                              {{ procedureSubmitLabel() }}
-                            </button>
-                            @if (editingProcedure()) {
-                              <button mat-button type="button" (click)="cancelProcedureEdit()">
-                                <mat-icon>close</mat-icon>
-                                Cancel
-                              </button>
-                            }
-                          </div>
-                        </form>
-                      </div>
-
-                      <mat-divider style="margin: 1rem 0;"></mat-divider>
-                    }
-
-                    @if (procedures().length === 0) {
-                      <p class="muted">No procedures defined for this version yet.</p>
-                    } @else {
-                      <div class="history-list">
-                        @for (procedure of procedures(); track procedure.id; let last = $last) {
-                          <div [style]="last ? 'padding: 1rem 0;' : 'padding: 1rem 0; border-bottom: 1px solid var(--portal-border);'">
-                            <div class="section-header">
-                              <div>
-                                <strong>{{ procedure.code }} - {{ procedure.title }}</strong>
-                                @if (procedure.utility) {
-                                  <p class="muted"><strong>Utility:</strong> {{ procedure.utility }}</p>
-                                }
-                                @if (procedure.warranty) {
-                                  <p class="muted"><strong>Warranty:</strong> {{ procedure.warranty }}</p>
-                                }
-                                @if (procedure.outcome) {
-                                  <p class="muted"><strong>Outcome:</strong> {{ procedure.outcome }}</p>
-                                }
-                                @if (procedure.policy) {
-                                  <p class="muted"><strong>Policy:</strong> {{ procedure.policy }}</p>
-                                }
-                                @if (procedure.activities && procedure.activities.length > 0) {
-                                  <div class="muted" style="margin-top: 0.75rem;">
-                                    <strong>Activities ({{ procedure.activities.length }}):</strong>
-                                    <ul style="margin: 0.5rem 0 0 1.5rem; padding: 0;">
-                                      @for (activity of procedure.activities; track $index) {
-                                        <li style="margin-bottom: 0.5rem;">
-                                          {{ activity['service_action'] || activity['Service Action'] || 'Activity' }}
-                                          <ul style="margin: 0.25rem 0 0 1.25rem; padding: 0;">
-                                            @if (activity['resource'] || activity['Resource']) {
-                                              <li style="margin-bottom: 0.25rem;">Resource: {{ activity['resource'] || activity['Resource'] }}</li>
-                                            }
-                                            @if (activity['work_instruction'] || activity['Work Instruction']) {
-                                              <li>{{ activity['work_instruction'] || activity['Work Instruction'] }}</li>
-                                            }
-                                          </ul>
-                                        </li>
-                                      }
-                                    </ul>
-                                  </div>
-                                }
-                                @if (procedure.inputs && procedure.inputs.length > 0) {
-                                  <div class="muted" style="margin-top: 0.75rem;">
-                                    <strong>Inputs ({{ procedure.inputs.length }}):</strong>
-                                    <ul style="margin: 0.5rem 0 0 1.5rem; padding: 0;">
-                                      @for (input of procedure.inputs; track $index) {
-                                        <li style="margin-bottom: 0.25rem;">{{ typeof input === 'string' ? input : (input | json) }}</li>
-                                      }
-                                    </ul>
-                                  </div>
-                                }
-                                @if (procedure.outputs && procedure.outputs.length > 0) {
-                                  <div class="muted" style="margin-top: 0.75rem;">
-                                    <strong>Outputs ({{ procedure.outputs.length }}):</strong>
-                                    <ul style="margin: 0.5rem 0 0 1.5rem; padding: 0;">
-                                      @for (output of procedure.outputs; track $index) {
-                                        <li style="margin-bottom: 0.25rem;">{{ typeof output === 'string' ? output : (output | json) }}</li>
-                                      }
-                                    </ul>
-                                  </div>
-                                }
-                              </div>
-                              @if (canEditDraft()) {
-                                <div class="card-actions">
-                                  <button mat-button type="button" (click)="startEditingProcedure(procedure)">
-                                    <mat-icon>edit</mat-icon>
-                                    Edit
-                                  </button>
-                                </div>
-                              }
-                            </div>
-                          </div>
-                        }
-                      </div>
-                    }
-                  </mat-card-content>
-                </mat-card>
-              </div>
+              <app-version-procedure-panel
+                [canEditDraft]="canEditDraft()"
+                [panelTitle]="procedurePanelTitle()"
+                [editingProcedure]="editingProcedure() !== null"
+                [procedureForm]="procedureForm"
+                [activities]="procedureActivities()"
+                [errorMessage]="procedureErrorMessage()"
+                [isSaving]="isSavingProcedure()"
+                [submitLabel]="procedureSubmitLabel()"
+                [procedures]="procedures()"
+                (activityAdded)="addProcedureActivity()"
+                (activityRemoved)="removeProcedureActivity($event)"
+                (saveRequested)="saveProcedure()"
+                (editCancelled)="cancelProcedureEdit()"
+                (editRequested)="startEditingProcedure($event)"
+              />
             } @else if (selectedTab() === 'history') {
-              <div class="detail-frame__body">
-                <mat-card appearance="outlined">
-                  <mat-card-content>
-                    <div class="work-card-header">
-                      <h3 class="work-card-title">Change description</h3>
-                      <p>{{ version.changeDescription }}</p>
-                    </div>
-                    <div class="work-card-header">
-                      <h3 class="work-card-title">Reason for change</h3>
-                      <p>{{ version.reasonForChange }}</p>
-                    </div>
-
-                    @if (historyAvailable()) {
-                      <mat-divider style="margin: 2.5rem 0;"></mat-divider>
-
-                      <div class="work-card-header">
-                        <h3 class="work-card-title">Lifecycle history</h3>
-                        @if (stateHistory().length === 0) {
-                          <p class="muted">No transitions recorded.</p>
-                        } @else {
-                          <div class="history-list">
-                            @for (entry of stateHistory(); track entry.id) {
-                              <mat-card appearance="outlined">
-                                <mat-card-content>
-                                  <strong>{{ entry.fromState || '' }} {{entry.fromState ? '→' : ''}} {{ entry.toState }}</strong>
-                                  <p class="muted">{{ entry.createdAt | date: 'medium' }}</p>
-                                  <p>{{ entry.reason || 'No reason provided.' }}</p>
-                                  <p class="muted">{{ entry.actorName || entry.actorId || 'Unknown' }}</p>
-                                </mat-card-content>
-                              </mat-card>
-                            }
-                          </div>
-                        }
-                      </div>
-
-                      <mat-divider style="margin: 2.5rem 0;"></mat-divider>
-
-                      <div class="work-card-header">
-                        <h3 class="work-card-title">Audit history</h3>
-                        @if (auditLogs().length === 0) {
-                          <p class="muted">No audit entries.</p>
-                        } @else {
-                          <div class="history-list">
-                            @for (log of auditLogs(); track log.id) {
-                              <mat-card appearance="outlined">
-                                <mat-card-content>
-                                  <strong>{{ log.action }}</strong>
-                                  <p class="muted">{{ log.createdAt | date: 'medium' }}</p>
-                                  <p>{{ log.reasonForChange }}</p>
-                                  <p class="muted">{{ log.actorName || log.actorId || 'Unknown' }}</p>
-                                </mat-card-content>
-                              </mat-card>
-                            }
-                          </div>
-                        }
-                      </div>
-
-                      <mat-divider style="margin: 2.5rem 0;"></mat-divider>
-
-                      <div class="work-card-header">
-                        <h3 class="work-card-title">Asset supersede history</h3>
-                        @if (supersededAssets().length === 0) {
-                          <p class="muted">No asset supersede history.</p>
-                        } @else {
-                          <div class="history-list">
-                            @for (asset of supersededAssets(); track asset.id) {
-                              <mat-card appearance="outlined">
-                                <mat-card-content>
-                                  <strong>
-                                    {{ getAssetRevisionLabel(asset) }} - {{ asset.caption }}
-                                  </strong>
-                                  <p class="muted">
-                                    Process version v{{ version.versionNumber }} - Uploaded
-                                    {{ asset.createdAt | date: 'medium' }}
-                                  </p>
-                                  <p class="muted">
-                                    {{ getAssetMimeTypeLabel(asset) }} - {{ asset.sizeBytes }} bytes
-                                  </p>
-                                  @if (asset.supersededAt) {
-                                    <p class="muted">Superseded: {{ asset.supersededAt | date: 'medium' }}</p>
-                                  }
-                                </mat-card-content>
-                              </mat-card>
-                            }
-                          </div>
-                        }
-                      </div>
-                    }
-                  </mat-card-content>
-                </mat-card>
-              </div>
+              <app-version-history-panel
+                [version]="version"
+                [historyAvailable]="historyAvailable()"
+                [stateHistory]="stateHistory()"
+                [auditLogs]="auditLogs()"
+                [assets]="assets()"
+                [supersededAssets]="supersededAssets()"
+              />
             }
           </section>
         </section>
@@ -1413,14 +737,8 @@ export class VersionDetailPageComponent {
   private readonly destroyRef = inject(DestroyRef);
   private readonly breadcrumbOwner = Symbol('version-detail-page');
 
-  @ViewChild('titleInput', { static: false })
-  private readonly titleInput?: ElementRef<HTMLInputElement>;
-  @ViewChild('changeDescriptionInput', { static: false })
-  private readonly changeDescriptionInput?: ElementRef<HTMLTextAreaElement>;
-  @ViewChild('reasonForChangeInput', { static: false })
-  private readonly reasonForChangeInput?: ElementRef<HTMLTextAreaElement>;
-  @ViewChild('architectureStateInput', { static: false })
-  private readonly architectureStateInput?: MatSelect;
+  @ViewChild(VersionLifecyclePanelComponent)
+  private readonly lifecyclePanel?: VersionLifecyclePanelComponent;
 
   protected readonly version = signal<ProcessVersionRecord | null>(null);
   protected readonly process = signal<ProcessRecord | null>(null);
@@ -1524,8 +842,7 @@ export class VersionDetailPageComponent {
   );
   protected readonly assetTimeline = computed(() => [...this.assets()].reverse());
   protected readonly previewAsset = computed(() => {
-    const previewAssetId =
-      this.expandedPreviewAssetId() ?? this.previewAssetContent()?.id;
+    const previewAssetId = this.expandedPreviewAssetId() ?? this.previewAssetContent()?.id;
 
     return (
       this.assets().find((asset) => asset.id === previewAssetId) ??
@@ -1571,8 +888,7 @@ export class VersionDetailPageComponent {
     titlePresent: this.draftForm.controls.title.getRawValue().trim().length > 0,
     changeDescriptionPresent:
       this.draftForm.controls.changeDescription.getRawValue().trim().length > 0,
-    reasonForChangePresent:
-      this.draftForm.controls.reasonForChange.getRawValue().trim().length > 0,
+    reasonForChangePresent: this.draftForm.controls.reasonForChange.getRawValue().trim().length > 0,
     architectureStateSelected: this.architectureStateSelected(),
     hasBpmnAsset: this.hasBpmnAsset(),
     hasProcedure: this.hasProcedure(),
@@ -1581,11 +897,31 @@ export class VersionDetailPageComponent {
     if (this.showReviewChecklist()) {
       const checklistState = this.checklistState();
       const reviewChecklistItems = [
-        { checked: checklistState.titleChecked, label: 'Confirm the title is correct', action: () => this.selectTabAndFocus('work', 'title') },
-        { checked: checklistState.changeChecked, label: 'Confirm the change description is correct', action: () => this.selectTabAndFocus('work', 'changeDescription') },
-        { checked: checklistState.requirementsChecked, label: 'Confirm the reason for change is correct', action: () => this.selectTabAndFocus('work', 'reasonForChange') },
-        { checked: checklistState.architectureChecked, label: 'Confirm the architecture state is correct', action: () => this.selectTabAndFocus('work', 'architectureState') },
-        { checked: checklistState.diagramProceduresChecked, label: 'Check that the BPMN diagram reflects the documented procedures', action: () => this.selectTab('diagram') },
+        {
+          checked: checklistState.titleChecked,
+          label: 'Confirm the title is correct',
+          action: () => this.selectTabAndFocus('work', 'title'),
+        },
+        {
+          checked: checklistState.changeChecked,
+          label: 'Confirm the change description is correct',
+          action: () => this.selectTabAndFocus('work', 'changeDescription'),
+        },
+        {
+          checked: checklistState.requirementsChecked,
+          label: 'Confirm the reason for change is correct',
+          action: () => this.selectTabAndFocus('work', 'reasonForChange'),
+        },
+        {
+          checked: checklistState.architectureChecked,
+          label: 'Confirm the architecture state is correct',
+          action: () => this.selectTabAndFocus('work', 'architectureState'),
+        },
+        {
+          checked: checklistState.diagramProceduresChecked,
+          label: 'Check that the BPMN diagram reflects the documented procedures',
+          action: () => this.selectTab('diagram'),
+        },
       ];
       const nextItem = reviewChecklistItems.find((item) => !item.checked);
       return nextItem ? { label: nextItem.label, action: nextItem.action } : null;
@@ -1597,12 +933,36 @@ export class VersionDetailPageComponent {
 
     const submissionRequirements = this.submissionRequirements();
     const submissionChecklistItems = [
-      { present: submissionRequirements.titlePresent, label: 'Fill in the title', action: () => this.selectTabAndFocus('work', 'title') },
-      { present: submissionRequirements.changeDescriptionPresent, label: 'Fill in the change description', action: () => this.selectTabAndFocus('work', 'changeDescription') },
-      { present: submissionRequirements.reasonForChangePresent, label: 'Fill in the reason for change', action: () => this.selectTabAndFocus('work', 'reasonForChange') },
-      { present: submissionRequirements.architectureStateSelected, label: 'Select the architecture state', action: () => this.selectTabAndFocus('work', 'architectureState') },
-      { present: submissionRequirements.hasBpmnAsset, label: 'Upload the BPMN diagram', action: () => this.selectTab('diagram') },
-      { present: submissionRequirements.hasProcedure, label: 'Add at least 1 procedure', action: () => this.selectTab('procedures') },
+      {
+        present: submissionRequirements.titlePresent,
+        label: 'Fill in the title',
+        action: () => this.selectTabAndFocus('work', 'title'),
+      },
+      {
+        present: submissionRequirements.changeDescriptionPresent,
+        label: 'Fill in the change description',
+        action: () => this.selectTabAndFocus('work', 'changeDescription'),
+      },
+      {
+        present: submissionRequirements.reasonForChangePresent,
+        label: 'Fill in the reason for change',
+        action: () => this.selectTabAndFocus('work', 'reasonForChange'),
+      },
+      {
+        present: submissionRequirements.architectureStateSelected,
+        label: 'Select the architecture state',
+        action: () => this.selectTabAndFocus('work', 'architectureState'),
+      },
+      {
+        present: submissionRequirements.hasBpmnAsset,
+        label: 'Upload the BPMN diagram',
+        action: () => this.selectTab('diagram'),
+      },
+      {
+        present: submissionRequirements.hasProcedure,
+        label: 'Add at least 1 procedure',
+        action: () => this.selectTab('procedures'),
+      },
     ];
     const nextItem = submissionChecklistItems.find((item) => !item.present);
     return nextItem ? { label: nextItem.label, action: nextItem.action } : null;
@@ -1644,7 +1004,11 @@ export class VersionDetailPageComponent {
     const currentVersion = this.version();
     const activeWorkflowVersion = this.process()?.governanceSummary?.activeWorkflowVersion;
 
-    if (!currentVersion || !activeWorkflowVersion || activeWorkflowVersion?.id !== currentVersion?.id) {
+    if (
+      !currentVersion ||
+      !activeWorkflowVersion ||
+      activeWorkflowVersion?.id !== currentVersion?.id
+    ) {
       return null;
     }
 
@@ -1660,11 +1024,7 @@ export class VersionDetailPageComponent {
     const waitingForRole = this.waitingForRoleLabel();
     const currentRole = this.currentUserRole();
 
-    return Boolean(
-      currentRole &&
-        waitingForRole !== '-' &&
-        waitingForRole === currentRole,
-    );
+    return Boolean(currentRole && waitingForRole !== '-' && waitingForRole === currentRole);
   });
   protected readonly workPanelTitle = computed(() => {
     if (this.canEditDraft()) {
@@ -1702,7 +1062,9 @@ export class VersionDetailPageComponent {
       return null;
     }
 
-    const relatedVersion = this.relatedVersions().find((version) => version.id === derivedFromVersionId);
+    const relatedVersion = this.relatedVersions().find(
+      (version) => version.id === derivedFromVersionId,
+    );
 
     if (!relatedVersion) {
       return 'the linked earlier version';
@@ -1803,8 +1165,8 @@ export class VersionDetailPageComponent {
 
     return `${this.getAssetRevisionLabel(currentAsset)} current revision uploaded`;
   });
-  protected readonly editingProcedure = computed(() =>
-    this.procedures().find((procedure) => procedure.id === this.editingProcedureId()) ?? null,
+  protected readonly editingProcedure = computed(
+    () => this.procedures().find((procedure) => procedure.id === this.editingProcedureId()) ?? null,
   );
   protected readonly procedurePanelTitle = computed(() =>
     this.editingProcedure()
@@ -1929,25 +1291,7 @@ export class VersionDetailPageComponent {
 
     // Use setTimeout to wait for the tab transition to complete
     setTimeout(() => {
-      let focusTarget: { focus: () => void } | undefined;
-      switch (inputId) {
-        case 'title':
-          focusTarget = this.titleInput?.nativeElement;
-          break;
-        case 'changeDescription':
-          focusTarget = this.changeDescriptionInput?.nativeElement;
-          break;
-        case 'reasonForChange':
-          focusTarget = this.reasonForChangeInput?.nativeElement;
-          break;
-        case 'architectureState':
-          focusTarget = this.architectureStateInput;
-          break;
-      }
-
-      if (focusTarget) {
-        focusTarget.focus();
-      }
+      this.lifecyclePanel?.focusField(inputId);
     }, 100);
   }
 
@@ -1994,32 +1338,19 @@ export class VersionDetailPageComponent {
       await this.reloadSupportingData(currentVersion);
       this.toast.success('BPMN asset uploaded successfully');
     } catch (error) {
-      this.uploadErrorMessage.set(
-        getHttpErrorMessage(error, 'Unable to upload the BPMN asset.'),
-      );
+      this.uploadErrorMessage.set(getHttpErrorMessage(error, 'Unable to upload the BPMN asset.'));
       this.toast.error('Failed to upload BPMN asset');
     } finally {
       this.isUploading.set(false);
     }
   }
 
-  protected isPreviewedAsset(asset: AssetRecord): boolean {
-    return this.expandedPreviewAssetId() === asset.id;
-  }
-
   protected getAssetRevisionLabel(asset: AssetRecord): string {
-    return `v${this.getAssetRevisionNumber(asset)}`;
+    return getAssetRevisionLabel(asset, this.assets());
   }
 
   protected getAssetMimeTypeLabel(asset: AssetRecord): string {
-    if (
-      asset.mimeType === 'application/octet-stream' &&
-      /\.(bpmn|xml)$/i.test(asset.filePath)
-    ) {
-      return 'application/xml';
-    }
-
-    return asset.mimeType;
+    return getAssetMimeTypeLabel(asset);
   }
 
   protected async toggleAssetPreview(asset: AssetRecord): Promise<void> {
@@ -2057,9 +1388,7 @@ export class VersionDetailPageComponent {
       this.expandedAssetXmlContent.set(await this.loadAssetContent(asset));
       this.expandedAssetXmlId.set(asset.id);
     } catch (error) {
-      this.uploadErrorMessage.set(
-        getHttpErrorMessage(error, 'Unable to load the BPMN asset XML.'),
-      );
+      this.uploadErrorMessage.set(getHttpErrorMessage(error, 'Unable to load the BPMN asset XML.'));
     }
   }
 
@@ -2067,9 +1396,7 @@ export class VersionDetailPageComponent {
     return this.procedureForm.controls.activities;
   }
 
-  protected addProcedureActivity(
-    activity?: Partial<ProcedureActivityFormValue>,
-  ): void {
+  protected addProcedureActivity(activity?: Partial<ProcedureActivityFormValue>): void {
     this.procedureActivities().push(this.createProcedureActivityGroup(activity));
   }
 
@@ -2089,9 +1416,7 @@ export class VersionDetailPageComponent {
       inputsText: this.stringifyProcedureList(procedure.inputs),
       outputsText: this.stringifyProcedureList(procedure.outputs),
     });
-    this.resetProcedureActivities(
-      this.mapProcedureActivitiesToForm(procedure.activities),
-    );
+    this.resetProcedureActivities(this.mapProcedureActivitiesToForm(procedure.activities));
   }
 
   protected cancelProcedureEdit(): void {
@@ -2105,9 +1430,7 @@ export class VersionDetailPageComponent {
 
     if (!currentVersion || this.procedureForm.invalid) {
       this.procedureForm.markAllAsTouched();
-      this.procedureErrorMessage.set(
-        'Complete the required procedure fields before saving.',
-      );
+      this.procedureErrorMessage.set('Complete the required procedure fields before saving.');
       return;
     }
 
@@ -2126,12 +1449,8 @@ export class VersionDetailPageComponent {
           workInstruction: value.workInstruction.trim(),
         };
       }),
-      inputs: this.parseProcedureList(
-        this.procedureForm.controls.inputsText.getRawValue(),
-      ),
-      outputs: this.parseProcedureList(
-        this.procedureForm.controls.outputsText.getRawValue(),
-      ),
+      inputs: this.parseProcedureList(this.procedureForm.controls.inputsText.getRawValue()),
+      outputs: this.parseProcedureList(this.procedureForm.controls.outputsText.getRawValue()),
     };
 
     this.isSavingProcedure.set(true);
@@ -2139,9 +1458,7 @@ export class VersionDetailPageComponent {
 
     try {
       if (this.editingProcedureId()) {
-        await firstValueFrom(
-          this.api.updateProcedure(this.editingProcedureId()!, payload),
-        );
+        await firstValueFrom(this.api.updateProcedure(this.editingProcedureId()!, payload));
         this.toast.success('Procedure updated successfully');
       } else {
         await firstValueFrom(this.api.createProcedure(currentVersion.id, payload));
@@ -2151,15 +1468,12 @@ export class VersionDetailPageComponent {
       await this.reloadSupportingData(currentVersion);
       this.cancelProcedureEdit();
     } catch (error) {
-      this.procedureErrorMessage.set(
-        getHttpErrorMessage(error, 'Unable to save the procedure.'),
-      );
+      this.procedureErrorMessage.set(getHttpErrorMessage(error, 'Unable to save the procedure.'));
       this.toast.error('Failed to save procedure');
     } finally {
       this.isSavingProcedure.set(false);
     }
   }
-
 
   protected async runLifecycleAction(action: LifecycleActionDefinition): Promise<void> {
     const currentVersion = this.version();
@@ -2314,14 +1628,6 @@ export class VersionDetailPageComponent {
     await this.ensurePreviewAssetContent(assets);
   }
 
-  private getAssetRevisionNumber(asset: AssetRecord): number {
-    const index = this.assets().findIndex(
-      (candidateAsset) => candidateAsset.id === asset.id,
-    );
-
-    return index >= 0 ? index + 1 : this.assets().length;
-  }
-
   private async loadAssetContent(asset: AssetRecord): Promise<AssetContentRecord> {
     const currentPreview = this.previewAssetContent();
 
@@ -2329,9 +1635,7 @@ export class VersionDetailPageComponent {
       return currentPreview;
     }
 
-    return await firstValueFrom(
-      this.api.getAssetContent(asset.processVersionId, asset.id),
-    );
+    return await firstValueFrom(this.api.getAssetContent(asset.processVersionId, asset.id));
   }
 
   private async ensurePreviewAssetContent(assets: AssetRecord[]): Promise<void> {
@@ -2341,12 +1645,9 @@ export class VersionDetailPageComponent {
       return;
     }
 
-    const currentPreviewId =
-      this.expandedPreviewAssetId() ?? this.previewAssetContent()?.id;
+    const currentPreviewId = this.expandedPreviewAssetId() ?? this.previewAssetContent()?.id;
     const assetToPreview =
-      (currentPreviewId
-        ? assets.find((asset) => asset.id === currentPreviewId)
-        : null) ??
+      (currentPreviewId ? assets.find((asset) => asset.id === currentPreviewId) : null) ??
       assets.find((asset) => asset.isCurrent) ??
       assets.at(-1) ??
       null;
@@ -2469,9 +1770,7 @@ export class VersionDetailPageComponent {
     }
   }
 
-  private createProcedureActivityGroup(
-    activity?: Partial<ProcedureActivityFormValue>,
-  ) {
+  private createProcedureActivityGroup(activity?: Partial<ProcedureActivityFormValue>) {
     return this.fb.group({
       resource: [activity?.resource ?? '', [Validators.required]],
       serviceAction: [activity?.serviceAction ?? '', [Validators.required]],
@@ -2479,9 +1778,7 @@ export class VersionDetailPageComponent {
     });
   }
 
-  private resetProcedureActivities(
-    activities: ProcedureActivityFormValue[] = [],
-  ): void {
+  private resetProcedureActivities(activities: ProcedureActivityFormValue[] = []): void {
     this.procedureActivities().clear();
 
     for (const activity of activities) {
@@ -2520,13 +1817,9 @@ export class VersionDetailPageComponent {
     }));
   }
 
-  private stringifyProcedureList(
-    items: unknown[] | null | undefined,
-  ): string {
+  private stringifyProcedureList(items: unknown[] | null | undefined): string {
     return (items ?? [])
-      .map((item) =>
-        typeof item === 'string' ? item : JSON.stringify(item),
-      )
+      .map((item) => (typeof item === 'string' ? item : JSON.stringify(item)))
       .join('\n');
   }
 
@@ -2537,10 +1830,7 @@ export class VersionDetailPageComponent {
       .filter((entry) => entry.length > 0);
   }
 
-  private readProcedureString(
-    activity: Record<string, unknown>,
-    keys: string[],
-  ): string {
+  private readProcedureString(activity: Record<string, unknown>, keys: string[]): string {
     for (const key of keys) {
       const value = activity[key];
 
@@ -2586,9 +1876,7 @@ export class VersionDetailPageComponent {
       }
     } catch (error) {
       if (showMessageOnError) {
-        this.draftErrorMessage.set(
-          getHttpErrorMessage(error, 'Unable to save the draft changes.'),
-        );
+        this.draftErrorMessage.set(getHttpErrorMessage(error, 'Unable to save the draft changes.'));
         this.toast.error('Failed to save draft');
       }
 

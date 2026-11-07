@@ -34,6 +34,7 @@ interface VersionDetailPageTestInstance {
   getAssetRevisionLabel: VersionDetailPageComponent['getAssetRevisionLabel'];
   getAssetMimeTypeLabel: VersionDetailPageComponent['getAssetMimeTypeLabel'];
   saveDraft: VersionDetailPageComponent['saveDraft'];
+  selectTab: VersionDetailPageComponent['selectTab'];
 }
 
 type TestRole = 'EDITOR' | 'REVIEWER' | 'PUBLISHER';
@@ -721,5 +722,70 @@ describe('VersionDetailPageComponent', () => {
     expect(component.expandedPreviewAssetId()).toBe('asset-2');
     expect(component.previewAssetContent()?.id).toBe('asset-2');
     expect(component.diagramPreviewXml()).toContain('asset-2');
+  });
+
+  it('should delegate lifecycle work rendering to a focused panel', async () => {
+    const fixture = TestBed.createComponent(VersionDetailPageComponent);
+    fixture.componentRef.setInput('id', 'version-1');
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const component = fixture.componentInstance as unknown as VersionDetailPageTestInstance;
+    component.selectTab('work');
+    fixture.detectChanges();
+
+    const panel = fixture.nativeElement.querySelector('app-version-lifecycle-panel');
+    expect(panel).not.toBeNull();
+    expect(panel.textContent).toContain('Your responsibility');
+    expect(panel.textContent).toContain('Submit for Review');
+  });
+
+  it('should delegate asset revision rendering to a focused panel', async () => {
+    const fixture = TestBed.createComponent(VersionDetailPageComponent);
+    fixture.componentRef.setInput('id', 'version-1');
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const component = fixture.componentInstance as unknown as VersionDetailPageTestInstance;
+    component.selectTab('diagram');
+    fixture.detectChanges();
+
+    const panel = fixture.nativeElement.querySelector('app-version-asset-panel');
+    expect(panel).not.toBeNull();
+    expect(panel.textContent).toContain('Current preview');
+    expect(panel.textContent).toContain('Diagram revisions');
+  });
+
+  it('should delegate procedure rendering to a focused panel', async () => {
+    const fixture = TestBed.createComponent(VersionDetailPageComponent);
+    fixture.componentRef.setInput('id', 'version-1');
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const component = fixture.componentInstance as unknown as VersionDetailPageTestInstance;
+    component.selectTab('procedures');
+    fixture.detectChanges();
+
+    const panel = fixture.nativeElement.querySelector('app-version-procedure-panel');
+    expect(panel).not.toBeNull();
+    expect(panel.textContent).toContain('Add procedure');
+    expect(panel.textContent).toContain('No procedures defined for this version yet.');
+  });
+
+  it('should delegate governance history rendering to a focused panel', async () => {
+    const fixture = TestBed.createComponent(VersionDetailPageComponent);
+    fixture.componentRef.setInput('id', 'version-1');
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const component = fixture.componentInstance as unknown as VersionDetailPageTestInstance;
+    component.selectTab('history');
+    fixture.detectChanges();
+
+    const panel = fixture.nativeElement.querySelector('app-version-history-panel');
+    expect(panel).not.toBeNull();
+    expect(panel.textContent).toContain('Lifecycle history');
+    expect(panel.textContent).toContain('Audit history');
+    expect(panel.textContent).toContain('Asset supersede history');
   });
 });
