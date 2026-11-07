@@ -46,13 +46,13 @@ A1 → A11 ───────────────┘───────
 **Tests/Gate:** contract/full  
 **Done when:** every consumed endpoint has an intentional schema, including text/void/nullable responses, and the audit is automated. **Complete: 2026-11-07; 57 consumed operations covered; 325 API tests passed.**
 
-### A5 — Generate and adopt public contract types [P]
+### A5 — Generate and adopt public contract types [P] ✅
 
 **Where:** `web/public/src/app/core/api/generated/`, public models/services/mappers/specs  
 **Depends on:** A4  
 **Requirement:** TERM-01, CONTRACT-01  
 **Tests/Gate:** unit+contract/full — public suite/build  
-**Done when:** contract fields alias generated schemas and presentation adapters remain thin.
+**Done when:** contract fields alias generated schemas and presentation adapters remain thin. **Complete: 2026-11-07; generated types/check added, 23 public tests and production build passed.**
 
 ### A6 — Generate and adopt backoffice contract types [P]
 

@@ -1,139 +1,40 @@
-export type ArchitectureState = 'AS-IS' | 'TO-BE';
+import type { components, paths } from '../api/generated/api.types';
 
-export interface PublicAreaSummary {
-  id: string;
-  code: string;
-  title: string;
+type JsonResponse<Operation extends { responses: object }> = Operation['responses'] extends {
+  200: { content: { 'application/json': infer Response } };
 }
+  ? Response
+  : never;
 
-export interface PublicCatalogSearchResult {
-  kind: 'Area' | 'Process' | 'Procedure' | 'Asset';
-  code: string;
-  title: string;
-  subtitle: string;
-  href: string;
-}
+export type ArchitectureState =
+  components['schemas']['PublicProcessSummaryResponseDto']['availableArchitectures'][number];
 
-export interface PublicProcessSummary {
-  id: string;
-  code: string;
-  title: string;
-  description: string | null;
-  area: PublicAreaSummary;
-  itilPractice: {
-    id: string;
-    code: string;
-    name: string;
-  };
-  availableArchitectures: ArchitectureState[];
-}
+export type PublicAreaSummary = JsonResponse<paths['/public/areas']['get']>[number];
 
-export interface PublicProcedureSummary {
-  id: string;
-  processVersionId: string;
-  code: string;
-  title: string;
-  description: string | null;
-  version: {
-    versionNumber: number;
-    architectureState: ArchitectureState;
-    title: string;
-  };
-  process: {
-    id: string;
-    code: string;
-    title: string;
-  };
-  area: PublicAreaSummary;
-  utility: string;
-  warranty: string;
-  outcome: string;
-  policy: string;
-  activities: Record<string, unknown>[];
-  inputs: string[];
-  outputs: string[];
-}
+export type PublicCatalogSearchResult = JsonResponse<paths['/public/search']['get']>[number];
 
-export interface PublicProcessVersionView {
-  id: string;
-  processId: string;
-  versionNumber: number;
-  architectureState: ArchitectureState;
-  title: string;
-  changeDescription: string;
-  reasonForChange: string;
-  procedures: PublicProcedureSummary[];
-  bpmnAsset: {
-    id: string;
-    caption: string;
-  } | null;
-}
+export type PublicProcessSummary = JsonResponse<paths['/public/processes']['get']>[number];
 
-export interface PublicProcessHistoryItem {
-  id: string;
-  versionNumber: number;
-  lifecycleState: 'Published' | 'Archived';
-  architectureState: ArchitectureState;
-  title: string;
-  changeDescription: string;
-  reasonForChange: string;
-  createdAt?: string;
-  updatedAt?: string;
-  derivedFromVersionId?: string | null;
-}
+export type PublicProcedureSummary = JsonResponse<paths['/public/procedures']['get']>[number];
 
-export interface PublicProcessDetail {
-  process: {
-    id: string;
-    code: string;
-    title: string;
-    description: string | null;
-    area: PublicAreaSummary;
-    itilPractice: {
-      id: string;
-      code: string;
-      name: string;
-    };
-  };
-  versions: {
-    asIs: PublicProcessVersionView | null;
-    toBe: PublicProcessVersionView | null;
-  };
-}
+export type PublicProcessVersionView = components['schemas']['PublicProcessVersionViewResponseDto'];
 
-export interface PublicProcedureDetail {
-  procedure: PublicProcedureSummary;
-  version: {
-    id: string;
-    versionNumber: number;
-    architectureState: ArchitectureState;
-    title: string;
-  };
-  process: {
-    id: string;
-    code: string;
-    title: string;
-  };
-  area: PublicAreaSummary;
-  itilPractice: {
-    id: string;
-    code: string;
-    name: string;
-  };
-}
+export type PublicProcessHistoryItem = JsonResponse<
+  paths['/public/processes/{processId}/versions']['get']
+>[number];
 
-export interface PublicGlossaryResponse {
-  terms: {
-    id: string;
-    term: string;
-    definition: string;
-    category: string | null;
-    isPreferred: boolean;
-  }[];
-  practices: {
-    id: string;
-    code: string;
-    name: string;
-    description: string;
-  }[];
-}
+export type PublicProcessDetail = JsonResponse<paths['/public/processes/{processId}']['get']>;
+
+export type PublicProcedureDetail = JsonResponse<paths['/public/procedures/{id}']['get']>;
+
+export type PublicGlossaryResponse = JsonResponse<paths['/public/glossary']['get']>;
+
+type PublicGlossaryTerm = PublicGlossaryResponse['terms'][number];
+
+export type PublicGlossaryViewModel = Omit<PublicGlossaryResponse, 'terms'> & {
+  terms: Array<
+    Omit<PublicGlossaryTerm, 'category'> & {
+      category: string | null;
+    }
+  >;
+};

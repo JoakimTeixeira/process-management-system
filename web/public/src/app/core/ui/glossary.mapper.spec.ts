@@ -1,15 +1,17 @@
+import { PublicGlossaryResponse } from '../models/public-portal.models';
 import { mapGlossaryResponse } from './glossary.mapper';
 
 describe('glossary.mapper', () => {
   it('should separate glossary terms from practices', () => {
-    const response = {
+    const response: PublicGlossaryResponse = {
       terms: [
         {
           id: 'term-1',
           term: 'Configuration Item',
           definition: 'Managed component',
-          category: 'ITSM',
+          category: {},
           isPreferred: true,
+          createdBy: null,
         },
       ],
       practices: [
@@ -22,6 +24,9 @@ describe('glossary.mapper', () => {
       ],
     };
 
-    expect(mapGlossaryResponse(response)).toEqual(response);
+    expect(mapGlossaryResponse(response)).toEqual({
+      ...response,
+      terms: [{ ...response.terms[0], category: null }],
+    });
   });
 });

@@ -8,7 +8,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 
 import { PublicPortalApiService } from '../../core/api/public-portal-api.service';
-import { PublicGlossaryResponse } from '../../core/models/public-portal.models';
+import { PublicGlossaryViewModel } from '../../core/models/public-portal.models';
 import { mapGlossaryResponse } from '../../core/ui/glossary.mapper';
 import { buildStaticBreadcrumbs } from '../../shared/breadcrumbs/breadcrumbs.builder';
 import { BreadcrumbsComponent } from '../../shared/breadcrumbs/breadcrumbs.component';
@@ -33,7 +33,7 @@ export class GlossaryPageComponent {
   private readonly publicPortalApi = inject(PublicPortalApiService);
 
   protected readonly breadcrumbs = buildStaticBreadcrumbs('Glossary');
-  protected readonly glossary = signal<PublicGlossaryResponse | null>(null);
+  protected readonly glossary = signal<PublicGlossaryViewModel | null>(null);
   protected readonly loading = signal(true);
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly terms = computed(() => this.glossary()?.terms ?? []);
