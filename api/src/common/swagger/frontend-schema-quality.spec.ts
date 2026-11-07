@@ -61,10 +61,12 @@ describe('frontend-consumed OpenAPI schema quality', () => {
     expect(activities).toEqual(
       expect.objectContaining({
         type: 'array',
-        items: expect.objectContaining({
-          type: 'object',
-          additionalProperties: true,
-        }),
+      }),
+    );
+    expect(activities?.items).toEqual(
+      expect.objectContaining({
+        type: 'object',
+        additionalProperties: true,
       }),
     );
   });
