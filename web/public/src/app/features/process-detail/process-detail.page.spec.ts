@@ -1,3 +1,4 @@
+import { Signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, Router } from '@angular/router';
 import { of } from 'rxjs';
@@ -12,14 +13,14 @@ import { BreadcrumbItem } from '../../shared/breadcrumbs/breadcrumbs.builder';
 import { ProcessDetailPageComponent } from './process-detail.page';
 
 interface ProcessDetailPageHarness {
-  activeTabId: string;
-  breadcrumbs: BreadcrumbItem[];
-  canCompareViews: boolean;
-  compareLeftViewId: string;
-  compareRightViewId: string;
-  detail: PublicProcessDetail | null;
-  historyItems: PublicProcessHistoryItem[];
-  loading: boolean;
+  activeTabId: Signal<string>;
+  breadcrumbs: Signal<BreadcrumbItem[]>;
+  canCompareViews: Signal<boolean>;
+  compareLeftViewId: Signal<string>;
+  compareRightViewId: Signal<string>;
+  detail: Signal<PublicProcessDetail | null>;
+  historyItems: Signal<PublicProcessHistoryItem[]>;
+  loading: Signal<boolean>;
   handleTabChange(tab: 'overview' | 'diagram' | 'procedures' | 'history' | 'compare'): void;
 }
 
@@ -104,14 +105,14 @@ describe('ProcessDetailPageComponent', () => {
 
     fixture.componentInstance.ngOnInit();
 
-    expect(page.loading).toBe(false);
-    expect(page.detail).toEqual(detail);
-    expect(page.historyItems).toEqual([historyItem]);
-    expect(page.activeTabId).toBe('compare');
-    expect(page.compareLeftViewId).toBe('as-is');
-    expect(page.compareRightViewId).toBe('to-be');
-    expect(page.canCompareViews).toBe(true);
-    expect(page.breadcrumbs.at(-1)?.label).toBe('Compare');
+    expect(page.loading()).toBe(false);
+    expect(page.detail()).toEqual(detail);
+    expect(page.historyItems()).toEqual([historyItem]);
+    expect(page.activeTabId()).toBe('compare');
+    expect(page.compareLeftViewId()).toBe('as-is');
+    expect(page.compareRightViewId()).toBe('to-be');
+    expect(page.canCompareViews()).toBe(true);
+    expect(page.breadcrumbs().at(-1)?.label).toBe('Compare');
   });
 
   it('navigates history without carrying view query parameters', () => {

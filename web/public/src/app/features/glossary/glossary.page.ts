@@ -1,5 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  OnInit,
+  computed,
+  inject,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -28,8 +37,9 @@ import { BreadcrumbsComponent } from '../../shared/breadcrumbs/breadcrumbs.compo
   templateUrl: './glossary.page.html',
   styleUrl: './glossary.page.scss',
 })
-export class GlossaryPageComponent {
+export class GlossaryPageComponent implements OnInit {
   private readonly publicPortalApi = inject(PublicPortalApiService);
+  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly breadcrumbs = buildStaticBreadcrumbs('Glossary');
   protected readonly glossary = signal<PublicGlossaryResponse | null>(null);
@@ -68,17 +78,20 @@ export class GlossaryPageComponent {
     });
   });
 
-  constructor() {
-    this.publicPortalApi.getGlossary().subscribe({
-      next: (response) => {
-        this.glossary.set(response);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.loading.set(false);
-        this.errorMessage.set('The public glossary could not be loaded.');
-      },
-    });
+  ngOnInit(): void {
+    this.publicPortalApi
+      .getGlossary()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (response) => {
+          this.glossary.set(response);
+          this.loading.set(false);
+        },
+        error: () => {
+          this.loading.set(false);
+          this.errorMessage.set('The public glossary could not be loaded.');
+        },
+      });
   }
 
   protected handleSearchInput(event: Event): void {

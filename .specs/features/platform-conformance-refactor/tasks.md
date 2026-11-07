@@ -61,13 +61,15 @@ A5  + B3 → C5 → C6 → C7
 
 **Complete:** 2026-11-07 — all public feature routes load standalone components lazily, router component input binding is enabled, and structural tests preserve paths, redirects, parameters, and route data. All 15 public test files / 40 tests, lint, contract, production build, and critical-flow verification pass.
 
-### C6 — Adopt signal-first public data/page state
+### C6 — Adopt signal-first public data/page state ✅
 
 **Where:** public API service and process-detail/procedure-detail/glossary (plus process-list if the audited CDR path remains) and specs  
 **Depends on:** C5  
 **Requirement:** REF-01  
 **Tests/Gate:** unit/full — public suite/build plus verify  
 **Done when:** touched pages have signal-first state and deterministic teardown; no constructor-started unsubscribed HTTP remains; experimental APIs are used only if stable enough.
+
+**Complete:** 2026-11-07 — process/procedure detail state is signal-first, glossary/procedure HTTP subscriptions tear down deterministically, glossary loading starts in `ngOnInit`, and redundant manual change detection is removed. Stable `HttpClient` observables remain the service boundary because Angular 20 marks `httpResource` experimental. All 15 public test files / 41 tests, lint, contract, and production build pass.
 
 ### C7 — Modernize public shared components
 

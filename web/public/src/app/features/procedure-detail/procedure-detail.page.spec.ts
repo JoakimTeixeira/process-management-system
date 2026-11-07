@@ -1,3 +1,4 @@
+import { Signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { of } from 'rxjs';
@@ -9,9 +10,9 @@ import { BreadcrumbItem } from '../../shared/breadcrumbs/breadcrumbs.builder';
 import { ProcedureDetailPageComponent } from './procedure-detail.page';
 
 interface ProcedureDetailPageHarness {
-  breadcrumbs: BreadcrumbItem[];
-  detail: PublicProcedureDetail | null;
-  loading: boolean;
+  breadcrumbs: Signal<BreadcrumbItem[]>;
+  detail: Signal<PublicProcedureDetail | null>;
+  loading: Signal<boolean>;
   readActivityField(
     activity: Record<string, unknown>,
     field: 'resource' | 'serviceAction' | 'workInstruction',
@@ -79,10 +80,10 @@ describe('ProcedureDetailPageComponent', () => {
 
     fixture.componentInstance.ngOnInit();
 
-    expect(page.loading).toBe(false);
-    expect(page.detail).toEqual(detail);
-    expect(page.breadcrumbs[1]).toEqual({ label: 'Processes', link: '/catalog/processes' });
-    expect(page.breadcrumbs[3]).toMatchObject({
+    expect(page.loading()).toBe(false);
+    expect(page.detail()).toEqual(detail);
+    expect(page.breadcrumbs()[1]).toEqual({ label: 'Processes', link: '/catalog/processes' });
+    expect(page.breadcrumbs()[3]).toMatchObject({
       link: '/catalog/processes/process-1',
       queryParams: { tab: 'procedures', view: 'to-be' },
     });

@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   computed,
   DestroyRef,
@@ -72,7 +71,6 @@ import {
   styleUrl: './process-list.page.scss',
 })
 export class ProcessListPageComponent implements OnInit {
-  private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -200,7 +198,6 @@ export class ProcessListPageComponent implements OnInit {
         this.pageTitle.set(getCatalogPageTitle(data['pageTitle'], nextState.tab));
         this.pageDescription.set(getCatalogPageDescription(nextState.tab));
         this.applyQueryState(nextState);
-        this.cdr.markForCheck();
       });
   }
 
@@ -221,12 +218,10 @@ export class ProcessListPageComponent implements OnInit {
           this.allProcedures.set(procedures);
           this.loading.set(false);
           this.ensureSelectedProcessIsValid();
-          this.cdr.markForCheck();
         },
         error: () => {
           this.loading.set(false);
           this.errorMessage.set('The public catalog could not be loaded.');
-          this.cdr.markForCheck();
         },
       });
   }

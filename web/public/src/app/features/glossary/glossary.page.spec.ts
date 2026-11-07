@@ -1,6 +1,7 @@
 import { Signal, WritableSignal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
+import { of, Subject } from 'rxjs';
 import { vi } from 'vitest';
 
 import { PublicPortalApiService } from '../../core/api/public-portal-api.service';
@@ -50,6 +51,7 @@ describe('GlossaryPageComponent', () => {
     await TestBed.configureTestingModule({
       imports: [GlossaryPageComponent],
       providers: [
+        { provide: ActivatedRoute, useValue: {} },
         {
           provide: PublicPortalApiService,
           useValue: { getGlossary: vi.fn().mockReturnValue(of(glossary)) },
@@ -61,6 +63,7 @@ describe('GlossaryPageComponent', () => {
   it('loads glossary data and filters terms by search and normalized category labels', () => {
     const fixture = TestBed.createComponent(GlossaryPageComponent);
     const page = fixture.componentInstance as unknown as GlossaryPageHarness;
+    fixture.detectChanges();
 
     expect(page.loading()).toBe(false);
     expect(page.categories()).toEqual(['General', 'Operations']);
@@ -74,5 +77,20 @@ describe('GlossaryPageComponent', () => {
 
     page.clearFilters();
     expect(page.filteredTerms()).toEqual(glossary.terms);
+  });
+
+  it('releases its glossary request when the page is destroyed', () => {
+    const response$ = new Subject<PublicGlossaryResponse>();
+    const api = TestBed.inject(PublicPortalApiService);
+    vi.mocked(api.getGlossary).mockReturnValue(response$);
+
+    const fixture = TestBed.createComponent(GlossaryPageComponent);
+    fixture.detectChanges();
+
+    expect(response$.observers).toHaveLength(1);
+
+    fixture.destroy();
+
+    expect(response$.observers).toHaveLength(0);
   });
 });

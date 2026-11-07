@@ -1,11 +1,13 @@
 import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
+  DestroyRef,
   OnInit,
   inject,
+  signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { ActivatedRoute } from '@angular/router';
@@ -33,12 +35,12 @@ import { BreadcrumbsComponent } from '../../shared/breadcrumbs/breadcrumbs.compo
 export class ProcedureDetailPageComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly publicPortalApi = inject(PublicPortalApiService);
-  private readonly cdr = inject(ChangeDetectorRef);
+  private readonly destroyRef = inject(DestroyRef);
 
-  protected detail: PublicProcedureDetail | null = null;
-  protected loading = true;
-  protected errorMessage: string | null = null;
-  protected breadcrumbs: BreadcrumbItem[] = [{ label: 'Home', link: '/' }];
+  protected readonly detail = signal<PublicProcedureDetail | null>(null);
+  protected readonly loading = signal(true);
+  protected readonly errorMessage = signal<string | null>(null);
+  protected readonly breadcrumbs = signal<BreadcrumbItem[]>([{ label: 'Home', link: '/' }]);
   protected readonly getArchitectureLabel = getArchitectureLabel;
   protected readonly getArchitectureSubtitle = getArchitectureSubtitle;
 
@@ -64,25 +66,25 @@ export class ProcedureDetailPageComponent implements OnInit {
     const context = this.readProcedureBreadcrumbContext();
 
     if (!procedureId) {
-      this.loading = false;
-      this.errorMessage = 'The requested procedure could not be identified.';
-      this.cdr.markForCheck();
+      this.loading.set(false);
+      this.errorMessage.set('The requested procedure could not be identified.');
       return;
     }
 
-    this.publicPortalApi.getProcedureDetail(procedureId).subscribe({
-      next: (detail) => {
-        this.detail = detail;
-        this.breadcrumbs = buildProcedureBreadcrumbs(detail, context);
-        this.loading = false;
-        this.cdr.markForCheck();
-      },
-      error: () => {
-        this.loading = false;
-        this.errorMessage = 'The requested public procedure could not be loaded.';
-        this.cdr.markForCheck();
-      },
-    });
+    this.publicPortalApi
+      .getProcedureDetail(procedureId)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (detail) => {
+          this.detail.set(detail);
+          this.breadcrumbs.set(buildProcedureBreadcrumbs(detail, context));
+          this.loading.set(false);
+        },
+        error: () => {
+          this.loading.set(false);
+          this.errorMessage.set('The requested public procedure could not be loaded.');
+        },
+      });
   }
 
   private readProcedureBreadcrumbContext(): ProcedureBreadcrumbContext {

@@ -1,14 +1,14 @@
-<app-breadcrumbs [items]="breadcrumbs" />
+<app-breadcrumbs [items]="breadcrumbs()" />
 
-@if (loading) {
+@if (loading()) {
   <div class="portal-state-panel">
     <mat-spinner diameter="42" />
   </div>
-} @else if (errorMessage) {
+} @else if (errorMessage(); as errorMessage) {
   <div class="portal-state-panel">
     <p>{{ errorMessage }}</p>
   </div>
-} @else if (detail) {
+} @else if (detail(); as detail) {
   <section class="procedure-page">
     <header class="portal-page-intro procedure-page__intro">
       <div class="procedure-page__identity">
