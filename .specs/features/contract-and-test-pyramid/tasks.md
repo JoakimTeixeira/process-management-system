@@ -86,13 +86,13 @@ A1 → A11 ───────────────┘───────
 **Tests/Gate:** integration/full  
 **Done when:** explicit test DB setup migrates once, cleans safely, serializes shared state, and refuses non-test cleanup targets. **Complete: 2026-11-07; 2 integration suites / 6 tests passed against live PostgreSQL, migrations ran once with one worker, non-test database names were rejected, and teardown removal was verified from the PostgreSQL catalog.**
 
-### A10 — Cover high-risk SQL against Postgres
+### A10 — Cover high-risk SQL against Postgres ✅
 
 **Where:** `api/test/integration/**/*.spec.ts`  
 **Depends on:** A9  
 **Requirement:** PYR-02  
 **Tests/Gate:** integration/full — lifecycle/public/RBAC/procedure+asset clone assertions pass  
-**Done when:** real SQL, not only mocked `query`, proves the identified critical paths.
+**Done when:** real SQL, not only mocked `query`, proves the identified critical paths. **Complete: 2026-11-07; 3 integration suites / 10 tests passed against isolated PostgreSQL, proving ownership joins, lifecycle archival/history/audit, published-only reads, and exact procedure/BPMN/PDF cloning during TO-BE promotion.**
 
 ### A11 — Automate curl and DB verification ✅
 
