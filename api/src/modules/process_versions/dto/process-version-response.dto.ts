@@ -63,6 +63,7 @@ export class ProcessVersionResponseDto {
 
   @ApiProperty({
     description: 'UUID of the version this draft was derived from, if any.',
+    type: String,
     format: 'uuid',
     nullable: true,
   })

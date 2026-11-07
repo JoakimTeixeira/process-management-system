@@ -26,6 +26,7 @@ export class GlossaryTermResponseDto {
 
   @ApiProperty({
     description: 'Optional grouping category for the term.',
+    type: String,
     example: 'ITIL',
     nullable: true,
   })
@@ -41,6 +42,7 @@ export class GlossaryTermResponseDto {
 
   @ApiProperty({
     description: 'Identifier of the user who created the term.',
+    type: String,
     format: 'uuid',
     nullable: true,
   })

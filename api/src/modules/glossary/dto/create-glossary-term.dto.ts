@@ -37,6 +37,7 @@ export class CreateGlossaryTermDto {
 
   @ApiPropertyOptional({
     description: 'Optional category label used to group glossary entries.',
+    type: String,
     example: 'ITIL',
     maxLength: MAX_TEXT_LENGTH,
     nullable: true,

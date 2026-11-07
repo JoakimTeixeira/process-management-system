@@ -40,6 +40,7 @@ export class VersionStateHistoryResponseDto {
 
   @ApiProperty({
     description: 'Identifier of the actor who triggered the transition.',
+    type: String,
     format: 'uuid',
     nullable: true,
   })
@@ -48,6 +49,7 @@ export class VersionStateHistoryResponseDto {
 
   @ApiProperty({
     description: 'Display name of the actor who triggered the transition.',
+    type: String,
     nullable: true,
   })
   @Expose()
@@ -55,6 +57,7 @@ export class VersionStateHistoryResponseDto {
 
   @ApiProperty({
     description: 'Justification recorded for the transition.',
+    type: String,
     nullable: true,
   })
   @Expose()

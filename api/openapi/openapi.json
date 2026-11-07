@@ -3221,18 +3221,18 @@
             "example": "In Review"
           },
           "actorId": {
-            "type": "object",
+            "type": "string",
             "description": "Identifier of the actor who triggered the transition.",
             "format": "uuid",
             "nullable": true
           },
           "actorName": {
-            "type": "object",
+            "type": "string",
             "description": "Display name of the actor who triggered the transition.",
             "nullable": true
           },
           "reason": {
-            "type": "object",
+            "type": "string",
             "description": "Justification recorded for the transition.",
             "nullable": true
           },
@@ -3277,13 +3277,13 @@
             "example": "PUBLISH"
           },
           "actorId": {
-            "type": "object",
+            "type": "string",
             "description": "Identifier of the actor who triggered the event.",
             "format": "uuid",
             "nullable": true
           },
           "actorName": {
-            "type": "object",
+            "type": "string",
             "description": "Display name of the actor who triggered the event.",
             "nullable": true
           },
@@ -3411,7 +3411,7 @@
             "description": "Whether the governance checklist has been completed."
           },
           "derivedFromVersionId": {
-            "type": "object",
+            "type": "string",
             "description": "UUID of the version this draft was derived from, if any.",
             "format": "uuid",
             "nullable": true
@@ -3598,13 +3598,13 @@
             "description": "Whether this asset is the active asset for the process version."
           },
           "supersededAt": {
-            "type": "object",
+            "type": "string",
             "description": "Timestamp when the asset was superseded.",
             "format": "date-time",
             "nullable": true
           },
           "supersededByAssetId": {
-            "type": "object",
+            "type": "string",
             "description": "Identifier of the replacement asset, if this one was superseded.",
             "format": "uuid",
             "nullable": true
@@ -3770,13 +3770,13 @@
             "example": "TO-BE"
           },
           "waitingForRole": {
-            "type": "object",
+            "type": "string",
             "description": "Role currently expected to act on the version.",
             "example": "REVIEWER",
             "nullable": true
           },
           "nextAction": {
-            "type": "object",
+            "type": "string",
             "description": "Next governance action available on the workflow.",
             "example": "approve",
             "nullable": true
@@ -3879,7 +3879,7 @@
             "description": "Business-facing title of the process."
           },
           "description": {
-            "type": "object",
+            "type": "string",
             "description": "Short description of the process scope.",
             "nullable": true
           },
@@ -3996,7 +3996,7 @@
             "description": "Display name of the ITIL practice."
           },
           "description": {
-            "type": "object",
+            "type": "string",
             "description": "Optional descriptive summary of the practice.",
             "nullable": true
           }
@@ -4082,7 +4082,7 @@
             "description": "Business-facing title of the area."
           },
           "description": {
-            "type": "object",
+            "type": "string",
             "description": "Description of the area scope.",
             "nullable": true
           },
@@ -4501,7 +4501,7 @@
             "example": "The practice for minimizing the negative impact of incidents by restoring normal service operation as quickly as possible."
           },
           "category": {
-            "type": "object",
+            "type": "string",
             "description": "Optional grouping category for the term.",
             "example": "ITIL",
             "nullable": true
@@ -4512,7 +4512,7 @@
             "example": true
           },
           "createdBy": {
-            "type": "object",
+            "type": "string",
             "description": "Identifier of the user who created the term.",
             "format": "uuid",
             "nullable": true
@@ -4597,7 +4597,7 @@
             "maxLength": 255
           },
           "category": {
-            "type": "object",
+            "type": "string",
             "description": "Optional category label used to group glossary entries.",
             "example": "ITIL",
             "maxLength": 255,
@@ -4631,7 +4631,7 @@
             "maxLength": 255
           },
           "category": {
-            "type": "object",
+            "type": "string",
             "description": "Updated glossary category. Use null to clear the category.",
             "example": "Operations",
             "maxLength": 255,
@@ -4707,7 +4707,7 @@
             "description": "Display title for the process."
           },
           "description": {
-            "type": "object",
+            "type": "string",
             "description": "Short description of the published process.",
             "nullable": true
           },
@@ -4821,7 +4821,7 @@
             "description": "Display title for the procedure."
           },
           "description": {
-            "type": "object",
+            "type": "string",
             "description": "Short description of the published procedure.",
             "nullable": true
           },
@@ -4866,10 +4866,11 @@
             "description": "Policy statement for the procedure."
           },
           "activities": {
-            "description": "Structured activity definitions for the procedure.",
             "type": "array",
+            "description": "Structured activity definitions for the procedure.",
             "items": {
-              "type": "object"
+              "type": "object",
+              "additionalProperties": true
             }
           },
           "inputs": {
@@ -4961,7 +4962,7 @@
             "description": "Display title for the process."
           },
           "description": {
-            "type": "object",
+            "type": "string",
             "description": "Short description of the published process.",
             "nullable": true
           },
@@ -5183,7 +5184,7 @@
             "format": "date-time"
           },
           "derivedFromVersionId": {
-            "type": "object",
+            "type": "string",
             "description": "Identifier of the source version this one was derived from.",
             "format": "uuid",
             "nullable": true

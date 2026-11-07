@@ -10,7 +10,8 @@
     "test:cov": "ng test --code-coverage",
     "test:headless": "ng test --watch=false --browsers=ChromeHeadless",
     "contract:generate": "openapi-typescript ../../api/openapi/openapi.json -o src/app/core/api/generated/api.types.ts",
-    "contract:check": "npm run contract:generate && git diff --exit-code -- src/app/core/api/generated/api.types.ts",
+    "contract:check": "openapi-typescript ../../api/openapi/openapi.json -o src/app/core/api/generated/api.types.ts --check",
+    "test:contract": "npm run contract:check && ng test --watch=false --browsers=ChromeHeadless --include=src/app/core/api/public-contract.fixture.spec.ts",
     "lint": "ng lint --fix",
     "format": "prettier --write \"src/**/*.{ts,scss,html}\""
   },

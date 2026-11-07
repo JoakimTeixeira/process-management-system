@@ -38,6 +38,7 @@ export class AreaResponseDto {
 
   @ApiProperty({
     description: 'Description of the area scope.',
+    type: String,
     nullable: true,
   })
   @Expose()

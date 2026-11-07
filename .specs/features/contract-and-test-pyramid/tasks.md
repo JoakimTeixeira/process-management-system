@@ -62,13 +62,13 @@ A1 → A11 ───────────────┘───────
 **Tests/Gate:** unit+contract/full — backoffice suite/build  
 **Done when:** covered DTO fields and role/state unions come from generated schemas. **Complete: 2026-11-07; generated operation/schema aliases added, 69 backoffice tests and production build passed.**
 
-### A7 — Add contract/schema gate
+### A7 — Add contract/schema gate ✅
 
 **Where:** API contract specs, frontend contract fixtures, root scripts  
 **Depends on:** A5, A6  
 **Requirement:** CONTRACT-01  
 **Tests/Gate:** contract/full — `npm run test:contract`  
-**Done when:** a breaking field/enum/schema change fails before merge.
+**Done when:** a breaking field/enum/schema change fails before merge. **Complete: 2026-11-07; `npm run test:contract` checks OpenAPI drift, 79 API contract assertions, generated-type drift, and both frontend fixtures. Full gates: API 347, backoffice 69, public 22 tests; all builds passed.**
 
 ### A8 — Centralize public synonym/route mapping
 

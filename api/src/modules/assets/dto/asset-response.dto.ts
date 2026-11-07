@@ -64,6 +64,7 @@ export class AssetResponseDto {
 
   @ApiProperty({
     description: 'Timestamp when the asset was superseded.',
+    type: String,
     format: 'date-time',
     nullable: true,
   })
@@ -73,6 +74,7 @@ export class AssetResponseDto {
   @ApiProperty({
     description:
       'Identifier of the replacement asset, if this one was superseded.',
+    type: String,
     format: 'uuid',
     nullable: true,
   })

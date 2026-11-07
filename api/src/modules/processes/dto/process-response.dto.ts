@@ -45,6 +45,7 @@ class GovernanceActiveWorkflowVersionDto extends GovernanceVersionSummaryDto {
 
   @ApiPropertyOptional({
     description: 'Role currently expected to act on the version.',
+    type: String,
     example: 'REVIEWER',
     nullable: true,
   })
@@ -53,6 +54,7 @@ class GovernanceActiveWorkflowVersionDto extends GovernanceVersionSummaryDto {
 
   @ApiPropertyOptional({
     description: 'Next governance action available on the workflow.',
+    type: String,
     example: 'approve',
     nullable: true,
   })
@@ -142,6 +144,7 @@ export class ProcessResponseDto {
 
   @ApiProperty({
     description: 'Short description of the process scope.',
+    type: String,
     nullable: true,
   })
   @Expose()

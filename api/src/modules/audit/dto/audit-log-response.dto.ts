@@ -34,6 +34,7 @@ export class AuditLogResponseDto {
 
   @ApiProperty({
     description: 'Identifier of the actor who triggered the event.',
+    type: String,
     format: 'uuid',
     nullable: true,
   })
@@ -42,6 +43,7 @@ export class AuditLogResponseDto {
 
   @ApiProperty({
     description: 'Display name of the actor who triggered the event.',
+    type: String,
     nullable: true,
   })
   @Expose()

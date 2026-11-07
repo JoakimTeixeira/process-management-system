@@ -23,6 +23,7 @@ export class ItilPracticeResponseDto {
 
   @ApiProperty({
     description: 'Optional descriptive summary of the practice.',
+    type: String,
     nullable: true,
   })
   @Expose()

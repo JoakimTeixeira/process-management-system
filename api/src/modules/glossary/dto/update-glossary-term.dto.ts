@@ -39,6 +39,7 @@ export class UpdateGlossaryTermDto {
 
   @ApiPropertyOptional({
     description: 'Updated glossary category. Use null to clear the category.',
+    type: String,
     example: 'Operations',
     maxLength: MAX_TEXT_LENGTH,
     nullable: true,

@@ -943,11 +943,11 @@ export interface components {
              * Format: uuid
              * @description Identifier of the actor who triggered the transition.
              */
-            actorId: Record<string, never> | null;
+            actorId: string | null;
             /** @description Display name of the actor who triggered the transition. */
-            actorName: Record<string, never> | null;
+            actorName: string | null;
             /** @description Justification recorded for the transition. */
-            reason: Record<string, never> | null;
+            reason: string | null;
             /**
              * Format: date-time
              * @description Timestamp when the transition occurred.
@@ -979,9 +979,9 @@ export interface components {
              * Format: uuid
              * @description Identifier of the actor who triggered the event.
              */
-            actorId: Record<string, never> | null;
+            actorId: string | null;
             /** @description Display name of the actor who triggered the event. */
-            actorName: Record<string, never> | null;
+            actorName: string | null;
             /** @description Reason for change recorded with the audit entry. */
             reasonForChange: string;
             /** @description Previous state snapshot when available. */
@@ -1062,7 +1062,7 @@ export interface components {
              * Format: uuid
              * @description UUID of the version this draft was derived from, if any.
              */
-            derivedFromVersionId: Record<string, never> | null;
+            derivedFromVersionId: string | null;
             /** @description Description of the changes captured in the version. */
             changeDescription: string;
             /** @description Business reason for the version changes. */
@@ -1173,12 +1173,12 @@ export interface components {
              * Format: date-time
              * @description Timestamp when the asset was superseded.
              */
-            supersededAt: Record<string, never> | null;
+            supersededAt: string | null;
             /**
              * Format: uuid
              * @description Identifier of the replacement asset, if this one was superseded.
              */
-            supersededByAssetId: Record<string, never> | null;
+            supersededByAssetId: string | null;
             /**
              * Format: date-time
              * @description Timestamp when the asset was created.
@@ -1275,12 +1275,12 @@ export interface components {
              * @description Role currently expected to act on the version.
              * @example REVIEWER
              */
-            waitingForRole?: Record<string, never> | null;
+            waitingForRole?: string | null;
             /**
              * @description Next governance action available on the workflow.
              * @example approve
              */
-            nextAction?: Record<string, never> | null;
+            nextAction?: string | null;
         };
         GovernanceVersionCountsDto: {
             /**
@@ -1320,7 +1320,7 @@ export interface components {
             /** @description Business-facing title of the process. */
             title: string;
             /** @description Short description of the process scope. */
-            description: Record<string, never> | null;
+            description: string | null;
             /**
              * Format: uuid
              * @description Owning team UUID.
@@ -1393,7 +1393,7 @@ export interface components {
             /** @description Display name of the ITIL practice. */
             name: string;
             /** @description Optional descriptive summary of the practice. */
-            description: Record<string, never> | null;
+            description: string | null;
         };
         CreateAreaDto: {
             /**
@@ -1442,7 +1442,7 @@ export interface components {
             /** @description Business-facing title of the area. */
             title: string;
             /** @description Description of the area scope. */
-            description: Record<string, never> | null;
+            description: string | null;
             /**
              * Format: uuid
              * @description Owning team UUID.
@@ -1693,7 +1693,7 @@ export interface components {
              * @description Optional grouping category for the term.
              * @example ITIL
              */
-            category: Record<string, never> | null;
+            category: string | null;
             /**
              * @description Whether this term is the preferred wording.
              * @example true
@@ -1703,7 +1703,7 @@ export interface components {
              * Format: uuid
              * @description Identifier of the user who created the term.
              */
-            createdBy: Record<string, never> | null;
+            createdBy: string | null;
         };
         GlossaryPracticeResponseDto: {
             /**
@@ -1748,7 +1748,7 @@ export interface components {
              * @description Optional category label used to group glossary entries.
              * @example ITIL
              */
-            category?: Record<string, never> | null;
+            category?: string | null;
             /**
              * @description Whether this term is marked as the preferred wording in the glossary.
              * @default true
@@ -1771,7 +1771,7 @@ export interface components {
              * @description Updated glossary category. Use null to clear the category.
              * @example Operations
              */
-            category?: Record<string, never> | null;
+            category?: string | null;
             /**
              * @description Whether the term remains the preferred entry.
              * @example false
@@ -1811,7 +1811,7 @@ export interface components {
             /** @description Display title for the process. */
             title: string;
             /** @description Short description of the published process. */
-            description: Record<string, never> | null;
+            description: string | null;
             /** @description Owning area summary for the published process. */
             area: components["schemas"]["PublicAreaSummaryResponseDto"];
             /** @description Linked ITIL practice summary. */
@@ -1860,7 +1860,7 @@ export interface components {
             /** @description Display title for the procedure. */
             title: string;
             /** @description Short description of the published procedure. */
-            description: Record<string, never> | null;
+            description: string | null;
             /** @description Published version summary for the procedure. */
             version: components["schemas"]["PublicProcedureVersionSummaryResponseDto"];
             /** @description Parent process summary for the procedure. */
@@ -1876,7 +1876,9 @@ export interface components {
             /** @description Policy statement for the procedure. */
             policy: string;
             /** @description Structured activity definitions for the procedure. */
-            activities: Record<string, never>[];
+            activities: {
+                [key: string]: unknown;
+            }[];
             /** @description Inputs required by the procedure. */
             inputs: string[];
             /** @description Outputs produced by the procedure. */
@@ -1911,7 +1913,7 @@ export interface components {
             /** @description Display title for the process. */
             title: string;
             /** @description Short description of the published process. */
-            description: Record<string, never> | null;
+            description: string | null;
             /** @description Owning area summary for the process. */
             area: components["schemas"]["PublicAreaSummaryResponseDto"];
             /** @description Linked ITIL practice summary. */
@@ -2011,7 +2013,7 @@ export interface components {
              * Format: uuid
              * @description Identifier of the source version this one was derived from.
              */
-            derivedFromVersionId: Record<string, never> | null;
+            derivedFromVersionId: string | null;
         };
         PublicProcessVersionDetailResponseDto: {
             /**

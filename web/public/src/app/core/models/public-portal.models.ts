@@ -28,13 +28,3 @@ export type PublicProcessDetail = JsonResponse<paths['/public/processes/{process
 export type PublicProcedureDetail = JsonResponse<paths['/public/procedures/{id}']['get']>;
 
 export type PublicGlossaryResponse = JsonResponse<paths['/public/glossary']['get']>;
-
-type PublicGlossaryTerm = PublicGlossaryResponse['terms'][number];
-
-export type PublicGlossaryViewModel = Omit<PublicGlossaryResponse, 'terms'> & {
-  terms: Array<
-    Omit<PublicGlossaryTerm, 'category'> & {
-      category: string | null;
-    }
-  >;
-};

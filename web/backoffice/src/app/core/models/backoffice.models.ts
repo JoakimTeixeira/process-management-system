@@ -14,28 +14,11 @@ export type CurrentUser = Omit<CurrentUserContract, 'role'> & {
   role: Omit<CurrentUserContract['role'], 'name'> & { name: AppRole };
 };
 
-export type ItilPractice = Replace<
-  ApiSchemas['ItilPracticeResponseDto'],
-  { description: string | null }
->;
-export type AreaRecord = Replace<ApiSchemas['AreaResponseDto'], { description: string | null }>;
-
-type GovernanceActiveWorkflowVersion = Replace<
-  ApiSchemas['GovernanceActiveWorkflowVersionDto'],
-  { waitingForRole?: string | null; nextAction?: string | null }
->;
-export type GovernanceSummary = Replace<
-  ApiSchemas['GovernanceSummaryDto'],
-  { activeWorkflowVersion: GovernanceActiveWorkflowVersion | null }
->;
-export type ProcessRecord = Replace<
-  ApiSchemas['ProcessResponseDto'],
-  { description: string | null; governanceSummary?: GovernanceSummary }
->;
-export type ProcessVersionRecord = Replace<
-  ApiSchemas['ProcessVersionResponseDto'],
-  { derivedFromVersionId: string | null }
->;
+export type ItilPractice = ApiSchemas['ItilPracticeResponseDto'];
+export type AreaRecord = ApiSchemas['AreaResponseDto'];
+export type GovernanceSummary = ApiSchemas['GovernanceSummaryDto'];
+export type ProcessRecord = ApiSchemas['ProcessResponseDto'];
+export type ProcessVersionRecord = ApiSchemas['ProcessVersionResponseDto'];
 export type ProcedureRecord = Replace<
   ApiSchemas['ProcedureResponseDto'],
   {
@@ -48,43 +31,18 @@ export type ProcedureRecord = Replace<
     outputs: unknown[] | null;
   }
 >;
-export type AssetRecord = Replace<
-  ApiSchemas['AssetResponseDto'],
-  { supersededAt: string | null; supersededByAssetId: string | null }
->;
+export type AssetRecord = ApiSchemas['AssetResponseDto'];
 export type AssetContentRecord = ApiSchemas['AssetContentResponseDto'];
-export type VersionStateHistoryRecord = Replace<
-  ApiSchemas['VersionStateHistoryResponseDto'],
-  { actorId: string | null; actorName: string | null; reason: string | null }
->;
-export type AuditLogRecord = Replace<
-  ApiSchemas['AuditLogResponseDto'],
-  { actorId: string | null; actorName: string | null }
->;
-export type GlossaryTermRecord = Replace<
-  ApiSchemas['GlossaryTermResponseDto'],
-  { category: string | null; createdBy: string | null }
->;
-export type GlossaryResponse = Replace<
-  ApiSchemas['PublicGlossaryResponseDto'],
-  { terms: GlossaryTermRecord[] }
->;
-export type CreateGlossaryTermPayload = Replace<
-  ApiSchemas['CreateGlossaryTermDto'],
-  { category?: string | null }
->;
-export type UpdateGlossaryTermPayload = Replace<
-  ApiSchemas['UpdateGlossaryTermDto'],
-  { category?: string | null }
->;
-export type CreateGlossaryTermResponse = Replace<
-  paths['/glossary']['post']['responses'][201]['content']['application/json'],
-  GlossaryTermRecord
->;
-export type UpdateGlossaryTermResponse = Replace<
-  paths['/glossary/{id}']['patch']['responses'][200]['content']['application/json'],
-  GlossaryTermRecord
->;
+export type VersionStateHistoryRecord = ApiSchemas['VersionStateHistoryResponseDto'];
+export type AuditLogRecord = ApiSchemas['AuditLogResponseDto'];
+export type GlossaryTermRecord = ApiSchemas['GlossaryTermResponseDto'];
+export type GlossaryResponse = ApiSchemas['PublicGlossaryResponseDto'];
+export type CreateGlossaryTermPayload = ApiSchemas['CreateGlossaryTermDto'];
+export type UpdateGlossaryTermPayload = ApiSchemas['UpdateGlossaryTermDto'];
+export type CreateGlossaryTermResponse =
+  paths['/glossary']['post']['responses'][201]['content']['application/json'];
+export type UpdateGlossaryTermResponse =
+  paths['/glossary/{id}']['patch']['responses'][200]['content']['application/json'];
 export type OwnerOption = ApiSchemas['OwnerOptionResponseDto'];
 export type TeamOption = ApiSchemas['TeamOptionResponseDto'];
 export type TeamRecord = ApiSchemas['TeamResponseDto'];

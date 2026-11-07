@@ -187,6 +187,7 @@ export class PublicProcessSummaryResponseDto {
 
   @ApiProperty({
     description: 'Short description of the published process.',
+    type: String,
     nullable: true,
   })
   @Expose()
@@ -250,6 +251,7 @@ export class PublicProcedureSummaryResponseDto {
 
   @ApiProperty({
     description: 'Short description of the published procedure.',
+    type: String,
     nullable: true,
   })
   @Expose()
@@ -305,8 +307,11 @@ export class PublicProcedureSummaryResponseDto {
 
   @ApiProperty({
     description: 'Structured activity definitions for the procedure.',
-    type: () => Object,
-    isArray: true,
+    type: 'array',
+    items: {
+      type: 'object',
+      additionalProperties: true,
+    },
   })
   @Expose()
   activities!: Record<string, unknown>[];
@@ -424,6 +429,7 @@ class PublicProcessDetailProcessResponseDto {
 
   @ApiProperty({
     description: 'Short description of the published process.',
+    type: String,
     nullable: true,
   })
   @Expose()
@@ -551,6 +557,7 @@ export class PublicProcessHistoryItemResponseDto {
 
   @ApiProperty({
     description: 'Identifier of the source version this one was derived from.',
+    type: String,
     format: 'uuid',
     nullable: true,
   })
