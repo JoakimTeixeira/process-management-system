@@ -1,0 +1,5626 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "JWT access token issued successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid login payload."
+          },
+          "401": {
+            "description": "Invalid email or password."
+          }
+        },
+        "summary": "Authenticate a user and issue a JWT access token",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "operationId": "AuthController_getMe",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Authenticated user context resolved from the JWT.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Get the authenticated user context",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/process-versions/{processVersionId}/state-history": {
+      "get": {
+        "operationId": "AuditController_listVersionStateHistory",
+        "parameters": [
+          {
+            "name": "processVersionId",
+            "required": true,
+            "in": "path",
+            "description": "Process version UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Lifecycle state transitions recorded for the process version.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/VersionStateHistoryResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "List lifecycle state history for a process version",
+        "tags": [
+          "audit"
+        ]
+      }
+    },
+    "/audit-logs/{entityType}/{entityId}": {
+      "get": {
+        "operationId": "AuditController_listAuditLogsByEntity",
+        "parameters": [
+          {
+            "name": "entityType",
+            "required": true,
+            "in": "path",
+            "description": "Audited entity type.",
+            "schema": {
+              "enum": [
+                "area",
+                "process",
+                "process_version",
+                "procedure",
+                "asset",
+                "user",
+                "role",
+                "team"
+              ],
+              "type": "string"
+            }
+          },
+          {
+            "name": "entityId",
+            "required": true,
+            "in": "path",
+            "description": "Audited entity UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Audit log entries for the requested entity.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AuditLogResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "List audit logs for an entity",
+        "tags": [
+          "audit"
+        ]
+      }
+    },
+    "/processes/{processId}/versions": {
+      "post": {
+        "operationId": "ProcessVersionsController_create",
+        "parameters": [
+          {
+            "name": "processId",
+            "required": true,
+            "in": "path",
+            "description": "Parent process UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProcessVersionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Process version created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessVersionResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Create a process version",
+        "tags": [
+          "versions"
+        ]
+      },
+      "get": {
+        "operationId": "ProcessVersionsController_listByProcessId",
+        "parameters": [
+          {
+            "name": "processId",
+            "required": true,
+            "in": "path",
+            "description": "Parent process UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Process versions accessible to the authenticated user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProcessVersionResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "List versions for a process",
+        "tags": [
+          "versions"
+        ]
+      }
+    },
+    "/process-versions/{id}": {
+      "get": {
+        "operationId": "ProcessVersionsController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Process version UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Requested process version record.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessVersionResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "404": {
+            "description": "Process version not found."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Get a process version by id",
+        "tags": [
+          "versions"
+        ]
+      },
+      "patch": {
+        "operationId": "ProcessVersionsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Process version UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProcessVersionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Process version updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessVersionResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "404": {
+            "description": "Process version not found."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Update a process version",
+        "tags": [
+          "versions"
+        ]
+      }
+    },
+    "/process-versions/{id}/submit-for-review": {
+      "post": {
+        "operationId": "ProcessVersionsController_submitForReview",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Process version UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LifecycleJustificationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Process version submitted for review.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessVersionResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "404": {
+            "description": "Process version not found."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Submit a process version for review",
+        "tags": [
+          "versions"
+        ]
+      }
+    },
+    "/process-versions/{id}/approve": {
+      "post": {
+        "operationId": "ProcessVersionsController_approve",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Process version UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LifecycleJustificationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Process version approved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessVersionResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "404": {
+            "description": "Process version not found."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Approve a process version",
+        "tags": [
+          "versions"
+        ]
+      }
+    },
+    "/process-versions/{id}/reject": {
+      "post": {
+        "operationId": "ProcessVersionsController_reject",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Process version UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequiredJustificationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Process version rejected successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessVersionResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "404": {
+            "description": "Process version not found."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Reject a process version",
+        "tags": [
+          "versions"
+        ]
+      }
+    },
+    "/process-versions/{id}/reopen": {
+      "post": {
+        "operationId": "ProcessVersionsController_reopen",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Process version UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequiredJustificationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Process version reopened successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessVersionResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "404": {
+            "description": "Process version not found."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Reopen a rejected process version",
+        "tags": [
+          "versions"
+        ]
+      }
+    },
+    "/process-versions/{id}/publish": {
+      "post": {
+        "operationId": "ProcessVersionsController_publish",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Process version UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LifecycleJustificationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Process version published successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessVersionResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "404": {
+            "description": "Process version not found."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Publish a process version",
+        "tags": [
+          "versions"
+        ]
+      }
+    },
+    "/process-versions/{id}/archive": {
+      "post": {
+        "operationId": "ProcessVersionsController_archive",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Process version UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequiredJustificationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Process version archived successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessVersionResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "404": {
+            "description": "Process version not found."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Archive a process version",
+        "tags": [
+          "versions"
+        ]
+      }
+    },
+    "/process-versions/{id}/promote": {
+      "post": {
+        "operationId": "ProcessVersionsController_promote",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Process version UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PromoteProcessVersionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Process version promoted successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessVersionResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "404": {
+            "description": "Process version not found."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Promote a process version",
+        "tags": [
+          "versions"
+        ]
+      }
+    },
+    "/process-versions/{processVersionId}/assets/bpmn": {
+      "post": {
+        "operationId": "AssetsController_createBpmnAsset",
+        "parameters": [
+          {
+            "name": "processVersionId",
+            "required": true,
+            "in": "path",
+            "description": "Parent process version UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/CreateBpmnAssetDto"
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "file": {
+                        "type": "string",
+                        "format": "binary",
+                        "description": "BPMN file to upload."
+                      }
+                    },
+                    "required": [
+                      "file"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "BPMN asset uploaded successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Upload a BPMN asset for a process version",
+        "tags": [
+          "assets"
+        ]
+      }
+    },
+    "/process-versions/{processVersionId}/assets": {
+      "get": {
+        "operationId": "AssetsController_listByProcessVersionId",
+        "parameters": [
+          {
+            "name": "processVersionId",
+            "required": true,
+            "in": "path",
+            "description": "Parent process version UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Assets attached to the requested process version.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AssetResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "List assets for a process version",
+        "tags": [
+          "assets"
+        ]
+      }
+    },
+    "/process-versions/{processVersionId}/assets/current": {
+      "get": {
+        "operationId": "AssetsController_getCurrentByProcessVersionId",
+        "parameters": [
+          {
+            "name": "processVersionId",
+            "required": true,
+            "in": "path",
+            "description": "Parent process version UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current asset for the requested process version, if one exists.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Get the current asset for a process version",
+        "tags": [
+          "assets"
+        ]
+      }
+    },
+    "/process-versions/{processVersionId}/assets/{assetId}/content": {
+      "get": {
+        "operationId": "AssetsController_getAssetContent",
+        "parameters": [
+          {
+            "name": "processVersionId",
+            "required": true,
+            "in": "path",
+            "description": "Parent process version UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "assetId",
+            "required": true,
+            "in": "path",
+            "description": "Asset UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Decoded content for the requested asset.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AssetContentResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "404": {
+            "description": "Asset not found."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Get decoded content for an asset",
+        "tags": [
+          "assets"
+        ]
+      }
+    },
+    "/processes": {
+      "post": {
+        "operationId": "ProcessesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProcessDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Process created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Create a process",
+        "tags": [
+          "processes"
+        ]
+      },
+      "get": {
+        "operationId": "ProcessesController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Processes accessible to the authenticated user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProcessResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "List processes",
+        "tags": [
+          "processes"
+        ]
+      }
+    },
+    "/processes/{id}": {
+      "get": {
+        "operationId": "ProcessesController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Process UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Requested process record.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "404": {
+            "description": "Process not found."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Get a process by id",
+        "tags": [
+          "processes"
+        ]
+      },
+      "patch": {
+        "operationId": "ProcessesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Process UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProcessDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Process updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcessResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "404": {
+            "description": "Process not found."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Update a process",
+        "tags": [
+          "processes"
+        ]
+      },
+      "delete": {
+        "description": "Deletes a process only when it has no process versions. This operation is audited and returns 409 if versions still exist.",
+        "operationId": "ProcessesController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Process UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Process deleted successfully."
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "404": {
+            "description": "Process not found."
+          },
+          "409": {
+            "description": "Process cannot be deleted while it still has versions or other business rules prevent the deletion."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Delete a process",
+        "tags": [
+          "processes"
+        ]
+      }
+    },
+    "/itil-practices": {
+      "post": {
+        "operationId": "ItilPracticesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateItilPracticeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "ITIL practice created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ItilPracticeResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Create an ITIL practice",
+        "tags": [
+          "itil_practices"
+        ]
+      },
+      "get": {
+        "operationId": "ItilPracticesController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "ITIL practices available to the authenticated user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ItilPracticeResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "List ITIL practices",
+        "tags": [
+          "itil_practices"
+        ]
+      }
+    },
+    "/areas": {
+      "post": {
+        "operationId": "AreasController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAreaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Area created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Create an area",
+        "tags": [
+          "areas"
+        ]
+      },
+      "get": {
+        "operationId": "AreasController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Areas accessible to the authenticated user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AreaResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "List areas",
+        "tags": [
+          "areas"
+        ]
+      }
+    },
+    "/areas/{id}": {
+      "get": {
+        "operationId": "AreasController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Area UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Requested area record.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "404": {
+            "description": "Area not found."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Get an area by id",
+        "tags": [
+          "areas"
+        ]
+      },
+      "patch": {
+        "operationId": "AreasController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Area UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAreaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Area updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AreaResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "404": {
+            "description": "Area not found."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Update an area",
+        "tags": [
+          "areas"
+        ]
+      },
+      "delete": {
+        "description": "Deletes an area only when it has no processes. This operation is audited and returns 409 if dependent processes still exist.",
+        "operationId": "AreasController_delete",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Area UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Area deleted successfully."
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "404": {
+            "description": "Area not found."
+          },
+          "409": {
+            "description": "Area cannot be deleted while it still contains processes or other business rules prevent the deletion."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Delete an area",
+        "tags": [
+          "areas"
+        ]
+      }
+    },
+    "/process-versions/{processVersionId}/procedures": {
+      "post": {
+        "operationId": "ProceduresController_create",
+        "parameters": [
+          {
+            "name": "processVersionId",
+            "required": true,
+            "in": "path",
+            "description": "Parent process version UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProcedureDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Procedure created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcedureResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Create a procedure for a process version",
+        "tags": [
+          "procedures"
+        ]
+      },
+      "get": {
+        "operationId": "ProceduresController_listByProcessVersionId",
+        "parameters": [
+          {
+            "name": "processVersionId",
+            "required": true,
+            "in": "path",
+            "description": "Parent process version UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Procedures attached to the requested process version.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProcedureResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "List procedures for a process version",
+        "tags": [
+          "procedures"
+        ]
+      }
+    },
+    "/procedures": {
+      "get": {
+        "operationId": "ProceduresController_listAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Procedures accessible to the authenticated user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ProcedureResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "List procedures across accessible process versions",
+        "tags": [
+          "procedures"
+        ]
+      }
+    },
+    "/procedures/{id}": {
+      "get": {
+        "operationId": "ProceduresController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Procedure UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Requested procedure record.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcedureResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "404": {
+            "description": "Procedure not found."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Get a procedure by id",
+        "tags": [
+          "procedures"
+        ]
+      },
+      "patch": {
+        "operationId": "ProceduresController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Procedure UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProcedureDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Procedure updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProcedureResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "404": {
+            "description": "Procedure not found."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Update a procedure",
+        "tags": [
+          "procedures"
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "HealthController_getHealth",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "API and database connectivity are healthy.",
+            "schema": {
+              "example": {
+                "status": "UP",
+                "checks": {
+                  "database": "UP"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthStatusResponseDto"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "One or more health checks failed.",
+            "schema": {
+              "example": {
+                "status": "DOWN",
+                "checks": {
+                  "database": "DOWN"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthStatusResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Run the API health check",
+        "tags": [
+          "health"
+        ]
+      }
+    },
+    "/public/glossary": {
+      "get": {
+        "operationId": "GlossaryController_getPublicGlossary",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Public glossary terms and linked ITIL practices.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicGlossaryResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get the public glossary catalogue",
+        "tags": [
+          "glossary"
+        ]
+      }
+    },
+    "/glossary": {
+      "get": {
+        "operationId": "GlossaryController_listTerms",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Glossary terms managed in the backoffice.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/GlossaryTermResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "List glossary terms",
+        "tags": [
+          "glossary"
+        ]
+      },
+      "post": {
+        "operationId": "GlossaryController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGlossaryTermDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Glossary term created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GlossaryTermResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Create a glossary term",
+        "tags": [
+          "glossary"
+        ]
+      }
+    },
+    "/glossary/{id}": {
+      "get": {
+        "operationId": "GlossaryController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Glossary term UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Requested glossary term record.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GlossaryTermResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "404": {
+            "description": "Glossary term not found."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Get a glossary term by id",
+        "tags": [
+          "glossary"
+        ]
+      },
+      "patch": {
+        "operationId": "GlossaryController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Glossary term UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateGlossaryTermDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Glossary term updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GlossaryTermResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "404": {
+            "description": "Glossary term not found."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Update a glossary term",
+        "tags": [
+          "glossary"
+        ]
+      }
+    },
+    "/public/areas": {
+      "get": {
+        "operationId": "PublicPortalController_listAreas",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Published areas available in the public portal.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PublicAreaSummaryResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "List public areas",
+        "tags": [
+          "public"
+        ]
+      }
+    },
+    "/public/processes": {
+      "get": {
+        "operationId": "PublicPortalController_listProcesses",
+        "parameters": [
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search term applied to process code and title.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "areaId",
+            "required": false,
+            "in": "query",
+            "description": "Area UUID used to filter the public process catalogue.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          },
+          {
+            "name": "architectures",
+            "required": false,
+            "in": "query",
+            "description": "Comma-separated architecture states to include, for example AS-IS,TO-BE.",
+            "schema": {
+              "example": "AS-IS,TO-BE",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Published processes matching the supplied filters.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PublicProcessSummaryResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "List public processes",
+        "tags": [
+          "public"
+        ]
+      }
+    },
+    "/public/procedures": {
+      "get": {
+        "operationId": "PublicPortalController_listProcedures",
+        "parameters": [
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search term applied to procedure code and title.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Published procedures matching the supplied search term.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PublicProcedureSummaryResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "List public procedures",
+        "tags": [
+          "public"
+        ]
+      }
+    },
+    "/public/search": {
+      "get": {
+        "operationId": "PublicPortalController_searchCatalog",
+        "parameters": [
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Free-text query applied across published areas, processes, procedures, and assets.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Matching public catalogue results. Returns an empty array when the search term is blank.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PublicCatalogSearchResultResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "Search the public catalogue",
+        "tags": [
+          "public"
+        ]
+      }
+    },
+    "/public/processes/{processId}": {
+      "get": {
+        "operationId": "PublicPortalController_getProcessDetail",
+        "parameters": [
+          {
+            "name": "processId",
+            "required": true,
+            "in": "path",
+            "description": "Published process UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Published process detail including current AS-IS and TO-BE versions.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicProcessDetailResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Public process not found."
+          }
+        },
+        "summary": "Get public process detail",
+        "tags": [
+          "public"
+        ]
+      }
+    },
+    "/public/processes/{processId}/versions": {
+      "get": {
+        "operationId": "PublicPortalController_listProcessVersions",
+        "parameters": [
+          {
+            "name": "processId",
+            "required": true,
+            "in": "path",
+            "description": "Published process UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Published version history for the requested public process.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PublicProcessHistoryItemResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Public process not found."
+          }
+        },
+        "summary": "List published versions for a public process",
+        "tags": [
+          "public"
+        ]
+      }
+    },
+    "/public/process-versions/{id}/bpmn": {
+      "get": {
+        "operationId": "PublicPortalController_getPublishedBpmnXml",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Published process version UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Published BPMN XML document for the requested process version.",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "string",
+                  "example": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><definitions id=\"Definitions_1\" />"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Published BPMN asset not found."
+          }
+        },
+        "summary": "Get published BPMN XML for a process version",
+        "tags": [
+          "public"
+        ]
+      }
+    },
+    "/public/procedures/{id}": {
+      "get": {
+        "operationId": "PublicPortalController_getProcedureDetail",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Published procedure UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Published procedure detail for the requested record.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PublicProcedureDetailResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Public procedure not found."
+          }
+        },
+        "summary": "Get public procedure detail",
+        "tags": [
+          "public"
+        ]
+      }
+    },
+    "/teams": {
+      "get": {
+        "operationId": "TeamsController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Teams available in the tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TeamResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "List teams",
+        "tags": [
+          "teams"
+        ]
+      },
+      "post": {
+        "operationId": "TeamsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTeamDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Team created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "409": {
+            "description": "Team code or name already exists."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Create a team",
+        "tags": [
+          "teams"
+        ]
+      }
+    },
+    "/teams/{id}": {
+      "get": {
+        "operationId": "TeamsController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Team UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Requested team record.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "404": {
+            "description": "Team not found."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Get a team by id",
+        "tags": [
+          "teams"
+        ]
+      },
+      "patch": {
+        "operationId": "TeamsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Team UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTeamDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Team updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "404": {
+            "description": "Team not found."
+          },
+          "409": {
+            "description": "Team code or name already exists."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Update a team",
+        "tags": [
+          "teams"
+        ]
+      }
+    },
+    "/teams/{id}/deactivate": {
+      "patch": {
+        "operationId": "TeamsController_deactivate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Team UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Team deactivated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeamResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "404": {
+            "description": "Team not found."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Deactivate a team",
+        "tags": [
+          "teams"
+        ]
+      }
+    },
+    "/users/owner-options": {
+      "get": {
+        "operationId": "UsersController_listOwnerOptions",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Owner options available to the authenticated user.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OwnerOptionResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "List available process owners for the current user",
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/users/owner-options/all": {
+      "get": {
+        "operationId": "UsersController_listAllOwnerOptions",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "All owner options available in the tenant.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OwnerOptionResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "List all available process owners",
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/users/owner-options/team/{id}": {
+      "get": {
+        "operationId": "UsersController_listOwnerOptionsByTeamId",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Active team UUID used to filter owner options.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Owner options available for the requested active team.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/OwnerOptionResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "List available process owners for an active team",
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/users/team-options": {
+      "get": {
+        "operationId": "UsersController_listTeamOptions",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Active team options that can be assigned to users or records.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TeamOptionResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "List selectable active teams for user and ownership forms",
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/users": {
+      "get": {
+        "operationId": "UsersController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Technical users configured in the system.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserResponseDto"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "List technical users",
+        "tags": [
+          "users"
+        ]
+      },
+      "post": {
+        "operationId": "UsersController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Technical user created successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Create a technical user",
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "operationId": "UsersController_getById",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Technical user UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Requested technical user record.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "404": {
+            "description": "Technical user not found."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Get a technical user by id",
+        "tags": [
+          "users"
+        ]
+      },
+      "patch": {
+        "operationId": "UsersController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Technical user UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Technical user updated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "404": {
+            "description": "Technical user not found."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Update a technical user",
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/users/{id}/deactivate": {
+      "patch": {
+        "operationId": "UsersController_deactivate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Technical user UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Technical user deactivated successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "404": {
+            "description": "Technical user not found."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Deactivate a technical user",
+        "tags": [
+          "users"
+        ]
+      }
+    },
+    "/users/{id}/reset-password": {
+      "patch": {
+        "operationId": "UsersController_resetPassword",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Technical user UUID.",
+            "schema": {
+              "format": "uuid",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Technical user password reset successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "JWT bearer token is missing or invalid."
+          },
+          "403": {
+            "description": "The authenticated user does not have permission to access this endpoint."
+          },
+          "404": {
+            "description": "Technical user not found."
+          }
+        },
+        "security": [
+          {
+            "JWT-auth": []
+          }
+        ],
+        "summary": "Reset a technical user password",
+        "tags": [
+          "users"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Process Management System API",
+    "description": "OpenAPI documentation for the Process Management System backoffice, governance workflows, master data, audit trails, and operational health checks.",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [
+    {
+      "name": "areas",
+      "description": "Business capability areas managed by the backoffice."
+    },
+    {
+      "name": "assets",
+      "description": "BPMN and related files attached to process versions."
+    },
+    {
+      "name": "audit",
+      "description": "Audit logs and lifecycle history for governed records."
+    },
+    {
+      "name": "auth",
+      "description": "Authentication and current-user identity endpoints."
+    },
+    {
+      "name": "glossary",
+      "description": "Glossary term management and public catalogue content."
+    },
+    {
+      "name": "health",
+      "description": "Operational health probes for the API."
+    },
+    {
+      "name": "itil_practices",
+      "description": "ITIL practice reference data used across the process catalogue."
+    },
+    {
+      "name": "public",
+      "description": "Public portal catalogue, search, and published process content."
+    },
+    {
+      "name": "processes",
+      "description": "Process records owned by teams and areas."
+    },
+    {
+      "name": "procedures",
+      "description": "Operational procedures attached to governed process versions."
+    },
+    {
+      "name": "teams",
+      "description": "Team administration and active-selection endpoints."
+    },
+    {
+      "name": "users",
+      "description": "Technical user-management endpoints for access administration."
+    },
+    {
+      "name": "versions",
+      "description": "Lifecycle-managed process versions and governance actions."
+    }
+  ],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "JWT-auth": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http",
+        "description": "Paste a valid JWT access token to test protected backoffice endpoints."
+      }
+    },
+    "schemas": {
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "Email address used to authenticate the user.",
+            "example": "editor@pms.local",
+            "maxLength": 255
+          },
+          "password": {
+            "type": "string",
+            "description": "Plain-text password that satisfies the backend password policy.",
+            "example": "StrongPassword!2026",
+            "maxLength": 255
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "LoginResponseDto": {
+        "type": "object",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "description": "JWT access token for authenticated API requests."
+          },
+          "tokenType": {
+            "type": "string",
+            "description": "Token type returned by the authentication endpoint.",
+            "example": "Bearer"
+          },
+          "expiresIn": {
+            "type": "number",
+            "description": "Token lifetime in seconds.",
+            "example": 3600
+          },
+          "expiresAt": {
+            "type": "string",
+            "description": "UTC timestamp when the access token expires.",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "accessToken",
+          "tokenType",
+          "expiresIn",
+          "expiresAt"
+        ]
+      },
+      "RoleSummaryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the assigned role.",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the assigned role."
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "TeamSummaryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the assigned team.",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "description": "Short code of the assigned team."
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of the assigned team."
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name"
+        ]
+      },
+      "MeResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the authenticated user.",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of the authenticated user."
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address of the authenticated user.",
+            "example": "editor@pms.local"
+          },
+          "role": {
+            "description": "Role resolved from the authenticated JWT.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/RoleSummaryDto"
+              }
+            ]
+          },
+          "team": {
+            "description": "Team resolved from the authenticated JWT, if present.",
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/TeamSummaryDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "email",
+          "role",
+          "team"
+        ]
+      },
+      "VersionStateHistoryResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the state-history entry.",
+            "format": "uuid"
+          },
+          "processVersionId": {
+            "type": "string",
+            "description": "Parent process version UUID.",
+            "format": "uuid"
+          },
+          "fromState": {
+            "type": "string",
+            "description": "Previous lifecycle state.",
+            "enum": [
+              "Draft",
+              "In Review",
+              "Approved",
+              "Published",
+              "Archived"
+            ],
+            "nullable": true,
+            "example": "Draft"
+          },
+          "toState": {
+            "type": "string",
+            "description": "New lifecycle state.",
+            "enum": [
+              "Draft",
+              "In Review",
+              "Approved",
+              "Published",
+              "Archived"
+            ],
+            "example": "In Review"
+          },
+          "actorId": {
+            "type": "object",
+            "description": "Identifier of the actor who triggered the transition.",
+            "format": "uuid",
+            "nullable": true
+          },
+          "actorName": {
+            "type": "object",
+            "description": "Display name of the actor who triggered the transition.",
+            "nullable": true
+          },
+          "reason": {
+            "type": "object",
+            "description": "Justification recorded for the transition.",
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Timestamp when the transition occurred."
+          }
+        },
+        "required": [
+          "id",
+          "processVersionId",
+          "fromState",
+          "toState",
+          "actorId",
+          "actorName",
+          "reason",
+          "createdAt"
+        ]
+      },
+      "AuditLogResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the audit log entry.",
+            "format": "uuid"
+          },
+          "entityType": {
+            "type": "string",
+            "description": "Type of the audited entity.",
+            "example": "process_version"
+          },
+          "entityId": {
+            "type": "string",
+            "description": "Unique identifier for the audited entity.",
+            "format": "uuid"
+          },
+          "action": {
+            "type": "string",
+            "description": "Recorded audit action.",
+            "example": "PUBLISH"
+          },
+          "actorId": {
+            "type": "object",
+            "description": "Identifier of the actor who triggered the event.",
+            "format": "uuid",
+            "nullable": true
+          },
+          "actorName": {
+            "type": "object",
+            "description": "Display name of the actor who triggered the event.",
+            "nullable": true
+          },
+          "reasonForChange": {
+            "type": "string",
+            "description": "Reason for change recorded with the audit entry."
+          },
+          "oldData": {
+            "type": "object",
+            "description": "Previous state snapshot when available.",
+            "additionalProperties": true,
+            "nullable": true
+          },
+          "newData": {
+            "type": "object",
+            "description": "New state snapshot when available.",
+            "additionalProperties": true,
+            "nullable": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Timestamp when the audit entry was recorded."
+          }
+        },
+        "required": [
+          "id",
+          "entityType",
+          "entityId",
+          "action",
+          "actorId",
+          "actorName",
+          "reasonForChange",
+          "oldData",
+          "newData",
+          "createdAt"
+        ]
+      },
+      "CreateProcessVersionDto": {
+        "type": "object",
+        "properties": {
+          "architectureState": {
+            "type": "string",
+            "description": "Architecture state represented by the new process version.",
+            "enum": [
+              "AS-IS",
+              "TO-BE"
+            ],
+            "example": "TO-BE"
+          },
+          "title": {
+            "type": "string",
+            "description": "Business-facing title of the process version.",
+            "example": "Major Incident Resolution v2",
+            "maxLength": 255
+          },
+          "changeDescription": {
+            "type": "string",
+            "description": "What has changed in this version.",
+            "example": "Introduced escalation checkpoints and clearer ownership."
+          },
+          "reasonForChange": {
+            "type": "string",
+            "description": "Why this version is being created.",
+            "example": "Align the workflow with the updated incident governance model."
+          },
+          "derivedFromVersionId": {
+            "type": "string",
+            "description": "Optional source version UUID this draft was derived from.",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "architectureState",
+          "title",
+          "changeDescription",
+          "reasonForChange"
+        ]
+      },
+      "ProcessVersionResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the process version.",
+            "format": "uuid"
+          },
+          "processId": {
+            "type": "string",
+            "description": "Parent process UUID.",
+            "format": "uuid"
+          },
+          "versionNumber": {
+            "type": "number",
+            "description": "Human-readable version number.",
+            "example": 3
+          },
+          "lifecycleState": {
+            "type": "string",
+            "description": "Current lifecycle state.",
+            "enum": [
+              "Draft",
+              "In Review",
+              "Approved",
+              "Published",
+              "Archived"
+            ],
+            "example": "Draft"
+          },
+          "architectureState": {
+            "type": "string",
+            "description": "Architecture state represented by the version.",
+            "enum": [
+              "AS-IS",
+              "TO-BE"
+            ],
+            "example": "TO-BE"
+          },
+          "title": {
+            "type": "string",
+            "description": "Business-facing version title."
+          },
+          "checklistCompleted": {
+            "type": "boolean",
+            "description": "Whether the governance checklist has been completed."
+          },
+          "derivedFromVersionId": {
+            "type": "object",
+            "description": "UUID of the version this draft was derived from, if any.",
+            "format": "uuid",
+            "nullable": true
+          },
+          "changeDescription": {
+            "type": "string",
+            "description": "Description of the changes captured in the version."
+          },
+          "reasonForChange": {
+            "type": "string",
+            "description": "Business reason for the version changes."
+          },
+          "availableActions": {
+            "type": "array",
+            "description": "Actions currently available to the authenticated user.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "view",
+                "edit",
+                "upload_bpmn",
+                "manage_checklist",
+                "submit_for_review",
+                "approve",
+                "reject",
+                "reopen",
+                "publish",
+                "archive",
+                "promote"
+              ]
+            }
+          }
+        },
+        "required": [
+          "id",
+          "processId",
+          "versionNumber",
+          "lifecycleState",
+          "architectureState",
+          "title",
+          "checklistCompleted",
+          "derivedFromVersionId",
+          "changeDescription",
+          "reasonForChange"
+        ]
+      },
+      "UpdateProcessVersionDto": {
+        "type": "object",
+        "properties": {
+          "architectureState": {
+            "type": "string",
+            "description": "Updated architecture state for the version.",
+            "enum": [
+              "AS-IS",
+              "TO-BE"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "description": "Updated business-facing title of the process version.",
+            "example": "Major Incident Resolution v2",
+            "maxLength": 255
+          },
+          "checklistCompleted": {
+            "type": "boolean",
+            "description": "Whether the required version checklist has been completed.",
+            "example": true
+          },
+          "derivedFromVersionId": {
+            "type": "string",
+            "description": "Updated source version UUID for derivation traceability.",
+            "format": "uuid"
+          },
+          "changeDescription": {
+            "type": "string",
+            "description": "Updated description of the changes in this version.",
+            "example": "Refined approval gates and assignment rules."
+          },
+          "reasonForChange": {
+            "type": "string",
+            "description": "Updated rationale for the version changes.",
+            "example": "Reflects the target-state governance controls."
+          }
+        }
+      },
+      "LifecycleJustificationDto": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "description": "Optional justification recorded against the lifecycle action.",
+            "example": "Checklist verified and ready for reviewer assessment."
+          }
+        }
+      },
+      "RequiredJustificationDto": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "description": "Mandatory rationale recorded against the lifecycle action.",
+            "example": "Returned to draft because the BPMN model is missing a gateway."
+          }
+        },
+        "required": [
+          "reason"
+        ]
+      },
+      "PromoteProcessVersionDto": {
+        "type": "object",
+        "properties": {
+          "justification": {
+            "type": "string",
+            "description": "Justification recorded for promoting the version.",
+            "example": "Approved target-state process now becomes the active working baseline."
+          },
+          "title": {
+            "type": "string",
+            "description": "Optional replacement title for the promoted version.",
+            "example": "Incident Resolution v3",
+            "maxLength": 255
+          }
+        },
+        "required": [
+          "justification"
+        ]
+      },
+      "CreateBpmnAssetDto": {
+        "type": "object",
+        "properties": {
+          "caption": {
+            "type": "string",
+            "description": "Human-readable caption for the uploaded BPMN asset.",
+            "example": "Approved BPMN diagram for incident resolution",
+            "maxLength": 255
+          }
+        },
+        "required": [
+          "caption"
+        ]
+      },
+      "AssetResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the asset.",
+            "format": "uuid"
+          },
+          "processVersionId": {
+            "type": "string",
+            "description": "Parent process version UUID.",
+            "format": "uuid"
+          },
+          "caption": {
+            "type": "string",
+            "description": "Human-readable caption for the asset."
+          },
+          "assetType": {
+            "type": "string",
+            "description": "Asset classification stored by the backend.",
+            "example": "BPMN"
+          },
+          "filePath": {
+            "type": "string",
+            "description": "Storage path of the asset in the backend."
+          },
+          "mimeType": {
+            "type": "string",
+            "description": "MIME type of the uploaded asset.",
+            "example": "application/xml"
+          },
+          "checksum": {
+            "type": "string",
+            "description": "Checksum recorded for file integrity."
+          },
+          "sizeBytes": {
+            "type": "number",
+            "description": "Asset size in bytes.",
+            "example": 20480
+          },
+          "isCurrent": {
+            "type": "boolean",
+            "description": "Whether this asset is the active asset for the process version."
+          },
+          "supersededAt": {
+            "type": "object",
+            "description": "Timestamp when the asset was superseded.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "supersededByAssetId": {
+            "type": "object",
+            "description": "Identifier of the replacement asset, if this one was superseded.",
+            "format": "uuid",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Timestamp when the asset was created.",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "id",
+          "processVersionId",
+          "caption",
+          "assetType",
+          "filePath",
+          "mimeType",
+          "checksum",
+          "sizeBytes",
+          "isCurrent",
+          "supersededAt",
+          "supersededByAssetId",
+          "createdAt"
+        ]
+      },
+      "AssetContentResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the asset.",
+            "format": "uuid"
+          },
+          "caption": {
+            "type": "string",
+            "description": "Human-readable caption for the asset."
+          },
+          "filePath": {
+            "type": "string",
+            "description": "Storage path of the asset in the backend."
+          },
+          "mimeType": {
+            "type": "string",
+            "description": "MIME type of the asset content.",
+            "example": "application/xml"
+          },
+          "content": {
+            "type": "string",
+            "description": "Decoded asset content returned by the API."
+          }
+        },
+        "required": [
+          "id",
+          "caption",
+          "filePath",
+          "mimeType",
+          "content"
+        ]
+      },
+      "CreateProcessDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Business-facing title of the process.",
+            "example": "Incident Resolution",
+            "maxLength": 255
+          },
+          "description": {
+            "type": "string",
+            "description": "Short description of the process scope.",
+            "example": "Restores affected services after incidents are diagnosed.",
+            "maxLength": 255
+          },
+          "teamId": {
+            "type": "string",
+            "description": "Owning team UUID for the process.",
+            "format": "uuid"
+          },
+          "ownerId": {
+            "type": "string",
+            "description": "Owner UUID for the process.",
+            "format": "uuid"
+          },
+          "areaId": {
+            "type": "string",
+            "description": "Parent area UUID for the process.",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "title",
+          "description",
+          "teamId",
+          "ownerId",
+          "areaId"
+        ]
+      },
+      "GovernanceVersionSummaryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the process version.",
+            "format": "uuid"
+          },
+          "versionNumber": {
+            "type": "number",
+            "description": "Human-readable version number.",
+            "example": 3
+          },
+          "lifecycleState": {
+            "type": "string",
+            "description": "Current lifecycle state of the version.",
+            "enum": [
+              "Draft",
+              "In Review",
+              "Approved",
+              "Published",
+              "Archived"
+            ],
+            "example": "In Review"
+          }
+        },
+        "required": [
+          "id",
+          "versionNumber",
+          "lifecycleState"
+        ]
+      },
+      "GovernanceActiveWorkflowVersionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the process version.",
+            "format": "uuid"
+          },
+          "versionNumber": {
+            "type": "number",
+            "description": "Human-readable version number.",
+            "example": 3
+          },
+          "lifecycleState": {
+            "type": "string",
+            "description": "Current lifecycle state of the version.",
+            "enum": [
+              "Draft",
+              "In Review",
+              "Approved",
+              "Published",
+              "Archived"
+            ],
+            "example": "In Review"
+          },
+          "architectureState": {
+            "type": "string",
+            "description": "Architecture state of the active workflow version.",
+            "enum": [
+              "AS-IS",
+              "TO-BE"
+            ],
+            "example": "TO-BE"
+          },
+          "waitingForRole": {
+            "type": "object",
+            "description": "Role currently expected to act on the version.",
+            "example": "REVIEWER",
+            "nullable": true
+          },
+          "nextAction": {
+            "type": "object",
+            "description": "Next governance action available on the workflow.",
+            "example": "approve",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "versionNumber",
+          "lifecycleState",
+          "architectureState"
+        ]
+      },
+      "GovernanceVersionCountsDto": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "number",
+            "description": "Total number of versions for this process.",
+            "example": 4
+          },
+          "archived": {
+            "type": "number",
+            "description": "Number of archived versions for this process.",
+            "example": 1
+          }
+        },
+        "required": [
+          "total",
+          "archived"
+        ]
+      },
+      "GovernanceSummaryDto": {
+        "type": "object",
+        "properties": {
+          "currentAsIsVersion": {
+            "description": "Current approved AS-IS version, if one exists.",
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GovernanceVersionSummaryDto"
+              }
+            ]
+          },
+          "currentToBeVersion": {
+            "description": "Current approved TO-BE version, if one exists.",
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GovernanceVersionSummaryDto"
+              }
+            ]
+          },
+          "activeWorkflowVersion": {
+            "description": "Version that is currently active in the governance workflow.",
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GovernanceActiveWorkflowVersionDto"
+              }
+            ]
+          },
+          "versionCounts": {
+            "description": "Roll-up counts for the process version set.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GovernanceVersionCountsDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "currentAsIsVersion",
+          "currentToBeVersion",
+          "activeWorkflowVersion",
+          "versionCounts"
+        ]
+      },
+      "ProcessResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the process.",
+            "format": "uuid"
+          },
+          "areaId": {
+            "type": "string",
+            "description": "Parent area UUID for the process.",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "description": "System-generated process code."
+          },
+          "title": {
+            "type": "string",
+            "description": "Business-facing title of the process."
+          },
+          "description": {
+            "type": "object",
+            "description": "Short description of the process scope.",
+            "nullable": true
+          },
+          "teamId": {
+            "type": "string",
+            "description": "Owning team UUID.",
+            "format": "uuid"
+          },
+          "teamName": {
+            "type": "string",
+            "description": "Owning team display name."
+          },
+          "ownerId": {
+            "type": "string",
+            "description": "Owner UUID.",
+            "format": "uuid"
+          },
+          "ownerName": {
+            "type": "string",
+            "description": "Owner display name."
+          },
+          "governanceSummary": {
+            "description": "Governance roll-up of related process versions.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/GovernanceSummaryDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "areaId",
+          "code",
+          "title",
+          "description",
+          "teamId",
+          "teamName",
+          "ownerId",
+          "ownerName"
+        ]
+      },
+      "UpdateProcessDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Updated business-facing title of the process.",
+            "example": "Major Incident Resolution",
+            "maxLength": 255
+          },
+          "description": {
+            "type": "string",
+            "description": "Updated short description of the process scope.",
+            "example": "Coordinates restoration for high-priority incidents."
+          },
+          "teamId": {
+            "type": "string",
+            "description": "Updated owning team UUID.",
+            "format": "uuid"
+          },
+          "ownerId": {
+            "type": "string",
+            "description": "Updated owner UUID.",
+            "format": "uuid"
+          },
+          "areaId": {
+            "type": "string",
+            "description": "Updated parent area UUID.",
+            "format": "uuid"
+          }
+        }
+      },
+      "CreateItilPracticeDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Short reference code for the ITIL practice.",
+            "example": "ITIL-IM",
+            "maxLength": 50
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of the ITIL practice.",
+            "example": "Incident Management",
+            "maxLength": 255
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional descriptive summary of the practice.",
+            "example": "The practice for minimizing the negative impact of incidents by restoring normal service operation quickly."
+          }
+        },
+        "required": [
+          "code",
+          "name"
+        ]
+      },
+      "ItilPracticeResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the ITIL practice.",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "description": "Short reference code for the ITIL practice."
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of the ITIL practice."
+          },
+          "description": {
+            "type": "object",
+            "description": "Optional descriptive summary of the practice.",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "description"
+        ]
+      },
+      "CreateAreaDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Business-facing title of the area.",
+            "example": "Service Transition",
+            "maxLength": 255
+          },
+          "description": {
+            "type": "string",
+            "description": "Short description of the area scope.",
+            "example": "Coordinates controlled changes into live service.",
+            "maxLength": 255
+          },
+          "teamId": {
+            "type": "string",
+            "description": "Owning team UUID for the area.",
+            "format": "uuid"
+          },
+          "ownerId": {
+            "type": "string",
+            "description": "Owner UUID for the area.",
+            "format": "uuid"
+          },
+          "itilPracticeId": {
+            "type": "string",
+            "description": "Linked ITIL practice UUID.",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "title",
+          "description",
+          "teamId",
+          "ownerId",
+          "itilPracticeId"
+        ]
+      },
+      "AreaItilPracticeSummaryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the linked ITIL practice.",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name for the linked ITIL practice."
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "AreaResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the area.",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "description": "System-generated area code."
+          },
+          "title": {
+            "type": "string",
+            "description": "Business-facing title of the area."
+          },
+          "description": {
+            "type": "object",
+            "description": "Description of the area scope.",
+            "nullable": true
+          },
+          "teamId": {
+            "type": "string",
+            "description": "Owning team UUID.",
+            "format": "uuid"
+          },
+          "teamName": {
+            "type": "string",
+            "description": "Owning team display name."
+          },
+          "ownerId": {
+            "type": "string",
+            "description": "Owner UUID.",
+            "format": "uuid"
+          },
+          "ownerName": {
+            "type": "string",
+            "description": "Owner display name."
+          },
+          "itilPracticeId": {
+            "type": "string",
+            "description": "Linked ITIL practice UUID.",
+            "format": "uuid"
+          },
+          "itilPractice": {
+            "description": "Linked ITIL practice summary.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AreaItilPracticeSummaryDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "title",
+          "description",
+          "teamId",
+          "teamName",
+          "ownerId",
+          "ownerName",
+          "itilPracticeId",
+          "itilPractice"
+        ]
+      },
+      "UpdateAreaDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Updated business-facing title of the area.",
+            "example": "Service Validation and Testing",
+            "maxLength": 255
+          },
+          "teamId": {
+            "type": "string",
+            "description": "Updated owning team UUID.",
+            "format": "uuid"
+          },
+          "ownerId": {
+            "type": "string",
+            "description": "Updated owner UUID.",
+            "format": "uuid"
+          },
+          "itilPracticeId": {
+            "type": "string",
+            "description": "Updated linked ITIL practice UUID.",
+            "format": "uuid"
+          },
+          "description": {
+            "type": "string",
+            "description": "Updated description of the area scope.",
+            "example": "Coordinates testing and validation before release."
+          }
+        }
+      },
+      "ProcedureActivityDto": {
+        "type": "object",
+        "properties": {
+          "resource": {
+            "type": "string",
+            "description": "Role, team, or resource performing the activity.",
+            "example": "Service Desk Analyst"
+          },
+          "serviceAction": {
+            "type": "string",
+            "description": "Concrete service action performed in the procedure.",
+            "example": "Classify the incident and record impact."
+          },
+          "workInstruction": {
+            "type": "string",
+            "description": "Detailed work instruction for the activity.",
+            "example": "Use the incident template and assign the correct priority."
+          }
+        },
+        "required": [
+          "resource",
+          "serviceAction",
+          "workInstruction"
+        ]
+      },
+      "CreateProcedureDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Procedure title.",
+            "example": "Log and Categorize Incident",
+            "maxLength": 255
+          },
+          "utility": {
+            "type": "string",
+            "description": "Utility statement for the procedure.",
+            "example": "Ensures incidents are consistently captured and routed."
+          },
+          "warranty": {
+            "type": "string",
+            "description": "Warranty statement for the procedure.",
+            "example": "Provides traceable and timely intake for every incident."
+          },
+          "outcome": {
+            "type": "string",
+            "description": "Expected business or operational outcome.",
+            "example": "Incidents are prioritized and routed to the right resolver group."
+          },
+          "policy": {
+            "type": "string",
+            "description": "Policy or control that governs the procedure.",
+            "example": "All P1 incidents must be escalated within 15 minutes."
+          },
+          "activities": {
+            "description": "Ordered list of activities executed by the procedure.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProcedureActivityDto"
+            }
+          },
+          "inputs": {
+            "description": "Inputs required to execute the procedure.",
+            "example": [
+              "Incident ticket",
+              "Affected service details"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "outputs": {
+            "description": "Outputs produced by the procedure.",
+            "example": [
+              "Categorized incident",
+              "Assigned resolver group"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "title",
+          "utility",
+          "warranty",
+          "outcome",
+          "policy",
+          "activities",
+          "inputs",
+          "outputs"
+        ]
+      },
+      "ProcedureResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the procedure.",
+            "format": "uuid"
+          },
+          "processVersionId": {
+            "type": "string",
+            "description": "Parent process version UUID.",
+            "format": "uuid"
+          },
+          "processId": {
+            "type": "string",
+            "description": "Parent process UUID when returned from cross-version listings.",
+            "format": "uuid"
+          },
+          "processCode": {
+            "type": "string",
+            "description": "Parent process code when returned from cross-version listings."
+          },
+          "processTitle": {
+            "type": "string",
+            "description": "Parent process title when returned from cross-version listings."
+          },
+          "versionNumber": {
+            "type": "number",
+            "description": "Related version number when returned from cross-version listings.",
+            "example": 2
+          },
+          "lifecycleState": {
+            "type": "string",
+            "description": "Lifecycle state of the related process version.",
+            "enum": [
+              "Draft",
+              "In Review",
+              "Approved",
+              "Published",
+              "Archived"
+            ],
+            "example": "Draft"
+          },
+          "architectureState": {
+            "type": "string",
+            "description": "Architecture state of the related process version.",
+            "enum": [
+              "AS-IS",
+              "TO-BE"
+            ],
+            "example": "AS-IS"
+          },
+          "code": {
+            "type": "string",
+            "description": "System-generated procedure code."
+          },
+          "title": {
+            "type": "string",
+            "description": "Procedure title."
+          },
+          "utility": {
+            "type": "string",
+            "description": "Utility statement for the procedure."
+          },
+          "warranty": {
+            "type": "string",
+            "description": "Warranty statement for the procedure."
+          },
+          "outcome": {
+            "type": "string",
+            "description": "Expected business or operational outcome."
+          },
+          "policy": {
+            "type": "string",
+            "description": "Policy or control that governs the procedure."
+          },
+          "activities": {
+            "description": "Ordered activities in the procedure.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProcedureActivityDto"
+            }
+          },
+          "inputs": {
+            "description": "Inputs required to execute the procedure.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "outputs": {
+            "description": "Outputs produced by the procedure.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "processVersionId",
+          "code",
+          "title",
+          "utility",
+          "warranty",
+          "outcome",
+          "policy",
+          "activities",
+          "inputs",
+          "outputs"
+        ]
+      },
+      "UpdateProcedureDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Procedure title.",
+            "example": "Log and Categorize Incident",
+            "maxLength": 255
+          },
+          "utility": {
+            "type": "string",
+            "description": "Utility statement for the procedure.",
+            "example": "Ensures incidents are consistently captured and routed."
+          },
+          "warranty": {
+            "type": "string",
+            "description": "Warranty statement for the procedure.",
+            "example": "Provides traceable and timely intake for every incident."
+          },
+          "outcome": {
+            "type": "string",
+            "description": "Expected business or operational outcome.",
+            "example": "Incidents are prioritized and routed to the right resolver group."
+          },
+          "policy": {
+            "type": "string",
+            "description": "Policy or control that governs the procedure.",
+            "example": "All P1 incidents must be escalated within 15 minutes."
+          },
+          "activities": {
+            "description": "Ordered list of activities executed by the procedure.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ProcedureActivityDto"
+            }
+          },
+          "inputs": {
+            "description": "Inputs required to execute the procedure.",
+            "example": [
+              "Incident ticket",
+              "Affected service details"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "outputs": {
+            "description": "Outputs produced by the procedure.",
+            "example": [
+              "Categorized incident",
+              "Assigned resolver group"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "title",
+          "utility",
+          "warranty",
+          "outcome",
+          "policy",
+          "activities",
+          "inputs",
+          "outputs"
+        ]
+      },
+      "HealthChecksResponseDto": {
+        "type": "object",
+        "properties": {
+          "database": {
+            "type": "string",
+            "description": "Database connectivity status.",
+            "enum": [
+              "UP",
+              "DOWN"
+            ],
+            "example": "UP"
+          }
+        },
+        "required": [
+          "database"
+        ]
+      },
+      "HealthStatusResponseDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "description": "Overall API health state.",
+            "enum": [
+              "UP",
+              "DOWN"
+            ],
+            "example": "UP"
+          },
+          "checks": {
+            "description": "Individual infrastructure checks included in the health probe.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/HealthChecksResponseDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "checks"
+        ]
+      },
+      "GlossaryTermResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the glossary term.",
+            "format": "uuid"
+          },
+          "term": {
+            "type": "string",
+            "description": "Published glossary term label.",
+            "example": "Incident management"
+          },
+          "definition": {
+            "type": "string",
+            "description": "Definition presented to users.",
+            "example": "The practice for minimizing the negative impact of incidents by restoring normal service operation as quickly as possible."
+          },
+          "category": {
+            "type": "object",
+            "description": "Optional grouping category for the term.",
+            "example": "ITIL",
+            "nullable": true
+          },
+          "isPreferred": {
+            "type": "boolean",
+            "description": "Whether this term is the preferred wording.",
+            "example": true
+          },
+          "createdBy": {
+            "type": "object",
+            "description": "Identifier of the user who created the term.",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "term",
+          "definition",
+          "category",
+          "isPreferred",
+          "createdBy"
+        ]
+      },
+      "GlossaryPracticeResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the linked ITIL practice.",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "description": "Short reference code for the ITIL practice.",
+            "example": "ITIL-IM"
+          },
+          "name": {
+            "type": "string",
+            "description": "Practice name displayed in the glossary payload.",
+            "example": "Incident Management"
+          },
+          "description": {
+            "type": "string",
+            "description": "Practice description for public glossary consumers.",
+            "example": "The practice for minimizing the negative impact of incidents by restoring normal service operation as quickly as possible."
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "description"
+        ]
+      },
+      "PublicGlossaryResponseDto": {
+        "type": "object",
+        "properties": {
+          "terms": {
+            "description": "Published glossary terms available to public portal users.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GlossaryTermResponseDto"
+            }
+          },
+          "practices": {
+            "description": "ITIL practices surfaced alongside glossary terms.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GlossaryPracticeResponseDto"
+            }
+          }
+        },
+        "required": [
+          "terms",
+          "practices"
+        ]
+      },
+      "CreateGlossaryTermDto": {
+        "type": "object",
+        "properties": {
+          "term": {
+            "type": "string",
+            "description": "The preferred glossary term to publish in the catalogue.",
+            "example": "Incident management",
+            "maxLength": 255
+          },
+          "definition": {
+            "type": "string",
+            "description": "The definition shown to backoffice and public portal users.",
+            "example": "The practice for minimizing the negative impact of incidents by restoring normal service operation as quickly as possible.",
+            "maxLength": 255
+          },
+          "category": {
+            "type": "object",
+            "description": "Optional category label used to group glossary entries.",
+            "example": "ITIL",
+            "maxLength": 255,
+            "nullable": true
+          },
+          "isPreferred": {
+            "type": "boolean",
+            "description": "Whether this term is marked as the preferred wording in the glossary.",
+            "example": true,
+            "default": true
+          }
+        },
+        "required": [
+          "term",
+          "definition"
+        ]
+      },
+      "UpdateGlossaryTermDto": {
+        "type": "object",
+        "properties": {
+          "term": {
+            "type": "string",
+            "description": "Updated glossary term label.",
+            "example": "Major incident management",
+            "maxLength": 255
+          },
+          "definition": {
+            "type": "string",
+            "description": "Updated glossary definition.",
+            "example": "The coordinated handling of high-impact incidents that require urgent restoration and communication.",
+            "maxLength": 255
+          },
+          "category": {
+            "type": "object",
+            "description": "Updated glossary category. Use null to clear the category.",
+            "example": "Operations",
+            "maxLength": 255,
+            "nullable": true
+          },
+          "isPreferred": {
+            "type": "boolean",
+            "description": "Whether the term remains the preferred entry.",
+            "example": false
+          }
+        }
+      },
+      "PublicAreaSummaryResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the public area.",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "description": "Short area reference code."
+          },
+          "title": {
+            "type": "string",
+            "description": "Display title for the area."
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "title"
+        ]
+      },
+      "PublicItilPracticeSummaryResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the linked ITIL practice.",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "description": "Short ITIL practice reference code."
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name for the linked ITIL practice."
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name"
+        ]
+      },
+      "PublicProcessSummaryResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the published process.",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "description": "Short process reference code."
+          },
+          "title": {
+            "type": "string",
+            "description": "Display title for the process."
+          },
+          "description": {
+            "type": "object",
+            "description": "Short description of the published process.",
+            "nullable": true
+          },
+          "area": {
+            "description": "Owning area summary for the published process.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicAreaSummaryResponseDto"
+              }
+            ]
+          },
+          "itilPractice": {
+            "description": "Linked ITIL practice summary.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicItilPracticeSummaryResponseDto"
+              }
+            ]
+          },
+          "availableArchitectures": {
+            "type": "array",
+            "description": "Published architecture states currently available.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "AS-IS",
+                "TO-BE"
+              ]
+            }
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "title",
+          "description",
+          "area",
+          "itilPractice",
+          "availableArchitectures"
+        ]
+      },
+      "PublicProcedureVersionSummaryResponseDto": {
+        "type": "object",
+        "properties": {
+          "versionNumber": {
+            "type": "number",
+            "description": "Published version number for the procedure.",
+            "example": 3
+          },
+          "architectureState": {
+            "type": "string",
+            "description": "Architecture state for the linked published version.",
+            "enum": [
+              "AS-IS",
+              "TO-BE"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "description": "Display title for the linked published version."
+          }
+        },
+        "required": [
+          "versionNumber",
+          "architectureState",
+          "title"
+        ]
+      },
+      "PublicProcessReferenceResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the published process.",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "description": "Short process reference code."
+          },
+          "title": {
+            "type": "string",
+            "description": "Display title for the process."
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "title"
+        ]
+      },
+      "PublicProcedureSummaryResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the published procedure.",
+            "format": "uuid"
+          },
+          "processVersionId": {
+            "type": "string",
+            "description": "Unique identifier for the published process version.",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "description": "Short procedure reference code."
+          },
+          "title": {
+            "type": "string",
+            "description": "Display title for the procedure."
+          },
+          "description": {
+            "type": "object",
+            "description": "Short description of the published procedure.",
+            "nullable": true
+          },
+          "version": {
+            "description": "Published version summary for the procedure.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicProcedureVersionSummaryResponseDto"
+              }
+            ]
+          },
+          "process": {
+            "description": "Parent process summary for the procedure.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicProcessReferenceResponseDto"
+              }
+            ]
+          },
+          "area": {
+            "description": "Owning area summary for the procedure.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicAreaSummaryResponseDto"
+              }
+            ]
+          },
+          "utility": {
+            "type": "string",
+            "description": "Utility statement for the procedure."
+          },
+          "warranty": {
+            "type": "string",
+            "description": "Warranty statement for the procedure."
+          },
+          "outcome": {
+            "type": "string",
+            "description": "Outcome statement for the procedure."
+          },
+          "policy": {
+            "type": "string",
+            "description": "Policy statement for the procedure."
+          },
+          "activities": {
+            "description": "Structured activity definitions for the procedure.",
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "inputs": {
+            "description": "Inputs required by the procedure.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "outputs": {
+            "description": "Outputs produced by the procedure.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "processVersionId",
+          "code",
+          "title",
+          "description",
+          "version",
+          "process",
+          "area",
+          "utility",
+          "warranty",
+          "outcome",
+          "policy",
+          "activities",
+          "inputs",
+          "outputs"
+        ]
+      },
+      "PublicCatalogSearchResultResponseDto": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "description": "Catalog entity type matched by the search query.",
+            "enum": [
+              "Area",
+              "Process",
+              "Procedure",
+              "Asset"
+            ]
+          },
+          "code": {
+            "type": "string",
+            "description": "Matched catalogue code."
+          },
+          "title": {
+            "type": "string",
+            "description": "Matched catalogue title."
+          },
+          "subtitle": {
+            "type": "string",
+            "description": "Supporting context displayed with the result."
+          },
+          "href": {
+            "type": "string",
+            "description": "Public portal link for the matched item.",
+            "example": "/catalog/processes?areaId=4b9581f2-ff64-4acf-9d40-0b2f7b13b0ea"
+          }
+        },
+        "required": [
+          "kind",
+          "code",
+          "title",
+          "subtitle",
+          "href"
+        ]
+      },
+      "PublicProcessDetailProcessResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the published process.",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "description": "Short process reference code."
+          },
+          "title": {
+            "type": "string",
+            "description": "Display title for the process."
+          },
+          "description": {
+            "type": "object",
+            "description": "Short description of the published process.",
+            "nullable": true
+          },
+          "area": {
+            "description": "Owning area summary for the process.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicAreaSummaryResponseDto"
+              }
+            ]
+          },
+          "itilPractice": {
+            "description": "Linked ITIL practice summary.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicItilPracticeSummaryResponseDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "title",
+          "description",
+          "area",
+          "itilPractice"
+        ]
+      },
+      "PublicBpmnAssetSummaryResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the published BPMN asset.",
+            "format": "uuid"
+          },
+          "caption": {
+            "type": "string",
+            "description": "Caption shown for the BPMN asset."
+          }
+        },
+        "required": [
+          "id",
+          "caption"
+        ]
+      },
+      "PublicProcessVersionViewResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the published process version.",
+            "format": "uuid"
+          },
+          "processId": {
+            "type": "string",
+            "description": "Parent process identifier.",
+            "format": "uuid"
+          },
+          "versionNumber": {
+            "type": "number",
+            "description": "Human-readable published version number.",
+            "example": 2
+          },
+          "architectureState": {
+            "type": "string",
+            "description": "Architecture state for the published process version.",
+            "enum": [
+              "AS-IS",
+              "TO-BE"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "description": "Display title for the published process version."
+          },
+          "changeDescription": {
+            "type": "string",
+            "description": "Summary of what changed in the version."
+          },
+          "reasonForChange": {
+            "type": "string",
+            "description": "Reason the change was introduced."
+          },
+          "procedures": {
+            "description": "Published procedures attached to the version.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PublicProcedureSummaryResponseDto"
+            }
+          },
+          "bpmnAsset": {
+            "description": "Published BPMN asset for the version, if available.",
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicBpmnAssetSummaryResponseDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "processId",
+          "versionNumber",
+          "architectureState",
+          "title",
+          "changeDescription",
+          "reasonForChange",
+          "procedures",
+          "bpmnAsset"
+        ]
+      },
+      "PublicProcessVersionsResponseDto": {
+        "type": "object",
+        "properties": {
+          "asIs": {
+            "description": "Current published AS-IS version, if one exists.",
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicProcessVersionViewResponseDto"
+              }
+            ]
+          },
+          "toBe": {
+            "description": "Current published TO-BE version, if one exists.",
+            "nullable": true,
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicProcessVersionViewResponseDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "asIs",
+          "toBe"
+        ]
+      },
+      "PublicProcessDetailResponseDto": {
+        "type": "object",
+        "properties": {
+          "process": {
+            "description": "Published process summary and catalogue metadata.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicProcessDetailProcessResponseDto"
+              }
+            ]
+          },
+          "versions": {
+            "description": "Published versions currently exposed for the process.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicProcessVersionsResponseDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "process",
+          "versions"
+        ]
+      },
+      "PublicProcessHistoryItemResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the published process version.",
+            "format": "uuid"
+          },
+          "versionNumber": {
+            "type": "number",
+            "description": "Human-readable published version number.",
+            "example": 4
+          },
+          "lifecycleState": {
+            "type": "string",
+            "description": "Lifecycle state currently visible in the public catalogue.",
+            "enum": [
+              "Published",
+              "Archived"
+            ]
+          },
+          "architectureState": {
+            "type": "string",
+            "description": "Architecture state for the published process version.",
+            "enum": [
+              "AS-IS",
+              "TO-BE"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "description": "Display title for the published process version."
+          },
+          "changeDescription": {
+            "type": "string",
+            "description": "Summary of what changed in the version."
+          },
+          "reasonForChange": {
+            "type": "string",
+            "description": "Reason the change was introduced."
+          },
+          "createdAt": {
+            "type": "string",
+            "description": "Timestamp when the version was created.",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "description": "Timestamp when the version was last updated.",
+            "format": "date-time"
+          },
+          "derivedFromVersionId": {
+            "type": "object",
+            "description": "Identifier of the source version this one was derived from.",
+            "format": "uuid",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "versionNumber",
+          "lifecycleState",
+          "architectureState",
+          "title",
+          "changeDescription",
+          "reasonForChange",
+          "createdAt",
+          "updatedAt",
+          "derivedFromVersionId"
+        ]
+      },
+      "PublicProcessVersionDetailResponseDto": {
+        "type": "object",
+        "properties": {
+          "versionNumber": {
+            "type": "number",
+            "description": "Published version number for the procedure.",
+            "example": 3
+          },
+          "architectureState": {
+            "type": "string",
+            "description": "Architecture state for the linked published version.",
+            "enum": [
+              "AS-IS",
+              "TO-BE"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "description": "Display title for the linked published version."
+          },
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the published process version.",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "versionNumber",
+          "architectureState",
+          "title",
+          "id"
+        ]
+      },
+      "PublicProcedureDetailResponseDto": {
+        "type": "object",
+        "properties": {
+          "procedure": {
+            "description": "Published procedure content.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicProcedureSummaryResponseDto"
+              }
+            ]
+          },
+          "version": {
+            "description": "Published version that owns the procedure.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicProcessVersionDetailResponseDto"
+              }
+            ]
+          },
+          "process": {
+            "description": "Parent process summary for the procedure.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicProcessReferenceResponseDto"
+              }
+            ]
+          },
+          "area": {
+            "description": "Owning area summary for the procedure.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicAreaSummaryResponseDto"
+              }
+            ]
+          },
+          "itilPractice": {
+            "description": "Linked ITIL practice summary.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PublicItilPracticeSummaryResponseDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "procedure",
+          "version",
+          "process",
+          "area",
+          "itilPractice"
+        ]
+      },
+      "TeamResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the team.",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "description": "Short reference code for the team."
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of the team."
+          },
+          "description": {
+            "type": "string",
+            "description": "Business description of the team."
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether the team is currently available for selection.",
+            "example": true
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name",
+          "description",
+          "isActive"
+        ]
+      },
+      "CreateTeamDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Short reference code for the team.",
+            "example": "OPS",
+            "maxLength": 50
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name of the team.",
+            "example": "Operations",
+            "maxLength": 255
+          },
+          "description": {
+            "type": "string",
+            "description": "Business description of the team.",
+            "example": "Technical operations team responsible for platform administration and infrastructure maintenance.",
+            "maxLength": 255
+          }
+        },
+        "required": [
+          "code",
+          "name",
+          "description"
+        ]
+      },
+      "UpdateTeamDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Updated short reference code for the team.",
+            "example": "OPS",
+            "maxLength": 50
+          },
+          "name": {
+            "type": "string",
+            "description": "Updated display name for the team.",
+            "example": "Operations and Support",
+            "maxLength": 255
+          },
+          "description": {
+            "type": "string",
+            "description": "Updated business description for the team.",
+            "example": "Technical operations team responsible for platform administration, infrastructure maintenance, and support.",
+            "maxLength": 255
+          }
+        }
+      },
+      "OwnerOptionResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the selectable owner.",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name for the selectable owner."
+          },
+          "teamId": {
+            "type": "string",
+            "description": "Team UUID associated with the owner.",
+            "format": "uuid"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether the owner account is currently active."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "teamId",
+          "isActive"
+        ]
+      },
+      "TeamOptionResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the selectable team.",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "description": "Short reference code for the team."
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name for the team."
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name"
+        ]
+      },
+      "UserRoleSummaryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the assigned role.",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "Assigned role name."
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "UserTeamSummaryDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the assigned team.",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string",
+            "description": "Short team reference code."
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name for the assigned team."
+          }
+        },
+        "required": [
+          "id",
+          "code",
+          "name"
+        ]
+      },
+      "UserResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the user.",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "Display name for the user."
+          },
+          "email": {
+            "type": "string",
+            "description": "Email address used by the user.",
+            "example": "alice.editor@pms.local"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether the user is currently active."
+          },
+          "role": {
+            "description": "Assigned role summary.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserRoleSummaryDto"
+              }
+            ]
+          },
+          "team": {
+            "description": "Assigned team summary.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UserTeamSummaryDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "email",
+          "isActive",
+          "role",
+          "team"
+        ]
+      },
+      "CreateUserDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Display name of the technical user.",
+            "example": "Alice Editor",
+            "maxLength": 255
+          },
+          "email": {
+            "type": "string",
+            "description": "Unique email address for login and notifications.",
+            "example": "alice.editor@pms.local",
+            "maxLength": 255
+          },
+          "roleId": {
+            "type": "string",
+            "description": "UUID of an existing role to assign. Provide this or roleName.",
+            "format": "uuid"
+          },
+          "roleName": {
+            "type": "string",
+            "description": "Symbolic role name to assign. Provide this or roleId.",
+            "enum": [
+              "EDITOR",
+              "REVIEWER",
+              "PUBLISHER",
+              "VIEWER",
+              "SYSTEM_ADMIN"
+            ]
+          },
+          "teamId": {
+            "type": "string",
+            "description": "Team UUID the user belongs to.",
+            "format": "uuid"
+          },
+          "password": {
+            "type": "string",
+            "description": "Initial password that satisfies the backend password policy.",
+            "example": "VeryStrongPassword!2026",
+            "minLength": 15,
+            "maxLength": 255
+          }
+        },
+        "required": [
+          "name",
+          "email",
+          "teamId",
+          "password"
+        ]
+      },
+      "UpdateUserDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Updated display name for the technical user.",
+            "example": "Alice Reviewer",
+            "maxLength": 255
+          },
+          "email": {
+            "type": "string",
+            "description": "Updated email address for the technical user.",
+            "example": "alice.reviewer@pms.local",
+            "maxLength": 255
+          },
+          "roleId": {
+            "type": "string",
+            "description": "Updated role UUID to assign.",
+            "format": "uuid"
+          },
+          "roleName": {
+            "type": "string",
+            "description": "Updated symbolic role name to assign instead of roleId.",
+            "enum": [
+              "EDITOR",
+              "REVIEWER",
+              "PUBLISHER",
+              "VIEWER",
+              "SYSTEM_ADMIN"
+            ]
+          },
+          "teamId": {
+            "type": "string",
+            "description": "Updated team UUID for the user.",
+            "format": "uuid"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether the user remains active.",
+            "example": true
+          }
+        }
+      },
+      "ResetPasswordDto": {
+        "type": "object",
+        "properties": {
+          "newPassword": {
+            "type": "string",
+            "description": "Replacement password for the selected technical user.",
+            "example": "AnotherStrongPassword!2026",
+            "minLength": 15,
+            "maxLength": 255
+          }
+        },
+        "required": [
+          "newPassword"
+        ]
+      }
+    }
+  }
+}

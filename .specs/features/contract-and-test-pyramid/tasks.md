@@ -30,13 +30,13 @@ A1 → A11 ───────────────┘───────
 **Tests/Gate:** unit/quick — API unit suite (≥263 tests)  
 **Done when:** lifecycle/architecture/catalog values have one API source; stale uppercase Swagger examples are gone; typed repository/public records consume the source. **Complete: 2026-11-07; 266 API tests passed.**
 
-### A3 — Add deterministic OpenAPI generation
+### A3 — Add deterministic OpenAPI generation ✅
 
 **Where:** API bootstrap/document factory, `api/scripts/generate-openapi.ts`, `api/openapi/openapi.json`, `api/package.json`  
 **Depends on:** A2  
 **Requirement:** TERM-01, CONTRACT-01  
 **Tests/Gate:** contract/full — generate twice and compare; API tests/build pass  
-**Done when:** generation does not listen, closes cleanly, and `openapi:check` detects drift.
+**Done when:** generation does not listen, closes cleanly, and `openapi:check` detects drift. **Complete: 2026-11-07; deterministic SHA-256 verified; 268 API tests passed.**
 
 ### A4 — Audit and complete consumed response schemas
 
