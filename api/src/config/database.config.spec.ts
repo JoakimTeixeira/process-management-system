@@ -1,3 +1,5 @@
+import type { Mock } from 'vitest';
+
 import { buildDatabaseConfig } from './database.config';
 import { getValidatedEnvironment } from './env.validation';
 
@@ -9,15 +11,15 @@ import {
   TEST_TOKEN_EXPIRES_IN_SECONDS,
 } from '../common/constants/workflow.constants';
 
-jest.mock('./env.validation');
+vi.mock('./env.validation');
 
 describe('database.config', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should build database config from environment', () => {
-    (getValidatedEnvironment as jest.Mock).mockReturnValue({
+    (getValidatedEnvironment as Mock).mockReturnValue({
       NODE_ENV: 'development',
       PORT: DEFAULT_PORT,
       DB_HOST: 'localhost',
@@ -45,7 +47,7 @@ describe('database.config', () => {
   });
 
   it('should build database config with SSL enabled', () => {
-    (getValidatedEnvironment as jest.Mock).mockReturnValue({
+    (getValidatedEnvironment as Mock).mockReturnValue({
       NODE_ENV: 'production',
       PORT: TEST_PORT,
       DB_HOST: 'prod-db.example.com',
@@ -72,7 +74,7 @@ describe('database.config', () => {
   });
 
   it('should build database config with custom port', () => {
-    (getValidatedEnvironment as jest.Mock).mockReturnValue({
+    (getValidatedEnvironment as Mock).mockReturnValue({
       NODE_ENV: 'development',
       PORT: DEFAULT_PORT,
       DB_HOST: 'localhost',

@@ -1,3 +1,5 @@
+import type { Mocked } from 'vitest';
+
 import { UnauthorizedException } from '@nestjs/common';
 
 import type { AuthConfig } from '../../../config/auth.config';
@@ -20,12 +22,12 @@ describe('JwtStrategy', () => {
     email: 'editor@example.com',
   };
 
-  let authService: jest.Mocked<Pick<AuthService, 'getAuthenticatedUserById'>>;
+  let authService: Mocked<Pick<AuthService, 'getAuthenticatedUserById'>>;
   let strategy: JwtStrategy;
 
   beforeEach(() => {
     authService = {
-      getAuthenticatedUserById: jest.fn(),
+      getAuthenticatedUserById: vi.fn(),
     };
     strategy = new JwtStrategy(authConfiguration, authService);
   });

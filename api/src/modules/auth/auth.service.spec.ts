@@ -1,3 +1,5 @@
+import type { MockedFunction, MockInstance } from 'vitest';
+
 import * as argon2 from 'argon2';
 import type { DataSource } from 'typeorm';
 
@@ -9,8 +11,8 @@ import type { AuthRepositoryUser } from './auth.repository';
 import type { JwtPayload } from './interfaces/jwt-payload.interface';
 import { AuthService } from './auth.service';
 
-jest.mock('argon2', () => ({
-  verify: jest.fn(),
+vi.mock('argon2', () => ({
+  verify: vi.fn(),
 }));
 
 describe('AuthService', () => {
@@ -24,29 +26,29 @@ describe('AuthService', () => {
   };
 
   let authRepository: AuthRepository;
-  let findUserByEmailSpy: jest.SpiedFunction<AuthRepository['findUserByEmail']>;
-  let findUserByIdSpy: jest.SpiedFunction<AuthRepository['findUserById']>;
+  let findUserByEmailSpy: MockInstance<AuthRepository['findUserByEmail']>;
+  let findUserByIdSpy: MockInstance<AuthRepository['findUserById']>;
   let jwtSigner: {
-    signAsync: jest.MockedFunction<(payload: JwtPayload) => Promise<string>>;
+    signAsync: MockedFunction<(payload: JwtPayload) => Promise<string>>;
   };
   let authService: AuthService;
 
   beforeEach(() => {
     authRepository = new AuthRepository({} as DataSource);
-    findUserByEmailSpy = jest.spyOn(authRepository, 'findUserByEmail');
-    findUserByIdSpy = jest.spyOn(authRepository, 'findUserById');
+    findUserByEmailSpy = vi.spyOn(authRepository, 'findUserByEmail');
+    findUserByIdSpy = vi.spyOn(authRepository, 'findUserById');
     jwtSigner = {
-      signAsync: jest
+      signAsync: vi
         .fn<Promise<string>, [JwtPayload]>()
         .mockResolvedValue('signed-token'),
     };
     authService = new AuthService(authRepository, authConfiguration, jwtSigner);
-    jest.spyOn(authService['logger'], 'log').mockImplementation();
-    jest.spyOn(authService['logger'], 'warn').mockImplementation();
+    vi.spyOn(authService['logger'], 'log').mockImplementation();
+    vi.spyOn(authService['logger'], 'warn').mockImplementation();
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should sign a minimal jwt payload during login', async () => {
@@ -62,7 +64,7 @@ describe('AuthService', () => {
     };
 
     findUserByEmailSpy.mockResolvedValue(user);
-    jest.mocked(argon2.verify).mockResolvedValue(true);
+    vi.mocked(argon2.verify).mockResolvedValue(true);
 
     await authService.login(email, password);
 
@@ -122,7 +124,7 @@ describe('AuthService', () => {
     };
 
     findUserByEmailSpy.mockResolvedValue(user);
-    jest.mocked(argon2.verify).mockResolvedValue(false);
+    vi.mocked(argon2.verify).mockResolvedValue(false);
 
     await expect(authService.login(email, password)).rejects.toThrow(
       'Invalid email or password',

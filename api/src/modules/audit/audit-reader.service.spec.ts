@@ -1,3 +1,5 @@
+import type { Mocked } from 'vitest';
+
 import { ForbiddenException, NotFoundException } from '@nestjs/common';
 
 import { Role } from '../../common/enums/role.enum';
@@ -6,7 +8,7 @@ import type { AuditReaderRepository } from './audit-reader.repository';
 import { AuditReaderService } from './audit-reader.service';
 
 describe('AuditReaderService', () => {
-  let auditReaderRepository: jest.Mocked<
+  let auditReaderRepository: Mocked<
     Pick<
       AuditReaderRepository,
       'findLogsByEntity' | 'findVersionStateHistory' | 'findWorkflowAuditAccess'
@@ -42,9 +44,9 @@ describe('AuditReaderService', () => {
 
   beforeEach(() => {
     auditReaderRepository = {
-      findLogsByEntity: jest.fn(),
-      findWorkflowAuditAccess: jest.fn(),
-      findVersionStateHistory: jest.fn(),
+      findLogsByEntity: vi.fn(),
+      findWorkflowAuditAccess: vi.fn(),
+      findVersionStateHistory: vi.fn(),
     };
     service = new AuditReaderService(
       auditReaderRepository as unknown as AuditReaderRepository,

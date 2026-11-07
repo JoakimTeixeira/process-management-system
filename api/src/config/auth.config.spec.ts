@@ -1,3 +1,5 @@
+import type { Mock } from 'vitest';
+
 import { buildAuthConfig } from './auth.config';
 import { getValidatedEnvironment } from './env.validation';
 
@@ -9,15 +11,15 @@ import {
   SECONDS_PER_MINUTE,
 } from '../common/constants/workflow.constants';
 
-jest.mock('./env.validation');
+vi.mock('./env.validation');
 
 describe('auth.config', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should build auth config from environment', () => {
-    (getValidatedEnvironment as jest.Mock).mockReturnValue({
+    (getValidatedEnvironment as Mock).mockReturnValue({
       NODE_ENV: 'development',
       PORT: DEFAULT_PORT,
       DB_HOST: 'localhost',
@@ -43,7 +45,7 @@ describe('auth.config', () => {
   });
 
   it('should parse JWT expiration in seconds', () => {
-    (getValidatedEnvironment as jest.Mock).mockReturnValue({
+    (getValidatedEnvironment as Mock).mockReturnValue({
       PASSWORD_PEPPER: 'pepper',
       JWT_SECRET: 'secret',
       JWT_EXPIRES_IN: '30s',
@@ -55,7 +57,7 @@ describe('auth.config', () => {
   });
 
   it('should parse JWT expiration in minutes', () => {
-    (getValidatedEnvironment as jest.Mock).mockReturnValue({
+    (getValidatedEnvironment as Mock).mockReturnValue({
       PASSWORD_PEPPER: 'pepper',
       JWT_SECRET: 'secret',
       JWT_EXPIRES_IN: '15m',
@@ -67,7 +69,7 @@ describe('auth.config', () => {
   });
 
   it('should parse JWT expiration in hours', () => {
-    (getValidatedEnvironment as jest.Mock).mockReturnValue({
+    (getValidatedEnvironment as Mock).mockReturnValue({
       PASSWORD_PEPPER: 'pepper',
       JWT_SECRET: 'secret',
       JWT_EXPIRES_IN: '2h',
@@ -79,7 +81,7 @@ describe('auth.config', () => {
   });
 
   it('should parse JWT expiration in days', () => {
-    (getValidatedEnvironment as jest.Mock).mockReturnValue({
+    (getValidatedEnvironment as Mock).mockReturnValue({
       PASSWORD_PEPPER: 'pepper',
       JWT_SECRET: 'secret',
       JWT_EXPIRES_IN: '1d',
@@ -91,7 +93,7 @@ describe('auth.config', () => {
   });
 
   it('should throw error for invalid JWT_EXPIRES_IN format', () => {
-    (getValidatedEnvironment as jest.Mock).mockReturnValue({
+    (getValidatedEnvironment as Mock).mockReturnValue({
       PASSWORD_PEPPER: 'pepper',
       JWT_SECRET: 'secret',
       JWT_EXPIRES_IN: 'invalid',
@@ -103,7 +105,7 @@ describe('auth.config', () => {
   });
 
   it('should throw error for JWT_EXPIRES_IN without unit', () => {
-    (getValidatedEnvironment as jest.Mock).mockReturnValue({
+    (getValidatedEnvironment as Mock).mockReturnValue({
       PASSWORD_PEPPER: 'pepper',
       JWT_SECRET: 'secret',
       JWT_EXPIRES_IN: '15',

@@ -1,3 +1,5 @@
+import type { Mocked } from 'vitest';
+
 import { GUARDS_METADATA } from '@nestjs/common/constants';
 
 import { ROLES_KEY } from '../../common/decorators/roles.decorator';
@@ -75,7 +77,7 @@ describe('ProcessVersionsController metadata', () => {
 
 describe('ProcessVersionsController', () => {
   let controller: ProcessVersionsController;
-  let processVersionsService: jest.Mocked<
+  let processVersionsService: Mocked<
     Pick<
       ProcessVersionsService,
       | 'create'
@@ -120,17 +122,17 @@ describe('ProcessVersionsController', () => {
 
   beforeEach(() => {
     processVersionsService = {
-      create: jest.fn(),
-      listByProcessId: jest.fn(),
-      getById: jest.fn(),
-      update: jest.fn(),
-      submitForReview: jest.fn(),
-      approve: jest.fn(),
-      reject: jest.fn(),
-      reopen: jest.fn(),
-      publish: jest.fn(),
-      archive: jest.fn(),
-      promote: jest.fn(),
+      create: vi.fn(),
+      listByProcessId: vi.fn(),
+      getById: vi.fn(),
+      update: vi.fn(),
+      submitForReview: vi.fn(),
+      approve: vi.fn(),
+      reject: vi.fn(),
+      reopen: vi.fn(),
+      publish: vi.fn(),
+      archive: vi.fn(),
+      promote: vi.fn(),
     };
 
     controller = new ProcessVersionsController(

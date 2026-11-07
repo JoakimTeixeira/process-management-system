@@ -1,3 +1,5 @@
+import type { Mocked } from 'vitest';
+
 import { ConflictException } from '@nestjs/common';
 
 import { Role } from '../../common/enums/role.enum';
@@ -7,13 +9,13 @@ import type { ItilPracticesRepository } from './itil-practices.repository';
 import { ItilPracticesService } from './itil-practices.service';
 
 describe('ItilPracticesService', () => {
-  let repository: jest.Mocked<
+  let repository: Mocked<
     Pick<
       ItilPracticesRepository,
       'create' | 'findAll' | 'findByCodeOrName' | 'findById'
     >
   >;
-  let auditLogWriterService: jest.Mocked<Pick<AuditLogWriterService, 'create'>>;
+  let auditLogWriterService: Mocked<Pick<AuditLogWriterService, 'create'>>;
   let service: ItilPracticesService;
 
   const currentUser: AuthenticatedUser = {
@@ -27,13 +29,13 @@ describe('ItilPracticesService', () => {
 
   beforeEach(() => {
     repository = {
-      create: jest.fn(),
-      findAll: jest.fn(),
-      findByCodeOrName: jest.fn(),
-      findById: jest.fn(),
+      create: vi.fn(),
+      findAll: vi.fn(),
+      findByCodeOrName: vi.fn(),
+      findById: vi.fn(),
     };
     auditLogWriterService = {
-      create: jest.fn(),
+      create: vi.fn(),
     };
     service = new ItilPracticesService(
       repository as unknown as ItilPracticesRepository,

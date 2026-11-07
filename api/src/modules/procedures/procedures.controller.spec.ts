@@ -1,3 +1,5 @@
+import type { Mocked } from 'vitest';
+
 import { GUARDS_METADATA } from '@nestjs/common/constants';
 
 import { ROLES_KEY } from '../../common/decorators/roles.decorator';
@@ -55,7 +57,7 @@ describe('ProceduresController metadata', () => {
 
 describe('ProceduresController', () => {
   let controller: ProceduresController;
-  let proceduresService: jest.Mocked<
+  let proceduresService: Mocked<
     Pick<
       ProceduresService,
       'create' | 'listAll' | 'listByProcessVersionId' | 'getById' | 'update'
@@ -91,11 +93,11 @@ describe('ProceduresController', () => {
 
   beforeEach(() => {
     proceduresService = {
-      create: jest.fn(),
-      listAll: jest.fn(),
-      listByProcessVersionId: jest.fn(),
-      getById: jest.fn(),
-      update: jest.fn(),
+      create: vi.fn(),
+      listAll: vi.fn(),
+      listByProcessVersionId: vi.fn(),
+      getById: vi.fn(),
+      update: vi.fn(),
     };
 
     controller = new ProceduresController(

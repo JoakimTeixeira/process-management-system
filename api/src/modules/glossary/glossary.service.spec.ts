@@ -1,13 +1,15 @@
+import type { Mocked } from 'vitest';
+
 import type { GlossaryRepository } from './glossary.repository';
 import { GlossaryService } from './glossary.service';
 import type { AuditLogWriterService } from '../audit/audit-log-writer.service';
 
 describe('GlossaryService', () => {
   it('returns glossary terms and practices together', async () => {
-    const repository: jest.Mocked<
+    const repository: Mocked<
       Pick<GlossaryRepository, 'listTerms' | 'listPractices'>
     > = {
-      listTerms: jest.fn().mockResolvedValue([
+      listTerms: vi.fn().mockResolvedValue([
         {
           id: 'term-1',
           term: 'Configuration Item',
@@ -17,7 +19,7 @@ describe('GlossaryService', () => {
           createdBy: 'user-1',
         },
       ]),
-      listPractices: jest.fn().mockResolvedValue([
+      listPractices: vi.fn().mockResolvedValue([
         {
           id: 'practice-1',
           code: 'CHANGE_ENABLEMENT',
@@ -27,11 +29,10 @@ describe('GlossaryService', () => {
       ]),
     };
 
-    const auditLogWriterService: jest.Mocked<
-      Pick<AuditLogWriterService, 'create'>
-    > = {
-      create: jest.fn(),
-    };
+    const auditLogWriterService: Mocked<Pick<AuditLogWriterService, 'create'>> =
+      {
+        create: vi.fn(),
+      };
 
     const service = new GlossaryService(
       repository as unknown as GlossaryRepository,

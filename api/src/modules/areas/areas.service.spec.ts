@@ -1,3 +1,5 @@
+import type { Mocked } from 'vitest';
+
 import {
   BadRequestException,
   ForbiddenException,
@@ -13,7 +15,7 @@ import type { AreasRepository } from './areas.repository';
 import { AreasService } from './areas.service';
 
 describe('AreasService', () => {
-  let repository: jest.Mocked<
+  let repository: Mocked<
     Pick<
       AreasRepository,
       | 'create'
@@ -29,11 +31,11 @@ describe('AreasService', () => {
       | 'hasProcesses'
     >
   >;
-  let itilPracticesService: jest.Mocked<Pick<ItilPracticesService, 'findById'>>;
-  let workflowAuthorizationService: jest.Mocked<
+  let itilPracticesService: Mocked<Pick<ItilPracticesService, 'findById'>>;
+  let workflowAuthorizationService: Mocked<
     Pick<WorkflowAuthorizationService, 'assertSameTeamAsUser'>
   >;
-  let auditLogWriterService: jest.Mocked<Pick<AuditLogWriterService, 'create'>>;
+  let auditLogWriterService: Mocked<Pick<AuditLogWriterService, 'create'>>;
   let service: AreasService;
 
   const currentUser: AuthenticatedUser = {
@@ -64,26 +66,26 @@ describe('AreasService', () => {
 
   beforeEach(() => {
     repository = {
-      create: jest.fn(),
-      delete: jest.fn(),
-      findAll: jest.fn(),
-      findByCode: jest.fn(),
-      findById: jest.fn(),
-      getNextAreaCode: jest.fn(),
-      ownerExists: jest.fn(),
-      teamExists: jest.fn(),
-      userBelongsToTeam: jest.fn(),
-      update: jest.fn(),
-      hasProcesses: jest.fn(),
+      create: vi.fn(),
+      delete: vi.fn(),
+      findAll: vi.fn(),
+      findByCode: vi.fn(),
+      findById: vi.fn(),
+      getNextAreaCode: vi.fn(),
+      ownerExists: vi.fn(),
+      teamExists: vi.fn(),
+      userBelongsToTeam: vi.fn(),
+      update: vi.fn(),
+      hasProcesses: vi.fn(),
     };
     itilPracticesService = {
-      findById: jest.fn(),
+      findById: vi.fn(),
     };
     workflowAuthorizationService = {
-      assertSameTeamAsUser: jest.fn(),
+      assertSameTeamAsUser: vi.fn(),
     };
     auditLogWriterService = {
-      create: jest.fn(),
+      create: vi.fn(),
     };
     service = new AreasService(
       repository as unknown as AreasRepository,

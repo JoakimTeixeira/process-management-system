@@ -1,3 +1,5 @@
+import type { Mocked } from 'vitest';
+
 import { GUARDS_METADATA } from '@nestjs/common/constants';
 
 import { ROLES_KEY } from '../../common/decorators/roles.decorator';
@@ -73,7 +75,7 @@ describe('UsersController metadata', () => {
 
 describe('UsersController', () => {
   let controller: UsersController;
-  let usersService: jest.Mocked<
+  let usersService: Mocked<
     Pick<
       UsersService,
       | 'listOwnerOptions'
@@ -104,16 +106,16 @@ describe('UsersController', () => {
 
   beforeEach(() => {
     usersService = {
-      listOwnerOptions: jest.fn(),
-      listAllOwnerOptions: jest.fn(),
-      listOwnerOptionsByTeamId: jest.fn(),
-      listTeamOptions: jest.fn(),
-      list: jest.fn(),
-      getById: jest.fn(),
-      create: jest.fn(),
-      update: jest.fn(),
-      deactivate: jest.fn(),
-      resetPassword: jest.fn(),
+      listOwnerOptions: vi.fn(),
+      listAllOwnerOptions: vi.fn(),
+      listOwnerOptionsByTeamId: vi.fn(),
+      listTeamOptions: vi.fn(),
+      list: vi.fn(),
+      getById: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      deactivate: vi.fn(),
+      resetPassword: vi.fn(),
     };
 
     controller = new UsersController(usersService as unknown as UsersService);

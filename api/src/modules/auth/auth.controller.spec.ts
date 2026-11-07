@@ -1,3 +1,5 @@
+import type { Mock } from 'vitest';
+
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import type { AuthenticatedUser } from './interfaces/authenticated-user.interface';
@@ -10,8 +12,8 @@ import {
 describe('AuthController', () => {
   let controller: AuthController;
   let authService: Pick<AuthService, 'login' | 'getAuthenticatedUserById'> & {
-    login: jest.Mock;
-    getAuthenticatedUserById: jest.Mock;
+    login: Mock;
+    getAuthenticatedUserById: Mock;
   };
 
   const mockUser: AuthenticatedUser = {
@@ -29,8 +31,8 @@ describe('AuthController', () => {
 
   beforeEach(() => {
     authService = {
-      login: jest.fn(),
-      getAuthenticatedUserById: jest.fn(),
+      login: vi.fn(),
+      getAuthenticatedUserById: vi.fn(),
     };
 
     controller = new AuthController(authService as unknown as AuthService);

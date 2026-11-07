@@ -1,3 +1,5 @@
+import type { Mocked } from 'vitest';
+
 import {
   BadRequestException,
   ConflictException,
@@ -14,7 +16,7 @@ import type { ProcessesRepository } from './processes.repository';
 import { ProcessesService } from './processes.service';
 
 describe('ProcessesService', () => {
-  let repository: jest.Mocked<
+  let repository: Mocked<
     Pick<
       ProcessesRepository,
       | 'areaExists'
@@ -31,13 +33,13 @@ describe('ProcessesService', () => {
       | 'hasAnyVersions'
     >
   >;
-  let workflowAuthorizationService: jest.Mocked<
+  let workflowAuthorizationService: Mocked<
     Pick<
       WorkflowAuthorizationService,
       'assertSameTeamAsProcessOwner' | 'assertSameTeamAsUser'
     >
   >;
-  let auditLogWriterService: jest.Mocked<Pick<AuditLogWriterService, 'create'>>;
+  let auditLogWriterService: Mocked<Pick<AuditLogWriterService, 'create'>>;
   let service: ProcessesService;
 
   const currentUser: AuthenticatedUser = {
@@ -67,25 +69,25 @@ describe('ProcessesService', () => {
 
   beforeEach(() => {
     repository = {
-      areaExists: jest.fn(),
-      create: jest.fn(),
-      delete: jest.fn(),
-      findAll: jest.fn(),
-      findByCode: jest.fn(),
-      findById: jest.fn(),
-      getNextProcessCode: jest.fn(),
-      ownerExists: jest.fn(),
-      teamExists: jest.fn(),
-      userBelongsToTeam: jest.fn(),
-      update: jest.fn(),
-      hasAnyVersions: jest.fn(),
+      areaExists: vi.fn(),
+      create: vi.fn(),
+      delete: vi.fn(),
+      findAll: vi.fn(),
+      findByCode: vi.fn(),
+      findById: vi.fn(),
+      getNextProcessCode: vi.fn(),
+      ownerExists: vi.fn(),
+      teamExists: vi.fn(),
+      userBelongsToTeam: vi.fn(),
+      update: vi.fn(),
+      hasAnyVersions: vi.fn(),
     };
     workflowAuthorizationService = {
-      assertSameTeamAsProcessOwner: jest.fn(),
-      assertSameTeamAsUser: jest.fn(),
+      assertSameTeamAsProcessOwner: vi.fn(),
+      assertSameTeamAsUser: vi.fn(),
     };
     auditLogWriterService = {
-      create: jest.fn(),
+      create: vi.fn(),
     };
     service = new ProcessesService(
       repository as unknown as ProcessesRepository,

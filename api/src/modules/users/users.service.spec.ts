@@ -1,3 +1,5 @@
+import type { Mocked } from 'vitest';
+
 import { ConflictException, NotFoundException } from '@nestjs/common';
 
 import type { ConfigType } from '@nestjs/config';
@@ -11,7 +13,7 @@ import type { UsersRepository } from './users.repository';
 import { UsersService } from './users.service';
 
 describe('UsersService', () => {
-  let usersRepository: jest.Mocked<
+  let usersRepository: Mocked<
     Pick<
       UsersRepository,
       | 'findOwnerOptionsByTeamId'
@@ -27,7 +29,7 @@ describe('UsersService', () => {
       | 'updatePasswordHash'
     >
   >;
-  let auditLogWriterService: jest.Mocked<Pick<AuditLogWriterService, 'create'>>;
+  let auditLogWriterService: Mocked<Pick<AuditLogWriterService, 'create'>>;
   let service: UsersService;
 
   const currentUser: AuthenticatedUser = {
@@ -52,20 +54,20 @@ describe('UsersService', () => {
 
   beforeEach(() => {
     usersRepository = {
-      findOwnerOptionsByTeamId: jest.fn(),
-      findAllOwnerOptions: jest.fn(),
-      findTeamOptions: jest.fn(),
-      findAll: jest.fn(),
-      findById: jest.fn(),
-      findRoleById: jest.fn(),
-      findRoleByName: jest.fn(),
-      teamExists: jest.fn(),
-      create: jest.fn(),
-      update: jest.fn(),
-      updatePasswordHash: jest.fn(),
+      findOwnerOptionsByTeamId: vi.fn(),
+      findAllOwnerOptions: vi.fn(),
+      findTeamOptions: vi.fn(),
+      findAll: vi.fn(),
+      findById: vi.fn(),
+      findRoleById: vi.fn(),
+      findRoleByName: vi.fn(),
+      teamExists: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      updatePasswordHash: vi.fn(),
     };
     auditLogWriterService = {
-      create: jest.fn(),
+      create: vi.fn(),
     };
 
     service = new UsersService(

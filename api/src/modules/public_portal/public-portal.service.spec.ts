@@ -1,3 +1,5 @@
+import type { Mocked } from 'vitest';
+
 import { NotFoundException } from '@nestjs/common';
 
 import { PublicCatalogRepository } from './public-catalog.repository';
@@ -8,34 +10,34 @@ import { PublicPortalService } from './public-portal.service';
 
 describe('PublicPortalService', () => {
   let service: PublicPortalService;
-  let catalogRepository: jest.Mocked<PublicCatalogRepository>;
-  let processesRepository: jest.Mocked<PublicProcessesRepository>;
-  let proceduresRepository: jest.Mocked<PublicProceduresRepository>;
-  let assetsService: jest.Mocked<PublicPortalAssetsService>;
+  let catalogRepository: Mocked<PublicCatalogRepository>;
+  let processesRepository: Mocked<PublicProcessesRepository>;
+  let proceduresRepository: Mocked<PublicProceduresRepository>;
+  let assetsService: Mocked<PublicPortalAssetsService>;
 
   beforeEach(() => {
     catalogRepository = {
-      listAreas: jest.fn(),
-      searchCatalog: jest.fn(),
-    } as unknown as jest.Mocked<PublicCatalogRepository>;
+      listAreas: vi.fn(),
+      searchCatalog: vi.fn(),
+    } as unknown as Mocked<PublicCatalogRepository>;
 
     processesRepository = {
-      listProcesses: jest.fn(),
-      findPublicProcessBase: jest.fn(),
-      findPublishedProcessVersion: jest.fn(),
-      listProcessVersions: jest.fn(),
-      findPublishedBpmnAsset: jest.fn(),
-    } as unknown as jest.Mocked<PublicProcessesRepository>;
+      listProcesses: vi.fn(),
+      findPublicProcessBase: vi.fn(),
+      findPublishedProcessVersion: vi.fn(),
+      listProcessVersions: vi.fn(),
+      findPublishedBpmnAsset: vi.fn(),
+    } as unknown as Mocked<PublicProcessesRepository>;
 
     proceduresRepository = {
-      listProcedures: jest.fn(),
-      listPublishedProceduresByVersionId: jest.fn(),
-      findProcedureDetail: jest.fn(),
-    } as unknown as jest.Mocked<PublicProceduresRepository>;
+      listProcedures: vi.fn(),
+      listPublishedProceduresByVersionId: vi.fn(),
+      findProcedureDetail: vi.fn(),
+    } as unknown as Mocked<PublicProceduresRepository>;
 
     assetsService = {
-      readPublishedBpmnXml: jest.fn(),
-    } as unknown as jest.Mocked<PublicPortalAssetsService>;
+      readPublishedBpmnXml: vi.fn(),
+    } as unknown as Mocked<PublicPortalAssetsService>;
 
     service = new PublicPortalService(
       catalogRepository,
@@ -46,7 +48,7 @@ describe('PublicPortalService', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should list public areas', async () => {

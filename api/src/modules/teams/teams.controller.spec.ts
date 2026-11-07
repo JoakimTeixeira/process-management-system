@@ -1,3 +1,5 @@
+import type { Mocked } from 'vitest';
+
 import { GUARDS_METADATA } from '@nestjs/common/constants';
 
 import { ROLES_KEY } from '../../common/decorators/roles.decorator';
@@ -48,7 +50,7 @@ describe('TeamsController metadata', () => {
 
 describe('TeamsController', () => {
   let controller: TeamsController;
-  let teamsService: jest.Mocked<
+  let teamsService: Mocked<
     Pick<TeamsService, 'list' | 'getById' | 'create' | 'update' | 'deactivate'>
   >;
 
@@ -67,11 +69,11 @@ describe('TeamsController', () => {
 
   beforeEach(() => {
     teamsService = {
-      list: jest.fn(),
-      getById: jest.fn(),
-      create: jest.fn(),
-      update: jest.fn(),
-      deactivate: jest.fn(),
+      list: vi.fn(),
+      getById: vi.fn(),
+      create: vi.fn(),
+      update: vi.fn(),
+      deactivate: vi.fn(),
     };
 
     controller = new TeamsController(teamsService as unknown as TeamsService);

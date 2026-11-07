@@ -1,3 +1,5 @@
+import type { Mocked } from 'vitest';
+
 import { GlossaryController } from './glossary.controller';
 import type {
   GlossaryService,
@@ -26,8 +28,8 @@ describe('GlossaryController', () => {
         },
       ],
     };
-    const service: jest.Mocked<Pick<GlossaryService, 'getPublicGlossary'>> = {
-      getPublicGlossary: jest.fn().mockResolvedValue(response),
+    const service: Mocked<Pick<GlossaryService, 'getPublicGlossary'>> = {
+      getPublicGlossary: vi.fn().mockResolvedValue(response),
     };
 
     const controller = new GlossaryController(

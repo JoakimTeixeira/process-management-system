@@ -1,3 +1,5 @@
+import type { Mocked } from 'vitest';
+
 import { GUARDS_METADATA } from '@nestjs/common/constants';
 
 import { PublicPortalController } from './public-portal.controller';
@@ -21,7 +23,7 @@ describe('PublicPortalController metadata', () => {
 
 describe('PublicPortalController', () => {
   let controller: PublicPortalController;
-  let service: jest.Mocked<
+  let service: Mocked<
     Pick<
       PublicPortalService,
       | 'listAreas'
@@ -36,13 +38,13 @@ describe('PublicPortalController', () => {
 
   beforeEach(() => {
     service = {
-      listAreas: jest.fn(),
-      listProcesses: jest.fn(),
-      searchCatalog: jest.fn(),
-      getProcessDetail: jest.fn(),
-      listProcessVersions: jest.fn(),
-      getPublishedBpmnXml: jest.fn(),
-      getProcedureDetail: jest.fn(),
+      listAreas: vi.fn(),
+      listProcesses: vi.fn(),
+      searchCatalog: vi.fn(),
+      getProcessDetail: vi.fn(),
+      listProcessVersions: vi.fn(),
+      getPublishedBpmnXml: vi.fn(),
+      getProcedureDetail: vi.fn(),
     };
 
     controller = new PublicPortalController(

@@ -1,3 +1,5 @@
+import type { Mocked } from 'vitest';
+
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { ConflictException, ForbiddenException } from '@nestjs/common';
 
@@ -10,14 +12,14 @@ import type { WorkflowAuthorizationService } from '../workflow_support/workflow-
 import type { AssetsRepository } from './assets.repository';
 import { AssetsService } from './assets.service';
 
-jest.mock('node:fs/promises', () => ({
-  mkdir: jest.fn(),
-  readFile: jest.fn(),
-  writeFile: jest.fn(),
+vi.mock('node:fs/promises', () => ({
+  mkdir: vi.fn(),
+  readFile: vi.fn(),
+  writeFile: vi.fn(),
 }));
 
 describe('AssetsService', () => {
-  let assetsRepository: jest.Mocked<
+  let assetsRepository: Mocked<
     Pick<
       AssetsRepository,
       | 'createBpmnAsset'
@@ -27,13 +29,13 @@ describe('AssetsService', () => {
       | 'supersedeAsset'
     >
   >;
-  let processVersionsRepository: jest.Mocked<
+  let processVersionsRepository: Mocked<
     Pick<ProcessVersionsRepository, 'findById'>
   >;
-  let workflowAuthorizationService: jest.Mocked<
+  let workflowAuthorizationService: Mocked<
     Pick<WorkflowAuthorizationService, 'assertSameTeamAsProcessVersionOwner'>
   >;
-  let auditLogWriterService: jest.Mocked<Pick<AuditLogWriterService, 'create'>>;
+  let auditLogWriterService: Mocked<Pick<AuditLogWriterService, 'create'>>;
   let service: AssetsService;
 
   const currentUser: AuthenticatedUser = {
@@ -50,22 +52,22 @@ describe('AssetsService', () => {
   };
 
   beforeEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
     assetsRepository = {
-      createBpmnAsset: jest.fn(),
-      findById: jest.fn(),
-      findByProcessVersionId: jest.fn(),
-      findCurrentByProcessVersionId: jest.fn(),
-      supersedeAsset: jest.fn(),
+      createBpmnAsset: vi.fn(),
+      findById: vi.fn(),
+      findByProcessVersionId: vi.fn(),
+      findCurrentByProcessVersionId: vi.fn(),
+      supersedeAsset: vi.fn(),
     };
     processVersionsRepository = {
-      findById: jest.fn(),
+      findById: vi.fn(),
     };
     workflowAuthorizationService = {
-      assertSameTeamAsProcessVersionOwner: jest.fn(),
+      assertSameTeamAsProcessVersionOwner: vi.fn(),
     };
     auditLogWriterService = {
-      create: jest.fn(),
+      create: vi.fn(),
     };
     service = new AssetsService(
       assetsRepository as unknown as AssetsRepository,
@@ -106,8 +108,8 @@ describe('AssetsService', () => {
   });
 
   it('validates BPMN XML content and computes checksum metadata', async () => {
-    const mkdirMock = jest.mocked(mkdir);
-    const writeFileMock = jest.mocked(writeFile);
+    const mkdirMock = vi.mocked(mkdir);
+    const writeFileMock = vi.mocked(writeFile);
 
     processVersionsRepository.findById.mockResolvedValue({
       id: 'version-1',
@@ -212,8 +214,8 @@ describe('AssetsService', () => {
   });
 
   it('normalizes generic octet-stream BPMN uploads to application/xml metadata', async () => {
-    const mkdirMock = jest.mocked(mkdir);
-    const writeFileMock = jest.mocked(writeFile);
+    const mkdirMock = vi.mocked(mkdir);
+    const writeFileMock = vi.mocked(writeFile);
 
     processVersionsRepository.findById.mockResolvedValue({
       id: 'version-1',
@@ -296,7 +298,7 @@ describe('AssetsService', () => {
   });
 
   it('returns stored asset content', async () => {
-    const readFileMock = jest.mocked(readFile);
+    const readFileMock = vi.mocked(readFile);
 
     assetsRepository.findById.mockResolvedValue({
       id: 'asset-1',
@@ -350,8 +352,8 @@ describe('AssetsService', () => {
   });
 
   it('supersedes existing asset when uploading new BPMN for same version', async () => {
-    const mkdirMock = jest.mocked(mkdir);
-    const writeFileMock = jest.mocked(writeFile);
+    const mkdirMock = vi.mocked(mkdir);
+    const writeFileMock = vi.mocked(writeFile);
 
     processVersionsRepository.findById.mockResolvedValue({
       id: 'version-1',
@@ -438,8 +440,8 @@ describe('AssetsService', () => {
   });
 
   it('does not supersede when no existing asset exists', async () => {
-    const mkdirMock = jest.mocked(mkdir);
-    const writeFileMock = jest.mocked(writeFile);
+    const mkdirMock = vi.mocked(mkdir);
+    const writeFileMock = vi.mocked(writeFile);
 
     processVersionsRepository.findById.mockResolvedValue({
       id: 'version-1',

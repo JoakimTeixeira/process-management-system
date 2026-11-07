@@ -1,3 +1,5 @@
+import type { Mock } from 'vitest';
+
 import { AuditLogWriterService } from './audit-log-writer.service';
 import { AuditLogWriterRepository } from './audit-log-writer.repository';
 import type { CreateAuditLogEntry } from './interfaces/create-audit-log-entry.interface';
@@ -6,14 +8,14 @@ import type { SqlExecutor } from '../../common/types/sql-executor.type';
 describe('AuditLogWriterService', () => {
   let service: AuditLogWriterService;
   let repository: AuditLogWriterRepository & {
-    create: jest.Mock;
+    create: Mock;
   };
 
   beforeEach(() => {
     repository = {
-      create: jest.fn(),
+      create: vi.fn(),
     } as AuditLogWriterRepository & {
-      create: jest.Mock;
+      create: Mock;
     };
 
     service = new AuditLogWriterService(repository);
@@ -45,8 +47,8 @@ describe('AuditLogWriterService', () => {
       actorId: 'user-1',
       reasonForChange: null,
     };
-    const executor: SqlExecutor & { query: jest.Mock } = {
-      query: jest.fn(),
+    const executor: SqlExecutor & { query: Mock } = {
+      query: vi.fn(),
     };
 
     await service.create(entry, executor);

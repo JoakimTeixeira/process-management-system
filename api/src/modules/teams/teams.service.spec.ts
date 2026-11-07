@@ -1,3 +1,5 @@
+import type { Mocked } from 'vitest';
+
 import { ConflictException, NotFoundException } from '@nestjs/common';
 
 import { Role } from '../../common/enums/role.enum';
@@ -7,13 +9,13 @@ import type { TeamsRepository } from './teams.repository';
 import { TeamsService } from './teams.service';
 
 describe('TeamsService', () => {
-  let repository: jest.Mocked<
+  let repository: Mocked<
     Pick<
       TeamsRepository,
       'create' | 'deactivate' | 'findAll' | 'findById' | 'update'
     >
   >;
-  let auditLogWriterService: jest.Mocked<Pick<AuditLogWriterService, 'create'>>;
+  let auditLogWriterService: Mocked<Pick<AuditLogWriterService, 'create'>>;
   let service: TeamsService;
 
   const currentUser: AuthenticatedUser = {
@@ -39,14 +41,14 @@ describe('TeamsService', () => {
 
   beforeEach(() => {
     repository = {
-      create: jest.fn(),
-      deactivate: jest.fn(),
-      findAll: jest.fn(),
-      findById: jest.fn(),
-      update: jest.fn(),
+      create: vi.fn(),
+      deactivate: vi.fn(),
+      findAll: vi.fn(),
+      findById: vi.fn(),
+      update: vi.fn(),
     };
     auditLogWriterService = {
-      create: jest.fn(),
+      create: vi.fn(),
     };
 
     service = new TeamsService(

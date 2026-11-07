@@ -1,3 +1,5 @@
+import type { Mock } from 'vitest';
+
 import { ForbiddenException } from '@nestjs/common';
 
 import { WorkflowAuthorizationService } from './workflow-authorization.service';
@@ -14,10 +16,10 @@ describe('WorkflowAuthorizationService', () => {
     | 'findProcessVersionOwnerTeamId'
     | 'findProcedureOwnerTeamId'
   > & {
-    findUserTeamId: jest.Mock;
-    findProcessOwnerTeamId: jest.Mock;
-    findProcessVersionOwnerTeamId: jest.Mock;
-    findProcedureOwnerTeamId: jest.Mock;
+    findUserTeamId: Mock;
+    findProcessOwnerTeamId: Mock;
+    findProcessVersionOwnerTeamId: Mock;
+    findProcedureOwnerTeamId: Mock;
   };
 
   const mockUser: AuthenticatedUser = {
@@ -35,10 +37,10 @@ describe('WorkflowAuthorizationService', () => {
 
   beforeEach(() => {
     repository = {
-      findUserTeamId: jest.fn(),
-      findProcessOwnerTeamId: jest.fn(),
-      findProcessVersionOwnerTeamId: jest.fn(),
-      findProcedureOwnerTeamId: jest.fn(),
+      findUserTeamId: vi.fn(),
+      findProcessOwnerTeamId: vi.fn(),
+      findProcessVersionOwnerTeamId: vi.fn(),
+      findProcedureOwnerTeamId: vi.fn(),
     };
 
     service = new WorkflowAuthorizationService(

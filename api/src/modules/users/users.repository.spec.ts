@@ -1,14 +1,16 @@
+import type { Mocked } from 'vitest';
+
 import type { DataSource } from 'typeorm';
 
 import { UsersRepository } from './users.repository';
 
 describe('UsersRepository team queries', () => {
-  let dataSource: jest.Mocked<Pick<DataSource, 'query'>>;
+  let dataSource: Mocked<Pick<DataSource, 'query'>>;
   let repository: UsersRepository;
 
   beforeEach(() => {
     dataSource = {
-      query: jest.fn(),
+      query: vi.fn(),
     };
 
     repository = new UsersRepository(dataSource as unknown as DataSource);

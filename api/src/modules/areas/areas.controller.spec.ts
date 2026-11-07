@@ -1,3 +1,5 @@
+import type { Mock } from 'vitest';
+
 import { GUARDS_METADATA } from '@nestjs/common/constants';
 
 import { ROLES_KEY } from '../../common/decorators/roles.decorator';
@@ -58,11 +60,11 @@ describe('AreasController metadata', () => {
 describe('AreasController', () => {
   let controller: AreasController;
   let areasService: AreasService & {
-    create: jest.Mock;
-    list: jest.Mock;
-    getById: jest.Mock;
-    update: jest.Mock;
-    delete: jest.Mock;
+    create: Mock;
+    list: Mock;
+    getById: Mock;
+    update: Mock;
+    delete: Mock;
   };
 
   const mockUser: AuthenticatedUser = {
@@ -80,17 +82,17 @@ describe('AreasController', () => {
 
   beforeEach(() => {
     areasService = {
-      create: jest.fn(),
-      list: jest.fn(),
-      getById: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
+      create: vi.fn(),
+      list: vi.fn(),
+      getById: vi.fn(),
+      update: vi.fn(),
+      delete: vi.fn(),
     } as AreasService & {
-      create: jest.Mock;
-      list: jest.Mock;
-      getById: jest.Mock;
-      update: jest.Mock;
-      delete: jest.Mock;
+      create: Mock;
+      list: Mock;
+      getById: Mock;
+      update: Mock;
+      delete: Mock;
     };
 
     controller = new AreasController(areasService);

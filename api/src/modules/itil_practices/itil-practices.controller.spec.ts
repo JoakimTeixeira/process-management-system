@@ -1,3 +1,5 @@
+import type { Mock } from 'vitest';
+
 import { GUARDS_METADATA } from '@nestjs/common/constants';
 
 import { ROLES_KEY } from '../../common/decorators/roles.decorator';
@@ -49,8 +51,8 @@ describe('ItilPracticesController metadata', () => {
 describe('ItilPracticesController', () => {
   let controller: ItilPracticesController;
   let itilPracticesService: ItilPracticesService & {
-    create: jest.Mock;
-    list: jest.Mock;
+    create: Mock;
+    list: Mock;
   };
 
   const mockUser: AuthenticatedUser = {
@@ -68,11 +70,11 @@ describe('ItilPracticesController', () => {
 
   beforeEach(() => {
     itilPracticesService = {
-      create: jest.fn(),
-      list: jest.fn(),
+      create: vi.fn(),
+      list: vi.fn(),
     } as ItilPracticesService & {
-      create: jest.Mock;
-      list: jest.Mock;
+      create: Mock;
+      list: Mock;
     };
 
     controller = new ItilPracticesController(itilPracticesService);

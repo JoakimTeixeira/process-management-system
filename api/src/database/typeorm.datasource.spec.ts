@@ -1,3 +1,5 @@
+import type { Mock } from 'vitest';
+
 import { DataSource } from 'typeorm';
 
 import { buildDatabaseConfig } from '../config/database.config';
@@ -5,24 +7,24 @@ import { createDataSourceOptions } from './typeorm-options';
 
 import { DEFAULT_DB_PORT } from '../common/constants/workflow.constants';
 
-jest.mock('typeorm', () => ({
-  DataSource: jest.fn(),
+vi.mock('typeorm', () => ({
+  DataSource: vi.fn(),
 }));
 
-jest.mock('../config/database.config', () => ({
-  buildDatabaseConfig: jest.fn(),
+vi.mock('../config/database.config', () => ({
+  buildDatabaseConfig: vi.fn(),
 }));
 
-jest.mock('./typeorm-options', () => ({
-  createDataSourceOptions: jest.fn(),
+vi.mock('./typeorm-options', () => ({
+  createDataSourceOptions: vi.fn(),
 }));
 
 describe('typeorm.datasource', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
-  it('should create a DataSource with correct options', () => {
+  it('should create a DataSource with correct options', async () => {
     const mockDbConfig = {
       host: 'localhost',
       port: DEFAULT_DB_PORT,
@@ -47,14 +49,15 @@ describe('typeorm.datasource', () => {
       entities: [],
     };
 
-    (buildDatabaseConfig as jest.Mock).mockReturnValue(mockDbConfig);
-    (createDataSourceOptions as jest.Mock).mockReturnValue(mockOptions);
-    (DataSource as jest.Mock).mockImplementation(() => ({
-      initialize: jest.fn(),
-    }));
+    (buildDatabaseConfig as Mock).mockReturnValue(mockDbConfig);
+    (createDataSourceOptions as Mock).mockReturnValue(mockOptions);
+    (DataSource as Mock).mockImplementation(function DataSourceMock() {
+      return {
+        initialize: vi.fn(),
+      };
+    });
 
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    require('./typeorm.datasource');
+    await import('./typeorm.datasource');
 
     expect(buildDatabaseConfig).toHaveBeenCalled();
     expect(createDataSourceOptions).toHaveBeenCalledWith(mockDbConfig);

@@ -4,7 +4,7 @@ import {
   resetIntegrationDatabase,
 } from './integration-database';
 
-export default async function globalSetup(): Promise<void> {
+export default async function globalSetup(): Promise<() => Promise<void>> {
   await resetIntegrationDatabase();
 
   try {
@@ -13,4 +13,6 @@ export default async function globalSetup(): Promise<void> {
     await dropIntegrationDatabase();
     throw error;
   }
+
+  return dropIntegrationDatabase;
 }

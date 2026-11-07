@@ -1,3 +1,5 @@
+import type { Mocked } from 'vitest';
+
 import { AuditController } from './audit.controller';
 import { AuditReaderService } from './audit-reader.service';
 import type { AuthenticatedUser } from '../auth/interfaces/authenticated-user.interface';
@@ -6,7 +8,7 @@ import type { AuditAction } from './types/audit-action.type';
 
 describe('AuditController', () => {
   let controller: AuditController;
-  let auditReaderService: jest.Mocked<
+  let auditReaderService: Mocked<
     Pick<AuditReaderService, 'listVersionStateHistory' | 'listLogsByEntity'>
   >;
 
@@ -49,8 +51,8 @@ describe('AuditController', () => {
 
   beforeEach(() => {
     auditReaderService = {
-      listVersionStateHistory: jest.fn(),
-      listLogsByEntity: jest.fn(),
+      listVersionStateHistory: vi.fn(),
+      listLogsByEntity: vi.fn(),
     };
 
     controller = new AuditController(

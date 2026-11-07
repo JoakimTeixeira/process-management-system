@@ -1,3 +1,5 @@
+import type { Mock } from 'vitest';
+
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getDataSourceToken } from '@nestjs/typeorm';
@@ -10,12 +12,12 @@ import { HealthService } from './health.service';
 describe('Health endpoint', () => {
   let app: INestApplication;
   let dataSource: {
-    query: jest.Mock;
+    query: Mock;
   };
 
   beforeEach(async () => {
     dataSource = {
-      query: jest.fn(),
+      query: vi.fn(),
     };
 
     const moduleFixture: TestingModule = await Test.createTestingModule({

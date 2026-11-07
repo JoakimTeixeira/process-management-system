@@ -22,13 +22,13 @@ A1 → B4 ──────┘
 **Tests/Gate:** unit/quick — pilot passes under Vitest and unchanged Jest suite remains ≥263  
 **Done when:** Nest decorators/reflection and mock-reset semantics are demonstrated. **Complete: 2026-11-07; Vitest pilot 3 tests, unchanged Jest suite 325 tests, and API build passed.**
 
-### B2 — Migrate API suite and repair e2e
+### B2 — Migrate API suite and repair e2e ✅
 
 **Where:** API specs/config/package and `api/test/app.e2e-spec.ts`  
 **Depends on:** B1  
 **Requirement:** TEST-01  
 **Tests/Gate:** unit+e2e/full — API unit count does not decrease; `/health` Supertest passes  
-**Done when:** API scripts use Vitest and Jest/ts-jest configuration/dependencies are removed.
+**Done when:** API scripts use Vitest and Jest/ts-jest configuration/dependencies are removed. **Complete: 2026-11-07; Vitest runs 47 unit files / 350 tests, the repaired `/health` Supertest e2e, 79 contract assertions, and 3 PostgreSQL integration files / 10 tests. Jest/ts-jest configuration and direct dependencies are removed; coverage, build, lint, and residue checks pass.**
 
 ### B3 — Migrate public and add page characterization [P] ✅
 

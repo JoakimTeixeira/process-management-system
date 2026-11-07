@@ -1,17 +1,19 @@
+import type { Mock } from 'vitest';
+
 import { HealthController } from './health.controller';
 import { HealthService, HealthStatus } from './health.service';
 
 describe('HealthController', () => {
   let controller: HealthController;
   let healthService: HealthService & {
-    getStatus: jest.Mock;
+    getStatus: Mock;
   };
 
   beforeEach(() => {
     healthService = {
-      getStatus: jest.fn(),
+      getStatus: vi.fn(),
     } as HealthService & {
-      getStatus: jest.Mock;
+      getStatus: Mock;
     };
 
     controller = new HealthController(healthService);

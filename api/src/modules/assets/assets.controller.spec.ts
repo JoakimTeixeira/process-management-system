@@ -1,3 +1,5 @@
+import type { Mock } from 'vitest';
+
 import { GUARDS_METADATA } from '@nestjs/common/constants';
 
 import { ROLES_KEY } from '../../common/decorators/roles.decorator';
@@ -57,9 +59,9 @@ describe('AssetsController', () => {
     AssetsService,
     'createBpmnAsset' | 'getAssetContent' | 'listByProcessVersionId'
   > & {
-    createBpmnAsset: jest.Mock;
-    getAssetContent: jest.Mock;
-    listByProcessVersionId: jest.Mock;
+    createBpmnAsset: Mock;
+    getAssetContent: Mock;
+    listByProcessVersionId: Mock;
   };
 
   const mockUser: AuthenticatedUser = {
@@ -92,9 +94,9 @@ describe('AssetsController', () => {
 
   beforeEach(() => {
     assetsService = {
-      createBpmnAsset: jest.fn(),
-      getAssetContent: jest.fn(),
-      listByProcessVersionId: jest.fn(),
+      createBpmnAsset: vi.fn(),
+      getAssetContent: vi.fn(),
+      listByProcessVersionId: vi.fn(),
     };
 
     controller = new AssetsController(

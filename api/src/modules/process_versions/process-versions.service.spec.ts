@@ -1,3 +1,5 @@
+import type { Mocked } from 'vitest';
+
 import { ConflictException, ForbiddenException } from '@nestjs/common';
 import type { DataSource } from 'typeorm';
 
@@ -11,9 +13,9 @@ import type { ProcessVersionsRepository } from './process-versions.repository';
 import { ProcessVersionsService } from './process-versions.service';
 
 describe('ProcessVersionsService', () => {
-  let dataSource: jest.Mocked<Pick<DataSource, 'transaction' | 'query'>>;
-  let processesRepository: jest.Mocked<Pick<ProcessesRepository, 'findById'>>;
-  let processVersionsRepository: jest.Mocked<
+  let dataSource: Mocked<Pick<DataSource, 'transaction' | 'query'>>;
+  let processesRepository: Mocked<Pick<ProcessesRepository, 'findById'>>;
+  let processVersionsRepository: Mocked<
     Pick<
       ProcessVersionsRepository,
       | 'countBpmnAssets'
@@ -29,13 +31,13 @@ describe('ProcessVersionsService', () => {
       | 'update'
     >
   >;
-  let workflowAuthorizationService: jest.Mocked<
+  let workflowAuthorizationService: Mocked<
     Pick<
       WorkflowAuthorizationService,
       'assertSameTeamAsProcessOwner' | 'assertSameTeamAsProcessVersionOwner'
     >
   >;
-  let auditLogWriterService: jest.Mocked<Pick<AuditLogWriterService, 'create'>>;
+  let auditLogWriterService: Mocked<Pick<AuditLogWriterService, 'create'>>;
   let service: ProcessVersionsService;
 
   const currentUser: AuthenticatedUser = {
@@ -66,14 +68,14 @@ describe('ProcessVersionsService', () => {
 
   beforeEach(() => {
     dataSource = {
-      query: jest
+      query: vi
         .fn()
         .mockImplementation((sql: string) =>
           Promise.resolve(
             sql.includes('SELECT EXISTS') ? [{ exists: true }] : [],
           ),
         ),
-      transaction: jest.fn().mockImplementation(
+      transaction: vi.fn().mockImplementation(
         async (
           runInTransaction: (entityManager: unknown) => Promise<unknown>,
         ) =>
@@ -83,27 +85,27 @@ describe('ProcessVersionsService', () => {
       ),
     };
     processesRepository = {
-      findById: jest.fn(),
+      findById: vi.fn(),
     };
     processVersionsRepository = {
-      countBpmnAssets: jest.fn(),
-      create: jest.fn(),
-      findById: jest.fn(),
-      findByProcessId: jest.fn(),
-      findByProcessAndVersionNumber: jest.fn(),
-      findLatestActorForState: jest.fn(),
-      findPublishedVersion: jest.fn(),
-      getNextVersionNumber: jest.fn(),
-      insertStateHistory: jest.fn(),
-      setLifecycleState: jest.fn(),
-      update: jest.fn(),
+      countBpmnAssets: vi.fn(),
+      create: vi.fn(),
+      findById: vi.fn(),
+      findByProcessId: vi.fn(),
+      findByProcessAndVersionNumber: vi.fn(),
+      findLatestActorForState: vi.fn(),
+      findPublishedVersion: vi.fn(),
+      getNextVersionNumber: vi.fn(),
+      insertStateHistory: vi.fn(),
+      setLifecycleState: vi.fn(),
+      update: vi.fn(),
     };
     workflowAuthorizationService = {
-      assertSameTeamAsProcessOwner: jest.fn(),
-      assertSameTeamAsProcessVersionOwner: jest.fn(),
+      assertSameTeamAsProcessOwner: vi.fn(),
+      assertSameTeamAsProcessVersionOwner: vi.fn(),
     };
     auditLogWriterService = {
-      create: jest.fn(),
+      create: vi.fn(),
     };
     service = new ProcessVersionsService(
       dataSource as unknown as DataSource,

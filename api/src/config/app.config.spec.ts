@@ -1,3 +1,5 @@
+import type { Mock } from 'vitest';
+
 import { buildAppConfig } from './app.config';
 import { getValidatedEnvironment } from './env.validation';
 
@@ -9,15 +11,15 @@ import {
   TEST_TOKEN_EXPIRES_IN_SECONDS,
 } from '../common/constants/workflow.constants';
 
-jest.mock('./env.validation');
+vi.mock('./env.validation');
 
 describe('app.config', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('should build app config from environment', () => {
-    (getValidatedEnvironment as jest.Mock).mockReturnValue({
+    (getValidatedEnvironment as Mock).mockReturnValue({
       NODE_ENV: 'development',
       PORT: DEFAULT_PORT,
       DB_HOST: 'localhost',
@@ -41,7 +43,7 @@ describe('app.config', () => {
   });
 
   it('should build app config with production environment', () => {
-    (getValidatedEnvironment as jest.Mock).mockReturnValue({
+    (getValidatedEnvironment as Mock).mockReturnValue({
       NODE_ENV: 'production',
       PORT: TEST_PORT,
       DB_HOST: 'localhost',
@@ -64,7 +66,7 @@ describe('app.config', () => {
   });
 
   it('should build app config with test environment', () => {
-    (getValidatedEnvironment as jest.Mock).mockReturnValue({
+    (getValidatedEnvironment as Mock).mockReturnValue({
       NODE_ENV: 'test',
       PORT: TEST_PORT_ALTERNATIVE,
       DB_HOST: 'localhost',

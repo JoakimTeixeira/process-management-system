@@ -1,3 +1,5 @@
+import type { Mocked } from 'vitest';
+
 import {
   BadRequestException,
   ConflictException,
@@ -13,7 +15,7 @@ import type { ProceduresRepository } from './procedures.repository';
 import { ProceduresService } from './procedures.service';
 
 describe('ProceduresService', () => {
-  let proceduresRepository: jest.Mocked<
+  let proceduresRepository: Mocked<
     Pick<
       ProceduresRepository,
       | 'create'
@@ -25,16 +27,16 @@ describe('ProceduresService', () => {
       | 'update'
     >
   >;
-  let processVersionsRepository: jest.Mocked<
+  let processVersionsRepository: Mocked<
     Pick<ProcessVersionsRepository, 'findById'>
   >;
-  let workflowAuthorizationService: jest.Mocked<
+  let workflowAuthorizationService: Mocked<
     Pick<
       WorkflowAuthorizationService,
       'assertSameTeamAsProcedureOwner' | 'assertSameTeamAsProcessVersionOwner'
     >
   >;
-  let auditLogWriterService: jest.Mocked<Pick<AuditLogWriterService, 'create'>>;
+  let auditLogWriterService: Mocked<Pick<AuditLogWriterService, 'create'>>;
   let service: ProceduresService;
 
   const currentUser: AuthenticatedUser = {
@@ -52,23 +54,23 @@ describe('ProceduresService', () => {
 
   beforeEach(() => {
     proceduresRepository = {
-      create: jest.fn(),
-      delete: jest.fn(),
-      findAllForBackoffice: jest.fn(),
-      findById: jest.fn(),
-      findByProcessVersionId: jest.fn(),
-      getNextProcedureCode: jest.fn(),
-      update: jest.fn(),
+      create: vi.fn(),
+      delete: vi.fn(),
+      findAllForBackoffice: vi.fn(),
+      findById: vi.fn(),
+      findByProcessVersionId: vi.fn(),
+      getNextProcedureCode: vi.fn(),
+      update: vi.fn(),
     };
     processVersionsRepository = {
-      findById: jest.fn(),
+      findById: vi.fn(),
     };
     workflowAuthorizationService = {
-      assertSameTeamAsProcedureOwner: jest.fn(),
-      assertSameTeamAsProcessVersionOwner: jest.fn(),
+      assertSameTeamAsProcedureOwner: vi.fn(),
+      assertSameTeamAsProcessVersionOwner: vi.fn(),
     };
     auditLogWriterService = {
-      create: jest.fn(),
+      create: vi.fn(),
     };
     service = new ProceduresService(
       proceduresRepository as unknown as ProceduresRepository,
