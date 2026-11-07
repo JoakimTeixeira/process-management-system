@@ -70,13 +70,13 @@ A1 → A11 ───────────────┘───────
 **Tests/Gate:** contract/full — `npm run test:contract`  
 **Done when:** a breaking field/enum/schema change fails before merge. **Complete: 2026-11-07; `npm run test:contract` checks OpenAPI drift, 79 API contract assertions, generated-type drift, and both frontend fixtures. Full gates: API 347, backoffice 69, public 22 tests; all builds passed.**
 
-### A8 — Centralize public synonym/route mapping
+### A8 — Centralize public synonym/route mapping ✅
 
 **Where:** public architecture/route helpers, duplicated page/search adapters, specs, `AGENTS.md`  
 **Depends on:** A7  
 **Requirement:** TERM-02  
 **Tests/Gate:** unit/quick — public suite  
-**Done when:** page code delegates Current/Target and route conversions to centralized helpers.
+**Done when:** page code delegates Current/Target and route conversions to centralized helpers. **Complete: 2026-11-07; architecture/state/view conversion and legacy catalog navigation now have single helper boundaries; 26 public tests, lint, and production build passed.**
 
 ### A9 — Add isolated Postgres integration harness
 

@@ -5,7 +5,10 @@ import {
   PublicProcedureSummary,
 } from '../../core/models/public-portal.models';
 import { CatalogTabId } from '../../core/ui/catalog-query-state';
-import { getArchitectureLabel } from '../../core/ui/architecture-view.helpers';
+import {
+  getArchitectureLabel,
+  getArchitectureViewId,
+} from '../../core/ui/architecture-view.helpers';
 
 export interface CatalogTabDefinition {
   id: CatalogTabId;
@@ -23,10 +26,6 @@ export const CATALOG_ARCHITECTURE_OPTIONS = [
   { value: 'AS-IS' as const, label: getArchitectureLabel('AS-IS') },
   { value: 'TO-BE' as const, label: getArchitectureLabel('TO-BE') },
 ];
-
-export function getCatalogRoute(tabId: CatalogTabId): string {
-  return tabId === 'procedures' ? '/catalog/procedures' : '/catalog/processes';
-}
 
 export function getDefaultCatalogTab(value: unknown): CatalogTabId {
   return value === 'procedures' ? 'procedures' : 'processes';
@@ -53,7 +52,8 @@ export function getCatalogPageDescription(activeTabId: CatalogTabId): string {
 }
 
 export function getDefaultProcessView(process: PublicProcessSummary): 'as-is' | 'to-be' {
-  return process.availableArchitectures.includes('AS-IS') ? 'as-is' : 'to-be';
+  const architectureState = process.availableArchitectures.includes('AS-IS') ? 'AS-IS' : 'TO-BE';
+  return getArchitectureViewId(architectureState);
 }
 
 export function getProcedureArchitectureState(

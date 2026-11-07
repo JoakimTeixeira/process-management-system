@@ -13,6 +13,9 @@ Use these terms in API code, generated contracts, tests, and documentation:
 
 The public UI may present `AS-IS` as “Current State” and `TO-BE` as “Target State”, but only centralized route/UI helpers may perform that translation. Lowercase `as-is` and `to-be` route parameters are presentation values, not alternate domain enums.
 
+- Keep architecture label/state/view-ID conversion in `web/public/src/app/core/ui/architecture-view.helpers.ts`.
+- Keep catalog paths, legacy search-link normalization, and navigation target parsing in `web/public/src/app/core/routing/process-route.helper.ts`.
+
 ## Test contract
 
 Follow the test pyramid and gate commands in `.specs/codebase/TESTING.md`. Integration and contract tests must remain runner-agnostic. Before structural conformance refactors, add characterization tests that pin actual observable behavior.

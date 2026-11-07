@@ -2,6 +2,7 @@ import { Params } from '@angular/router';
 
 import { PublicProcessDetail, PublicProcedureDetail } from '../../core/models/public-portal.models';
 import { getProcessTabRoute } from '../../core/routing/process-route.helper';
+import { getArchitectureViewId } from '../../core/ui/architecture-view.helpers';
 import { CatalogTabId } from '../../core/ui/catalog-query-state';
 
 export interface BreadcrumbItem {
@@ -55,8 +56,7 @@ export function buildProcedureBreadcrumbs(
   context: ProcedureBreadcrumbContext = { origin: 'direct' },
 ): BreadcrumbItem[] {
   const procedureLabel = formatCatalogLabel(detail.procedure.code, detail.procedure.title);
-  const resolvedView =
-    context.view ?? (detail.version.architectureState === 'TO-BE' ? 'to-be' : 'as-is');
+  const resolvedView = context.view ?? getArchitectureViewId(detail.version.architectureState);
 
   if (
     context.origin !== 'process' ||
@@ -80,7 +80,7 @@ export function buildProcedureBreadcrumbs(
     },
     {
       label: formatCatalogLabel(detail.process.code, detail.process.title),
-      link: `/catalog/processes/${context.originProcessId}`,
+      link: getProcessTabRoute(context.originProcessId, 'overview'),
       queryParams: {
         tab: 'procedures',
         view: resolvedView,

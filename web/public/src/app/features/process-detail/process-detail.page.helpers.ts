@@ -5,6 +5,13 @@ import {
   PublicProcessVersionView,
 } from '../../core/models/public-portal.models';
 import { ProcessTabId } from '../../core/routing/process-route.helper';
+import {
+  ArchitectureViewId,
+  getArchitectureLabel,
+  getArchitectureState,
+  getArchitectureViewId,
+  normalizeArchitectureViewId,
+} from '../../core/ui/architecture-view.helpers';
 
 export interface DetailTabDefinition {
   id: Exclude<ProcessTabId, 'default'>;
@@ -13,7 +20,7 @@ export interface DetailTabDefinition {
   disabled?: boolean;
 }
 
-export type ViewSelection = 'as-is' | 'to-be';
+export type ViewSelection = ArchitectureViewId;
 
 export function buildProcessDetailTabDefinitions(
   selectedViewVersion: PublicProcessVersionView | null,
@@ -60,15 +67,15 @@ export function buildProcessVersionOptions(
 
   if (detail?.versions.asIs) {
     options.push({
-      id: 'as-is',
-      label: `Current State (v${detail.versions.asIs.versionNumber})`,
+      id: getArchitectureViewId('AS-IS'),
+      label: `${getArchitectureLabel('AS-IS')} (v${detail.versions.asIs.versionNumber})`,
     });
   }
 
   if (detail?.versions.toBe) {
     options.push({
-      id: 'to-be',
-      label: `Target State (v${detail.versions.toBe.versionNumber})`,
+      id: getArchitectureViewId('TO-BE'),
+      label: `${getArchitectureLabel('TO-BE')} (v${detail.versions.toBe.versionNumber})`,
     });
   }
 
@@ -87,7 +94,7 @@ export function getProcessVersionForView(
 }
 
 export function getViewLabel(viewId: ViewSelection): string {
-  return viewId === 'to-be' ? 'Target State' : 'Current State';
+  return getArchitectureLabel(getArchitectureState(viewId));
 }
 
 export function getCompareTitle(
@@ -122,11 +129,11 @@ export function getPublishedProcessViewsSummary(detail: PublicProcessDetail | nu
   const labels: string[] = [];
 
   if (detail.versions.asIs) {
-    labels.push('Current State');
+    labels.push(getArchitectureLabel('AS-IS'));
   }
 
   if (detail.versions.toBe) {
-    labels.push('Target State');
+    labels.push(getArchitectureLabel('TO-BE'));
   }
 
   return labels.length > 0 ? labels.join(' and ') : 'No published views';
@@ -183,7 +190,7 @@ export function normalizeDetailViewSelection(
   value: string | null | undefined,
   fallback: ViewSelection = 'as-is',
 ): ViewSelection {
-  return value === 'to-be' ? 'to-be' : fallback;
+  return normalizeArchitectureViewId(value, fallback);
 }
 
 export function buildProcessDetailQueryParams(
@@ -270,11 +277,11 @@ function getAvailableProcessViewIds(detail: PublicProcessDetail | null): ViewSel
   const viewIds: ViewSelection[] = [];
 
   if (detail?.versions.asIs) {
-    viewIds.push('as-is');
+    viewIds.push(getArchitectureViewId('AS-IS'));
   }
 
   if (detail?.versions.toBe) {
-    viewIds.push('to-be');
+    viewIds.push(getArchitectureViewId('TO-BE'));
   }
 
   return viewIds;

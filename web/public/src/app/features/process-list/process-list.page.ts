@@ -25,6 +25,7 @@ import {
   PublicProcessSummary,
   PublicProcedureSummary,
 } from '../../core/models/public-portal.models';
+import { getCatalogRoute } from '../../core/routing/process-route.helper';
 import {
   CatalogQueryState,
   CatalogTabId,
@@ -44,7 +45,6 @@ import {
   filterProcesses,
   getCatalogPageDescription,
   getCatalogPageTitle,
-  getCatalogRoute,
   getDefaultCatalogTab,
   getDefaultProcessView,
   getProcedureArchitectureLabel,
