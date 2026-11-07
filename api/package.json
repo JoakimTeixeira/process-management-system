@@ -25,6 +25,7 @@
     "openapi:check": "node --require ts-node/register --require tsconfig-paths/register ./scripts/generate-openapi.ts --check",
     "test": "jest",
     "test:contract": "npm run openapi:check && jest --runInBand src/common/swagger/frontend-api-coverage.spec.ts src/common/swagger/frontend-schema-quality.spec.ts",
+    "test:integration": "jest --config ./test/integration/jest.config.json",
     "test:vitest:pilot": "vitest run --config ./vitest.config.ts",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",

@@ -78,13 +78,13 @@ A1 → A11 ───────────────┘───────
 **Tests/Gate:** unit/quick — public suite  
 **Done when:** page code delegates Current/Target and route conversions to centralized helpers. **Complete: 2026-11-07; architecture/state/view conversion and legacy catalog navigation now have single helper boundaries; 26 public tests, lint, and production build passed.**
 
-### A9 — Add isolated Postgres integration harness
+### A9 — Add isolated Postgres integration harness ✅
 
 **Where:** `api/test/integration/`, API scripts/config/package  
 **Depends on:** A1  
 **Requirement:** PYR-02  
 **Tests/Gate:** integration/full  
-**Done when:** explicit test DB setup migrates once, cleans safely, serializes shared state, and refuses non-test cleanup targets.
+**Done when:** explicit test DB setup migrates once, cleans safely, serializes shared state, and refuses non-test cleanup targets. **Complete: 2026-11-07; 2 integration suites / 6 tests passed against live PostgreSQL, migrations ran once with one worker, non-test database names were rejected, and teardown removal was verified from the PostgreSQL catalog.**
 
 ### A10 — Cover high-risk SQL against Postgres
 
