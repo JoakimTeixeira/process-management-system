@@ -38,13 +38,13 @@ A1 → A11 ───────────────┘───────
 **Tests/Gate:** contract/full — generate twice and compare; API tests/build pass  
 **Done when:** generation does not listen, closes cleanly, and `openapi:check` detects drift. **Complete: 2026-11-07; deterministic SHA-256 verified; 268 API tests passed.**
 
-### A4 — Audit and complete consumed response schemas
+### A4 — Audit and complete consumed response schemas ✅
 
 **Where:** consumed API controllers/DTOs and OpenAPI contract checks  
 **Depends on:** A3  
 **Requirement:** CONTRACT-01  
 **Tests/Gate:** contract/full  
-**Done when:** every consumed endpoint has an intentional schema, including text/void/nullable responses, and the audit is automated.
+**Done when:** every consumed endpoint has an intentional schema, including text/void/nullable responses, and the audit is automated. **Complete: 2026-11-07; 57 consumed operations covered; 325 API tests passed.**
 
 ### A5 — Generate and adopt public contract types [P]
 
