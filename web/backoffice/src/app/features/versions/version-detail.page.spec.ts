@@ -3,7 +3,9 @@ import { provideRouter } from '@angular/router';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Observable, of, Subject } from 'rxjs';
 import { signal, WritableSignal } from '@angular/core';
+import { type Mock, vi } from 'vitest';
 
+import { createSpyObject, type SpyObject } from '../../../testing/spy-object';
 import { BackofficeApiService } from '../../core/api/backoffice-api.service';
 import { AuthService } from '../../core/auth/auth.service';
 import { VersionDetailPageComponent } from './version-detail.page';
@@ -14,6 +16,7 @@ interface VersionDetailPageTestInstance {
   uploadForm: VersionDetailPageComponent['uploadForm'];
   selectedFile: VersionDetailPageComponent['selectedFile'];
   previewAssetContent: VersionDetailPageComponent['previewAssetContent'];
+  diagramPreviewXml: VersionDetailPageComponent['diagramPreviewXml'];
   expandedPreviewAssetId: VersionDetailPageComponent['expandedPreviewAssetId'];
   assetTimeline: VersionDetailPageComponent['assetTimeline'];
   allChecklistChecked: VersionDetailPageComponent['allChecklistChecked'];
@@ -45,10 +48,10 @@ interface TestUser {
 
 interface TestAuthService {
   currentUser: WritableSignal<TestUser | null>;
-  hasRole: jasmine.Spy<(role: string) => boolean>;
+  hasRole: Mock<(role: string) => boolean>;
 }
 
-interface MatDialogTestDouble extends jasmine.SpyObj<MatDialog> {
+interface MatDialogTestDouble extends SpyObject<MatDialog> {
   _openDialogs: MatDialogRef<unknown>[];
   _afterAllClosed: Observable<void>;
   openDialogs: MatDialogRef<unknown>[];
@@ -56,12 +59,12 @@ interface MatDialogTestDouble extends jasmine.SpyObj<MatDialog> {
 }
 
 describe('VersionDetailPageComponent', () => {
-  let api: jasmine.SpyObj<BackofficeApiService>;
+  let api: SpyObject<BackofficeApiService>;
   let auth: TestAuthService;
   let dialog: MatDialogTestDouble;
 
   beforeEach(async () => {
-    api = jasmine.createSpyObj<BackofficeApiService>('BackofficeApiService', [
+    api = createSpyObject<BackofficeApiService>([
       'getVersion',
       'getProcess',
       'listProcessVersions',
@@ -82,8 +85,8 @@ describe('VersionDetailPageComponent', () => {
       'promoteVersion',
     ]);
 
-    dialog = jasmine.createSpyObj<MatDialog>('MatDialog', ['open']) as MatDialogTestDouble;
-    dialog.open.and.returnValue({
+    dialog = createSpyObject<MatDialog>(['open']) as MatDialogTestDouble;
+    dialog.open.mockReturnValue({
       afterClosed: () => of(true),
     } as MatDialogRef<unknown>);
     dialog._openDialogs = [];
@@ -91,7 +94,7 @@ describe('VersionDetailPageComponent', () => {
     dialog.openDialogs = [];
     dialog.afterOpened = new Subject<MatDialogRef<unknown>>();
 
-    api.getVersion.and.returnValue(
+    api.getVersion.mockReturnValue(
       of({
         id: 'version-1',
         processId: 'process-1',
@@ -106,7 +109,7 @@ describe('VersionDetailPageComponent', () => {
       }),
     );
 
-    api.getProcess.and.returnValue(
+    api.getProcess.mockReturnValue(
       of({
         id: 'process-1',
         areaId: 'area-1',
@@ -120,7 +123,7 @@ describe('VersionDetailPageComponent', () => {
       }),
     );
 
-    api.listProcessVersions.and.returnValue(
+    api.listProcessVersions.mockReturnValue(
       of([
         {
           id: 'version-0',
@@ -149,7 +152,7 @@ describe('VersionDetailPageComponent', () => {
       ]),
     );
 
-    api.listAssets.and.returnValue(
+    api.listAssets.mockReturnValue(
       of([
         {
           id: 'asset-1',
@@ -168,8 +171,8 @@ describe('VersionDetailPageComponent', () => {
       ]),
     );
 
-    api.listProcedures.and.returnValue(of([]));
-    api.getAssetContent.and.returnValue(
+    api.listProcedures.mockReturnValue(of([]));
+    api.getAssetContent.mockReturnValue(
       of({
         id: 'asset-1',
         caption: 'Draft BPMN',
@@ -178,11 +181,11 @@ describe('VersionDetailPageComponent', () => {
         content: '<?xml version="1.0"?><definitions><process id="p1" /></definitions>',
       }),
     );
-    api.getVersionStateHistory.and.returnValue(of([]));
-    api.getAuditLogs.and.returnValue(of([]));
+    api.getVersionStateHistory.mockReturnValue(of([]));
+    api.getAuditLogs.mockReturnValue(of([]));
 
     auth = {
-      hasRole: jasmine.createSpy('hasRole').and.callFake((role: string) => role === 'EDITOR'),
+      hasRole: vi.fn().mockImplementation((role: string) => role === 'EDITOR'),
       currentUser: signal<TestUser | null>({
         id: 'editor-1',
         name: 'Eve Editor',
@@ -226,8 +229,8 @@ describe('VersionDetailPageComponent', () => {
     ]);
     expect(component.assets().length).toBe(1);
     expect(component.expandedPreviewAssetId()).toBe('asset-1');
-    expect(component.canEditDraft()).toBeTrue();
-    expect(component.canUploadBpmn()).toBeTrue();
+    expect(component.canEditDraft()).toBe(true);
+    expect(component.canUploadBpmn()).toBe(true);
     expect(component.visibleActions().map((action) => action.key)).toEqual(['submit']);
     expect(component.waitingForRoleLabel()).toBe('EDITOR');
     expect(component.nextActionLabel()).toBe('Complete the draft and submit it for review.');
@@ -249,14 +252,14 @@ describe('VersionDetailPageComponent', () => {
 
     const component = fixture.componentInstance as unknown as VersionDetailPageTestInstance;
 
-    expect(component.canEditDraft()).toBeFalse();
-    expect(component.canUploadBpmn()).toBeFalse();
+    expect(component.canEditDraft()).toBe(false);
+    expect(component.canUploadBpmn()).toBe(false);
     expect(component.visibleActions()).toEqual([]);
   });
 
   it('should save draft metadata without updating reviewer checklist status', async () => {
-    api.listAssets.and.returnValue(of([]));
-    api.updateVersion.and.returnValue(
+    api.listAssets.mockReturnValue(of([]));
+    api.updateVersion.mockReturnValue(
       of({
         id: 'version-1',
         processId: 'process-1',
@@ -300,7 +303,7 @@ describe('VersionDetailPageComponent', () => {
 
     const component = fixture.componentInstance as unknown as VersionDetailPageTestInstance;
 
-    expect(component.allChecklistChecked()).toBeFalse();
+    expect(component.allChecklistChecked()).toBe(false);
 
     component.procedures.set([
       {
@@ -319,7 +322,7 @@ describe('VersionDetailPageComponent', () => {
     ]);
     fixture.detectChanges();
 
-    expect(component.allChecklistChecked()).toBeTrue();
+    expect(component.allChecklistChecked()).toBe(true);
   });
 
   it('should derive the next missing submission requirement for a draft version', async () => {
@@ -335,7 +338,7 @@ describe('VersionDetailPageComponent', () => {
   });
 
   it('should use a reviewer checklist for correctness checks', async () => {
-    auth.hasRole.and.callFake((role: string) => role === 'REVIEWER');
+    auth.hasRole.mockImplementation((role: string) => role === 'REVIEWER');
     auth.currentUser.set({
       id: 'reviewer-1',
       name: 'Rita Reviewer',
@@ -344,7 +347,7 @@ describe('VersionDetailPageComponent', () => {
       team: { id: 'team-1', code: 'OPS', name: 'Operations' },
     });
 
-    api.getVersion.and.returnValue(
+    api.getVersion.mockReturnValue(
       of({
         id: 'version-1',
         processId: 'process-1',
@@ -359,7 +362,7 @@ describe('VersionDetailPageComponent', () => {
       }),
     );
 
-    api.listProcedures.and.returnValue(
+    api.listProcedures.mockReturnValue(
       of([
         {
           id: 'procedure-1',
@@ -386,7 +389,7 @@ describe('VersionDetailPageComponent', () => {
     const component = fixture.componentInstance as unknown as VersionDetailPageTestInstance;
 
     expect(component.nextChecklistItem()?.label).toBe('Confirm the title is correct');
-    expect(component.allChecklistChecked()).toBeFalse();
+    expect(component.allChecklistChecked()).toBe(false);
 
     component.checklistForm.setValue({
       titleChecked: true,
@@ -397,11 +400,11 @@ describe('VersionDetailPageComponent', () => {
     });
     fixture.detectChanges();
 
-    expect(component.allChecklistChecked()).toBeTrue();
+    expect(component.allChecklistChecked()).toBe(true);
   });
 
   it('should derive the publisher completion state when no checklist requirement is missing', async () => {
-    auth.hasRole.and.callFake((role: string) => role === 'PUBLISHER');
+    auth.hasRole.mockImplementation((role: string) => role === 'PUBLISHER');
     auth.currentUser.set({
       id: 'publisher-1',
       name: 'Pat Publisher',
@@ -410,7 +413,7 @@ describe('VersionDetailPageComponent', () => {
       team: { id: 'team-1', code: 'OPS', name: 'Operations' },
     });
 
-    api.getVersion.and.returnValue(
+    api.getVersion.mockReturnValue(
       of({
         id: 'version-1',
         processId: 'process-1',
@@ -425,7 +428,7 @@ describe('VersionDetailPageComponent', () => {
       }),
     );
 
-    api.listProcedures.and.returnValue(
+    api.listProcedures.mockReturnValue(
       of([
         {
           id: 'procedure-1',
@@ -458,56 +461,59 @@ describe('VersionDetailPageComponent', () => {
   });
 
   it('should sync the version checklist after superseding a BPMN asset without resetting unsaved draft fields', async () => {
-    api.listAssets.and.returnValues(
-      of([
-        {
-          id: 'asset-1',
-          processVersionId: 'version-1',
-          caption: 'Draft BPMN',
-          assetType: 'BPMN',
-          filePath: 'uploads/backoffice/bpmn/file.bpmn',
-          mimeType: 'application/xml',
-          checksum: 'abc',
-          sizeBytes: 123,
-          isCurrent: true,
-          supersededAt: null,
-          supersededByAssetId: null,
-          createdAt: '2026-04-28T12:00:00.000Z',
-        },
-      ]),
-      of([
-        {
-          id: 'asset-1',
-          processVersionId: 'version-1',
-          caption: 'Draft BPMN',
-          assetType: 'BPMN',
-          filePath: 'uploads/backoffice/bpmn/file.bpmn',
-          mimeType: 'application/xml',
-          checksum: 'abc',
-          sizeBytes: 123,
-          isCurrent: false,
-          supersededAt: '2026-04-28T12:00:00.000Z',
-          supersededByAssetId: 'asset-2',
-          createdAt: '2026-04-28T12:00:00.000Z',
-        },
-        {
-          id: 'asset-2',
-          processVersionId: 'version-1',
-          caption: 'Updated BPMN',
-          assetType: 'BPMN',
-          filePath: 'uploads/backoffice/bpmn/file-v2.bpmn',
-          mimeType: 'application/xml',
-          checksum: 'def',
-          sizeBytes: 456,
-          isCurrent: true,
-          supersededAt: null,
-          supersededByAssetId: null,
-          createdAt: '2026-04-28T12:05:00.000Z',
-        },
-      ]),
-    );
+    api.listAssets
+      .mockReturnValueOnce(
+        of([
+          {
+            id: 'asset-1',
+            processVersionId: 'version-1',
+            caption: 'Draft BPMN',
+            assetType: 'BPMN',
+            filePath: 'uploads/backoffice/bpmn/file.bpmn',
+            mimeType: 'application/xml',
+            checksum: 'abc',
+            sizeBytes: 123,
+            isCurrent: true,
+            supersededAt: null,
+            supersededByAssetId: null,
+            createdAt: '2026-04-28T12:00:00.000Z',
+          },
+        ]),
+      )
+      .mockReturnValueOnce(
+        of([
+          {
+            id: 'asset-1',
+            processVersionId: 'version-1',
+            caption: 'Draft BPMN',
+            assetType: 'BPMN',
+            filePath: 'uploads/backoffice/bpmn/file.bpmn',
+            mimeType: 'application/xml',
+            checksum: 'abc',
+            sizeBytes: 123,
+            isCurrent: false,
+            supersededAt: '2026-04-28T12:00:00.000Z',
+            supersededByAssetId: 'asset-2',
+            createdAt: '2026-04-28T12:00:00.000Z',
+          },
+          {
+            id: 'asset-2',
+            processVersionId: 'version-1',
+            caption: 'Updated BPMN',
+            assetType: 'BPMN',
+            filePath: 'uploads/backoffice/bpmn/file-v2.bpmn',
+            mimeType: 'application/xml',
+            checksum: 'def',
+            sizeBytes: 456,
+            isCurrent: true,
+            supersededAt: null,
+            supersededByAssetId: null,
+            createdAt: '2026-04-28T12:05:00.000Z',
+          },
+        ]),
+      );
 
-    api.listProcedures.and.returnValue(
+    api.listProcedures.mockReturnValue(
       of([
         {
           id: 'procedure-1',
@@ -525,7 +531,7 @@ describe('VersionDetailPageComponent', () => {
       ]),
     );
 
-    api.uploadBpmnAsset.and.returnValue(
+    api.uploadBpmnAsset.mockReturnValue(
       of({
         id: 'asset-2',
         processVersionId: 'version-1',
@@ -542,7 +548,7 @@ describe('VersionDetailPageComponent', () => {
       }),
     );
 
-    api.getAssetContent.and.callFake((_processVersionId: string, assetId: string) =>
+    api.getAssetContent.mockImplementation((_processVersionId: string, assetId: string) =>
       of({
         id: assetId,
         caption: assetId === 'asset-2' ? 'Updated BPMN' : 'Draft BPMN',
@@ -555,7 +561,7 @@ describe('VersionDetailPageComponent', () => {
       }),
     );
 
-    api.updateVersion.and.returnValue(
+    api.updateVersion.mockReturnValue(
       of({
         id: 'version-1',
         processId: 'process-1',
@@ -590,11 +596,7 @@ describe('VersionDetailPageComponent', () => {
 
     await component.uploadAsset();
 
-    expect(api.uploadBpmnAsset).toHaveBeenCalledWith(
-      'version-1',
-      'Updated BPMN',
-      jasmine.any(File),
-    );
+    expect(api.uploadBpmnAsset).toHaveBeenCalledWith('version-1', 'Updated BPMN', expect.any(File));
     expect(api.updateVersion).not.toHaveBeenCalled();
     expect(component.draftForm.controls.title.getRawValue()).toBe('Unsaved title change');
     expect(
@@ -609,7 +611,7 @@ describe('VersionDetailPageComponent', () => {
   });
 
   it('should derive asset revision order and normalize BPMN mime type metadata', async () => {
-    api.listAssets.and.returnValue(
+    api.listAssets.mockReturnValue(
       of([
         {
           id: 'asset-1',
@@ -642,7 +644,7 @@ describe('VersionDetailPageComponent', () => {
       ]),
     );
 
-    api.getAssetContent.and.callFake((_processVersionId: string, assetId: string) =>
+    api.getAssetContent.mockImplementation((_processVersionId: string, assetId: string) =>
       of({
         id: assetId,
         caption: assetId === 'asset-2' ? 'Revised BPMN' : 'Original BPMN',
@@ -666,7 +668,7 @@ describe('VersionDetailPageComponent', () => {
   });
 
   it('should select the current asset as the active preview source by default', async () => {
-    api.listAssets.and.returnValue(
+    api.listAssets.mockReturnValue(
       of([
         {
           id: 'asset-1',
@@ -699,7 +701,7 @@ describe('VersionDetailPageComponent', () => {
       ]),
     );
 
-    api.getAssetContent.and.callFake((_processVersionId: string, assetId: string) =>
+    api.getAssetContent.mockImplementation((_processVersionId: string, assetId: string) =>
       of({
         id: assetId,
         caption: assetId === 'asset-2' ? 'Current BPMN' : 'Original BPMN',
@@ -718,5 +720,6 @@ describe('VersionDetailPageComponent', () => {
 
     expect(component.expandedPreviewAssetId()).toBe('asset-2');
     expect(component.previewAssetContent()?.id).toBe('asset-2');
+    expect(component.diagramPreviewXml()).toContain('asset-2');
   });
 });

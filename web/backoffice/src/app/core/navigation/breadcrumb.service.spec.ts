@@ -27,10 +27,7 @@ describe('BreadcrumbService', () => {
             path: 'processes/:id/versions',
             component: StubPageComponent,
             data: {
-              breadcrumb: [
-                { label: 'Processes', url: '/processes' },
-                { label: 'Versions' },
-              ],
+              breadcrumb: [{ label: 'Processes', url: '/processes' }, { label: 'Versions' }],
             },
           },
         ]),
@@ -48,7 +45,7 @@ describe('BreadcrumbService', () => {
       { label: 'Processes', url: '/processes' },
       { label: 'Versions' },
     ]);
-    expect(service.isVisible()).toBeTrue();
+    expect(service.isVisible()).toBe(true);
   });
 
   it('prefers scoped overrides and restores route breadcrumbs when cleared', async () => {
@@ -76,6 +73,6 @@ describe('BreadcrumbService', () => {
     await router.navigateByUrl('/processes');
 
     expect(service.items()).toEqual([{ label: 'Processes', url: '/processes' }]);
-    expect(service.isVisible()).toBeFalse();
+    expect(service.isVisible()).toBe(false);
   });
 });

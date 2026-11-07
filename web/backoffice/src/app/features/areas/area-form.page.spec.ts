@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
+import { createSpyObject, type SpyObject } from '../../../testing/spy-object';
 import { BackofficeApiService } from '../../core/api/backoffice-api.service';
 import { AreaFormPageComponent } from './area-form.page';
 
@@ -16,10 +17,10 @@ interface AreaFormPageTestInstance {
 }
 
 describe('AreaFormPageComponent', () => {
-  let api: jasmine.SpyObj<BackofficeApiService>;
+  let api: SpyObject<BackofficeApiService>;
 
   beforeEach(async () => {
-    api = jasmine.createSpyObj<BackofficeApiService>('BackofficeApiService', [
+    api = createSpyObject<BackofficeApiService>([
       'listTeamOptions',
       'listOwnerOptions',
       'listItilPractices',
@@ -28,16 +29,14 @@ describe('AreaFormPageComponent', () => {
       'updateArea',
     ]);
 
-    api.listTeamOptions.and.returnValue(
-      of([{ id: 'team-1', code: 'OPS', name: 'Operations' }]),
-    );
-    api.listOwnerOptions.and.returnValue(
+    api.listTeamOptions.mockReturnValue(of([{ id: 'team-1', code: 'OPS', name: 'Operations' }]));
+    api.listOwnerOptions.mockReturnValue(
       of([{ id: 'owner-1', name: 'Alice Owner', teamId: 'team-1', isActive: true }]),
     );
-    api.listItilPractices.and.returnValue(
+    api.listItilPractices.mockReturnValue(
       of([{ id: 'practice-1', code: 'PR1', name: 'Incident', description: null }]),
     );
-    api.getArea.and.returnValue(
+    api.getArea.mockReturnValue(
       of({
         id: 'area-1',
         code: 'A1',
@@ -54,10 +53,7 @@ describe('AreaFormPageComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [AreaFormPageComponent],
-      providers: [
-        { provide: BackofficeApiService, useValue: api },
-        provideRouter([]),
-      ],
+      providers: [{ provide: BackofficeApiService, useValue: api }, provideRouter([])],
     }).compileComponents();
   });
 
@@ -80,7 +76,7 @@ describe('AreaFormPageComponent', () => {
       ownerId: 'owner-1',
       itilPracticeId: 'practice-1',
     });
-    expect(component.form.controls.ownerId.enabled).toBeTrue();
+    expect(component.form.controls.ownerId.enabled).toBe(true);
     expect(component.owners()).toEqual([
       { id: 'owner-1', name: 'Alice Owner', teamId: 'team-1', isActive: true },
     ]);
@@ -102,19 +98,19 @@ describe('AreaFormPageComponent', () => {
 
     const component = fixture.componentInstance as unknown as AreaFormPageTestInstance;
 
-    expect(component.form.controls.ownerId.disabled).toBeTrue();
+    expect(component.form.controls.ownerId.disabled).toBe(true);
     expect(api.listOwnerOptions).not.toHaveBeenCalled();
 
     component.form.controls.teamId.setValue('team-1');
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(component.form.controls.ownerId.enabled).toBeTrue();
+    expect(component.form.controls.ownerId.enabled).toBe(true);
     expect(api.listOwnerOptions).toHaveBeenCalledWith('team-1');
   });
 
   it('should keep owner load failures scoped to owner-loading state', async () => {
-    api.listOwnerOptions.and.returnValue(
+    api.listOwnerOptions.mockReturnValue(
       throwError(() => new Error('Cannot GET /users/owner-options/team/team-1')),
     );
 
@@ -143,7 +139,7 @@ describe('AreaFormPageComponent', () => {
 
     const component = fixture.componentInstance as unknown as AreaFormPageTestInstance;
 
-    expect(component.form.controls.teamId.enabled).toBeTrue();
+    expect(component.form.controls.teamId.enabled).toBe(true);
     expect(component.form.controls.teamId.value).toBe('team-1');
   });
 });

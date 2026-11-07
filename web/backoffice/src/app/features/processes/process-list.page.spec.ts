@@ -2,7 +2,9 @@ import { Signal, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
+import { type Mock, vi } from 'vitest';
 
+import { createSpyObject, type SpyObject } from '../../../testing/spy-object';
 import { BackofficeApiService } from '../../core/api/backoffice-api.service';
 import { AuthService } from '../../core/auth/auth.service';
 import { ProcessRecord } from '../../core/models/backoffice.models';
@@ -23,16 +25,18 @@ interface ProcessListPageTestInstance {
 }
 
 describe('ProcessListPageComponent', () => {
-  let api: jasmine.SpyObj<BackofficeApiService>;
-  let currentUserState: ReturnType<typeof signal<{
-    id: string;
-    name: string;
-    email: string;
-    role: { id: string; name: 'EDITOR' | 'REVIEWER' | 'PUBLISHER' | 'VIEWER' };
-    team: { id: string; code: string; name: string };
-  }>>;
+  let api: SpyObject<BackofficeApiService>;
+  let currentUserState: ReturnType<
+    typeof signal<{
+      id: string;
+      name: string;
+      email: string;
+      role: { id: string; name: 'EDITOR' | 'REVIEWER' | 'PUBLISHER' | 'VIEWER' };
+      team: { id: string; code: string; name: string };
+    }>
+  >;
   let auth: {
-    hasRole: jasmine.Spy;
+    hasRole: Mock;
     currentUser: Signal<{
       id: string;
       name: string;
@@ -71,12 +75,9 @@ describe('ProcessListPageComponent', () => {
   } satisfies ProcessRecord;
 
   beforeEach(async () => {
-    api = jasmine.createSpyObj<BackofficeApiService>('BackofficeApiService', [
-      'listProcesses',
-      'listAreas',
-    ]);
-    api.listProcesses.and.returnValue(of([processRecord]));
-    api.listAreas.and.returnValue(
+    api = createSpyObject<BackofficeApiService>(['listProcesses', 'listAreas']);
+    api.listProcesses.mockReturnValue(of([processRecord]));
+    api.listAreas.mockReturnValue(
       of([
         {
           id: 'area-1',
@@ -114,9 +115,7 @@ describe('ProcessListPageComponent', () => {
     });
 
     auth = {
-      hasRole: jasmine
-        .createSpy('hasRole')
-        .and.callFake((role: string) => currentUserState().role.name === role),
+      hasRole: vi.fn((role: string) => currentUserState().role.name === role),
       currentUser: currentUserState.asReadonly(),
     };
 
@@ -139,8 +138,8 @@ describe('ProcessListPageComponent', () => {
 
     const component = fixture.componentInstance as unknown as ProcessListPageTestInstance;
 
-    expect(component.canEdit()).toBeFalse();
-    expect(component.canManageProcess(processRecord)).toBeFalse();
+    expect(component.canEdit()).toBe(false);
+    expect(component.canManageProcess(processRecord)).toBe(false);
     expect(component.openRoute(processRecord)).toEqual(['/versions', 'version-1']);
     expect(component.openQueryParams(processRecord)).toEqual({ tab: 'summary' });
     expect(component.workRoute(processRecord)).toEqual(['/versions', 'version-1']);
@@ -291,18 +290,18 @@ describe('ProcessListPageComponent', () => {
 
     const component = fixture.componentInstance as unknown as ProcessListPageTestInstance;
 
-    expect(component.canManageProcess(processRecord)).toBeTrue();
+    expect(component.canManageProcess(processRecord)).toBe(true);
     expect(
       component.canManageProcess({
         ...processRecord,
         teamId: 'team-2',
         teamName: 'Finance',
       }),
-    ).toBeFalse();
+    ).toBe(false);
   });
 
   it('should filter processes by area', async () => {
-    api.listProcesses.and.returnValue(
+    api.listProcesses.mockReturnValue(
       of([
         processRecord,
         {
@@ -329,8 +328,6 @@ describe('ProcessListPageComponent', () => {
     component.selectedAreaId.set('area-2');
     fixture.detectChanges();
 
-    expect(component.filteredProcesses().map((process) => process.id)).toEqual([
-      'process-2',
-    ]);
+    expect(component.filteredProcesses().map((process) => process.id)).toEqual(['process-2']);
   });
 });

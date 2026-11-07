@@ -1,7 +1,9 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { of } from 'rxjs';
+import { vi } from 'vitest';
 
+import { createSpyObject, type SpyObject } from '../../../testing/spy-object';
 import { BackofficeApiService } from '../../core/api/backoffice-api.service';
 import { AuthService } from '../../core/auth/auth.service';
 import { VersionFormPageComponent } from './version-form.page';
@@ -15,7 +17,7 @@ interface VersionFormPageTestInstance {
 }
 
 describe('VersionFormPageComponent', () => {
-  let api: jasmine.SpyObj<BackofficeApiService>;
+  let api: SpyObject<BackofficeApiService>;
   let auth: {
     currentUser: () => {
       id: string;
@@ -27,13 +29,13 @@ describe('VersionFormPageComponent', () => {
   };
 
   beforeEach(async () => {
-    api = jasmine.createSpyObj<BackofficeApiService>('BackofficeApiService', [
+    api = createSpyObject<BackofficeApiService>([
       'getProcess',
       'listProcessVersions',
       'createProcessVersion',
     ]);
 
-    api.getProcess.and.returnValue(
+    api.getProcess.mockReturnValue(
       of({
         id: 'process-1',
         areaId: 'area-1',
@@ -46,7 +48,7 @@ describe('VersionFormPageComponent', () => {
         ownerName: 'Alice Owner',
       }),
     );
-    api.listProcessVersions.and.returnValue(
+    api.listProcessVersions.mockReturnValue(
       of([
         {
           id: 'version-1',
@@ -62,7 +64,7 @@ describe('VersionFormPageComponent', () => {
         },
       ]),
     );
-    api.createProcessVersion.and.returnValue(
+    api.createProcessVersion.mockReturnValue(
       of({
         id: 'version-2',
         processId: 'process-1',
@@ -100,7 +102,7 @@ describe('VersionFormPageComponent', () => {
   it('creates versions without exposing version-number input to the client payload', async () => {
     const fixture = TestBed.createComponent(VersionFormPageComponent);
     const router = TestBed.inject(Router);
-    spyOn(router, 'navigate').and.resolveTo(true);
+    vi.spyOn(router, 'navigate').mockResolvedValue(true);
 
     fixture.componentRef.setInput('id', 'process-1');
     fixture.detectChanges();
@@ -117,7 +119,7 @@ describe('VersionFormPageComponent', () => {
 
     await component.submit();
 
-    expect(component.canCreateVersion()).toBeTrue();
+    expect(component.canCreateVersion()).toBe(true);
     expect(component.existingVersions().length).toBe(1);
     expect(api.createProcessVersion).toHaveBeenCalledWith('process-1', {
       architectureState: 'TO-BE',
@@ -145,8 +147,10 @@ describe('VersionFormPageComponent', () => {
     const component = fixture.componentInstance as unknown as VersionFormPageTestInstance;
     await component.submit();
 
-    expect(component.canCreateVersion()).toBeFalse();
-    expect(component.errorMessage()).toBe('You can only create versions for processes owned by your team.');
+    expect(component.canCreateVersion()).toBe(false);
+    expect(component.errorMessage()).toBe(
+      'You can only create versions for processes owned by your team.',
+    );
     expect(api.createProcessVersion).not.toHaveBeenCalled();
   });
 });

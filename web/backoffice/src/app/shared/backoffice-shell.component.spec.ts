@@ -1,6 +1,7 @@
 import { Signal, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { type Mock, vi } from 'vitest';
 
 import { AuthService } from '../core/auth/auth.service';
 import { AppRole } from '../core/models/backoffice.models';
@@ -28,7 +29,7 @@ describe('BackofficeShellComponent', () => {
       role: { id: string; name: AppRole };
       team: { id: string; code: string; name: string } | null;
     } | null>;
-    logout: jasmine.Spy;
+    logout: Mock;
   };
 
   beforeEach(async () => {
@@ -42,22 +43,18 @@ describe('BackofficeShellComponent', () => {
 
     auth = {
       currentUser: currentUserState.asReadonly(),
-      logout: jasmine.createSpy('logout'),
+      logout: vi.fn(),
     };
 
     await TestBed.configureTestingModule({
       imports: [BackofficeShellComponent],
-      providers: [
-        { provide: AuthService, useValue: auth },
-        provideRouter([]),
-      ],
+      providers: [{ provide: AuthService, useValue: auth }, provideRouter([])],
     }).compileComponents();
   });
 
   it('keeps Procedures between Processes and Glossary for content roles', () => {
     const fixture = TestBed.createComponent(BackofficeShellComponent);
-    const component =
-      fixture.componentInstance as unknown as BackofficeShellTestInstance;
+    const component = fixture.componentInstance as unknown as BackofficeShellTestInstance;
 
     expect(component.navItems().map((item) => item.label)).toEqual([
       'Areas',
@@ -88,9 +85,6 @@ describe('BackofficeShellComponent', () => {
       team: { id: 'team-1', code: 'OPS', name: 'Operations' },
     });
 
-    expect(component.navItems().map((item) => item.label)).toEqual([
-      'Users',
-      'Teams',
-    ]);
+    expect(component.navItems().map((item) => item.label)).toEqual(['Users', 'Teams']);
   });
 });

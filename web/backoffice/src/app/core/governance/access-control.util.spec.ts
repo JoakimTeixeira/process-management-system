@@ -53,8 +53,8 @@ describe('AccessControlUtil', () => {
   });
 
   it('allows same-team editors to manage processes and create versions', () => {
-    expect(service.canManageProcess(process)).toBeTrue();
-    expect(service.canCreateVersion(process)).toBeTrue();
+    expect(service.canManageProcess(process)).toBe(true);
+    expect(service.canCreateVersion(process)).toBe(true);
     expect(service.getAvailableTeams([{ id: 'team-1', name: 'Operations' }])).toEqual([
       { id: 'team-1', name: 'Operations' },
     ]);
@@ -70,9 +70,9 @@ describe('AccessControlUtil', () => {
       team: { id: 'team-1', code: 'OPS', name: 'Operations' },
     });
 
-    expect(service.canManageProcess(process)).toBeFalse();
-    expect(service.canCreateVersion(process)).toBeFalse();
-    expect(service.canManageVersion(process, { lifecycleState: 'Draft' })).toBeFalse();
+    expect(service.canManageProcess(process)).toBe(false);
+    expect(service.canCreateVersion(process)).toBe(false);
+    expect(service.canManageVersion(process, { lifecycleState: 'Draft' })).toBe(false);
 
     currentUserState.set({
       id: 'editor-2',
@@ -82,20 +82,20 @@ describe('AccessControlUtil', () => {
       team: { id: 'team-2', code: 'FIN', name: 'Finance' },
     });
 
-    expect(service.canManageProcess(process)).toBeFalse();
-    expect(service.canCreateVersion(process)).toBeFalse();
-    expect(service.canManageVersion(process, { lifecycleState: 'Draft' })).toBeFalse();
+    expect(service.canManageProcess(process)).toBe(false);
+    expect(service.canCreateVersion(process)).toBe(false);
+    expect(service.canManageVersion(process, { lifecycleState: 'Draft' })).toBe(false);
   });
 
   it('allows direct version mutation only for same-team editors on draft versions', () => {
-    expect(service.canManageVersion(process, { lifecycleState: 'Draft' })).toBeTrue();
-    expect(service.canManageVersion(process, { lifecycleState: 'Approved' })).toBeFalse();
-    expect(service.canManageVersion(process, { lifecycleState: 'Published' })).toBeFalse();
+    expect(service.canManageVersion(process, { lifecycleState: 'Draft' })).toBe(true);
+    expect(service.canManageVersion(process, { lifecycleState: 'Approved' })).toBe(false);
+    expect(service.canManageVersion(process, { lifecycleState: 'Published' })).toBe(false);
   });
 
   it('reflects helper role checks and empty-team behavior', () => {
-    expect(service.hasRole('EDITOR')).toBeTrue();
-    expect(service.hasAnyRole(['EDITOR', 'PUBLISHER'])).toBeTrue();
+    expect(service.hasRole('EDITOR')).toBe(true);
+    expect(service.hasAnyRole(['EDITOR', 'PUBLISHER'])).toBe(true);
 
     currentUserState.set({
       id: 'admin-1',
@@ -108,6 +108,6 @@ describe('AccessControlUtil', () => {
     expect(service.currentUserTeamId()).toBeNull();
     expect(service.getAvailableTeams([{ id: 'team-1', name: 'Operations' }])).toEqual([]);
     expect(service.getLockedTeamId(null)).toBe('');
-    expect(service.hasRole('SYSTEM_ADMIN')).toBeTrue();
+    expect(service.hasRole('SYSTEM_ADMIN')).toBe(true);
   });
 });

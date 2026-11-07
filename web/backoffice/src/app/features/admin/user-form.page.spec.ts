@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
+import { createSpyObject, type SpyObject } from '../../../testing/spy-object';
 import { BackofficeApiService } from '../../core/api/backoffice-api.service';
 import { UserFormPageComponent } from './user-form.page';
 
@@ -14,10 +15,10 @@ interface UserFormPageTestInstance {
 }
 
 describe('UserFormPageComponent', () => {
-  let api: jasmine.SpyObj<BackofficeApiService>;
+  let api: SpyObject<BackofficeApiService>;
 
   beforeEach(async () => {
-    api = jasmine.createSpyObj<BackofficeApiService>('BackofficeApiService', [
+    api = createSpyObject<BackofficeApiService>([
       'listTeamOptions',
       'getUser',
       'createUser',
@@ -26,13 +27,13 @@ describe('UserFormPageComponent', () => {
       'resetUserPassword',
     ]);
 
-    api.listTeamOptions.and.returnValue(
+    api.listTeamOptions.mockReturnValue(
       of([
         { id: 'team-1', code: 'OPS', name: 'Operations' },
         { id: 'team-2', code: 'HR', name: 'Human Resources' },
       ]),
     );
-    api.getUser.and.returnValue(
+    api.getUser.mockReturnValue(
       of({
         id: 'user-1',
         name: 'Sam Admin',
@@ -45,10 +46,7 @@ describe('UserFormPageComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [UserFormPageComponent],
-      providers: [
-        { provide: BackofficeApiService, useValue: api },
-        provideRouter([]),
-      ],
+      providers: [{ provide: BackofficeApiService, useValue: api }, provideRouter([])],
     }).compileComponents();
   });
 
@@ -63,7 +61,7 @@ describe('UserFormPageComponent', () => {
     const component = fixture.componentInstance as unknown as UserFormPageTestInstance;
 
     expect(api.getUser).toHaveBeenCalledWith('user-1');
-    expect(component.isEdit()).toBeTrue();
+    expect(component.isEdit()).toBe(true);
     expect(component.user()?.id).toBe('user-1');
     expect(component.form.getRawValue()).toEqual({
       name: 'Sam Admin',
@@ -73,17 +71,14 @@ describe('UserFormPageComponent', () => {
       password: '',
       isActive: true,
     });
-    expect(component.teams().map((team: { code: string }) => team.code)).toEqual([
-      'OPS',
-      'HR',
-    ]);
-    expect(component.resetPasswordForm.controls.newPassword.enabled).toBeTrue();
+    expect(component.teams().map((team: { code: string }) => team.code)).toEqual(['OPS', 'HR']);
+    expect(component.resetPasswordForm.controls.newPassword.enabled).toBe(true);
   });
 
   it('shows password requirements for create mode and blocks weak passwords', async () => {
     const fixture = TestBed.createComponent(UserFormPageComponent);
 
-    api.createUser.and.returnValue(
+    api.createUser.mockReturnValue(
       of({
         id: 'user-2',
         name: 'Alice Editor',
@@ -121,7 +116,7 @@ describe('UserFormPageComponent', () => {
     fixture.detectChanges();
 
     expect(api.createUser).not.toHaveBeenCalled();
-    expect(component.form.controls.password.invalid).toBeTrue();
+    expect(component.form.controls.password.invalid).toBe(true);
   });
 
   it('shows reset password requirements and blocks weak temporary passwords', async () => {
@@ -145,13 +140,13 @@ describe('UserFormPageComponent', () => {
     fixture.detectChanges();
 
     expect(api.resetUserPassword).not.toHaveBeenCalled();
-    expect(component.resetPasswordForm.controls.newPassword.invalid).toBeTrue();
+    expect(component.resetPasswordForm.controls.newPassword.invalid).toBe(true);
   });
 
   it('only sends changed fields when reactivating an existing user', async () => {
     const fixture = TestBed.createComponent(UserFormPageComponent);
 
-    api.getUser.and.returnValue(
+    api.getUser.mockReturnValue(
       of({
         id: 'user-2',
         name: 'Peter Publisher',
@@ -161,7 +156,7 @@ describe('UserFormPageComponent', () => {
         team: { id: 'team-2', code: 'HR', name: 'Human Resources' },
       }),
     );
-    api.updateUser.and.returnValue(
+    api.updateUser.mockReturnValue(
       of({
         id: 'user-2',
         name: 'Peter Publisher',

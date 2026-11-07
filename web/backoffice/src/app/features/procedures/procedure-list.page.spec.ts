@@ -3,6 +3,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
+import { createSpyObject, type SpyObject } from '../../../testing/spy-object';
 import { BackofficeApiService } from '../../core/api/backoffice-api.service';
 import { ProcedureListPageComponent } from './procedure-list.page';
 
@@ -38,15 +39,15 @@ interface ProcedureListPageTestInstance {
 }
 
 describe('ProcedureListPageComponent', () => {
-  let api: jasmine.SpyObj<BackofficeApiService>;
+  let api: SpyObject<BackofficeApiService>;
 
   beforeEach(async () => {
-    api = jasmine.createSpyObj<BackofficeApiService>('BackofficeApiService', [
+    api = createSpyObject<BackofficeApiService>([
       'listAllProcedures',
       'listProcesses',
       'listAreas',
     ]);
-    api.listProcesses.and.returnValue(
+    api.listProcesses.mockReturnValue(
       of([
         {
           id: 'process-1',
@@ -72,7 +73,7 @@ describe('ProcedureListPageComponent', () => {
         },
       ]),
     );
-    api.listAreas.and.returnValue(
+    api.listAreas.mockReturnValue(
       of([
         {
           id: 'area-1',
@@ -103,15 +104,12 @@ describe('ProcedureListPageComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [ProcedureListPageComponent],
-      providers: [
-        { provide: BackofficeApiService, useValue: api },
-        provideRouter([]),
-      ],
+      providers: [{ provide: BackofficeApiService, useValue: api }, provideRouter([])],
     }).compileComponents();
   });
 
   it('loads procedures for the backoffice workspace', async () => {
-    api.listAllProcedures.and.returnValue(
+    api.listAllProcedures.mockReturnValue(
       of([
         {
           id: 'procedure-1',
@@ -139,14 +137,13 @@ describe('ProcedureListPageComponent', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    const component =
-      fixture.componentInstance as unknown as ProcedureListPageTestInstance;
+    const component = fixture.componentInstance as unknown as ProcedureListPageTestInstance;
 
     expect(api.listAllProcedures).toHaveBeenCalled();
-    expect(component.isLoading()).toBeFalse();
+    expect(component.isLoading()).toBe(false);
     expect(component.errorMessage()).toBeNull();
     expect(component.procedures()).toEqual([
-      jasmine.objectContaining({
+      expect.objectContaining({
         id: 'procedure-1',
         processCode: 'P.001',
         versionNumber: 2,
@@ -155,24 +152,21 @@ describe('ProcedureListPageComponent', () => {
   });
 
   it('surfaces a functional load error without crashing', async () => {
-    api.listAllProcedures.and.returnValue(
-      throwError(() => new Error('Backend unavailable')),
-    );
+    api.listAllProcedures.mockReturnValue(throwError(() => new Error('Backend unavailable')));
 
     const fixture = TestBed.createComponent(ProcedureListPageComponent);
     fixture.detectChanges();
     await fixture.whenStable();
 
-    const component =
-      fixture.componentInstance as unknown as ProcedureListPageTestInstance;
+    const component = fixture.componentInstance as unknown as ProcedureListPageTestInstance;
 
-    expect(component.isLoading()).toBeFalse();
+    expect(component.isLoading()).toBe(false);
     expect(component.procedures()).toEqual([]);
     expect(component.errorMessage()).toBe('Backend unavailable');
   });
 
   it('filters procedures by area and process', async () => {
-    api.listAllProcedures.and.returnValue(
+    api.listAllProcedures.mockReturnValue(
       of([
         {
           id: 'procedure-1',
@@ -219,8 +213,7 @@ describe('ProcedureListPageComponent', () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    const component =
-      fixture.componentInstance as unknown as ProcedureListPageTestInstance;
+    const component = fixture.componentInstance as unknown as ProcedureListPageTestInstance;
 
     expect(component.filteredProcedures().map((procedure) => procedure.id)).toEqual([
       'procedure-1',
@@ -230,9 +223,7 @@ describe('ProcedureListPageComponent', () => {
     component.onAreaSelectionChange('area-1');
     fixture.detectChanges();
 
-    expect(component.processOptions().map((process) => process.id)).toEqual([
-      'process-1',
-    ]);
+    expect(component.processOptions().map((process) => process.id)).toEqual(['process-1']);
     expect(component.filteredProcedures().map((procedure) => procedure.id)).toEqual([
       'procedure-1',
     ]);

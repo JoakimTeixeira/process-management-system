@@ -3,7 +3,9 @@ import { provideRouter } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { of } from 'rxjs';
+import { vi } from 'vitest';
 
+import { createSpyObject, type SpyObject } from '../../../testing/spy-object';
 import { BackofficeApiService } from '../../core/api/backoffice-api.service';
 import { AuthService } from '../../core/auth/auth.service';
 import { AreaListPageComponent } from './area-list.page';
@@ -15,22 +17,18 @@ interface AreaListPageTestInstance {
 }
 
 describe('AreaListPageComponent', () => {
-  let api: jasmine.SpyObj<BackofficeApiService>;
-  let dialogOpenSpy: jasmine.Spy;
-  let snackBar: jasmine.SpyObj<MatSnackBar>;
+  let api: SpyObject<BackofficeApiService>;
+  let dialogOpenSpy: unknown;
+  let snackBar: SpyObject<MatSnackBar>;
 
   beforeEach(async () => {
-    api = jasmine.createSpyObj<BackofficeApiService>('BackofficeApiService', [
-      'listAreas',
-      'deleteArea',
-      'listProcesses',
-    ]);
-    snackBar = jasmine.createSpyObj<MatSnackBar>('MatSnackBar', ['open']);
-    dialogOpenSpy = spyOn(MatDialog.prototype, 'open').and.returnValue(
-      { afterClosed: () => of(true) } as never,
-    );
+    api = createSpyObject<BackofficeApiService>(['listAreas', 'deleteArea', 'listProcesses']);
+    snackBar = createSpyObject<MatSnackBar>(['open']);
+    dialogOpenSpy = vi
+      .spyOn(MatDialog.prototype, 'open')
+      .mockReturnValue({ afterClosed: () => of(true) } as never);
 
-    api.listAreas.and.returnValue(
+    api.listAreas.mockReturnValue(
       of([
         {
           id: 'area-1',
@@ -46,8 +44,8 @@ describe('AreaListPageComponent', () => {
         },
       ]),
     );
-    api.listProcesses.and.returnValue(of([]));
-    api.deleteArea.and.returnValue(of(void 0));
+    api.listProcesses.mockReturnValue(of([]));
+    api.deleteArea.mockReturnValue(of(void 0));
     await TestBed.configureTestingModule({
       imports: [AreaListPageComponent],
       providers: [
@@ -78,7 +76,11 @@ describe('AreaListPageComponent', () => {
     expect(dialogOpenSpy).toHaveBeenCalled();
     expect(api.deleteArea).toHaveBeenCalledWith('area-1');
     expect(component.areas().map((area) => area.id)).toEqual(['area-1']);
-    expect(snackBar.open).toHaveBeenCalledWith('Area "Change control" deleted successfully', 'Close', jasmine.any(Object));
+    expect(snackBar.open).toHaveBeenCalledWith(
+      'Area "Change control" deleted successfully',
+      'Close',
+      expect.any(Object),
+    );
     expect(component.actionErrorMessage()).toBeNull();
   });
 });

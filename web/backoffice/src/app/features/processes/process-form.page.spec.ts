@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
 
+import { createSpyObject, type SpyObject } from '../../../testing/spy-object';
 import { BackofficeApiService } from '../../core/api/backoffice-api.service';
 import { AuthService } from '../../core/auth/auth.service';
 import { ProcessFormPageComponent } from './process-form.page';
@@ -19,7 +20,7 @@ interface ProcessFormPageTestInstance {
 }
 
 describe('ProcessFormPageComponent', () => {
-  let api: jasmine.SpyObj<BackofficeApiService>;
+  let api: SpyObject<BackofficeApiService>;
   let auth: {
     currentUser: () => {
       id: string;
@@ -31,7 +32,7 @@ describe('ProcessFormPageComponent', () => {
   };
 
   beforeEach(async () => {
-    api = jasmine.createSpyObj<BackofficeApiService>('BackofficeApiService', [
+    api = createSpyObject<BackofficeApiService>([
       'listAreas',
       'listTeamOptions',
       'listOwnerOptions',
@@ -40,7 +41,7 @@ describe('ProcessFormPageComponent', () => {
       'updateProcess',
     ]);
 
-    api.listAreas.and.returnValue(
+    api.listAreas.mockReturnValue(
       of([
         {
           id: 'area-1',
@@ -56,13 +57,11 @@ describe('ProcessFormPageComponent', () => {
         },
       ]),
     );
-    api.listTeamOptions.and.returnValue(
-      of([{ id: 'team-1', code: 'OPS', name: 'Operations' }]),
-    );
-    api.listOwnerOptions.and.returnValue(
+    api.listTeamOptions.mockReturnValue(of([{ id: 'team-1', code: 'OPS', name: 'Operations' }]));
+    api.listOwnerOptions.mockReturnValue(
       of([{ id: 'owner-2', name: 'Bob Owner', teamId: 'team-1', isActive: true }]),
     );
-    api.getProcess.and.returnValue(
+    api.getProcess.mockReturnValue(
       of({
         id: 'process-1',
         areaId: 'area-1',
@@ -114,15 +113,11 @@ describe('ProcessFormPageComponent', () => {
       teamId: 'team-1',
       ownerId: 'owner-2',
     });
-    expect(component.areas().map((area: { title: string }) => area.title)).toEqual([
-      'Operations',
-    ]);
-    expect(component.availableTeams().map((team: { id: string }) => team.id)).toEqual([
-      'team-1',
-    ]);
-    expect(component.canManageProcess()).toBeTrue();
-    expect(component.form.controls.teamId.disabled).toBeTrue();
-    expect(component.form.controls.ownerId.enabled).toBeTrue();
+    expect(component.areas().map((area: { title: string }) => area.title)).toEqual(['Operations']);
+    expect(component.availableTeams().map((team: { id: string }) => team.id)).toEqual(['team-1']);
+    expect(component.canManageProcess()).toBe(true);
+    expect(component.form.controls.teamId.disabled).toBe(true);
+    expect(component.form.controls.ownerId.enabled).toBe(true);
     expect(component.owners()).toEqual([
       { id: 'owner-2', name: 'Bob Owner', teamId: 'team-1', isActive: true },
     ]);
@@ -142,13 +137,13 @@ describe('ProcessFormPageComponent', () => {
     const component = fixture.componentInstance as unknown as ProcessFormPageTestInstance;
 
     expect(component.form.controls.teamId.getRawValue()).toBe('team-1');
-    expect(component.form.controls.teamId.disabled).toBeTrue();
-    expect(component.form.controls.ownerId.enabled).toBeTrue();
+    expect(component.form.controls.teamId.disabled).toBe(true);
+    expect(component.form.controls.ownerId.enabled).toBe(true);
     expect(api.listOwnerOptions).toHaveBeenCalledWith('team-1');
   });
 
   it('should keep owner load failures scoped to owner-loading state', async () => {
-    api.listOwnerOptions.and.returnValue(
+    api.listOwnerOptions.mockReturnValue(
       throwError(() => new Error('Cannot GET /users/owner-options/team/team-1')),
     );
 
@@ -165,7 +160,7 @@ describe('ProcessFormPageComponent', () => {
   });
 
   it('should block editing processes owned by another team', async () => {
-    api.getProcess.and.returnValue(
+    api.getProcess.mockReturnValue(
       of({
         id: 'process-1',
         areaId: 'area-1',
@@ -186,7 +181,7 @@ describe('ProcessFormPageComponent', () => {
 
     const component = fixture.componentInstance as unknown as ProcessFormPageTestInstance;
 
-    expect(component.canManageProcess()).toBeFalse();
+    expect(component.canManageProcess()).toBe(false);
     expect(component.errorMessage()).toBe('You can only manage processes owned by your team.');
   });
 
@@ -200,7 +195,7 @@ describe('ProcessFormPageComponent', () => {
 
     const component = fixture.componentInstance as unknown as ProcessFormPageTestInstance;
 
-    expect(component.form.controls.teamId.disabled).toBeTrue();
+    expect(component.form.controls.teamId.disabled).toBe(true);
     expect(component.form.controls.teamId.value).toBe('team-1');
   });
 });

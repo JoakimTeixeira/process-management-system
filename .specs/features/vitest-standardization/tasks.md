@@ -38,13 +38,13 @@ A1 → B4 ──────┘
 **Tests/Gate:** unit/full — existing 22 plus new characterization tests pass under Vitest; build passes  
 **Done when:** process list/detail, procedure detail, glossary, and navigation/query behavior are pinned.
 
-### B4 — Migrate backoffice and expand characterization [P]
+### B4 — Migrate backoffice and expand characterization [P] ✅
 
 **Where:** backoffice Angular config/package/tsconfig and area/version/BPMN specs  
 **Depends on:** A1  
 **Requirement:** TEST-01  
 **Tests/Gate:** unit/full — existing 67 plus new characterization tests pass; build passes  
-**Done when:** area-detail has a loading spec and version-detail/BPMN seams needed by Feature C are pinned.
+**Done when:** area-detail has a loading spec and version-detail/BPMN seams needed by Feature C are pinned. **Complete: 2026-11-07; Angular-native Vitest runs 21 files / 71 tests, V8 coverage reports 78.73% statements/lines, lint and contract checks pass, and the production build passes with existing budget warnings.**
 
 ### B5 — Standardize final root unit runner
 

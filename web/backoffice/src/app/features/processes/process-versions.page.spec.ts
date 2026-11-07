@@ -2,7 +2,9 @@ import { Signal, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
+import { type Mock, vi } from 'vitest';
 
+import { createSpyObject, type SpyObject } from '../../../testing/spy-object';
 import { BackofficeApiService } from '../../core/api/backoffice-api.service';
 import { AuthService } from '../../core/auth/auth.service';
 import { BreadcrumbService } from '../../core/navigation/breadcrumb.service';
@@ -15,16 +17,18 @@ interface ProcessVersionsPageTestInstance {
 }
 
 describe('ProcessVersionsPageComponent', () => {
-  let api: jasmine.SpyObj<BackofficeApiService>;
-  let currentUserState: ReturnType<typeof signal<{
-    id: string;
-    name: string;
-    email: string;
-    role: { id: string; name: 'EDITOR' | 'REVIEWER' };
-    team: { id: string; code: string; name: string };
-  }>>;
+  let api: SpyObject<BackofficeApiService>;
+  let currentUserState: ReturnType<
+    typeof signal<{
+      id: string;
+      name: string;
+      email: string;
+      role: { id: string; name: 'EDITOR' | 'REVIEWER' };
+      team: { id: string; code: string; name: string };
+    }>
+  >;
   let auth: {
-    hasRole: jasmine.Spy;
+    hasRole: Mock;
     currentUser: Signal<{
       id: string;
       name: string;
@@ -35,12 +39,9 @@ describe('ProcessVersionsPageComponent', () => {
   };
 
   beforeEach(async () => {
-    api = jasmine.createSpyObj<BackofficeApiService>('BackofficeApiService', [
-      'getProcess',
-      'listProcessVersions',
-    ]);
+    api = createSpyObject<BackofficeApiService>(['getProcess', 'listProcessVersions']);
 
-    api.getProcess.and.returnValue(
+    api.getProcess.mockReturnValue(
       of({
         id: 'process-1',
         areaId: 'area-1',
@@ -53,7 +54,7 @@ describe('ProcessVersionsPageComponent', () => {
         ownerName: 'Alice Owner',
       }),
     );
-    api.listProcessVersions.and.returnValue(
+    api.listProcessVersions.mockReturnValue(
       of([
         {
           id: 'version-1',
@@ -91,9 +92,7 @@ describe('ProcessVersionsPageComponent', () => {
     });
 
     auth = {
-      hasRole: jasmine
-        .createSpy('hasRole')
-        .and.callFake((role: string) => currentUserState().role.name === role),
+      hasRole: vi.fn((role: string) => currentUserState().role.name === role),
       currentUser: currentUserState.asReadonly(),
     };
 
@@ -116,8 +115,10 @@ describe('ProcessVersionsPageComponent', () => {
     const component = fixture.componentInstance as unknown as ProcessVersionsPageTestInstance;
 
     expect(component.process()?.teamId).toBe('team-1');
-    expect(component.versions().map((version: { versionNumber: number }) => version.versionNumber)).toEqual([2, 1]);
-    expect(component.canCreateVersion()).toBeTrue();
+    expect(
+      component.versions().map((version: { versionNumber: number }) => version.versionNumber),
+    ).toEqual([2, 1]);
+    expect(component.canCreateVersion()).toBe(true);
     expect(TestBed.inject(BreadcrumbService).items()).toEqual([
       { label: 'Processes', url: '/processes' },
       { label: 'Change control' },
@@ -141,6 +142,6 @@ describe('ProcessVersionsPageComponent', () => {
 
     const component = fixture.componentInstance as unknown as ProcessVersionsPageTestInstance;
 
-    expect(component.canCreateVersion()).toBeFalse();
+    expect(component.canCreateVersion()).toBe(false);
   });
 });

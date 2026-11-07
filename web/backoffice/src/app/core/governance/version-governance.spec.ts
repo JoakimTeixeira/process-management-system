@@ -1,9 +1,7 @@
 import { getVisibleLifecycleActions } from './version-governance';
 import { ProcessVersionRecord } from '../models/backoffice.models';
 
-function createVersion(
-  partial: Partial<ProcessVersionRecord>,
-): ProcessVersionRecord {
+function createVersion(partial: Partial<ProcessVersionRecord>): ProcessVersionRecord {
   return {
     id: 'version-1',
     processId: 'process-1',

@@ -2,21 +2,25 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 
+import { createSpyObject, type SpyObject } from '../../../testing/spy-object';
 import { AppRole } from '../models/backoffice.models';
 import { anonymousOnlyGuard, authGuard, roleGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 
 describe('backoffice auth guards', () => {
-  let router: jasmine.SpyObj<Router>;
+  let router: SpyObject<Router>;
   let isAuthenticatedState: ReturnType<typeof signal<boolean>>;
   let currentRoleState: ReturnType<typeof signal<AppRole | undefined>>;
   let defaultRouteState: ReturnType<typeof signal<string>>;
 
   beforeEach(() => {
-    router = jasmine.createSpyObj<Router>('Router', ['createUrlTree']);
-    router.createUrlTree.and.callFake((commands: readonly unknown[]) => ({
-      commands,
-    }) as never);
+    router = createSpyObject<Router>(['createUrlTree']);
+    router.createUrlTree.mockImplementation(
+      (commands: readonly unknown[]) =>
+        ({
+          commands,
+        }) as never,
+    );
 
     isAuthenticatedState = signal(false);
     currentRoleState = signal<AppRole | undefined>(undefined);
@@ -61,7 +65,7 @@ describe('backoffice auth guards', () => {
       authGuard({} as never, {} as never),
     );
 
-    expect(authenticatedResult).toBeTrue();
+    expect(authenticatedResult).toBe(true);
   });
 
   it('anonymousOnlyGuard redirects authenticated users to their default route', () => {
@@ -69,7 +73,7 @@ describe('backoffice auth guards', () => {
       anonymousOnlyGuard({} as never, {} as never),
     );
 
-    expect(anonymousResult).toBeTrue();
+    expect(anonymousResult).toBe(true);
 
     isAuthenticatedState.set(true);
     defaultRouteState.set('/admin/users');
@@ -89,7 +93,7 @@ describe('backoffice auth guards', () => {
     const allowedResult = TestBed.runInInjectionContext(() =>
       roleGuard({ data: { roles: ['EDITOR'] } } as never, {} as never),
     );
-    expect(allowedResult).toBeTrue();
+    expect(allowedResult).toBe(true);
 
     const deniedResult = TestBed.runInInjectionContext(() =>
       roleGuard({ data: { roles: ['REVIEWER'] } } as never, {} as never),
@@ -99,6 +103,6 @@ describe('backoffice auth guards', () => {
     const openResult = TestBed.runInInjectionContext(() =>
       roleGuard({ data: {} } as never, {} as never),
     );
-    expect(openResult).toBeTrue();
+    expect(openResult).toBe(true);
   });
 });

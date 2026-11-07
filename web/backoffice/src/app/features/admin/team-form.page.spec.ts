@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
 
+import { createSpyObject, type SpyObject } from '../../../testing/spy-object';
 import { BackofficeApiService } from '../../core/api/backoffice-api.service';
 import { ToastService } from '../../core/toast/toast.service';
 import { TeamFormPageComponent } from './team-form.page';
@@ -13,19 +14,19 @@ interface TeamFormPageTestInstance {
 }
 
 describe('TeamFormPageComponent', () => {
-  let api: jasmine.SpyObj<BackofficeApiService>;
-  let toast: jasmine.SpyObj<ToastService>;
+  let api: SpyObject<BackofficeApiService>;
+  let toast: SpyObject<ToastService>;
 
   beforeEach(async () => {
-    api = jasmine.createSpyObj<BackofficeApiService>('BackofficeApiService', [
+    api = createSpyObject<BackofficeApiService>([
       'getTeam',
       'createTeam',
       'updateTeam',
       'deactivateTeam',
     ]);
-    toast = jasmine.createSpyObj<ToastService>('ToastService', ['success', 'error']);
+    toast = createSpyObject<ToastService>(['success', 'error']);
 
-    api.getTeam.and.returnValue(
+    api.getTeam.mockReturnValue(
       of({
         id: 'team-1',
         code: 'OPS',
@@ -46,7 +47,7 @@ describe('TeamFormPageComponent', () => {
   });
 
   it('loads team data in edit mode and allows deactivation', async () => {
-    api.deactivateTeam.and.returnValue(
+    api.deactivateTeam.mockReturnValue(
       of({
         id: 'team-1',
         code: 'OPS',
@@ -65,23 +66,25 @@ describe('TeamFormPageComponent', () => {
     const component = fixture.componentInstance as unknown as TeamFormPageTestInstance;
 
     expect(api.getTeam).toHaveBeenCalledWith('team-1');
-    expect(component.isEdit()).toBeTrue();
-    expect(component.team()?.isActive).toBeTrue();
+    expect(component.isEdit()).toBe(true);
+    expect(component.team()?.isActive).toBe(true);
     expect(component.form.getRawValue()).toEqual({
       code: 'OPS',
       name: 'Operations',
       description: 'Operations team',
     });
 
-    await (fixture.componentInstance as unknown as { deactivateTeam: () => Promise<void> }).deactivateTeam();
+    await (
+      fixture.componentInstance as unknown as { deactivateTeam: () => Promise<void> }
+    ).deactivateTeam();
 
     expect(api.deactivateTeam).toHaveBeenCalledWith('team-1');
-    expect(component.team()?.isActive).toBeFalse();
+    expect(component.team()?.isActive).toBe(false);
     expect(toast.success).toHaveBeenCalledWith('Team deactivated successfully');
   });
 
   it('sends a create payload from create mode', async () => {
-    api.createTeam.and.returnValue(
+    api.createTeam.mockReturnValue(
       of({
         id: 'team-2',
         code: 'ENG',
@@ -115,7 +118,7 @@ describe('TeamFormPageComponent', () => {
   });
 
   it('sends only changed fields when updating an existing team', async () => {
-    api.updateTeam.and.returnValue(
+    api.updateTeam.mockReturnValue(
       of({
         id: 'team-1',
         code: 'OPS',

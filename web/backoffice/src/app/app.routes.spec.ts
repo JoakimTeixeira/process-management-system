@@ -21,19 +21,17 @@ describe('backoffice routes', () => {
       'glossary/:id/edit',
     ];
 
-    const shellChildren =
-      routes.find((route) => route.path === '')?.children ?? [];
+    const shellChildren = routes.find((route) => route.path === '')?.children ?? [];
 
     for (const path of editorOnlyPaths) {
-      expect(
-        shellChildren.find((route) => route.path === path)?.data?.['roles'],
-      ).toEqual(['EDITOR']);
+      expect(shellChildren.find((route) => route.path === path)?.data?.['roles']).toEqual([
+        'EDITOR',
+      ]);
     }
   });
 
   it('allows content consultation routes to content roles and admin routes to SYSTEM_ADMIN only', () => {
-    const shellChildren =
-      routes.find((route) => route.path === '')?.children ?? [];
+    const shellChildren = routes.find((route) => route.path === '')?.children ?? [];
     const contentRoles = ['EDITOR', 'REVIEWER', 'PUBLISHER', 'VIEWER'];
 
     for (const path of [
@@ -43,9 +41,9 @@ describe('backoffice routes', () => {
       'versions/:id',
       'glossary',
     ]) {
-      expect(
-        shellChildren.find((route) => route.path === path)?.data?.['roles'],
-      ).toEqual(contentRoles);
+      expect(shellChildren.find((route) => route.path === path)?.data?.['roles']).toEqual(
+        contentRoles,
+      );
     }
 
     for (const path of [
@@ -56,15 +54,14 @@ describe('backoffice routes', () => {
       'admin/users/new',
       'admin/users/:id/edit',
     ]) {
-      expect(
-        shellChildren.find((route) => route.path === path)?.data?.['roles'],
-      ).toEqual(['SYSTEM_ADMIN']);
+      expect(shellChildren.find((route) => route.path === path)?.data?.['roles']).toEqual([
+        'SYSTEM_ADMIN',
+      ]);
     }
   });
 
   it('provides breadcrumb metadata for the main backoffice workspaces', () => {
-    const shellChildren =
-      routes.find((route) => route.path === '')?.children ?? [];
+    const shellChildren = routes.find((route) => route.path === '')?.children ?? [];
 
     for (const path of [
       '',
@@ -88,13 +85,14 @@ describe('backoffice routes', () => {
       'admin/users/new',
       'admin/users/:id/edit',
     ]) {
-      expect(shellChildren.find((route) => route.path === path)?.data?.['breadcrumb']).toBeDefined();
+      expect(
+        shellChildren.find((route) => route.path === path)?.data?.['breadcrumb'],
+      ).toBeDefined();
     }
   });
 
   it('hides breadcrumbs on entry list pages while keeping them on deeper workflows', () => {
-    const shellChildren =
-      routes.find((route) => route.path === '')?.children ?? [];
+    const shellChildren = routes.find((route) => route.path === '')?.children ?? [];
 
     for (const path of [
       '',
@@ -105,7 +103,9 @@ describe('backoffice routes', () => {
       'admin/users',
       'admin/teams',
     ]) {
-      expect(shellChildren.find((route) => route.path === path)?.data?.['breadcrumbVisible']).toBeFalse();
+      expect(shellChildren.find((route) => route.path === path)?.data?.['breadcrumbVisible']).toBe(
+        false,
+      );
     }
 
     for (const path of [
@@ -121,7 +121,9 @@ describe('backoffice routes', () => {
       'admin/teams/new',
       'admin/teams/:id/edit',
     ]) {
-      expect(shellChildren.find((route) => route.path === path)?.data?.['breadcrumbVisible']).not.toBeFalse();
+      expect(
+        shellChildren.find((route) => route.path === path)?.data?.['breadcrumbVisible'],
+      ).not.toBe(false);
     }
   });
 });
