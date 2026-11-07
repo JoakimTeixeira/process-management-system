@@ -14,13 +14,13 @@ A1 → B4 ──────┘
 
 ## Tasks
 
-### B1 — Prove API Vitest on a DI-heavy spec
+### B1 — Prove API Vitest on a DI-heavy spec ✅
 
 **Where:** API Vitest config/setup/package and one DI-heavy spec  
 **Depends on:** A1  
 **Requirement:** TEST-01  
 **Tests/Gate:** unit/quick — pilot passes under Vitest and unchanged Jest suite remains ≥263  
-**Done when:** Nest decorators/reflection and mock-reset semantics are demonstrated.
+**Done when:** Nest decorators/reflection and mock-reset semantics are demonstrated. **Complete: 2026-11-07; Vitest pilot 3 tests, unchanged Jest suite 325 tests, and API build passed.**
 
 ### B2 — Migrate API suite and repair e2e
 
