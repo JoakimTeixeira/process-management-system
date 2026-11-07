@@ -3,6 +3,8 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
 import { ProcessVersionAction } from '../../common/enums/process-version-action.enum';
+import type { ArchitectureState } from '../../common/enums/architecture-state.enum';
+import type { LifecycleState } from '../../common/enums/lifecycle-state.enum';
 import type { SqlExecutor } from '../../common/types/sql-executor.type';
 
 interface QueryRow {
@@ -29,8 +31,8 @@ interface ProcessVersionRow extends QueryRow {
   id: string;
   process_id: string;
   version_number: number;
-  lifecycle_state: string;
-  architecture_state: string;
+  lifecycle_state: LifecycleState;
+  architecture_state: ArchitectureState;
   title: string;
   checklist_completed: boolean;
   derived_from_version_id: string | null;
@@ -42,8 +44,8 @@ export interface ProcessVersionRecord {
   id: string;
   processId: string;
   versionNumber: number;
-  lifecycleState: string;
-  architectureState: string;
+  lifecycleState: LifecycleState;
+  architectureState: ArchitectureState;
   title: string;
   checklistCompleted: boolean;
   derivedFromVersionId: string | null;
@@ -55,8 +57,8 @@ export interface ProcessVersionRecord {
 export interface CreateProcessVersionInput {
   processId: string;
   versionNumber: number;
-  lifecycleState: string;
-  architectureState: string;
+  lifecycleState: LifecycleState;
+  architectureState: ArchitectureState;
   title: string;
   checklistCompleted: boolean;
   derivedFromVersionId: string | null;
@@ -67,7 +69,7 @@ export interface CreateProcessVersionInput {
 }
 
 interface UpdateProcessVersionInput {
-  architectureState?: string;
+  architectureState?: ArchitectureState;
   title?: string;
   checklistCompleted?: boolean;
   derivedFromVersionId?: string | null;

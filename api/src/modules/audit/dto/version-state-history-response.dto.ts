@@ -1,6 +1,11 @@
 import { Expose } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
+import {
+  LIFECYCLE_STATES,
+  type LifecycleState,
+} from '../../../common/enums/lifecycle-state.enum';
+
 export class VersionStateHistoryResponseDto {
   @ApiProperty({
     description: 'Unique identifier for the state-history entry.',
@@ -18,18 +23,20 @@ export class VersionStateHistoryResponseDto {
 
   @ApiProperty({
     description: 'Previous lifecycle state.',
+    enum: LIFECYCLE_STATES,
     nullable: true,
-    example: 'DRAFT',
+    example: 'Draft',
   })
   @Expose()
-  fromState!: string | null;
+  fromState!: LifecycleState | null;
 
   @ApiProperty({
     description: 'New lifecycle state.',
-    example: 'IN_REVIEW',
+    enum: LIFECYCLE_STATES,
+    example: 'In Review',
   })
   @Expose()
-  toState!: string;
+  toState!: LifecycleState;
 
   @ApiProperty({
     description: 'Identifier of the actor who triggered the transition.',

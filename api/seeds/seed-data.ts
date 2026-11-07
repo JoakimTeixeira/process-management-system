@@ -1,10 +1,7 @@
-export type ArchitectureState = 'AS-IS' | 'TO-BE';
-export type LifecycleState =
-  | 'Draft'
-  | 'In Review'
-  | 'Approved'
-  | 'Published'
-  | 'Archived';
+import type { ArchitectureState } from '../src/common/enums/architecture-state.enum';
+import type { LifecycleState } from '../src/common/enums/lifecycle-state.enum';
+
+export type { ArchitectureState, LifecycleState };
 
 export interface RoleSeed {
   name: string;

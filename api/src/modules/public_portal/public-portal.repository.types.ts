@@ -1,4 +1,6 @@
-import type { ArchitectureState } from './public-portal.types';
+import type { ArchitectureState } from '../../common/enums/architecture-state.enum';
+import type { CatalogKind } from '../../common/enums/catalog-kind.enum';
+import type { PublicLifecycleState } from '../../common/enums/lifecycle-state.enum';
 
 export interface QueryRow {
   [key: string]: unknown;
@@ -39,7 +41,7 @@ export interface PublicProcessVersionRow extends QueryRow {
 export interface PublicProcessVersionHistoryRow extends QueryRow {
   id: string;
   version_number: number;
-  lifecycle_state: 'Published' | 'Archived';
+  lifecycle_state: PublicLifecycleState;
   architecture_state: ArchitectureState;
   title: string;
   change_description: string;
@@ -80,7 +82,7 @@ export interface PublicBpmnAssetRow extends QueryRow {
 }
 
 export interface PublicCatalogSearchRow extends QueryRow {
-  kind: 'Area' | 'Process' | 'Procedure' | 'Asset';
+  kind: CatalogKind;
   code: string;
   title: string;
   subtitle: string;

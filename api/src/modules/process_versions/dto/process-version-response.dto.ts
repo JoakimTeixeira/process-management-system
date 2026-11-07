@@ -2,6 +2,14 @@ import { Expose } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import { ProcessVersionAction } from '../../../common/enums/process-version-action.enum';
+import {
+  ARCHITECTURE_STATES,
+  type ArchitectureState,
+} from '../../../common/enums/architecture-state.enum';
+import {
+  LIFECYCLE_STATES,
+  type LifecycleState,
+} from '../../../common/enums/lifecycle-state.enum';
 
 export class ProcessVersionResponseDto {
   @ApiProperty({
@@ -27,17 +35,19 @@ export class ProcessVersionResponseDto {
 
   @ApiProperty({
     description: 'Current lifecycle state.',
-    example: 'DRAFT',
+    enum: LIFECYCLE_STATES,
+    example: 'Draft',
   })
   @Expose()
-  lifecycleState!: string;
+  lifecycleState!: LifecycleState;
 
   @ApiProperty({
     description: 'Architecture state represented by the version.',
+    enum: ARCHITECTURE_STATES,
     example: 'TO-BE',
   })
   @Expose()
-  architectureState!: string;
+  architectureState!: ArchitectureState;
 
   @ApiProperty({
     description: 'Business-facing version title.',

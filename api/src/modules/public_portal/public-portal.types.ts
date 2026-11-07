@@ -1,4 +1,8 @@
-export type ArchitectureState = 'AS-IS' | 'TO-BE';
+import type { ArchitectureState } from '../../common/enums/architecture-state.enum';
+import type { CatalogKind } from '../../common/enums/catalog-kind.enum';
+import type { PublicLifecycleState } from '../../common/enums/lifecycle-state.enum';
+
+export type { ArchitectureState };
 
 export type PublicProcessFilters = {
   search?: string;
@@ -21,7 +25,7 @@ export type PublicAreaSummary = {
 };
 
 export type PublicCatalogSearchResult = {
-  kind: 'Area' | 'Process' | 'Procedure' | 'Asset';
+  kind: CatalogKind;
   code: string;
   title: string;
   subtitle: string;
@@ -105,7 +109,7 @@ export type PublicProcessDetail = {
 export type PublicProcessHistoryItem = {
   id: string;
   versionNumber: number;
-  lifecycleState: 'Published' | 'Archived';
+  lifecycleState: PublicLifecycleState;
   architectureState: ArchitectureState;
   title: string;
   changeDescription: string;

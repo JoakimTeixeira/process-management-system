@@ -1,9 +1,18 @@
 import { Expose, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
-const architectureStates = ['AS-IS', 'TO-BE'] as const;
-const catalogKinds = ['Area', 'Process', 'Procedure', 'Asset'] as const;
-const lifecycleStates = ['Published', 'Archived'] as const;
+import {
+  ARCHITECTURE_STATES,
+  type ArchitectureState,
+} from '../../../common/enums/architecture-state.enum';
+import {
+  CATALOG_KINDS,
+  type CatalogKind,
+} from '../../../common/enums/catalog-kind.enum';
+import {
+  PUBLIC_LIFECYCLE_STATES,
+  type PublicLifecycleState,
+} from '../../../common/enums/lifecycle-state.enum';
 
 class PublicItilPracticeSummaryResponseDto {
   @ApiProperty({
@@ -57,10 +66,10 @@ class PublicProcedureVersionSummaryResponseDto {
 
   @ApiProperty({
     description: 'Architecture state for the linked published version.',
-    enum: architectureStates,
+    enum: ARCHITECTURE_STATES,
   })
   @Expose()
-  architectureState!: (typeof architectureStates)[number];
+  architectureState!: ArchitectureState;
 
   @ApiProperty({
     description: 'Display title for the linked published version.',
@@ -121,10 +130,10 @@ export class PublicAreaSummaryResponseDto {
 export class PublicCatalogSearchResultResponseDto {
   @ApiProperty({
     description: 'Catalog entity type matched by the search query.',
-    enum: catalogKinds,
+    enum: CATALOG_KINDS,
   })
   @Expose()
-  kind!: (typeof catalogKinds)[number];
+  kind!: CatalogKind;
 
   @ApiProperty({
     description: 'Matched catalogue code.',
@@ -201,11 +210,11 @@ export class PublicProcessSummaryResponseDto {
 
   @ApiProperty({
     description: 'Published architecture states currently available.',
-    enum: architectureStates,
+    enum: ARCHITECTURE_STATES,
     isArray: true,
   })
   @Expose()
-  availableArchitectures!: Array<(typeof architectureStates)[number]>;
+  availableArchitectures!: ArchitectureState[];
 
   constructor(partial: Partial<PublicProcessSummaryResponseDto>) {
     Object.assign(this, partial);
@@ -347,10 +356,10 @@ export class PublicProcessVersionViewResponseDto {
 
   @ApiProperty({
     description: 'Architecture state for the published process version.',
-    enum: architectureStates,
+    enum: ARCHITECTURE_STATES,
   })
   @Expose()
-  architectureState!: (typeof architectureStates)[number];
+  architectureState!: ArchitectureState;
 
   @ApiProperty({
     description: 'Display title for the published process version.',
@@ -496,17 +505,17 @@ export class PublicProcessHistoryItemResponseDto {
 
   @ApiProperty({
     description: 'Lifecycle state currently visible in the public catalogue.',
-    enum: lifecycleStates,
+    enum: PUBLIC_LIFECYCLE_STATES,
   })
   @Expose()
-  lifecycleState!: (typeof lifecycleStates)[number];
+  lifecycleState!: PublicLifecycleState;
 
   @ApiProperty({
     description: 'Architecture state for the published process version.',
-    enum: architectureStates,
+    enum: ARCHITECTURE_STATES,
   })
   @Expose()
-  architectureState!: (typeof architectureStates)[number];
+  architectureState!: ArchitectureState;
 
   @ApiProperty({
     description: 'Display title for the published process version.',

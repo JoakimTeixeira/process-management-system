@@ -22,13 +22,13 @@ A1 → A11 ───────────────┘───────
 **Tests/Gate:** docs/build — `git diff --check` and artifact review  
 **Done when:** audit evidence, 352-test baseline, test matrix, concerns, approved designs/tasks, dependency cross-checks, and ubiquitous terms are recorded. **Complete: 2026-11-07.**
 
-### A2 — Centralize domain enums and Swagger values
+### A2 — Centralize domain enums and Swagger values ✅
 
 **Where:** `api/src/common/enums/`, affected API DTO/types/repositories/seeds and unit specs  
 **Depends on:** A1  
 **Requirement:** TERM-01  
 **Tests/Gate:** unit/quick — API unit suite (≥263 tests)  
-**Done when:** lifecycle/architecture/catalog values have one API source; stale uppercase Swagger examples are gone; typed repository/public records consume the source.
+**Done when:** lifecycle/architecture/catalog values have one API source; stale uppercase Swagger examples are gone; typed repository/public records consume the source. **Complete: 2026-11-07; 266 API tests passed.**
 
 ### A3 — Add deterministic OpenAPI generation
 

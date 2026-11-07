@@ -10,16 +10,20 @@ import {
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import { MAX_TEXT_LENGTH } from '../../../common/constants/workflow.constants';
+import {
+  ARCHITECTURE_STATES,
+  type ArchitectureState,
+} from '../../../common/enums/architecture-state.enum';
 import { trimString } from '../../../common/utils/trim-string-transform.util';
 
 export class CreateProcessVersionDto {
   @ApiProperty({
     description: 'Architecture state represented by the new process version.',
-    enum: ['AS-IS', 'TO-BE'],
+    enum: ARCHITECTURE_STATES,
     example: 'TO-BE',
   })
-  @IsIn(['AS-IS', 'TO-BE'])
-  architectureState!: 'AS-IS' | 'TO-BE';
+  @IsIn(ARCHITECTURE_STATES)
+  architectureState!: ArchitectureState;
 
   @ApiProperty({
     description: 'Business-facing title of the process version.',

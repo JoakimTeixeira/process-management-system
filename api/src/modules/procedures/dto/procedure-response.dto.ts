@@ -1,6 +1,15 @@
 import { Expose } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
+import {
+  ARCHITECTURE_STATES,
+  type ArchitectureState,
+} from '../../../common/enums/architecture-state.enum';
+import {
+  LIFECYCLE_STATES,
+  type LifecycleState,
+} from '../../../common/enums/lifecycle-state.enum';
+
 import { ProcedureActivityDto } from './shared-procedure.dto';
 
 export class ProcedureResponseDto {
@@ -50,17 +59,19 @@ export class ProcedureResponseDto {
 
   @ApiPropertyOptional({
     description: 'Lifecycle state of the related process version.',
-    example: 'DRAFT',
+    enum: LIFECYCLE_STATES,
+    example: 'Draft',
   })
   @Expose()
-  lifecycleState?: string;
+  lifecycleState?: LifecycleState;
 
   @ApiPropertyOptional({
     description: 'Architecture state of the related process version.',
+    enum: ARCHITECTURE_STATES,
     example: 'AS-IS',
   })
   @Expose()
-  architectureState?: string;
+  architectureState?: ArchitectureState;
 
   @ApiProperty({
     description: 'System-generated procedure code.',

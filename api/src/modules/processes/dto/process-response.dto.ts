@@ -1,6 +1,15 @@
 import { Expose, Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
+import {
+  ARCHITECTURE_STATES,
+  type ArchitectureState,
+} from '../../../common/enums/architecture-state.enum';
+import {
+  LIFECYCLE_STATES,
+  type LifecycleState,
+} from '../../../common/enums/lifecycle-state.enum';
+
 class GovernanceVersionSummaryDto {
   @ApiProperty({
     description: 'Unique identifier for the process version.',
@@ -18,19 +27,21 @@ class GovernanceVersionSummaryDto {
 
   @ApiProperty({
     description: 'Current lifecycle state of the version.',
-    example: 'IN_REVIEW',
+    enum: LIFECYCLE_STATES,
+    example: 'In Review',
   })
   @Expose()
-  lifecycleState!: string;
+  lifecycleState!: LifecycleState;
 }
 
 class GovernanceActiveWorkflowVersionDto extends GovernanceVersionSummaryDto {
   @ApiProperty({
     description: 'Architecture state of the active workflow version.',
+    enum: ARCHITECTURE_STATES,
     example: 'TO-BE',
   })
   @Expose()
-  architectureState!: string;
+  architectureState!: ArchitectureState;
 
   @ApiPropertyOptional({
     description: 'Role currently expected to act on the version.',
