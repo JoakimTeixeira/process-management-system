@@ -1,17 +1,10 @@
 import { Routes } from '@angular/router';
 
-import { FaqPageComponent } from './features/faq/faq.page';
-import { GlossaryPageComponent } from './features/glossary/glossary.page';
-import { HomePageComponent } from './features/home/home.page';
-import { MethodologyPageComponent } from './features/methodology/methodology.page';
-import { ProcedureDetailPageComponent } from './features/procedure-detail/procedure-detail.page';
-import { ProcessDetailPageComponent } from './features/process-detail/process-detail.page';
-import { ProcessListPageComponent } from './features/process-list/process-list.page';
-
 export const routes: Routes = [
   {
     path: '',
-    component: HomePageComponent,
+    loadComponent: () =>
+      import('./features/home/home.page').then((module) => module.HomePageComponent),
   },
   {
     path: 'catalog',
@@ -20,58 +13,90 @@ export const routes: Routes = [
   },
   {
     path: 'catalog/processes',
-    component: ProcessListPageComponent,
+    loadComponent: () =>
+      import('./features/process-list/process-list.page').then(
+        (module) => module.ProcessListPageComponent,
+      ),
     data: { defaultCatalogTab: 'processes', pageTitle: 'Processes' },
   },
   {
     path: 'catalog/procedures',
-    component: ProcessListPageComponent,
+    loadComponent: () =>
+      import('./features/process-list/process-list.page').then(
+        (module) => module.ProcessListPageComponent,
+      ),
     data: { defaultCatalogTab: 'procedures', pageTitle: 'Procedures' },
   },
   {
     path: 'catalog/processes/:processId',
-    component: ProcessDetailPageComponent,
+    loadComponent: () =>
+      import('./features/process-detail/process-detail.page').then(
+        (module) => module.ProcessDetailPageComponent,
+      ),
     data: { tab: 'default' },
   },
   {
     path: 'catalog/processes/:processId/overview',
-    component: ProcessDetailPageComponent,
+    loadComponent: () =>
+      import('./features/process-detail/process-detail.page').then(
+        (module) => module.ProcessDetailPageComponent,
+      ),
     data: { tab: 'overview' },
   },
   {
     path: 'catalog/processes/:processId/diagram',
-    component: ProcessDetailPageComponent,
+    loadComponent: () =>
+      import('./features/process-detail/process-detail.page').then(
+        (module) => module.ProcessDetailPageComponent,
+      ),
     data: { tab: 'diagram' },
   },
   {
     path: 'catalog/processes/:processId/procedures',
-    component: ProcessDetailPageComponent,
+    loadComponent: () =>
+      import('./features/process-detail/process-detail.page').then(
+        (module) => module.ProcessDetailPageComponent,
+      ),
     data: { tab: 'procedures' },
   },
   {
     path: 'catalog/processes/:processId/history',
-    component: ProcessDetailPageComponent,
+    loadComponent: () =>
+      import('./features/process-detail/process-detail.page').then(
+        (module) => module.ProcessDetailPageComponent,
+      ),
     data: { tab: 'history' },
   },
   {
     path: 'catalog/processes/:processId/compare',
-    component: ProcessDetailPageComponent,
+    loadComponent: () =>
+      import('./features/process-detail/process-detail.page').then(
+        (module) => module.ProcessDetailPageComponent,
+      ),
     data: { tab: 'compare' },
   },
   {
     path: 'catalog/procedures/:id',
-    component: ProcedureDetailPageComponent,
+    loadComponent: () =>
+      import('./features/procedure-detail/procedure-detail.page').then(
+        (module) => module.ProcedureDetailPageComponent,
+      ),
   },
   {
     path: 'glossary',
-    component: GlossaryPageComponent,
+    loadComponent: () =>
+      import('./features/glossary/glossary.page').then((module) => module.GlossaryPageComponent),
   },
   {
     path: 'methodology',
-    component: MethodologyPageComponent,
+    loadComponent: () =>
+      import('./features/methodology/methodology.page').then(
+        (module) => module.MethodologyPageComponent,
+      ),
   },
   {
     path: 'faq',
-    component: FaqPageComponent,
+    loadComponent: () =>
+      import('./features/faq/faq.page').then((module) => module.FaqPageComponent),
   },
 ];
