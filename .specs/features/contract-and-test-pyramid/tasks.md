@@ -1,7 +1,7 @@
 # Contract and Test Pyramid Tasks
 
 **Design:** `.specs/features/contract-and-test-pyramid/design.md`  
-**Status:** In Progress
+**Status:** Complete
 
 ## Execution plan
 
@@ -102,13 +102,13 @@ A1 → A11 ───────────────┘───────
 **Tests/Gate:** e2e/full — `npm run verify`  
 **Done when:** compose/migrate/seed/curl/DB assertions run unattended, fail fast, and are rerunnable. **Complete: 2026-11-07; `npm run verify` passed twice from clean state, covering migrations, deterministic seed, critical HTTP/RBAC/visibility flows, lifecycle/audit database evidence, and scoped container/network/volume cleanup.**
 
-### A12 — Finalize root pyramid scripts and docs
+### A12 — Finalize root pyramid scripts and docs ✅
 
 **Where:** `package.json`, `AGENTS.md`, `.specs/codebase/TESTING.md`  
 **Depends on:** A8, A10, A11  
 **Requirement:** PYR-01, TERM-02  
 **Tests/Gate:** build — all available unit/integration/contract/verify gates  
-**Done when:** root commands delegate correctly and docs match final scripts.
+**Done when:** root commands delegate correctly and docs match final scripts. **Complete: 2026-11-08; root unit, integration, contract, API health e2e, aggregate, build, and release verification commands delegate to the correct packages/layers. `npm run test:all`, `npm run build`, and `npm run verify` pass; contributor and testing docs match the final 87-file / 475-unit-test Vitest floor.**
 
 ## Dependency cross-check
 

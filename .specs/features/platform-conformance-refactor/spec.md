@@ -1,6 +1,6 @@
 # Platform Conformance Refactor Specification
 
-**Status:** Approved
+**Status:** Complete
 
 ## Problem statement
 
@@ -8,11 +8,11 @@ The audit found repository-boundary and Angular platform-pattern leftovers. Thes
 
 ## Goals
 
-- [ ] Move API data access behind repository boundaries.
-- [ ] Record explicit decisions for conditional API versioning/filter/cache guidance.
-- [ ] Modernize identified Angular route, input, listener, loading, and state patterns.
-- [ ] Decompose version detail into focused units without behavior drift.
-- [ ] Resolve every audited leftover or record a reasoned deferral.
+- [x] Move API data access behind repository boundaries.
+- [x] Record explicit decisions for conditional API versioning/filter/cache guidance.
+- [x] Modernize identified Angular route, input, listener, loading, and state patterns.
+- [x] Decompose version detail into focused units without behavior drift.
+- [x] Resolve every audited leftover or record a reasoned deferral.
 
 ## Out of scope
 
@@ -48,7 +48,7 @@ As a maintainer, I want audited legacy patterns modernized with a dependable saf
 
 | Requirement | Tasks | Status |
 | --- | --- | --- |
-| REF-01 | C1–C7 | In Tasks |
+| REF-01 | C1–C7 | Complete |
 
 **Coverage:** 1 total, 1 mapped, 0 unmapped.
 

@@ -20,6 +20,12 @@ The public UI may present `AS-IS` as “Current State” and `TO-BE` as “Targe
 
 Follow the test pyramid and gate commands in `.specs/codebase/TESTING.md`. Integration and contract tests must remain runner-agnostic. Before structural conformance refactors, add characterization tests that pin actual observable behavior.
 
+- `npm run test:unit` runs the API and both Angular unit suites.
+- `npm run test:integration` owns an isolated PostgreSQL test database and must not run concurrently with another integration suite.
+- `npm run test:contract` checks OpenAPI drift, schema coverage, generated frontend types, and typed frontend fixtures.
+- `npm run test:e2e` is the API bootstrap/health smoke; `npm run verify` is the release-level compose, curl, and database-evidence gate.
+- `npm run test:all` runs the non-release test layers serially where shared state requires it. Run `npm run build` and `npm run verify` before a release handoff.
+
 ## Generated contracts
 
 The API OpenAPI document is the contract source. Do not hand-maintain frontend copies of contract-covered DTO fields or enums. Regenerate the per-app contract types after API schema changes and include generated output in the same commit.

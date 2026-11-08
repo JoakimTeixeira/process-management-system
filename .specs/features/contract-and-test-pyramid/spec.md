@@ -1,6 +1,6 @@
 # Contract and Test Pyramid Specification
 
-**Status:** Approved
+**Status:** Complete
 
 ## Problem statement
 
@@ -8,11 +8,11 @@ The repository has a green unit base but no enforced pyramid or contract source.
 
 ## Goals
 
-- [ ] Make API/OpenAPI the source for frontend contract shapes and ubiquitous terms.
-- [ ] Fail deterministically on breaking schema changes.
-- [ ] Verify lifecycle, visibility, RBAC, and clone SQL against isolated Postgres.
-- [ ] Run the existing critical-flow curl/DB harness unattended.
-- [ ] Document test layers and canonical terms.
+- [x] Make API/OpenAPI the source for frontend contract shapes and ubiquitous terms.
+- [x] Fail deterministically on breaking schema changes.
+- [x] Verify lifecycle, visibility, RBAC, and clone SQL against isolated Postgres.
+- [x] Run the existing critical-flow curl/DB harness unattended.
+- [x] Document test layers and canonical terms.
 
 ## Out of scope
 
@@ -84,17 +84,17 @@ As a contributor, I want code-facing docs to prevent synonyms from becoming doma
 
 | Requirement | Tasks | Status |
 | --- | --- | --- |
-| TERM-01 | A2–A7 | In Tasks |
-| PYR-01 | A11–A12 | In Tasks |
-| PYR-02 | A9–A10 | In Tasks |
-| CONTRACT-01 | A3–A7 | In Tasks |
-| TERM-02 | A8, A12 | In Tasks |
+| TERM-01 | A2–A7 | Complete |
+| PYR-01 | A11–A12 | Complete |
+| PYR-02 | A9–A10 | Complete |
+| CONTRACT-01 | A3–A7 | Complete |
+| TERM-02 | A8, A12 | Complete |
 
 **Coverage:** 5 total, 5 mapped, 0 unmapped.
 
 ## Success criteria
 
-- [ ] Breaking API shape changes fail contract checks.
-- [ ] Wrong high-risk SQL fails integration tests.
-- [ ] Critical flow failures make `npm run verify` non-zero.
-- [ ] Frontends no longer own covered contract unions.
+- [x] Breaking API shape changes fail contract checks.
+- [x] Wrong high-risk SQL fails integration tests.
+- [x] Critical flow failures make `npm run verify` non-zero.
+- [x] Frontends no longer own covered contract unions.

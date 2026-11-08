@@ -1,6 +1,6 @@
 # Vitest Standardization Specification
 
-**Status:** Approved
+**Status:** Complete
 
 ## Problem statement
 
@@ -8,11 +8,11 @@ API tests use Jest while both Angular apps use Karma/Jasmine and require Chrome.
 
 ## Goals
 
-- [ ] Run all package unit tests on Vitest with decorator metadata intact.
-- [ ] Migrate one package at a time while retaining its previous runner until green.
-- [ ] Repair the API bootstrap/health e2e smoke.
-- [ ] Add characterization coverage needed by later conformance work.
-- [ ] Provide one root unit command and concise maintainer quickstart.
+- [x] Run all package unit tests on Vitest with decorator metadata intact.
+- [x] Migrate one package at a time while retaining its previous runner until green.
+- [x] Repair the API bootstrap/health e2e smoke.
+- [x] Add characterization coverage needed by later conformance work.
+- [x] Provide one root unit command and concise maintainer quickstart.
 
 ## Out of scope
 
@@ -60,8 +60,8 @@ Optional Stryker pilot for selected API services; survivors do not initially blo
 
 | Requirement | Tasks | Status |
 | --- | --- | --- |
-| TEST-01 | B1–B5 | In Tasks |
-| DOCS-01 | B7 | In Tasks |
+| TEST-01 | B1–B5 | Complete |
+| DOCS-01 | B7 | Complete |
 | E2E-01 | Deferred | P3 |
 | PYR-03 | B6 | P3 optional |
 

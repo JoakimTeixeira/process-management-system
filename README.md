@@ -12,7 +12,36 @@ COBIT-guided process management system.
 For direct local development without Docker you will also need:
 
 - PostgreSQL 16+
-- Google Chrome or Chromium for the Angular headless test runners
+
+## Maintainer Quickstart
+
+From a fresh clone, install the locked dependencies and run the complete verification path:
+
+```bash
+cp .env.example .env
+npm ci
+npm ci --prefix api
+npm ci --prefix web/backoffice
+npm ci --prefix web/public
+npm run test:all
+npm run build
+npm run verify
+```
+
+`npm run verify` owns an isolated Compose project, applies migrations, seeds deterministic data, exercises the critical curl/RBAC/visibility flows, asserts database evidence, and cleans up. For an interactive stack, continue with [Local Docker Run](#local-docker-run), which shows `docker compose`, migrate, and seed commands.
+
+| Command | Purpose |
+| --- | --- |
+| `npm run test:unit` | Run all API, public, and backoffice Vitest unit suites. |
+| `npm run test:integration` | Run isolated PostgreSQL integration tests. |
+| `npm run test:contract` | Check OpenAPI, generated types, schemas, and frontend fixtures. |
+| `npm run test:e2e` | Run the API bootstrap and `/health` Supertest smoke. |
+| `npm run test:all` | Run all non-release test layers. |
+| `npm run build` | Build all three packages. |
+| `npm run verify` | Run the release-level Compose, curl, and database gate. |
+| `npm run start:all` | Install and start all three development apps. |
+
+See the [contributor contract](AGENTS.md), [testing strategy](.specs/codebase/TESTING.md), and [verification guide](verification/README.md) for the detailed rules and troubleshooting steps.
 
 ## Overview
 

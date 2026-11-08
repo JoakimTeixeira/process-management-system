@@ -1,7 +1,7 @@
 # Platform Conformance Refactor Tasks
 
 **Design:** `.specs/features/platform-conformance-refactor/design.md`  
-**Status:** Approved
+**Status:** Complete
 
 ## Feature-wide rules
 
