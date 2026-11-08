@@ -12,7 +12,8 @@ const projectName = "process-management-system";
 const port = process.env.SONAR_PORT?.trim() || "9000";
 const serverUrl = (
   process.env.SONAR_HOST_URL?.trim() || `http://localhost:${port}`
-).replace(/\/+$/u, "");
+);
+const normalizedServerUrl = removeTrailingSlashes(serverUrl);
 const action = process.argv[2] ?? "status";
 
 try {
@@ -40,7 +41,7 @@ try {
 
 async function start() {
   compose(["--profile", "diagnostics", "up", "-d", "sonarqube"]);
-  console.log(`[sonar-local] Waiting for ${serverUrl} ...`);
+  console.log(`[sonar-local] Waiting for ${normalizedServerUrl} ...`);
   await waitUntilReady();
 
   const configuredToken = process.env.SONAR_TOKEN?.trim();
@@ -123,7 +124,7 @@ function findCompose() {
 async function waitUntilReady() {
   for (let attempt = 0; attempt < 120; attempt += 1) {
     try {
-      const response = await fetch(`${serverUrl}/api/system/status`);
+      const response = await fetch(`${normalizedServerUrl}/api/system/status`);
       if (response.ok) {
         const { status } = await response.json();
         if (status === "UP") {
@@ -143,7 +144,7 @@ async function waitUntilReady() {
 
 async function printServerStatus() {
   try {
-    const response = await fetch(`${serverUrl}/api/system/status`);
+    const response = await fetch(`${normalizedServerUrl}/api/system/status`);
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
     }
@@ -153,7 +154,7 @@ async function printServerStatus() {
     );
   } catch (error) {
     throw new Error(
-      `Server is unavailable at ${serverUrl}: ${error instanceof Error ? error.message : String(error)}`,
+      `Server is unavailable at ${normalizedServerUrl}: ${error instanceof Error ? error.message : String(error)}`,
       { cause: error },
     );
   }
@@ -179,7 +180,7 @@ async function bootstrapLocalCredentials() {
       password: generatedPassword,
       previousPassword: "admin",
     });
-    const response = await fetch(`${serverUrl}/api/users/change_password`, {
+    const response = await fetch(`${normalizedServerUrl}/api/users/change_password`, {
       method: "POST",
       headers: {
         Authorization: basicAuth("admin", "admin"),
@@ -197,7 +198,7 @@ async function bootstrapLocalCredentials() {
   }
 
   const tokenName = "process-management-system-local";
-  const revokeResponse = await fetch(`${serverUrl}/api/user_tokens/revoke`, {
+  const revokeResponse = await fetch(`${normalizedServerUrl}/api/user_tokens/revoke`, {
     method: "POST",
     headers: {
       Authorization: basicAuth("admin", adminPassword),
@@ -210,7 +211,7 @@ async function bootstrapLocalCredentials() {
       `Could not revoke the stale local token (${revokeResponse.status}).`,
     );
   }
-  const response = await fetch(`${serverUrl}/api/user_tokens/generate`, {
+  const response = await fetch(`${normalizedServerUrl}/api/user_tokens/generate`, {
     method: "POST",
     headers: {
       Authorization: basicAuth("admin", adminPassword),
@@ -237,7 +238,7 @@ async function assertValidToken(token) {
 }
 
 async function isValidToken(token) {
-  const response = await fetch(`${serverUrl}/api/authentication/validate`, {
+  const response = await fetch(`${normalizedServerUrl}/api/authentication/validate`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   const result = response.ok ? await response.json() : { valid: false };
@@ -245,7 +246,7 @@ async function isValidToken(token) {
 }
 
 async function isValidAdminPassword(password) {
-  const response = await fetch(`${serverUrl}/api/authentication/validate`, {
+  const response = await fetch(`${normalizedServerUrl}/api/authentication/validate`, {
     headers: { Authorization: basicAuth("admin", password) },
   });
   const result = response.ok ? await response.json() : { valid: false };
@@ -285,4 +286,12 @@ function basicAuth(username, password) {
 
 function delay(milliseconds) {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
+}
+
+function removeTrailingSlashes(value) {
+  let end = value.length;
+  while (end > 0 && value[end - 1] === "/") {
+    end -= 1;
+  }
+  return value.slice(0, end);
 }
