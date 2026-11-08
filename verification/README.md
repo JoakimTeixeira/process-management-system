@@ -53,6 +53,16 @@ docker compose --project-name process-management-system-verify --file docker-com
 
 `VERIFY_COMPOSE_PROJECT` may override the project name using lowercase letters, numbers, underscores, and hyphens. This is useful for isolated local runs; cleanup remains scoped to that exact project.
 
+## Troubleshooting: `EACCES` on `api/uploads`
+
+The API image runs as the non-root `node` user (UID 1000). `api/uploads` is bind-mounted into the container, so files and directories created by an older root-running image stay root-owned. They then fail with `EACCES` during the seed step (`/app/uploads/seed/...`) or with HTTP 500 on BPMN upload (`/app/uploads/backoffice/bpmn`). Fresh files created by the current image are owned by UID 1000 and are not affected.
+
+Hand the existing content to UID 1000 once; this changes ownership only and keeps the files:
+
+```bash
+docker run --rm --user root -v "$PWD/api/uploads:/uploads" process-management-system-api-verify:latest chown -R 1000:1000 /uploads
+```
+
 ## Verification artifacts
 
 - `scripts/backoffice_validation_curl_commands.sh` exercises the HTTP critical flows and writes a run-specific runtime env file.

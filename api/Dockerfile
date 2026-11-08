@@ -27,7 +27,9 @@ COPY --from=builder /app/nest-cli.json ./nest-cli.json
 COPY --from=builder /app/tsconfig.json ./tsconfig.json
 COPY --from=builder /app/tsconfig.build.json ./tsconfig.build.json
 
-RUN mkdir -p /app/uploads
+RUN mkdir -p /app/uploads && chown node:node /app/uploads
+
+USER node
 
 EXPOSE 3000
 
