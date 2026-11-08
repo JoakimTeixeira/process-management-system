@@ -7,3 +7,5 @@
 /verification/db_queries/DB*
 /verification/logs/backoffice*
 /internal-docs
+/playwright-report
+/test-results

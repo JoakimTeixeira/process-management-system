@@ -9,11 +9,14 @@
     "test:integration": "npm run test:integration --prefix api",
     "test:contract": "npm run test:contract --prefix api && npm run test:contract --prefix web/backoffice && npm run test:contract --prefix web/public",
     "test:e2e": "npm run test:e2e --prefix api",
+    "test:browser": "playwright test",
+    "test:browser:install": "playwright install chromium",
     "test:all": "npm run test:unit && npm run test:integration && npm run test:contract && npm run test:e2e",
     "build": "npm run build --prefix api && npm run build --prefix web/public && npm run build --prefix web/backoffice",
     "verify": "node ./verification/scripts/verify.mjs"
   },
   "devDependencies": {
+    "@playwright/test": "^1.65.0",
     "concurrently": "^8.2.2",
     "wait-on": "^9.0.5"
   }
