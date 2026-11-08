@@ -1,9 +1,7 @@
 {
-    "cSpell.words": [
-        "backoffice",
-        "Itil"
-    ],
-    "sonarlint.connectedMode.project": {
-        "projectKey": "process-management-system"
-    }
+  "cSpell.words": ["backoffice", "Itil"],
+  "sonarlint.connectedMode.project": {
+    "projectKey": "process-management-system"
+  },
+  "eslint.workingDirectories": [".", "api", "web/public", "web/backoffice"]
 }
