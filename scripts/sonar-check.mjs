@@ -134,7 +134,9 @@ export async function runSonarCheck({
   printIssues(issues, projectKey, logger);
   printHotspots(hotspots, projectKey, logger);
 
-  const gateStatus = qualityGate.projectStatus?.status ?? "UNKNOWN";
+  const projectStatus = qualityGate.projectStatus;
+  const gateStatus = projectStatus?.status ?? "UNKNOWN";
+  printFailedGateConditions(projectStatus?.conditions ?? [], logger);
   logger.log(`[sonar] Quality gate: ${gateStatus}`);
   logger.log(
     `[sonar] Dashboard: ${report.dashboardUrl ?? `${serverUrl}/dashboard?id=${projectKey}`}`,
@@ -212,6 +214,19 @@ function printHotspots(hotspots, key, logger) {
     const location = formatLocation(hotspot.component, hotspot.line, key);
     logger.error(
       `${location} [SonarQube HOTSPOT ${hotspot.ruleKey}] ${hotspot.message}`,
+    );
+  }
+}
+
+function printFailedGateConditions(conditions, logger) {
+  for (const condition of conditions) {
+    if (condition.status !== "ERROR") {
+      continue;
+    }
+    logger.error(
+      `[sonar] Quality gate condition failed: ${condition.metricKey ?? "unknown metric"} ` +
+        `${condition.comparator ?? "?"} ${condition.errorThreshold ?? "?"} ` +
+        `(actual ${condition.actualValue ?? "unknown"}).`,
     );
   }
 }

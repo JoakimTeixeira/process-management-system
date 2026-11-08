@@ -148,6 +148,46 @@ await test("returns a genuine clean analysis result", async () => {
   );
 });
 
+await test("reports the metric details for a failed quality gate", async () => {
+  const logged = [];
+  const result = await runSonarCheck({
+    environment: configuredEnvironment(),
+    fetchImpl: routeFetch({
+      qualityGate: {
+        conditions: [
+          {
+            actualValue: "0.0",
+            comparator: "LT",
+            errorThreshold: "80",
+            metricKey: "new_coverage",
+            status: "ERROR",
+          },
+        ],
+        status: "ERROR",
+      },
+    }),
+    logger: {
+      error: (message) => logged.push(message),
+      log: (message) => logged.push(message),
+    },
+    readFileImpl: async () =>
+      [
+        `serverUrl=${serverUrl}`,
+        `ceTaskUrl=${serverUrl}/api/ce/task?id=failed-gate`,
+        `${serverUrl}/dashboard?id=fixture`,
+      ].join("\n"),
+    scanImpl: async () => {},
+  });
+
+  assert.equal(result.clean, false);
+  assert.equal(result.gateStatus, "ERROR");
+  assert.ok(
+    logged.some((message) =>
+      message.includes("new_coverage LT 80 (actual 0.0)"),
+    ),
+  );
+});
+
 function configuredEnvironment() {
   return {
     SONAR_HOST_URL: serverUrl,
@@ -156,7 +196,10 @@ function configuredEnvironment() {
   };
 }
 
-function routeFetch({ authenticationValid = true } = {}) {
+function routeFetch({
+  authenticationValid = true,
+  qualityGate = { status: "OK" },
+} = {}) {
   return async (input) => {
     const url = new URL(input);
     if (url.pathname === "/api/system/status") {
@@ -177,7 +220,7 @@ function routeFetch({ authenticationValid = true } = {}) {
       return jsonResponse({ hotspots: [], paging: { total: 0 } });
     }
     if (url.pathname === "/api/qualitygates/project_status") {
-      return jsonResponse({ projectStatus: { status: "OK" } });
+      return jsonResponse({ projectStatus: qualityGate });
     }
     throw new Error(`Unexpected SonarQube route: ${url}`);
   };
