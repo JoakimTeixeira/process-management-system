@@ -210,8 +210,21 @@ export class AssetsService {
 
   private isValidBpmnXml(content: string): boolean {
     return (
-      /<[^>]*definitions\b/i.test(content) && /<[^>]*process\b/i.test(content)
+      this.hasXmlElement(content, 'definitions') &&
+      this.hasXmlElement(content, 'process')
     );
+  }
+
+  private hasXmlElement(content: string, expectedLocalName: string): boolean {
+    return content
+      .split('<')
+      .slice(1)
+      .some((fragment) => {
+        const [qualifiedName = ''] = fragment.trimStart().split(/[\s/>]/u, 1);
+        const separator = qualifiedName.lastIndexOf(':');
+        const localName = qualifiedName.slice(separator + 1).toLowerCase();
+        return localName === expectedLocalName;
+      });
   }
 
   private getSafeExtension(originalName?: string): '.bpmn' | '.xml' {

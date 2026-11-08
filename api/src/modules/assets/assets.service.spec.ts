@@ -213,6 +213,36 @@ describe('AssetsService', () => {
     ).rejects.toBeInstanceOf(ConflictException);
   });
 
+  it('does not treat BPMN element names in attributes as BPMN elements', async () => {
+    processVersionsRepository.findById.mockResolvedValue({
+      id: 'version-1',
+      processId: 'process-1',
+      versionNumber: 1,
+      lifecycleState: 'Draft',
+      architectureState: 'AS-IS',
+      title: 'Draft',
+      checklistCompleted: false,
+      derivedFromVersionId: null,
+      changeDescription: 'change',
+      reasonForChange: 'reason',
+    });
+
+    await expect(
+      service.createBpmnAsset(
+        'version-1',
+        { caption: 'Diagram' },
+        {
+          buffer: Buffer.from(
+            '<xml definitions="present" process="present" />',
+          ),
+          originalname: 'diagram.xml',
+          mimetype: 'application/xml',
+        },
+        currentUser,
+      ),
+    ).rejects.toBeInstanceOf(ConflictException);
+  });
+
   it('normalizes generic octet-stream BPMN uploads to application/xml metadata', async () => {
     const mkdirMock = vi.mocked(mkdir);
     const writeFileMock = vi.mocked(writeFile);
