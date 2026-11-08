@@ -1,0 +1,5 @@
+# Contract artifacts are compared byte-for-byte by `openapi:check` and
+# `openapi-typescript --check`, so they must stay LF on every platform.
+api/openapi/openapi.json text eol=lf
+**/generated/api.types.ts text eol=lf
+
