@@ -9,11 +9,8 @@ import { AuthService } from '../../core/auth/auth.service';
   selector: 'app-role-home-page',
   imports: [CommonModule, MatProgressSpinnerModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <section style="display:grid;place-items:center;min-height:16rem;">
-      <mat-progress-spinner mode="indeterminate" />
-    </section>
-  `,
+  templateUrl: './role-home.page.html',
+  styleUrl: './role-home.page.scss',
 })
 export class RoleHomePageComponent {
   private readonly auth = inject(AuthService);

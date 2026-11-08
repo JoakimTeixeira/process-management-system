@@ -1,0 +1,144 @@
+:host {
+  display: block;
+  min-width: 0;
+}
+
+.viewer-card {
+  display: grid;
+  gap: 1rem;
+  min-width: 0;
+}
+
+.viewer-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.viewer-kicker {
+  margin: 0;
+  color: var(--portal-muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.viewer-title {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--portal-ink);
+  font-weight: 600;
+}
+
+.viewer-subtitle {
+  margin: 0.25rem 0 0;
+  color: var(--portal-muted);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.viewer-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.viewer-action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 3rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--portal-border);
+  border-radius: 0.75rem;
+  background: var(--portal-surface);
+  color: var(--portal-muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.viewer-action-button:hover:not(:disabled) {
+  border-color: #0f6cbd;
+  background: #eff6ff;
+  color: #0f6cbd;
+}
+
+.viewer-action-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.viewer-stage {
+  position: relative;
+  min-height: 560px;
+  border: 1px solid var(--portal-border);
+  border-radius: 1rem;
+  background: var(--portal-surface-alt);
+  overflow: hidden;
+}
+
+.viewer-shell,
+.viewer-state {
+  position: absolute;
+  inset: 0;
+}
+
+.viewer-shell {
+  background: #ffffff;
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.viewer-shell:active {
+  cursor: grabbing;
+}
+
+.viewer-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  text-align: center;
+  background: rgba(248, 249, 250, 0.94);
+}
+
+.viewer-state__message {
+  display: grid;
+  gap: 0.5rem;
+  max-width: 26rem;
+}
+
+.viewer-state__message strong {
+  color: var(--portal-ink);
+  font-size: 1.125rem;
+}
+
+.viewer-state__message span {
+  color: var(--portal-muted);
+  line-height: 1.6;
+}
+
+.viewer-hidden {
+  visibility: hidden;
+}
+
+@media (max-width: 720px) {
+  .viewer-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .viewer-stage {
+    min-height: 420px;
+  }
+}

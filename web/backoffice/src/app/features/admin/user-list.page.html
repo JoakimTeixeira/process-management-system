@@ -1,0 +1,79 @@
+<section class="page">
+  <section class="bo-page-intro">
+  <div class="header-row">
+    <div class="bo-page-intro__copy">
+      <h1>User administration</h1>
+      <p class="muted">Technical-only administration for roles, teams, activation state, and password reset.</p>
+    </div>
+    <a mat-flat-button color="primary" routerLink="/admin/users/new">
+      <mat-icon>person_add</mat-icon>
+      New user
+    </a>
+  </div>
+  </section>
+
+  @if (isLoading()) {
+    <section class="center-state bo-state-card">
+      <mat-progress-spinner mode="indeterminate" />
+    </section>
+  } @else if (errorMessage(); as errorMessage) {
+    <mat-card appearance="outlined">
+      <mat-card-content>{{ errorMessage }}</mat-card-content>
+    </mat-card>
+  } @else if (users().length === 0) {
+    <mat-card appearance="outlined">
+      <mat-card-content>No users are available yet.</mat-card-content>
+    </mat-card>
+  } @else {
+    <mat-card appearance="outlined">
+      <mat-card-content>
+        <table mat-table [dataSource]="users()" [class.hide-actions]="!canEdit()" class="user-table">
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>Name</th>
+            <td mat-cell *matCellDef="let user">{{ user.name }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="email">
+            <th mat-header-cell *matHeaderCellDef>Email</th>
+            <td mat-cell *matCellDef="let user">{{ user.email }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="role">
+            <th mat-header-cell *matHeaderCellDef>Role</th>
+            <td mat-cell *matCellDef="let user">
+              <mat-chip>{{ formatRoleName(user.role.name) }}</mat-chip>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="team">
+            <th mat-header-cell *matHeaderCellDef>Team</th>
+            <td mat-cell *matCellDef="let user">
+              <mat-chip>{{ user.team.code }} - {{ user.team.name }}</mat-chip>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="isActive">
+            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <td mat-cell *matCellDef="let user">
+              <mat-chip class="user-status" [class.active]="user.isActive" [class.inactive]="!user.isActive">
+                {{ user.isActive ? 'Active' : 'Inactive' }}
+              </mat-chip>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <th mat-header-cell *matHeaderCellDef style="text-align: right;">Actions</th>
+            <td mat-cell *matCellDef="let user" style="text-align: right;">
+              <a mat-icon-button [routerLink]="['/admin/users', user.id, 'edit']" aria-label="Edit user">
+                <mat-icon>edit</mat-icon>
+              </a>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+  }
+</section>

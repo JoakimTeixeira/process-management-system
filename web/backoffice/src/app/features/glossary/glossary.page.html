@@ -1,0 +1,78 @@
+<section class="page">
+  <section class="bo-page-intro page-header">
+    <div class="header-row">
+      <div class="bo-page-intro__copy">
+        <h1>Glossary</h1>
+        <p class="muted">Manage ITIL practice definitions and glossary terms.</p>
+      </div>
+      @if (canEdit()) {
+        <a mat-flat-button color="primary" [routerLink]="['/glossary', 'new']">
+          <mat-icon>add</mat-icon>
+          New term
+        </a>
+      }
+    </div>
+  </section>
+
+  @if (isLoading()) {
+    <section class="center-state bo-state-card">
+      <mat-progress-spinner mode="indeterminate" />
+    </section>
+  } @else if (errorMessage(); as errorMessage) {
+    <mat-card appearance="outlined">
+      <mat-card-content>{{ errorMessage }}</mat-card-content>
+    </mat-card>
+  } @else if (glossary(); as glossary) {
+    @if (glossary.terms.length === 0) {
+      <mat-card appearance="outlined">
+        <mat-card-content>No glossary terms exist yet.</mat-card-content>
+      </mat-card>
+    } @else {
+      <mat-card appearance="outlined">
+        <mat-card-content>
+          <table mat-table [dataSource]="glossary.terms" class="term-table">
+            <ng-container matColumnDef="term">
+              <th mat-header-cell *matHeaderCellDef>Term</th>
+              <td mat-cell *matCellDef="let term">{{ term.term }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="category">
+              <th mat-header-cell *matHeaderCellDef>Category</th>
+              <td mat-cell *matCellDef="let term">{{ term.category || 'General' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="definition">
+              <th mat-header-cell *matHeaderCellDef>Definition</th>
+              <td mat-cell *matCellDef="let term">{{ term.definition }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="isPreferred">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let term">
+                @if (term.isPreferred) {
+                  <mat-chip>Preferred</mat-chip>
+                } @else {
+                  <span class="muted">-</span>
+                }
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef style="text-align: right;">Actions</th>
+              <td mat-cell *matCellDef="let term" style="text-align: right;">
+                @if (canEdit()) {
+                  <a mat-icon-button [routerLink]="['/glossary', term.id, 'edit']" aria-label="Edit term">
+                    <mat-icon>edit</mat-icon>
+                  </a>
+                }
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+    }
+  }
+</section>

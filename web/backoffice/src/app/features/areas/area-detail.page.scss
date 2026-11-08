@@ -1,0 +1,75 @@
+:host {
+  display: block;
+}
+
+.page-header {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.header-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.muted {
+  color: #5f6368;
+}
+
+.center-state {
+  display: grid;
+  place-items: center;
+  min-height: 12rem;
+}
+
+.detail-grid {
+  display: grid;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.detail-card {
+  padding: 1.5rem;
+}
+
+.detail-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: #5f6368;
+  min-width: 120px;
+}
+
+.detail-value {
+  flex: 1;
+}
+
+.processes-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.processes-table th,
+.processes-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.processes-table th {
+  font-weight: 600;
+  color: #5f6368;
+}
+
+.processes-table tr:last-child td {
+  border-bottom: none;
+}

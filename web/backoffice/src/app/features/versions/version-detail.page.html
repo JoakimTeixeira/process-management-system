@@ -1,0 +1,208 @@
+<section class="page">
+  @if (isLoading()) {
+    <section class="center-state bo-state-card">
+      <mat-progress-spinner mode="indeterminate" />
+    </section>
+  } @else if (errorMessage(); as errorMessage) {
+    <mat-card appearance="outlined">
+      <mat-card-content>{{ errorMessage }}</mat-card-content>
+    </mat-card>
+  } @else if (version(); as version) {
+    <section class="bo-page-intro">
+      <div class="bo-page-intro__copy">
+        <h1>{{ headerTitle() }}</h1>
+        <p class="muted">{{ headerSubtitle() }}</p>
+        <mat-chip-set>
+          <mat-chip>v{{ version.versionNumber }}</mat-chip>
+          <mat-chip>{{ version.lifecycleState }}</mat-chip>
+          <mat-chip>{{ version.architectureState }}</mat-chip>
+          <mat-chip>{{ submissionReadinessLabel() }}</mat-chip>
+          <mat-chip>{{ summaryDiagramStatus() }}</mat-chip>
+        </mat-chip-set>
+      </div>
+    </section>
+
+    <section class="detail-frame">
+      <section class="detail-frame__tabs">
+        <div class="detail-tab-shell">
+          <div class="detail-tab-shell__inner">
+            <nav class="detail-tab-nav" aria-label="Version sections">
+              @for (tab of tabs(); track tab.id) {
+                <button
+                  type="button"
+                  class="detail-tab-button"
+                  [class.detail-tab-button--active]="selectedTab() === tab.id"
+                  (click)="selectTab(tab.id)"
+                  [attr.aria-current]="selectedTab() === tab.id ? 'page' : null"
+                >
+                  <span class="detail-tab-button__label">{{ tab.label }}</span>
+                </button>
+              }
+            </nav>
+          </div>
+        </div>
+
+        @if (selectedTab() === 'summary') {
+          <div class="detail-frame__body">
+            <mat-card
+              appearance="outlined"
+              class="version-header-card"
+              style="margin-bottom: 1rem;"
+            >
+              <mat-card-content class="version-header-meta">
+                @if (process(); as process) {
+                  <div>
+                    <p class="work-sidebar-label">Process</p>
+                    <h3 class="work-card-title">{{ process.code }} - {{ process.title }}</h3>
+                    <p class="muted">
+                      {{ process.teamName }} team - Owner {{ process.ownerName }}
+                    </p>
+                  </div>
+                }
+                <mat-chip-set>
+                  <mat-chip>v{{ version.versionNumber }}</mat-chip>
+                  <mat-chip>{{ version.lifecycleState }}</mat-chip>
+                  <mat-chip>{{ version.architectureState }}</mat-chip>
+                  <mat-chip>Waiting for {{ waitingForRoleLabel() }}</mat-chip>
+                </mat-chip-set>
+              </mat-card-content>
+            </mat-card>
+
+            <div class="summary-grid" style="margin-bottom: 1rem;">
+              <section class="summary-stat">
+                <span class="summary-stat__label">Lineage</span>
+                <strong>
+                  @if (derivedFromVersionLabel(); as derivedFromVersionLabel) {
+                    {{ derivedFromVersionLabel }}
+                  } @else {
+                    No earlier linked version
+                  }
+                </strong>
+              </section>
+              <section class="summary-stat">
+                <span class="summary-stat__label">Readiness</span>
+                <strong>{{ submissionReadinessLabel() }}</strong>
+                <p class="muted">
+                  Metadata, BPMN, procedures, and review status are tracked live.
+                </p>
+              </section>
+              <section class="summary-stat">
+                <span class="summary-stat__label">Diagram</span>
+                <strong>{{ summaryDiagramStatus() }}</strong>
+                <p class="muted">{{ assets().length }} uploaded revision(s)</p>
+              </section>
+              <section class="summary-stat">
+                <span class="summary-stat__label">Procedures</span>
+                <strong>{{ procedures().length }} procedure(s)</strong>
+                <p class="muted">
+                  {{ hasProcedure() ? 'Procedure set is present' : 'No procedures added yet' }}
+                </p>
+              </section>
+            </div>
+
+            <mat-card appearance="outlined" class="summary-card">
+              <mat-card-content>
+                <div class="work-context">
+                  <div class="work-context__item">
+                    <span class="work-context__eyebrow">Change description</span>
+                    <p>{{ version.changeDescription || 'No change description provided.' }}</p>
+                  </div>
+                  <div class="work-context__item">
+                    <span class="work-context__eyebrow">Reason for change</span>
+                    <p>{{ version.reasonForChange || 'No reason for change provided.' }}</p>
+                  </div>
+                  <div class="work-context__item">
+                    <span class="work-context__eyebrow">Governance summary</span>
+                    <p>{{ governanceSummaryText() }}</p>
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        } @else if (selectedTab() === 'work') {
+          <app-version-lifecycle-panel
+            [version]="version"
+            [process]="process()"
+            [relatedVersions]="relatedVersions()"
+            [draftForm]="draftForm"
+            [checklistForm]="checklistForm"
+            [actionForm]="actionForm"
+            [panelTitle]="workPanelTitle()"
+            [panelDescription]="workPanelDescription()"
+            [canEditDraft]="canEditDraft()"
+            [derivedFromVersionLabel]="derivedFromVersionLabel()"
+            [draftErrorMessage]="draftErrorMessage()"
+            [isSavingDraft]="isSavingDraft()"
+            [waitingForRoleLabel]="waitingForRoleLabel()"
+            [isWaitingForCurrentUser]="isWaitingForCurrentUser()"
+            [nextChecklistLabel]="nextChecklistItem()?.label ?? null"
+            [nextChecklistCompleteLabel]="nextChecklistCompleteLabel()"
+            [canShowChecklist]="canShowChecklist()"
+            [checklistTitle]="checklistTitle()"
+            [submissionRequirements]="submissionRequirements()"
+            [showReviewChecklist]="showReviewChecklist()"
+            [submissionReadinessLabel]="submissionReadinessLabel()"
+            [visibleActions]="visibleActions()"
+            [showPromoteTitleField]="showPromoteTitleField()"
+            [actionErrorMessage]="actionErrorMessage()"
+            [isActing]="isActing()"
+            (saveDraftRequested)="saveDraft()"
+            (nextChecklistRequested)="executeNextChecklistAction()"
+            (lifecycleActionRequested)="runLifecycleAction($event)"
+          />
+        } @else if (selectedTab() === 'diagram') {
+          <app-version-asset-panel
+            [version]="version"
+            [canUploadBpmn]="canUploadBpmn()"
+            [uploadForm]="uploadForm"
+            [selectedFileName]="selectedFileName()"
+            [uploadErrorMessage]="uploadErrorMessage()"
+            [isUploading]="isUploading()"
+            [uploadSubmitLabel]="uploadSubmitLabel()"
+            [assets]="assets()"
+            [currentAssets]="currentAssets()"
+            [previewAsset]="previewAsset()"
+            [assetTimeline]="assetTimeline()"
+            [expandedPreviewAssetId]="expandedPreviewAssetId()"
+            [previewAssetContent]="previewAssetContent()"
+            [expandedAssetXmlId]="expandedAssetXmlId()"
+            [expandedAssetXmlContent]="expandedAssetXmlContent()"
+            [diagramPreviewXml]="diagramPreviewXml()"
+            [diagramPreviewTitle]="diagramPreviewTitle()"
+            [diagramPreviewSubtitle]="diagramPreviewSubtitle()"
+            (fileSelected)="onFileSelected($event)"
+            (uploadRequested)="uploadAsset()"
+            (previewToggled)="toggleAssetPreview($event)"
+            (xmlToggled)="toggleAssetXml($event)"
+          />
+        } @else if (selectedTab() === 'procedures') {
+          <app-version-procedure-panel
+            [canEditDraft]="canEditDraft()"
+            [panelTitle]="procedurePanelTitle()"
+            [editingProcedure]="editingProcedure() !== null"
+            [procedureForm]="procedureForm"
+            [activities]="procedureActivities()"
+            [errorMessage]="procedureErrorMessage()"
+            [isSaving]="isSavingProcedure()"
+            [submitLabel]="procedureSubmitLabel()"
+            [procedures]="procedures()"
+            (activityAdded)="addProcedureActivity()"
+            (activityRemoved)="removeProcedureActivity($event)"
+            (saveRequested)="saveProcedure()"
+            (editCancelled)="cancelProcedureEdit()"
+            (editRequested)="startEditingProcedure($event)"
+          />
+        } @else if (selectedTab() === 'history') {
+          <app-version-history-panel
+            [version]="version"
+            [historyAvailable]="historyAvailable()"
+            [stateHistory]="stateHistory()"
+            [auditLogs]="auditLogs()"
+            [assets]="assets()"
+            [supersededAssets]="supersededAssets()"
+          />
+        }
+      </section>
+    </section>
+  }
+</section>

@@ -1,0 +1,22 @@
+:host {
+  display: block;
+}
+
+.page {
+  max-width: 48rem;
+}
+
+.card-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+.muted {
+  color: #5f6368;
+}
+
+.error-message {
+  color: #d93025;
+  margin-top: 0.5rem;
+}

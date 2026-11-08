@@ -1,0 +1,123 @@
+<section class="page">
+  <section class="bo-page-intro page-header">
+    <div class="header-row">
+      <div class="bo-page-intro__copy">
+        @if (area(); as area) {
+          <h1>{{ area.title }}</h1>
+          <p class="muted">{{ area.code }} - {{ area.itilPractice.name }}</p>
+        } @else {
+          <h1>Area Details</h1>
+          <p class="muted">Loading area information...</p>
+        }
+      </div>
+      @if (area(); as area) {
+        <a mat-flat-button color="primary" [routerLink]="['/areas', area.id, 'edit']">
+          <mat-icon>edit</mat-icon>
+          Edit area
+        </a>
+      }
+    </div>
+  </section>
+
+  @if (isLoading()) {
+    <section class="center-state bo-state-card">
+      <mat-progress-spinner mode="indeterminate" />
+    </section>
+  } @else if (errorMessage(); as errorMessage) {
+    <mat-card appearance="outlined">
+      <mat-card-content>{{ errorMessage }}</mat-card-content>
+    </mat-card>
+  } @else if (area(); as area) {
+    <div class="detail-grid">
+      <!-- Area Information -->
+      <mat-card appearance="outlined" class="detail-card">
+        <h2>Area Information</h2>
+        <div class="detail-row">
+          <div class="detail-label">Code:</div>
+          <div class="detail-value">{{ area.code }}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Title:</div>
+          <div class="detail-value">{{ area.title }}</div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">ITIL Practice:</div>
+          <div class="detail-value">
+            <mat-chip>{{ area.itilPractice.name }}</mat-chip>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Owner:</div>
+          <div class="detail-value">
+            <mat-chip>{{ area.ownerName }}</mat-chip>
+          </div>
+        </div>
+        <div class="detail-row">
+          <div class="detail-label">Team:</div>
+          <div class="detail-value">
+            <mat-chip>{{ area.teamName }}</mat-chip>
+          </div>
+        </div>
+        @if (area.description) {
+          <div class="detail-row">
+            <div class="detail-label">Description:</div>
+            <div class="detail-value">{{ area.description }}</div>
+          </div>
+        }
+      </mat-card>
+
+      <!-- Processes in this Area -->
+      <mat-card appearance="outlined" class="detail-card">
+        <h2>Processes ({{ processes().length }})</h2>
+        @if (processes().length === 0) {
+          <p class="muted">No processes have been created for this area yet.</p>
+        } @else {
+          <table mat-table [dataSource]="processes()" class="processes-table">
+            <ng-container matColumnDef="title">
+              <th mat-header-cell *matHeaderCellDef>Title</th>
+              <td mat-cell *matCellDef="let process">{{ process.title }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="code">
+              <th mat-header-cell *matHeaderCellDef>Code</th>
+              <td mat-cell *matCellDef="let process">{{ process.code }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="description">
+              <th mat-header-cell *matHeaderCellDef>Description</th>
+              <td mat-cell *matCellDef="let process">
+                @if (process.description) {
+                  {{ process.description }}
+                } @else {
+                  <span class="muted">No description</span>
+                }
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let process">
+                <a
+                  mat-icon-button
+                  [routerLink]="['/processes', process.id, 'versions']"
+                  aria-label="View processes"
+                >
+                  <mat-icon>open_in_new</mat-icon>
+                </a>
+              </td>
+            </ng-container>
+
+            <tr
+              mat-header-row
+              *matHeaderRowDef="['title', 'code', 'description', 'actions']"
+            ></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; columns: ['title', 'code', 'description', 'actions']"
+            ></tr>
+          </table>
+        }
+      </mat-card>
+    </div>
+  }
+</section>

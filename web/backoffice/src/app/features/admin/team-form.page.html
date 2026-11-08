@@ -1,0 +1,80 @@
+<section class="page">
+  <section class="bo-page-intro">
+    <div class="bo-page-intro__copy">
+      <h1>{{ pageTitle() }}</h1>
+      <p class="muted">
+        Teams are governance reference data. They can be edited and deactivated, but not
+        physically deleted.
+      </p>
+    </div>
+  </section>
+
+  @if (isLoading()) {
+    <section class="center-state bo-state-card">
+      <mat-progress-spinner mode="indeterminate" />
+    </section>
+  } @else {
+    <mat-card class="form-card" appearance="outlined">
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="submit()">
+          <mat-form-field appearance="outline">
+            <mat-label>Code</mat-label>
+            <input matInput formControlName="code" maxlength="50" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name" maxlength="255" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Description</mat-label>
+            <textarea matInput rows="5" formControlName="description" maxlength="255"></textarea>
+          </mat-form-field>
+
+          @if (errorMessage(); as errorMessage) {
+            <p class="error-message">{{ errorMessage }}</p>
+          }
+
+          <div class="bo-form-actions">
+            <button mat-flat-button color="primary" type="submit" [disabled]="isSaving()">
+              <mat-icon>save</mat-icon>
+              Save team
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    @if (isEdit() && team(); as team) {
+      <mat-card appearance="outlined">
+        <mat-card-header>
+          <mat-card-title>Technical actions</mat-card-title>
+          <mat-card-subtitle>
+            Inactive teams remain in history but disappear from new assignment options.
+          </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="team-status-row">
+            <mat-chip class="team-status" [class.active]="team.isActive" [class.inactive]="!team.isActive">
+              {{ team.isActive ? 'Active' : 'Inactive' }}
+            </mat-chip>
+
+            @if (team.isActive) {
+              <span>This team can still be selected in new forms.</span>
+            } @else {
+              <span>This team is preserved for history only.</span>
+            }
+          </div>
+
+          @if (team.isActive) {
+            <button mat-button type="button" (click)="deactivateTeam()" [disabled]="isDeactivating()">
+              <mat-icon>do_not_disturb_on</mat-icon>
+              Deactivate team
+            </button>
+          }
+        </mat-card-content>
+      </mat-card>
+    }
+  }
+</section>

@@ -1,0 +1,31 @@
+:host {
+  display: block;
+}
+
+.page {
+  max-width: 52rem;
+}
+
+.form-card {
+  overflow: hidden;
+}
+
+.team-status-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.team-status-row span {
+  color: #5f6368;
+}
+
+.team-status.active {
+  background-color: #dcedc8 !important;
+}
+
+.team-status.inactive {
+  background-color: #e0e0e0 !important;
+}

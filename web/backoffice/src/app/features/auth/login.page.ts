@@ -22,38 +22,8 @@ import { AuthService } from '../../core/auth/auth.service';
     MatInputModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <section class="bo-login-shell">
-      <mat-card class="bo-login-card" appearance="outlined">
-        <mat-card-header>
-          <mat-card-title>Sign In</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <form [formGroup]="form" (ngSubmit)="submit()">
-            <mat-form-field appearance="outline">
-              <mat-label>Email</mat-label>
-              <input matInput type="email" formControlName="email" autocomplete="email" />
-            </mat-form-field>
-
-            <mat-form-field appearance="outline">
-              <mat-label>Password</mat-label>
-              <input matInput type="password" formControlName="password" autocomplete="current-password" />
-            </mat-form-field>
-
-            @if (errorMessage(); as errorMessage) {
-              <p class="error-message">{{ errorMessage }}</p>
-            }
-
-            <div class="bo-form-actions">
-              <button mat-flat-button color="primary" type="submit" [disabled]="isSubmitting()">
-                Sign in
-              </button>
-            </div>
-          </form>
-        </mat-card-content>
-      </mat-card>
-    </section>
-  `,
+  templateUrl: './login.page.html',
+  styleUrl: './login.page.scss',
 })
 export class LoginPageComponent {
   private readonly auth = inject(AuthService);

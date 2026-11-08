@@ -37,70 +37,8 @@ import { ToastService } from '../../core/toast/toast.service';
     MatProgressSpinnerModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styles: [
-    `
-      :host {
-        display: block;
-      }
-
-      .page {
-        max-width: 48rem;
-      }
-
-      .form-card {
-        overflow: hidden;
-      }
-    `,
-  ],
-  template: `
-    <section class="page">
-      <section class="bo-page-intro">
-        <div class="bo-page-intro__copy">
-          <h1>{{ pageTitle() }}</h1>
-        </div>
-      </section>
-
-      @if (isLoading()) {
-        <section class="center-state bo-state-card">
-          <mat-progress-spinner mode="indeterminate" />
-        </section>
-      } @else {
-        <mat-card class="form-card" appearance="outlined">
-          <mat-card-content>
-            <form [formGroup]="form" (ngSubmit)="submit()">
-              <mat-form-field appearance="outline">
-                <mat-label>Term</mat-label>
-                <input matInput formControlName="term" />
-              </mat-form-field>
-
-              <mat-form-field appearance="outline">
-                <mat-label>Definition</mat-label>
-                <textarea matInput rows="4" formControlName="definition"></textarea>
-              </mat-form-field>
-
-              <mat-form-field appearance="outline">
-                <mat-label>Category</mat-label>
-                <input matInput formControlName="category" />
-              </mat-form-field>
-
-              <mat-checkbox formControlName="isPreferred">Preferred term</mat-checkbox>
-
-              @if (errorMessage(); as errorMessage) {
-                <p class="error-message">{{ errorMessage }}</p>
-              }
-
-              <div class="bo-form-actions">
-                <button mat-flat-button color="primary" type="submit" [disabled]="isSaving()">
-                  <mat-icon>save</mat-icon>
-                  Save term
-                </button>
-              </div>
-            </form>
-          </mat-card-content>
-        </mat-card>
-      }
-    </section>
-  `,
+  templateUrl: './glossary-form.page.html',
+  styleUrl: './glossary-form.page.scss',
 })
 export class GlossaryFormPageComponent {
   readonly id = input<string>();

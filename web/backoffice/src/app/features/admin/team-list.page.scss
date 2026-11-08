@@ -1,0 +1,69 @@
+:host {
+  display: block;
+}
+
+.page {
+  display: grid;
+  gap: 1rem;
+}
+
+.header-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.center-state {
+  display: grid;
+  place-items: center;
+  min-height: 12rem;
+}
+
+.muted {
+  color: #5f6368;
+}
+
+.team-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.team-table th,
+.team-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+  vertical-align: top;
+}
+
+.team-table th {
+  font-weight: 600;
+  color: #5f6368;
+}
+
+.team-table tr:last-child td {
+  border-bottom: none;
+}
+
+::ng-deep {
+  .team-status {
+    &.active {
+      background-color: #dcedc8 !important;
+    }
+
+    &.inactive {
+      background-color: #e0e0e0 !important;
+    }
+
+    .mat-mdc-chip-action-label {
+      color: #424242 !important;
+    }
+
+    .mdc-evolution-chip__action--primary::before {
+      border-width: 0 !important;
+    }
+  }
+}

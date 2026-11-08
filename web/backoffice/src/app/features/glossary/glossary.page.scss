@@ -1,0 +1,49 @@
+:host {
+  display: block;
+}
+
+.page-header {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.header-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.muted {
+  color: #5f6368;
+}
+
+.center-state {
+  display: grid;
+  place-items: center;
+  min-height: 12rem;
+}
+
+.term-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.term-table th,
+.term-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.term-table th {
+  font-weight: 600;
+  color: #5f6368;
+}
+
+.term-table tr:last-child td {
+  border-bottom: none;
+}

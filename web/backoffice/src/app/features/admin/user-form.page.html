@@ -1,0 +1,148 @@
+<section class="page">
+  <section class="bo-page-intro">
+  <div class="bo-page-intro__copy">
+    <h1>{{ pageTitle() }}</h1>
+  </div>
+  </section>
+
+  @if (isLoading()) {
+    <section class="center-state bo-state-card">
+      <mat-progress-spinner mode="indeterminate" />
+    </section>
+  } @else {
+    <mat-card appearance="outlined">
+      <mat-card-content>
+        <form [formGroup]="form" (ngSubmit)="submit()">
+          <mat-form-field appearance="outline">
+            <mat-label>Name</mat-label>
+            <input matInput formControlName="name" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Email</mat-label>
+            <input matInput type="email" formControlName="email" />
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Role</mat-label>
+            <mat-select formControlName="roleName">
+              @for (role of roles; track role) {
+                <mat-option [value]="role">{{ formatRoleName(role) }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Team</mat-label>
+            <mat-select formControlName="teamId">
+              @for (team of teams(); track team.id) {
+                <mat-option [value]="team.id">{{ team.code }} - {{ team.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          @if (!isEdit()) {
+            <mat-form-field appearance="outline">
+              <mat-label>Initial password</mat-label>
+              <input matInput type="password" formControlName="password" />
+              @if (form.controls.password.touched && form.controls.password.invalid) {
+                <mat-error>{{ passwordRequirementsSummary }}</mat-error>
+              }
+            </mat-form-field>
+
+            <section class="password-checklist" aria-live="polite">
+              <p>Password requirements</p>
+              <ul>
+                @for (rule of passwordRules; track rule.key) {
+                  <li [class.met]="passwordRuleMet(form.controls.password.getRawValue(), rule)">
+                    <mat-icon>{{
+                      passwordRuleMet(form.controls.password.getRawValue(), rule)
+                        ? 'check_circle'
+                        : 'radio_button_unchecked'
+                    }}</mat-icon>
+                    <span>{{ rule.label }}</span>
+                  </li>
+                }
+              </ul>
+            </section>
+          }
+
+          @if (isEdit()) {
+            <mat-checkbox formControlName="isActive">User is active</mat-checkbox>
+          }
+
+          @if (formErrorMessage(); as formErrorMessage) {
+            <p class="error-message">{{ formErrorMessage }}</p>
+          }
+
+          <div class="bo-form-actions">
+            <button mat-flat-button color="primary" type="submit" [disabled]="isSaving()">
+              <mat-icon>save</mat-icon>
+              Save user
+            </button>
+          </div>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    @if (isEdit()) {
+      <mat-card appearance="outlined">
+        <mat-card-header>
+          <mat-card-title>Technical actions</mat-card-title>
+          <mat-card-subtitle>Governance workflow authority is not managed here.</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <form [formGroup]="resetPasswordForm" (ngSubmit)="resetPassword()">
+            <mat-form-field appearance="outline">
+              <mat-label>Temporary password</mat-label>
+              <input matInput type="password" formControlName="newPassword" />
+              @if (
+                resetPasswordForm.controls.newPassword.touched &&
+                resetPasswordForm.controls.newPassword.invalid
+              ) {
+                <mat-error>{{ passwordRequirementsSummary }}</mat-error>
+              }
+            </mat-form-field>
+
+            <section class="password-checklist" aria-live="polite">
+              <p>Temporary password requirements</p>
+              <ul>
+                @for (rule of passwordRules; track rule.key) {
+                  <li
+                    [class.met]="
+                      passwordRuleMet(resetPasswordForm.controls.newPassword.getRawValue(), rule)
+                    "
+                  >
+                    <mat-icon>{{
+                      passwordRuleMet(resetPasswordForm.controls.newPassword.getRawValue(), rule)
+                        ? 'check_circle'
+                        : 'radio_button_unchecked'
+                    }}</mat-icon>
+                    <span>{{ rule.label }}</span>
+                  </li>
+                }
+              </ul>
+            </section>
+
+            @if (resetPasswordErrorMessage(); as resetPasswordErrorMessage) {
+              <p class="error-message">{{ resetPasswordErrorMessage }}</p>
+            }
+
+            <div class="card-actions">
+              <button mat-flat-button color="primary" type="submit" [disabled]="isResettingPassword()">
+                <mat-icon>password</mat-icon>
+                Reset password
+              </button>
+              @if (user()?.isActive) {
+                <button mat-button type="button" (click)="deactivateUser()" [disabled]="isDeactivating()">
+                  <mat-icon>person_off</mat-icon>
+                  Deactivate user
+                </button>
+              }
+            </div>
+          </form>
+        </mat-card-content>
+      </mat-card>
+    }
+  }
+</section>

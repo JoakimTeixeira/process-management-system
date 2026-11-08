@@ -1,0 +1,55 @@
+:host {
+  display: block;
+}
+
+.page-header {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.header-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.muted {
+  color: #5f6368;
+}
+
+.center-state {
+  display: grid;
+  place-items: center;
+  min-height: 12rem;
+}
+
+.area-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.area-table th,
+.area-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.area-table th {
+  font-weight: 600;
+  color: #5f6368;
+}
+
+.area-table tr:last-child td {
+  border-bottom: none;
+}
+
+.action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}

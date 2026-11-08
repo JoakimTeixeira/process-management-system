@@ -13,20 +13,8 @@ export interface ConfirmDeleteDialogData {
   selector: 'app-confirm-delete-dialog',
   imports: [CommonModule, MatButtonModule, MatDialogModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `
-    <h2 mat-dialog-title>{{ data.title }}</h2>
-
-    <div mat-dialog-content>
-      <p>{{ data.message }}</p>
-    </div>
-
-    <div mat-dialog-actions align="end">
-      <button mat-button type="button" (click)="close(false)">Cancel</button>
-      <button mat-flat-button color="warn" type="button" (click)="close(true)">
-        {{ data.confirmLabel || 'Delete' }}
-      </button>
-    </div>
-  `,
+  templateUrl: './confirm-delete-dialog.component.html',
+  styleUrl: './confirm-delete-dialog.component.scss',
 })
 export class ConfirmDeleteDialogComponent {
   protected readonly data = inject<ConfirmDeleteDialogData>(MAT_DIALOG_DATA);

@@ -1,0 +1,61 @@
+<section class="viewer-card">
+  <div class="viewer-toolbar">
+    <div>
+      <p class="viewer-kicker">Diagram</p>
+      <span class="viewer-title">{{ title() }}</span>
+      <p class="viewer-subtitle">{{ subtitle() }}</p>
+    </div>
+    <div class="viewer-actions">
+      <button
+        class="viewer-action-button"
+        type="button"
+        (click)="fitViewport()"
+        matTooltip="Fit to viewport"
+      >
+        <mat-icon>fit_screen</mat-icon>
+      </button>
+      <button
+        class="viewer-action-button"
+        type="button"
+        (click)="zoom(-0.1)"
+        matTooltip="Zoom out"
+      >
+        <mat-icon>remove</mat-icon>
+      </button>
+      <button
+        class="viewer-action-button"
+        type="button"
+        (click)="zoom(0.1)"
+        matTooltip="Zoom in"
+      >
+        <mat-icon>add</mat-icon>
+      </button>
+      <button
+        class="viewer-action-button"
+        type="button"
+        (click)="toggleFullscreen()"
+        [disabled]="!canFullscreen"
+        matTooltip="Fullscreen"
+      >
+        <mat-icon>fullscreen</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <div class="viewer-stage" #stage>
+    <div class="viewer-shell" #canvas [class.viewer-hidden]="showStatePanel"></div>
+
+    @if (showStatePanel) {
+      <div class="viewer-state">
+        @if (loading()) {
+          <mat-spinner diameter="36"></mat-spinner>
+        } @else {
+          <div class="viewer-state__message">
+            <strong>Diagram unavailable</strong>
+            <span>{{ errorMessage() }}</span>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</section>
