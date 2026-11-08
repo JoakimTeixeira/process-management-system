@@ -1,12 +1,16 @@
 import { spawnSync } from "node:child_process";
 
 const npmCli = process.env.npm_execpath;
-const localOnly = process.argv.includes("--local");
+const mode = process.argv[2] ?? "all";
 
 if (!npmCli) {
   throw new Error("Run diagnostics through npm so npm_execpath is available.");
 }
-const checks = [
+if (!new Set(["all", "fast", "sonar"]).has(mode)) {
+  throw new Error(`Unknown diagnostics mode: ${mode}`);
+}
+
+const fastChecks = [
   ["Repository ESLint and SonarJS", "lint:root"],
   ["API ESLint and SonarJS", "lint:check", "api"],
   ["Public ESLint and SonarJS", "lint:check", "web/public"],
@@ -17,10 +21,11 @@ const checks = [
   ["Backoffice TypeScript", "typecheck", "web/backoffice"],
   ["Backoffice component modules", "check:component-modules", "web/backoffice"],
 ];
-
-if (!localOnly) {
-  checks.push(["SonarQube full-project analysis", "sonar:check"]);
-}
+const sonarChecks = [["SonarQube full-project analysis", "sonar:check"]];
+const checks = [
+  ...(mode === "sonar" ? [] : fastChecks),
+  ...(mode === "fast" ? [] : sonarChecks),
+];
 
 const failures = [];
 
@@ -52,8 +57,5 @@ if (failures.length > 0) {
   console.error(`\n[diagnostics] Failed checks: ${failures.join(", ")}`);
   process.exitCode = 1;
 } else {
-  const scope = localOnly
-    ? "local TypeScript, ESLint, SonarJS, and module checks"
-    : "TypeScript, ESLint, SonarQube, and module checks";
-  console.log(`\n[diagnostics] All ${scope} passed.`);
+  console.log(`\n[diagnostics] All ${mode} diagnostics passed.`);
 }

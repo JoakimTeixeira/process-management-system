@@ -1,193 +1,250 @@
-import { readFile } from "node:fs/promises";
 import { scan } from "@sonar/scan";
+import { readFile } from "node:fs/promises";
+import { join, resolve } from "node:path";
+import { pathToFileURL } from "node:url";
+import {
+  SonarDiagnosticError,
+  assertSameServer,
+  assertServerReady,
+  fetchPages,
+  formatLocation,
+  parseProperties,
+  sonarRequest,
+  waitForComputeTask,
+} from "./sonar-api.mjs";
 
 const defaultProjectKey = "process-management-system";
-const serverUrl = (process.env.SONAR_HOST_URL ?? "http://localhost:9000")
-  .trim()
-  .replace(/\/+$/, "");
-const token = process.env.SONAR_TOKEN?.trim();
-const projectKey = process.env.SONAR_PROJECT_KEY?.trim() || defaultProjectKey;
-const organization = process.env.SONAR_ORGANIZATION?.trim();
 
-if (!token) {
-  console.error(
-    "[sonar] SONAR_TOKEN is required. Generate a SonarQube user token, set " +
-      "SONAR_HOST_URL when the server is not http://localhost:9000, and rerun diagnostics.",
+export async function runSonarCheck({
+  environment = process.env,
+  fetchImpl = fetch,
+  logger = console,
+  readFileImpl = readFile,
+  scanImpl = scan,
+  workingDirectory = process.cwd(),
+} = {}) {
+  const serverUrl = removeTrailingSlashes(
+    (environment.SONAR_HOST_URL ?? "http://localhost:9000").trim(),
   );
-  process.exit(1);
-}
-
-const options = {
-  "sonar.projectKey": projectKey,
-};
-
-if (organization) {
-  options["sonar.organization"] = organization;
-}
-
-console.log(`[sonar] Scanning ${projectKey} with ${serverUrl}`);
-await scan({ serverUrl, token, options });
-
-const report = parseProperties(
-  await readFile(".scannerwork/report-task.txt", "utf8"),
-);
-const reportServerUrl = (report.serverUrl || serverUrl).replace(/\/+$/, "");
-
-assertSameServer(serverUrl, reportServerUrl);
-
-const task = await waitForComputeTask(report.ceTaskUrl, reportServerUrl, token);
-const issues = await fetchPages(
-  reportServerUrl,
-  token,
-  "api/issues/search",
-  "issues",
-  { componentKeys: projectKey, resolved: "false" },
-);
-const hotspots = await fetchPages(
-  reportServerUrl,
-  token,
-  "api/hotspots/search",
-  "hotspots",
-  { projectKey, status: "TO_REVIEW" },
-);
-const qualityGate = await sonarRequest(
-  reportServerUrl,
-  token,
-  `api/qualitygates/project_status?analysisId=${encodeURIComponent(task.analysisId)}`,
-);
-
-printIssues(issues, projectKey);
-printHotspots(hotspots, projectKey);
-
-const gateStatus = qualityGate.projectStatus?.status ?? "UNKNOWN";
-console.log(`[sonar] Quality gate: ${gateStatus}`);
-console.log(`[sonar] Dashboard: ${report.dashboardUrl}`);
-
-if (issues.length > 0 || hotspots.length > 0 || gateStatus !== "OK") {
-  console.error(
-    `[sonar] Failed with ${issues.length} unresolved issue(s), ` +
-      `${hotspots.length} unreviewed hotspot(s), and quality gate ${gateStatus}.`,
+  const projectKey = environment.SONAR_PROJECT_KEY?.trim() || defaultProjectKey;
+  const organization = environment.SONAR_ORGANIZATION?.trim();
+  const projectBaseDirectory = resolve(
+    workingDirectory,
+    environment.SONAR_PROJECT_BASE_DIR?.trim() || ".",
   );
-  process.exitCode = 1;
-} else {
-  console.log("[sonar] No unresolved issues or unreviewed hotspots.");
+  const token = await loadToken(environment, workingDirectory, readFileImpl);
+
+  await assertServerReady(serverUrl, token, fetchImpl);
+
+  const options = {
+    "sonar.projectBaseDir": projectBaseDirectory,
+    "sonar.projectKey": projectKey,
+  };
+  if (organization) {
+    options["sonar.organization"] = organization;
+  }
+
+  logger.log(`[sonar] Scanning ${projectKey} with ${serverUrl}`);
+  try {
+    await scanImpl({ serverUrl, token, options });
+  } catch (error) {
+    throw new SonarDiagnosticError(
+      "scanner",
+      "SonarScanner execution failed.",
+      {
+        cause: error,
+      },
+    );
+  }
+
+  let report;
+  try {
+    report = parseProperties(
+      await readFileImpl(
+        join(projectBaseDirectory, ".scannerwork", "report-task.txt"),
+        "utf8",
+      ),
+    );
+  } catch (error) {
+    throw new SonarDiagnosticError(
+      "scanner",
+      "SonarScanner did not produce .scannerwork/report-task.txt.",
+      { cause: error },
+    );
+  }
+
+  if (!report.ceTaskUrl || !report.serverUrl) {
+    throw new SonarDiagnosticError(
+      "scanner",
+      "SonarScanner report is missing its server or compute-task URL.",
+    );
+  }
+
+  const reportServerUrl = removeTrailingSlashes(report.serverUrl);
+  assertSameServer(serverUrl, reportServerUrl);
+
+  const timeoutMilliseconds = parsePositiveInteger(
+    environment.SONAR_ANALYSIS_TIMEOUT_MS,
+    240_000,
+  );
+  const pollMilliseconds = parsePositiveInteger(
+    environment.SONAR_POLL_INTERVAL_MS,
+    2_000,
+  );
+  const task = await waitForComputeTask(
+    report.ceTaskUrl,
+    reportServerUrl,
+    token,
+    {
+      fetchImpl,
+      intervalMilliseconds: pollMilliseconds,
+      maxAttempts: Math.max(
+        1,
+        Math.ceil(timeoutMilliseconds / pollMilliseconds),
+      ),
+    },
+  );
+  const issues = deduplicate(
+    await fetchPages(
+      reportServerUrl,
+      token,
+      "api/issues/search",
+      "issues",
+      { componentKeys: projectKey, resolved: "false" },
+      fetchImpl,
+    ),
+  );
+  const hotspots = deduplicate(
+    await fetchPages(
+      reportServerUrl,
+      token,
+      "api/hotspots/search",
+      "hotspots",
+      { project: projectKey, status: "TO_REVIEW" },
+      fetchImpl,
+    ),
+  );
+  const qualityGate = await sonarRequest(
+    reportServerUrl,
+    token,
+    `api/qualitygates/project_status?analysisId=${encodeURIComponent(task.analysisId)}`,
+    fetchImpl,
+  );
+
+  printIssues(issues, projectKey, logger);
+  printHotspots(hotspots, projectKey, logger);
+
+  const gateStatus = qualityGate.projectStatus?.status ?? "UNKNOWN";
+  logger.log(`[sonar] Quality gate: ${gateStatus}`);
+  logger.log(
+    `[sonar] Dashboard: ${report.dashboardUrl ?? `${serverUrl}/dashboard?id=${projectKey}`}`,
+  );
+
+  const clean =
+    issues.length === 0 && hotspots.length === 0 && gateStatus === "OK";
+  if (clean) {
+    logger.log("[sonar] No unresolved issues or unreviewed hotspots.");
+  } else {
+    logger.error(
+      `[sonar] Failed with ${issues.length} unresolved issue(s), ` +
+        `${hotspots.length} unreviewed hotspot(s), and quality gate ${gateStatus}.`,
+    );
+  }
+
+  return { clean, gateStatus, hotspots, issues };
 }
 
-function parseProperties(contents) {
-  return Object.fromEntries(
-    contents
-      .split(/\r?\n/u)
-      .filter((line) => line.includes("="))
-      .map((line) => {
-        const separator = line.indexOf("=");
-        return [line.slice(0, separator), line.slice(separator + 1)];
-      }),
+async function main() {
+  try {
+    const result = await runSonarCheck();
+    if (!result.clean) {
+      process.exitCode = 1;
+    }
+  } catch (error) {
+    const category =
+      error instanceof SonarDiagnosticError ? error.category : "unexpected";
+    const message = error instanceof Error ? error.message : String(error);
+    console.error(`[sonar][${category}] ${message}`);
+    if (error instanceof Error && error.cause instanceof Error) {
+      console.error(`[sonar][${category}] Cause: ${error.cause.message}`);
+    }
+    process.exitCode = 1;
+  }
+}
+
+async function loadToken(environment, workingDirectory, readFileImpl) {
+  const configured = environment.SONAR_TOKEN?.trim();
+  if (configured) {
+    return configured;
+  }
+
+  try {
+    const stored = await readFileImpl(
+      join(workingDirectory, ".sonarqube", "token"),
+      "utf8",
+    );
+    if (stored.trim()) {
+      return stored.trim();
+    }
+  } catch (error) {
+    if (!error || typeof error !== "object" || error.code !== "ENOENT") {
+      throw error;
+    }
+  }
+
+  throw new SonarDiagnosticError(
+    "authentication",
+    "SONAR_TOKEN is missing and .sonarqube/token does not exist. Run `npm run sonar:start`.",
   );
 }
 
-function assertSameServer(configuredUrl, reportedUrl) {
-  if (new URL(configuredUrl).origin !== new URL(reportedUrl).origin) {
-    throw new Error(
-      `Scanner reported an unexpected server (${reportedUrl}); refusing to send its token.`,
-    );
-  }
-}
-
-async function waitForComputeTask(taskUrl, baseUrl, authToken) {
-  const url = new URL(taskUrl);
-
-  if (url.origin !== new URL(baseUrl).origin) {
-    throw new Error(
-      "Scanner compute-task URL does not match the configured server.",
-    );
-  }
-
-  for (let attempt = 0; attempt < 60; attempt += 1) {
-    const response = await sonarRequest(baseUrl, authToken, url.toString());
-    const { task } = response;
-
-    if (task.status === "SUCCESS") {
-      return task;
-    }
-
-    if (task.status === "FAILED" || task.status === "CANCELED") {
-      throw new Error(
-        `SonarQube analysis ${task.status.toLowerCase()}: ${task.errorMessage ?? "unknown error"}`,
-      );
-    }
-
-    await new Promise((resolve) => setTimeout(resolve, 2_000));
-  }
-
-  throw new Error("Timed out waiting for SonarQube to process the analysis.");
-}
-
-async function fetchPages(baseUrl, authToken, endpoint, resultKey, parameters) {
-  const results = [];
-
-  for (let page = 1; ; page += 1) {
-    const query = new URLSearchParams({
-      ...parameters,
-      p: String(page),
-      ps: "500",
-    });
-    const response = await sonarRequest(
-      baseUrl,
-      authToken,
-      `${endpoint}?${query.toString()}`,
-    );
-    const pageResults = response[resultKey] ?? [];
-    results.push(...pageResults);
-
-    const total = response.paging?.total ?? response.total ?? results.length;
-    if (results.length >= total || pageResults.length === 0) {
-      return results;
-    }
-  }
-}
-
-async function sonarRequest(baseUrl, authToken, path) {
-  const requestUrl = new URL(path, `${baseUrl}/`);
-
-  if (requestUrl.origin !== new URL(baseUrl).origin) {
-    throw new Error("Refusing to send the SonarQube token to another server.");
-  }
-
-  const response = await fetch(requestUrl, {
-    headers: { Authorization: `Bearer ${authToken}` },
-  });
-
-  if (!response.ok) {
-    throw new Error(
-      `SonarQube request failed (${response.status} ${response.statusText}): ${requestUrl}`,
-    );
-  }
-
-  return response.json();
-}
-
-function printIssues(issues, key) {
+function printIssues(issues, key, logger) {
   for (const issue of issues) {
     const location = formatLocation(issue.component, issue.line, key);
-    console.error(
+    logger.error(
       `${location} [SonarQube ${issue.severity ?? "ISSUE"} ${issue.rule}] ${issue.message}`,
     );
   }
 }
 
-function printHotspots(hotspots, key) {
+function printHotspots(hotspots, key, logger) {
   for (const hotspot of hotspots) {
     const location = formatLocation(hotspot.component, hotspot.line, key);
-    console.error(
+    logger.error(
       `${location} [SonarQube HOTSPOT ${hotspot.ruleKey}] ${hotspot.message}`,
     );
   }
 }
 
-function formatLocation(component, line, key) {
-  const prefix = `${key}:`;
-  const path = component?.startsWith(prefix)
-    ? component.slice(prefix.length)
-    : component || key;
-  return line ? `${path}:${line}` : path;
+function deduplicate(results) {
+  return [...new Map(results.map((result) => [result.key, result])).values()];
+}
+
+function parsePositiveInteger(value, fallback) {
+  if (!value) {
+    return fallback;
+  }
+  const parsed = Number.parseInt(value, 10);
+  if (!Number.isSafeInteger(parsed) || parsed <= 0) {
+    throw new SonarDiagnosticError(
+      "configuration",
+      `Expected a positive integer, received: ${value}`,
+    );
+  }
+  return parsed;
+}
+
+function removeTrailingSlashes(value) {
+  let end = value.length;
+  while (end > 0 && value[end - 1] === "/") {
+    end -= 1;
+  }
+  return value.slice(0, end);
+}
+
+const invokedPath = process.argv[1]
+  ? pathToFileURL(resolve(process.argv[1])).href
+  : undefined;
+if (invokedPath === import.meta.url) {
+  await main();
 }
