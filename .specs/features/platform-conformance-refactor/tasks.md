@@ -17,13 +17,15 @@ A5  + B3 → C5 → C6 → C7
 
 ## Tasks
 
-### C1 — Move process-version SQL behind the repository
+### C1 — Move process-version SQL behind the repository ✅
 
 **Where:** process-version service/repository and unchanged characterization/integration specs  
 **Depends on:** A10, B2  
 **Requirement:** REF-01  
 **Tests/Gate:** unit+integration/full  
 **Done when:** procedure-existence and procedure/asset clone SQL no longer execute in the service; health probe remains; existing integration behavior passes unchanged.
+
+**Complete:** 2026-11-08 — procedure existence and transactional procedure/asset cloning now execute through `ProcessVersionsRepository`; the service retains validation and transaction orchestration, and the health probe remains intentional. Focused 28 tests, all 48 API unit files / 353 tests, 10 PostgreSQL integration tests, contract, lint, and build gates pass.
 
 ### C2 — Decide conditional API gaps
 

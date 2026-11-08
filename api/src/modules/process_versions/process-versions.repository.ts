@@ -40,6 +40,27 @@ interface ProcessVersionRow extends QueryRow {
   reason_for_change: string;
 }
 
+interface ProcedureCloneRow extends QueryRow {
+  code: string;
+  title: string;
+  utility: string;
+  warranty: string;
+  outcome: string;
+  policy: string;
+  activities: Record<string, unknown>[];
+  inputs: string[];
+  outputs: string[];
+}
+
+interface AssetCloneRow extends QueryRow {
+  caption: string;
+  asset_type: string;
+  file_path: string;
+  mime_type: string;
+  checksum: string;
+  size_bytes: number;
+}
+
 export interface ProcessVersionRecord {
   id: string;
   processId: string;
@@ -343,6 +364,152 @@ export class ProcessVersionsRepository {
     );
 
     return Number(rows[0]?.count ?? '0');
+  }
+
+  async procedureExists(
+    processVersionId: string,
+    executor: SqlExecutor = this.dataSource,
+  ): Promise<boolean> {
+    const rows = await queryRows<ExistsRow>(
+      executor,
+      `
+        SELECT EXISTS (
+          SELECT 1
+          FROM procedures pr
+          WHERE pr.process_version_id = $1
+        ) AS exists
+      `,
+      [processVersionId],
+    );
+
+    return rows[0]?.exists ?? false;
+  }
+
+  async cloneProceduresForPromotedVersion(
+    sourceVersionId: string,
+    targetVersionId: string,
+    actorId: string,
+    executor: SqlExecutor,
+  ): Promise<void> {
+    const rows = await queryRows<ProcedureCloneRow>(
+      executor,
+      `
+        SELECT
+          pr.code,
+          pr.title,
+          pr.utility,
+          pr.warranty,
+          pr.outcome,
+          pr.policy,
+          pr.activities,
+          pr.inputs,
+          pr.outputs
+        FROM procedures pr
+        WHERE pr.process_version_id = $1
+        ORDER BY pr.code ASC
+      `,
+      [sourceVersionId],
+    );
+
+    for (const row of rows) {
+      await executor.query(
+        `
+          INSERT INTO procedures (
+            process_version_id,
+            code,
+            title,
+            utility,
+            warranty,
+            outcome,
+            policy,
+            activities,
+            inputs,
+            outputs,
+            created_by,
+            updated_by
+          )
+          VALUES (
+            $1,
+            $2,
+            $3,
+            $4,
+            $5,
+            $6,
+            $7,
+            $8::jsonb,
+            $9::jsonb,
+            $10::jsonb,
+            $11,
+            $11
+          )
+        `,
+        [
+          targetVersionId,
+          row.code,
+          row.title,
+          row.utility,
+          row.warranty,
+          row.outcome,
+          row.policy,
+          JSON.stringify(row.activities ?? []),
+          JSON.stringify(row.inputs ?? []),
+          JSON.stringify(row.outputs ?? []),
+          actorId,
+        ],
+      );
+    }
+  }
+
+  async cloneAssetsForPromotedVersion(
+    sourceVersionId: string,
+    targetVersionId: string,
+    actorId: string,
+    executor: SqlExecutor,
+  ): Promise<void> {
+    const rows = await queryRows<AssetCloneRow>(
+      executor,
+      `
+        SELECT
+          a.caption,
+          a.asset_type,
+          a.file_path,
+          a.mime_type,
+          a.checksum,
+          a.size_bytes
+        FROM assets a
+        WHERE a.process_version_id = $1
+        ORDER BY a.created_at ASC
+      `,
+      [sourceVersionId],
+    );
+
+    for (const row of rows) {
+      await executor.query(
+        `
+          INSERT INTO assets (
+            process_version_id,
+            caption,
+            asset_type,
+            file_path,
+            mime_type,
+            checksum,
+            size_bytes,
+            created_by
+          )
+          VALUES ($1, $2, $3::asset_type, $4, $5, $6, $7, $8)
+        `,
+        [
+          targetVersionId,
+          row.caption,
+          row.asset_type,
+          row.file_path,
+          row.mime_type,
+          row.checksum,
+          row.size_bytes,
+          actorId,
+        ],
+      );
+    }
   }
 
   async insertStateHistory(
