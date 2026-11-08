@@ -19,17 +19,42 @@ const excludedDirectories = new Set([
 const externalSchemes = /^(?:https?:|mailto:|tel:)/i;
 const ignoredSchemes = /^(?:data:|javascript:)/i;
 
-function parseArguments(arguments_) {
-  const external = arguments_.includes("--external");
-  const targets = arguments_.filter((argument) => argument !== "--external");
-  return { external, targets: targets.length > 0 ? targets : [repositoryRoot] };
+export interface ParsedArguments {
+  external: boolean;
+  targets: string[];
 }
 
-async function collectMarkdownFiles(targets) {
-  const files = [];
+export interface MarkdownLinkReference {
+  destination: string;
+  line: number;
+}
 
-  async function visit(target, explicit = false) {
-    const absoluteTarget = path.resolve(repositoryRoot, target);
+export interface LinkFailure {
+  file: string;
+  line: number;
+  message: string;
+}
+
+export function parseArguments(
+  arguments_: readonly string[],
+  defaultRoot: string = repositoryRoot,
+): ParsedArguments {
+  const external = arguments_.includes("--external");
+  const targets = arguments_.filter((argument) => argument !== "--external");
+  return {
+    external,
+    targets: targets.length > 0 ? targets : [defaultRoot],
+  };
+}
+
+export async function collectMarkdownFiles(
+  targets: readonly string[],
+  root: string = repositoryRoot,
+): Promise<string[]> {
+  const files: string[] = [];
+
+  async function visit(target: string, explicit = false): Promise<void> {
+    const absoluteTarget = path.resolve(root, target);
     let targetStat;
 
     try {
@@ -70,7 +95,7 @@ async function collectMarkdownFiles(targets) {
   return [...new Set(files)].sort((left, right) => left.localeCompare(right));
 }
 
-function stripHtmlTags(value) {
+export function stripHtmlTags(value: string): string {
   let result = "";
   let insideTag = false;
 
@@ -86,7 +111,7 @@ function stripHtmlTags(value) {
   return result;
 }
 
-function stripMarkdownLinks(value) {
+export function stripMarkdownLinks(value: string): string {
   let result = "";
   let cursor = 0;
 
@@ -110,7 +135,7 @@ function stripMarkdownLinks(value) {
   return result;
 }
 
-function markdownSlug(value) {
+export function markdownSlug(value: string): string {
   return stripMarkdownLinks(stripHtmlTags(value))
     .replace(/[`*_~]/g, "")
     .trim()
@@ -119,12 +144,12 @@ function markdownSlug(value) {
     .replace(/\s/g, "-");
 }
 
-function isFence(line) {
+function isFence(line: string): boolean {
   const trimmed = line.trimStart();
   return trimmed.startsWith("```") || trimmed.startsWith("~~~");
 }
 
-function headingText(line) {
+function headingText(line: string): string | undefined {
   const trimmed = line.trimStart();
   let markerLength = 0;
   while (trimmed[markerLength] === "#" && markerLength < 6) {
@@ -141,8 +166,8 @@ function headingText(line) {
   return heading;
 }
 
-function tagAttributes(tag) {
-  const attributes = new Map();
+function tagAttributes(tag: string): Map<string, string> {
+  const attributes = new Map<string, string>();
   let cursor = 0;
 
   while (cursor < tag.length) {
@@ -184,8 +209,11 @@ function tagAttributes(tag) {
   return attributes;
 }
 
-function collectHtmlAttributes(line, names) {
-  const values = [];
+function collectHtmlAttributes(
+  line: string,
+  names: readonly string[],
+): string[] {
+  const values: string[] = [];
   let cursor = 0;
 
   while (cursor < line.length) {
@@ -210,9 +238,9 @@ function collectHtmlAttributes(line, names) {
   return values;
 }
 
-function collectAnchors(markdown) {
-  const anchors = new Set();
-  const occurrences = new Map();
+export function collectAnchors(markdown: string): Set<string> {
+  const anchors = new Set<string>();
+  const occurrences = new Map<string, number>();
   let fenced = false;
 
   for (const line of markdown.split(/\r?\n/)) {
@@ -240,7 +268,7 @@ function collectAnchors(markdown) {
   return anchors;
 }
 
-function normalizeDestination(rawDestination) {
+export function normalizeDestination(rawDestination: string): string {
   let withoutTitle = rawDestination.trim();
   if (withoutTitle.startsWith("<") && withoutTitle.endsWith(">")) {
     withoutTitle = withoutTitle.slice(1, -1);
@@ -264,7 +292,7 @@ function normalizeDestination(rawDestination) {
     : withoutTitle.slice(0, titleStart).trim();
 }
 
-function maskInlineCode(line) {
+function maskInlineCode(line: string): string {
   const characters = [...line];
   let cursor = 0;
 
@@ -289,7 +317,9 @@ function maskInlineCode(line) {
   return characters.join("");
 }
 
-function parseDefinition(line) {
+function parseDefinition(
+  line: string,
+): { label: string; destination: string } | undefined {
   const trimmed = line.trimStart();
   if (!trimmed.startsWith("[")) {
     return undefined;
@@ -310,8 +340,8 @@ function parseDefinition(line) {
   };
 }
 
-function collectInlineMarkdownLinks(line) {
-  const destinations = [];
+function collectInlineMarkdownLinks(line: string): string[] {
+  const destinations: string[] = [];
   let cursor = 0;
 
   while (cursor < line.length) {
@@ -331,8 +361,8 @@ function collectInlineMarkdownLinks(line) {
   return destinations;
 }
 
-function collectReferenceLabels(line) {
-  const labels = [];
+function collectReferenceLabels(line: string): string[] {
+  const labels: string[] = [];
   let cursor = 0;
 
   while (cursor < line.length) {
@@ -354,9 +384,9 @@ function collectReferenceLabels(line) {
   return labels;
 }
 
-function collectLinks(markdown) {
-  const links = [];
-  const definitions = new Map();
+export function collectLinks(markdown: string): MarkdownLinkReference[] {
+  const links: MarkdownLinkReference[] = [];
+  const definitions = new Map<string, { destination: string; line: number }>();
   const lines = markdown.split(/\r?\n/);
   let fenced = false;
 
@@ -386,7 +416,10 @@ function collectLinks(markdown) {
       });
     }
 
-    for (const destination of collectHtmlAttributes(searchableLine, ["href", "src"])) {
+    for (const destination of collectHtmlAttributes(searchableLine, [
+      "href",
+      "src",
+    ])) {
       links.push({ destination, line: index + 1 });
     }
   }
@@ -401,7 +434,10 @@ function collectLinks(markdown) {
       if (definition) {
         links.push({ destination: definition.destination, line: index + 1 });
       } else {
-        links.push({ destination: `[missing reference: ${label}]`, line: index + 1 });
+        links.push({
+          destination: `[missing reference: ${label}]`,
+          line: index + 1,
+        });
       }
     }
   }
@@ -409,7 +445,10 @@ function collectLinks(markdown) {
   return links;
 }
 
-function splitDestination(destination) {
+function splitDestination(destination: string): {
+  pathname: string;
+  anchor: string;
+} {
   const hashIndex = destination.indexOf("#");
   if (hashIndex === -1) {
     return { pathname: destination, anchor: "" };
@@ -420,14 +459,18 @@ function splitDestination(destination) {
   };
 }
 
-async function validateInternalLink(sourceFile, link, anchorCache) {
+export async function validateInternalLink(
+  sourceFile: string,
+  link: MarkdownLinkReference,
+  anchorCache: Map<string, Set<string>>,
+): Promise<string | undefined> {
   if (link.destination.startsWith("[missing reference:")) {
     return "has no matching reference definition";
   }
 
   const { pathname, anchor } = splitDestination(link.destination);
-  let decodedPath;
-  let decodedAnchor;
+  let decodedPath: string;
+  let decodedAnchor: string;
   try {
     decodedPath = decodeURIComponent(pathname);
     decodedAnchor = decodeURIComponent(anchor);
@@ -477,12 +520,15 @@ async function validateInternalLink(sourceFile, link, anchorCache) {
   return undefined;
 }
 
-async function validateExternalLink(url) {
+export async function validateExternalLink(
+  url: string,
+  fetchImpl: typeof fetch = fetch,
+): Promise<string | undefined> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15_000);
 
   try {
-    const response = await fetch(url, {
+    const response = await fetchImpl(url, {
       headers: { "user-agent": "process-management-system-link-check/1.0" },
       redirect: "follow",
       signal: controller.signal,
@@ -499,16 +545,29 @@ async function validateExternalLink(url) {
   }
 }
 
-function relative(file) {
-  return path.relative(repositoryRoot, file).replaceAll(path.sep, "/");
+function relative(file: string, root: string = repositoryRoot): string {
+  return path.relative(root, file).replaceAll(path.sep, "/");
 }
 
-async function main() {
-  const { external, targets } = parseArguments(process.argv.slice(2));
-  const files = await collectMarkdownFiles(targets);
-  const anchorCache = new Map();
-  const failures = [];
-  const externalReferences = new Map();
+export async function runLinkCheck({
+  arguments_ = process.argv.slice(2),
+  fetchImpl = fetch,
+  logger = console,
+  root = repositoryRoot,
+}: {
+  arguments_?: readonly string[];
+  fetchImpl?: typeof fetch;
+  logger?: { log: (message: string) => void; error: (message: string) => void };
+  root?: string;
+} = {}): Promise<{ checkedFiles: number; failures: LinkFailure[] }> {
+  const { external, targets } = parseArguments(arguments_, root);
+  const files = await collectMarkdownFiles(targets, root);
+  const anchorCache = new Map<string, Set<string>>();
+  const failures: LinkFailure[] = [];
+  const externalReferences = new Map<
+    string,
+    { file: string; line: number }[]
+  >();
 
   for (const file of files) {
     const markdown = await readFile(file, "utf8");
@@ -534,7 +593,7 @@ async function main() {
 
   if (external) {
     for (const [url, references] of externalReferences) {
-      const message = await validateExternalLink(url);
+      const message = await validateExternalLink(url, fetchImpl);
       if (message) {
         for (const reference of references) {
           failures.push({
@@ -547,17 +606,25 @@ async function main() {
   }
 
   for (const failure of failures) {
-    console.error(`${relative(failure.file)}:${failure.line} [links] ${failure.message}`);
+    logger.error(
+      `${relative(failure.file, root)}:${failure.line} [links] ${failure.message}`,
+    );
   }
 
   if (failures.length > 0) {
-    console.error(`\n[links] ${failures.length} broken link(s) found.`);
+    logger.error(`\n[links] ${failures.length} broken link(s) found.`);
     process.exitCode = 1;
-    return;
+    return { checkedFiles: files.length, failures };
   }
 
   const suffix = external ? "internal and external" : "internal";
-  console.log(`[links] Checked ${files.length} Markdown files; all ${suffix} links passed.`);
+  logger.log(
+    `[links] Checked ${files.length} Markdown files; all ${suffix} links passed.`,
+  );
+  return { checkedFiles: files.length, failures };
 }
 
-await main();
+if (path.basename(process.argv[1] ?? "") === "check-links.ts") {
+  void runLinkCheck();
+}
+

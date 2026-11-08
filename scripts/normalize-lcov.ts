@@ -1,9 +1,14 @@
 import { readFile, writeFile } from "node:fs/promises";
-import { isAbsolute, relative, resolve } from "node:path";
-import { pathToFileURL } from "node:url";
+import { basename, isAbsolute, relative, resolve } from "node:path";
 
-const repositoryRoot = resolve(import.meta.dirname, "..");
-const defaultReports = [
+export interface CoverageReportConfig {
+  reportPath: string;
+  sourceRoot: string;
+  sourceMarkerText?: string;
+}
+
+const repositoryRoot = process.cwd();
+const defaultReports: readonly CoverageReportConfig[] = [
   { reportPath: "api/coverage/lcov.info", sourceRoot: "api" },
   {
     reportPath: "web/backoffice/coverage/lcov.info",
@@ -18,14 +23,14 @@ const defaultReports = [
 ];
 
 export function normalizeLcov(
-  content,
-  sourceRoot,
-  root = repositoryRoot,
+  content: string,
+  sourceRoot: string,
+  root: string = repositoryRoot,
   sourceMarkerText = "src/",
-) {
+): string {
   const absoluteSourceRoot = resolve(root, sourceRoot);
   const records = content.split(/end_of_record\s*/u);
-  const normalizedRecords = [];
+  const normalizedRecords: string[] = [];
 
   for (const record of records) {
     const trimmedRecord = record.trim();
@@ -64,17 +69,10 @@ export function normalizeLcov(
 }
 
 export async function normalizeCoverageReports(
-  reports = defaultReports,
-  root = repositoryRoot,
-) {
-  for (const entry of reports) {
-    const { reportPath, sourceRoot, sourceMarkerText } = Array.isArray(entry)
-      ? {
-          reportPath: entry[0],
-          sourceRoot: entry[1],
-          sourceMarkerText: entry[2],
-        }
-      : entry;
+  reports: readonly CoverageReportConfig[] = defaultReports,
+  root: string = repositoryRoot,
+): Promise<void> {
+  for (const { reportPath, sourceRoot, sourceMarkerText } of reports) {
     const absoluteReportPath = resolve(root, reportPath);
     const content = await readFile(absoluteReportPath, "utf8");
     const normalized = normalizeLcov(
@@ -88,6 +86,7 @@ export async function normalizeCoverageReports(
   }
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
-  await normalizeCoverageReports();
+if (basename(process.argv[1] ?? "") === "normalize-lcov.ts") {
+  void normalizeCoverageReports();
 }
+

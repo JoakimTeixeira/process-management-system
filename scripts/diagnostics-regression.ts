@@ -1,42 +1,52 @@
 import assert from "node:assert/strict";
-import { spawnSync } from "node:child_process";
+import { spawnSync, type SpawnSyncReturns } from "node:child_process";
 import { mkdir, rm, unlink, writeFile } from "node:fs/promises";
-import { isAbsolute, join, relative, resolve } from "node:path";
+import { basename, isAbsolute, join, relative, resolve } from "node:path";
 
 const root = process.cwd();
-const npmCli = process.env.npm_execpath;
-const mode = process.argv[2] ?? "all";
 
-if (!npmCli) {
-  throw new Error("Run diagnostics regression tests through npm.");
-}
-if (!new Set(["all", "fast", "sonar"]).has(mode)) {
-  throw new Error(`Unknown diagnostics regression mode: ${mode}`);
+export async function runDiagnosticsRegression({
+  mode = process.argv[2] ?? "all",
+  npmCli = process.env.npm_execpath,
+}: {
+  mode?: string;
+  npmCli?: string;
+} = {}): Promise<void> {
+  if (!npmCli) {
+    throw new Error("Run diagnostics regression tests through npm.");
+  }
+  if (!new Set(["all", "fast", "sonar"]).has(mode)) {
+    throw new Error(`Unknown diagnostics regression mode: ${mode}`);
+  }
+
+  if (mode !== "sonar") {
+    runUnitTests();
+    await testFastDiagnostics(npmCli);
+  }
+  if (mode !== "fast") {
+    await testSonarDiagnostics();
+  }
+
+  console.log(`[diagnostics-regression] ${mode} regression coverage passed.`);
 }
 
-if (mode !== "sonar") {
-  runUnitTests();
-  await testFastDiagnostics();
-}
-if (mode !== "fast") {
-  await testSonarDiagnostics();
-}
-
-console.log(`[diagnostics-regression] ${mode} regression coverage passed.`);
-
-function runUnitTests() {
-  const result = run(process.execPath, ["--test", "scripts/sonar-api.test.mjs"]);
+function runUnitTests(): void {
+  const result = run(process.execPath, [
+    "--disable-warning=MODULE_TYPELESS_PACKAGE_JSON",
+    "--test",
+    "scripts/sonar-api.test.ts",
+  ]);
   assertSuccess(result, "SonarQube API unit tests");
   console.log("[diagnostics-regression] SonarQube API failure paths passed.");
 }
 
-async function testFastDiagnostics() {
-  const rootError = join(root, "scripts", "diagnostics-fixture-error.mjs");
+async function testFastDiagnostics(npmCli: string): Promise<void> {
+  const rootError = join(root, "scripts", "diagnostics-fixture-error.ts");
   const apiWarning = join(
     root,
     "api",
     "scripts",
-    "diagnostics-fixture-warning.mjs",
+    "diagnostics-fixture-warning.ts",
   );
   const typeError = join(root, "e2e", "diagnostics-fixture-type-error.ts");
   const testError = join(
@@ -50,17 +60,21 @@ async function testFastDiagnostics() {
   const fixtures = [rootError, apiWarning, typeError, testError];
 
   try {
-    await writeFile(rootError, "const unusedRootFixture = 1;\n", "utf8");
+    await writeFile(
+      rootError,
+      "const unusedRootFixture = 1;\nexport {};\n",
+      "utf8",
+    );
     assertUntracked(rootError);
-    assertDiagnostic(runNpm("lint:root"), [
-      "diagnostics-fixture-error.mjs",
+    assertDiagnostic(runNpm(npmCli, "lint:root"), [
+      "diagnostics-fixture-error.ts",
       "no-unused-vars",
     ]);
     await unlink(rootError);
 
-    await writeFile(apiWarning, "Promise.resolve();\n", "utf8");
-    assertDiagnostic(runNpm("lint:check", "api"), [
-      "diagnostics-fixture-warning.mjs",
+    await writeFile(apiWarning, "Promise.resolve();\nexport {};\n", "utf8");
+    assertDiagnostic(runNpm(npmCli, "lint:check", "api"), [
+      "diagnostics-fixture-warning.ts",
       "@typescript-eslint/no-floating-promises",
       "warning",
     ]);
@@ -71,7 +85,7 @@ async function testFastDiagnostics() {
       "export const diagnosticsFixture: string = 123;\n",
       "utf8",
     );
-    assertDiagnostic(runNpm("typecheck:root"), [
+    assertDiagnostic(runNpm(npmCli, "typecheck:root"), [
       "diagnostics-fixture-type-error.ts",
       "TS2322",
     ]);
@@ -82,7 +96,7 @@ async function testFastDiagnostics() {
       "const unusedTestFixture = 1;\nexport {};\n",
       "utf8",
     );
-    assertDiagnostic(runNpm("lint:check", "web/public"), [
+    assertDiagnostic(runNpm(npmCli, "lint:check", "web/public"), [
       "diagnostics-fixture.spec.ts",
       "no-unused-vars",
     ]);
@@ -91,13 +105,13 @@ async function testFastDiagnostics() {
     await Promise.all(fixtures.map((fixture) => removeFile(fixture)));
   }
 
-  assertSuccess(runNpm("diagnostics:fast"), "clean fast diagnostics");
+  assertSuccess(runNpm(npmCli, "diagnostics:fast"), "clean fast diagnostics");
   console.log(
     "[diagnostics-regression] ESLint warning/error, TypeScript, root, test, and uncommitted fixtures passed.",
   );
 }
 
-async function testSonarDiagnostics() {
+async function testSonarDiagnostics(): Promise<void> {
   const fixtureRoot = resolve(root, ".diagnostics-fixtures", "sonar");
   assertInsideRoot(fixtureRoot);
   await rm(fixtureRoot, { force: true, recursive: true });
@@ -149,7 +163,7 @@ async function testSonarDiagnostics() {
   }
 }
 
-async function writeSonarViolationFixture(fixtureRoot) {
+async function writeSonarViolationFixture(fixtureRoot: string): Promise<void> {
   await Promise.all([
     writeFile(
       join(fixtureRoot, "sonar-project.properties"),
@@ -197,7 +211,7 @@ async function writeSonarViolationFixture(fixtureRoot) {
   ]);
 }
 
-async function writeSonarCleanFixture(fixtureRoot) {
+async function writeSonarCleanFixture(fixtureRoot: string): Promise<void> {
   await Promise.all([
     writeFile(
       join(fixtureRoot, "fixture.ts"),
@@ -223,7 +237,7 @@ async function writeSonarCleanFixture(fixtureRoot) {
   ]);
 }
 
-function sonarProperties(sources) {
+export function sonarProperties(sources: string): string {
   return [
     "sonar.projectKey=process-management-system-diagnostics-fixture",
     "sonar.projectName=Diagnostics Regression Fixture",
@@ -237,18 +251,29 @@ function sonarProperties(sources) {
   ].join("\n");
 }
 
-function runSonarFixture(fixtureRoot) {
+function runSonarFixture(fixtureRoot: string): SpawnSyncReturns<string> {
   return runSonar({
     SONAR_PROJECT_BASE_DIR: fixtureRoot,
     SONAR_PROJECT_KEY: "process-management-system-diagnostics-fixture",
   });
 }
 
-function runSonar(environment) {
-  return run(process.execPath, ["scripts/sonar-check.mjs"], environment);
+function runSonar(environment: NodeJS.ProcessEnv): SpawnSyncReturns<string> {
+  return run(
+    process.execPath,
+    [
+      "--disable-warning=MODULE_TYPELESS_PACKAGE_JSON",
+      "scripts/sonar-check.ts",
+    ],
+    environment,
+  );
 }
 
-function runNpm(script, prefix) {
+function runNpm(
+  npmCli: string,
+  script: string,
+  prefix?: string,
+): SpawnSyncReturns<string> {
   const args = [npmCli, "run", script];
   if (prefix) {
     args.push("--prefix", prefix);
@@ -256,7 +281,11 @@ function runNpm(script, prefix) {
   return run(process.execPath, args);
 }
 
-function run(command, args, environment = {}) {
+function run(
+  command: string,
+  args: readonly string[],
+  environment: NodeJS.ProcessEnv = {},
+): SpawnSyncReturns<string> {
   return spawnSync(command, args, {
     cwd: root,
     encoding: "utf8",
@@ -265,7 +294,10 @@ function run(command, args, environment = {}) {
   });
 }
 
-function assertDiagnostic(result, fragments) {
+function assertDiagnostic(
+  result: SpawnSyncReturns<string>,
+  fragments: readonly string[],
+): void {
   const output = outputOf(result);
   assert.notEqual(
     result.status,
@@ -287,7 +319,7 @@ function assertDiagnostic(result, fragments) {
   console.log(`[diagnostics-regression] detected ${evidence}`);
 }
 
-function assertSuccess(result, name) {
+function assertSuccess(result: SpawnSyncReturns<string>, name: string): void {
   assert.equal(
     result.status,
     0,
@@ -295,25 +327,29 @@ function assertSuccess(result, name) {
   );
 }
 
-function outputOf(result) {
+function outputOf(result: SpawnSyncReturns<string>): string {
   if (result.error) {
     return `${result.stdout ?? ""}\n${result.stderr ?? ""}\n${result.error.message}`;
   }
   return `${result.stdout ?? ""}\n${result.stderr ?? ""}`;
 }
 
-function assertUntracked(path) {
+function assertUntracked(path: string): void {
   const result = run("git", ["status", "--short", "--", relative(root, path)]);
   assertSuccess(result, "git status for uncommitted fixture");
   assert.match(result.stdout, /^\?\?/u);
 }
 
-function assertNotTracked(path) {
-  const result = run("git", ["ls-files", "--error-unmatch", relative(root, path)]);
+function assertNotTracked(path: string): void {
+  const result = run("git", [
+    "ls-files",
+    "--error-unmatch",
+    relative(root, path),
+  ]);
   assert.notEqual(result.status, 0, "SonarQube fixture must remain uncommitted");
 }
 
-function assertInsideRoot(path) {
+export function assertInsideRoot(path: string): void {
   const fixturesRoot = resolve(root, ".diagnostics-fixtures");
   const childPath = relative(fixturesRoot, path);
   assert.ok(
@@ -322,12 +358,22 @@ function assertInsideRoot(path) {
   );
 }
 
-async function removeFile(path) {
+async function removeFile(path: string): Promise<void> {
   try {
     await unlink(path);
   } catch (error) {
-    if (!error || typeof error !== "object" || error.code !== "ENOENT") {
+    if (
+      !error ||
+      typeof error !== "object" ||
+      !("code" in error) ||
+      (error as { code?: unknown }).code !== "ENOENT"
+    ) {
       throw error;
     }
   }
 }
+
+if (basename(process.argv[1] ?? "") === "diagnostics-regression.ts") {
+  void runDiagnosticsRegression();
+}
+

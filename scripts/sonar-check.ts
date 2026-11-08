@@ -1,7 +1,6 @@
 import { scan } from "@sonar/scan";
 import { readFile } from "node:fs/promises";
-import { join, resolve } from "node:path";
-import { pathToFileURL } from "node:url";
+import { basename, join, resolve } from "node:path";
 import {
   SonarDiagnosticError,
   assertSameServer,
@@ -11,9 +10,52 @@ import {
   parseProperties,
   sonarRequest,
   waitForComputeTask,
-} from "./sonar-api.mjs";
+  type SonarFetch,
+} from "./sonar-api.ts";
 
 const defaultProjectKey = "process-management-system";
+
+export interface SonarIssue {
+  key: string;
+  component?: string;
+  line?: number;
+  severity?: string;
+  rule?: string;
+  message?: string;
+}
+
+export interface SonarHotspot {
+  key: string;
+  component?: string;
+  line?: number;
+  ruleKey?: string;
+  message?: string;
+}
+
+export interface SonarQualityGateCondition {
+  actualValue?: string;
+  comparator?: string;
+  errorThreshold?: string;
+  metricKey?: string;
+  status?: string;
+}
+
+export interface SonarMeasure {
+  metric: string;
+  value?: string;
+}
+
+export interface SonarLogger {
+  log: (message: string) => void;
+  error: (message: string) => void;
+}
+
+export interface SonarCheckResult {
+  clean: boolean;
+  gateStatus: "OK" | "ERROR";
+  hotspots: SonarHotspot[];
+  issues: SonarIssue[];
+}
 
 export async function runSonarCheck({
   environment = process.env,
@@ -22,7 +64,18 @@ export async function runSonarCheck({
   readFileImpl = readFile,
   scanImpl = scan,
   workingDirectory = process.cwd(),
-} = {}) {
+}: {
+  environment?: NodeJS.ProcessEnv;
+  fetchImpl?: SonarFetch;
+  logger?: SonarLogger;
+  readFileImpl?: (path: string, encoding: BufferEncoding) => Promise<string>;
+  scanImpl?: (parameters: {
+    serverUrl: string;
+    token: string;
+    options: Record<string, string>;
+  }) => Promise<unknown>;
+  workingDirectory?: string;
+} = {}): Promise<SonarCheckResult> {
   const serverUrl = removeTrailingSlashes(
     (environment.SONAR_HOST_URL ?? "http://localhost:9000").trim(),
   );
@@ -36,7 +89,7 @@ export async function runSonarCheck({
 
   await assertServerReady(serverUrl, token, fetchImpl);
 
-  const options = {
+  const options: Record<string, string> = {
     "sonar.projectBaseDir": projectBaseDirectory,
     "sonar.projectKey": projectKey,
   };
@@ -57,7 +110,7 @@ export async function runSonarCheck({
     );
   }
 
-  let report;
+  let report: Record<string, string>;
   try {
     report = parseProperties(
       await readFileImpl(
@@ -105,7 +158,7 @@ export async function runSonarCheck({
     },
   );
   const issues = deduplicate(
-    await fetchPages(
+    await fetchPages<SonarIssue>(
       reportServerUrl,
       token,
       "api/issues/search",
@@ -115,7 +168,7 @@ export async function runSonarCheck({
     ),
   );
   const hotspots = deduplicate(
-    await fetchPages(
+    await fetchPages<SonarHotspot>(
       reportServerUrl,
       token,
       "api/hotspots/search",
@@ -124,13 +177,20 @@ export async function runSonarCheck({
       fetchImpl,
     ),
   );
-  const qualityGate = await sonarRequest(
+  const qualityGate = await sonarRequest<{
+    projectStatus?: {
+      status?: string;
+      conditions?: SonarQualityGateCondition[];
+    };
+  }>(
     reportServerUrl,
     token,
     `api/qualitygates/project_status?analysisId=${encodeURIComponent(task.analysisId)}`,
     fetchImpl,
   );
-  const measureResponse = await sonarRequest(
+  const measureResponse = await sonarRequest<{
+    component?: { measures?: SonarMeasure[] };
+  }>(
     reportServerUrl,
     token,
     `api/measures/component?component=${encodeURIComponent(projectKey)}&metricKeys=coverage,lines_to_cover,duplicated_lines,duplicated_lines_density`,
@@ -182,7 +242,7 @@ export async function runSonarCheck({
   return { clean, gateStatus, hotspots, issues };
 }
 
-async function main() {
+export async function main(): Promise<void> {
   try {
     const result = await runSonarCheck();
     if (!result.clean) {
@@ -200,7 +260,11 @@ async function main() {
   }
 }
 
-async function loadToken(environment, workingDirectory, readFileImpl) {
+async function loadToken(
+  environment: NodeJS.ProcessEnv,
+  workingDirectory: string,
+  readFileImpl: (path: string, encoding: BufferEncoding) => Promise<string>,
+): Promise<string> {
   const configured = environment.SONAR_TOKEN?.trim();
   if (configured) {
     return configured;
@@ -215,7 +279,7 @@ async function loadToken(environment, workingDirectory, readFileImpl) {
       return stored.trim();
     }
   } catch (error) {
-    if (!error || typeof error !== "object" || error.code !== "ENOENT") {
+    if (!isMissingFileError(error)) {
       throw error;
     }
   }
@@ -226,25 +290,45 @@ async function loadToken(environment, workingDirectory, readFileImpl) {
   );
 }
 
-function printIssues(issues, key, logger) {
+function isMissingFileError(error: unknown): boolean {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    (error as { code?: unknown }).code === "ENOENT"
+  );
+}
+
+function printIssues(
+  issues: readonly SonarIssue[],
+  key: string,
+  logger: SonarLogger,
+): void {
   for (const issue of issues) {
     const location = formatLocation(issue.component, issue.line, key);
     logger.error(
-      `${location} [SonarQube ${issue.severity ?? "ISSUE"} ${issue.rule}] ${issue.message}`,
+      `${location} [SonarQube ${issue.severity ?? "ISSUE"} ${issue.rule ?? "unknown"}] ${issue.message ?? ""}`,
     );
   }
 }
 
-function printHotspots(hotspots, key, logger) {
+function printHotspots(
+  hotspots: readonly SonarHotspot[],
+  key: string,
+  logger: SonarLogger,
+): void {
   for (const hotspot of hotspots) {
     const location = formatLocation(hotspot.component, hotspot.line, key);
     logger.error(
-      `${location} [SonarQube HOTSPOT ${hotspot.ruleKey}] ${hotspot.message}`,
+      `${location} [SonarQube HOTSPOT ${hotspot.ruleKey ?? "unknown"}] ${hotspot.message ?? ""}`,
     );
   }
 }
 
-function printFailedGateConditions(conditions, logger) {
+function printFailedGateConditions(
+  conditions: readonly SonarQualityGateCondition[],
+  logger: SonarLogger,
+): void {
   for (const condition of conditions) {
     if (condition.status !== "ERROR") {
       continue;
@@ -257,14 +341,18 @@ function printFailedGateConditions(conditions, logger) {
   }
 }
 
-function toMeasureMap(measures) {
+function toMeasureMap(
+  measures: readonly SonarMeasure[],
+): Record<string, string | undefined> {
   return Object.fromEntries(
     measures.map((measure) => [measure.metric, measure.value]),
   );
 }
 
-function evaluateOverallMeasures(measures) {
-  const failures = [];
+function evaluateOverallMeasures(
+  measures: Record<string, string | undefined>,
+): SonarQualityGateCondition[] {
+  const failures: SonarQualityGateCondition[] = [];
   const linesToCover = Number.parseInt(measures.lines_to_cover ?? "0", 10);
   const coverage = Number.parseFloat(measures.coverage ?? "0");
   if (linesToCover > 0 && (!Number.isFinite(coverage) || coverage < 80)) {
@@ -295,7 +383,10 @@ function evaluateOverallMeasures(measures) {
   return failures;
 }
 
-function mergeConditions(serverConditions, measureFailures) {
+function mergeConditions(
+  serverConditions: readonly SonarQualityGateCondition[],
+  measureFailures: readonly SonarQualityGateCondition[],
+): SonarQualityGateCondition[] {
   const seenErrorMetrics = new Set(
     serverConditions
       .filter((condition) => condition.status === "ERROR")
@@ -309,11 +400,14 @@ function mergeConditions(serverConditions, measureFailures) {
   ];
 }
 
-function deduplicate(results) {
+function deduplicate<T extends { key: string }>(results: readonly T[]): T[] {
   return [...new Map(results.map((result) => [result.key, result])).values()];
 }
 
-function parsePositiveInteger(value, fallback) {
+function parsePositiveInteger(
+  value: string | undefined,
+  fallback: number,
+): number {
   if (!value) {
     return fallback;
   }
@@ -327,7 +421,7 @@ function parsePositiveInteger(value, fallback) {
   return parsed;
 }
 
-function removeTrailingSlashes(value) {
+function removeTrailingSlashes(value: string): string {
   let end = value.length;
   while (end > 0 && value[end - 1] === "/") {
     end -= 1;
@@ -335,9 +429,7 @@ function removeTrailingSlashes(value) {
   return value.slice(0, end);
 }
 
-const invokedPath = process.argv[1]
-  ? pathToFileURL(resolve(process.argv[1])).href
-  : undefined;
-if (invokedPath === import.meta.url) {
-  await main();
+if (basename(process.argv[1] ?? "") === "sonar-check.ts") {
+  void main();
 }
+

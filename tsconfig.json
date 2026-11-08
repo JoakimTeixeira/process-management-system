@@ -3,10 +3,17 @@
     "target": "ES2022",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
+    "allowImportingTsExtensions": true,
     "strict": true,
     "noEmit": true,
     "skipLibCheck": true,
     "types": ["node"]
   },
-  "include": ["playwright.config.ts", "e2e/**/*.ts"]
+  "include": [
+    "playwright.config.ts",
+    "e2e/**/*.ts",
+    "scripts/**/*.ts",
+    "verification/scripts/**/*.ts",
+    "web/backoffice/scripts/**/*.ts"
+  ]
 }

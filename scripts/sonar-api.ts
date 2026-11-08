@@ -1,15 +1,59 @@
+export type SonarDiagnosticCategory =
+  | "analysis"
+  | "api"
+  | "authentication"
+  | "configuration"
+  | "infrastructure"
+  | "scanner"
+  | "timeout"
+  | "unexpected";
+
+export interface SonarResponse {
+  ok: boolean;
+  status: number;
+  statusText: string;
+  json?: () => Promise<unknown>;
+}
+
+export type SonarFetch = (
+  input: URL | string,
+  init?: RequestInit,
+) => Promise<SonarResponse>;
+
+export interface SonarComputeTask {
+  status?: string;
+  analysisId?: string;
+  errorMessage?: string;
+}
+
+export interface SonarPagingResponse {
+  paging?: { total?: number };
+  total?: number;
+  [key: string]: unknown;
+}
+
 export class SonarDiagnosticError extends Error {
-  constructor(category, message, options) {
+  readonly category: SonarDiagnosticCategory;
+
+  constructor(
+    category: SonarDiagnosticCategory,
+    message: string,
+    options?: ErrorOptions,
+  ) {
     super(message, options);
     this.name = "SonarDiagnosticError";
     this.category = category;
   }
 }
 
-export async function assertServerReady(baseUrl, authToken, fetchImpl = fetch) {
-  let statusResponse;
+export async function assertServerReady(
+  baseUrl: string,
+  authToken: string,
+  fetchImpl: SonarFetch = fetch,
+): Promise<void> {
+  let statusResponse: { status?: string };
   try {
-    statusResponse = await sonarRequest(
+    statusResponse = await sonarRequest<{ status?: string }>(
       baseUrl,
       undefined,
       "api/system/status",
@@ -30,9 +74,9 @@ export async function assertServerReady(baseUrl, authToken, fetchImpl = fetch) {
     );
   }
 
-  let validation;
+  let validation: { valid?: boolean };
   try {
-    validation = await sonarRequest(
+    validation = await sonarRequest<{ valid?: boolean }>(
       baseUrl,
       authToken,
       "api/authentication/validate",
@@ -61,16 +105,21 @@ export async function assertServerReady(baseUrl, authToken, fetchImpl = fetch) {
 }
 
 export async function waitForComputeTask(
-  taskUrl,
-  baseUrl,
-  authToken,
+  taskUrl: string,
+  baseUrl: string,
+  authToken: string,
   {
     fetchImpl = fetch,
     intervalMilliseconds = 2_000,
     maxAttempts = 120,
     sleep = delay,
+  }: {
+    fetchImpl?: SonarFetch;
+    intervalMilliseconds?: number;
+    maxAttempts?: number;
+    sleep?: (milliseconds: number) => Promise<void>;
   } = {},
-) {
+): Promise<SonarComputeTask & { analysisId: string }> {
   const url = new URL(taskUrl);
   if (url.origin !== new URL(baseUrl).origin) {
     throw new SonarDiagnosticError(
@@ -80,7 +129,7 @@ export async function waitForComputeTask(
   }
 
   for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
-    const response = await sonarRequest(
+    const response = await sonarRequest<{ task?: SonarComputeTask }>(
       baseUrl,
       authToken,
       url.toString(),
@@ -94,7 +143,7 @@ export async function waitForComputeTask(
           "SonarQube completed the task without returning an analysis ID.",
         );
       }
-      return task;
+      return { ...task, analysisId: task.analysisId };
     }
     if (task?.status === "FAILED" || task?.status === "CANCELED") {
       throw new SonarDiagnosticError(
@@ -111,28 +160,28 @@ export async function waitForComputeTask(
   );
 }
 
-export async function fetchPages(
-  baseUrl,
-  authToken,
-  endpoint,
-  resultKey,
-  parameters,
-  fetchImpl = fetch,
-) {
-  const results = [];
+export async function fetchPages<T>(
+  baseUrl: string,
+  authToken: string,
+  endpoint: string,
+  resultKey: string,
+  parameters: Record<string, string>,
+  fetchImpl: SonarFetch = fetch,
+): Promise<T[]> {
+  const results: T[] = [];
   for (let page = 1; ; page += 1) {
     const query = new URLSearchParams({
       ...parameters,
       p: String(page),
       ps: "500",
     });
-    const response = await sonarRequest(
+    const response = await sonarRequest<SonarPagingResponse>(
       baseUrl,
       authToken,
       `${endpoint}?${query.toString()}`,
       fetchImpl,
     );
-    const pageResults = response[resultKey] ?? [];
+    const pageResults = (response[resultKey] as T[] | undefined) ?? [];
     results.push(...pageResults);
     const total = response.paging?.total ?? response.total ?? results.length;
     if (results.length >= total || pageResults.length === 0) {
@@ -141,13 +190,13 @@ export async function fetchPages(
   }
 }
 
-export async function sonarRequest(
-  baseUrl,
-  authToken,
-  path,
-  fetchImpl = fetch,
-  init = {},
-) {
+export async function sonarRequest<T = Record<string, unknown>>(
+  baseUrl: string,
+  authToken: string | undefined,
+  path: string,
+  fetchImpl: SonarFetch = fetch,
+  init: RequestInit = {},
+): Promise<T> {
   const requestUrl = new URL(path, `${baseUrl}/`);
   if (requestUrl.origin !== new URL(baseUrl).origin) {
     throw new SonarDiagnosticError(
@@ -156,7 +205,7 @@ export async function sonarRequest(
     );
   }
 
-  let response;
+  let response: SonarResponse;
   try {
     response = await fetchImpl(requestUrl, {
       ...init,
@@ -165,7 +214,7 @@ export async function sonarRequest(
   } catch (error) {
     throw new SonarDiagnosticError(
       "infrastructure",
-      `SonarQube request could not reach ${requestUrl}.`,
+      `SonarQube request could not reach ${requestUrl.toString()}.`,
       { cause: error },
     );
   }
@@ -177,26 +226,26 @@ export async function sonarRequest(
         : "api";
     throw new SonarDiagnosticError(
       category,
-      `SonarQube request failed (${response.status} ${response.statusText}): ${requestUrl}`,
+      `SonarQube request failed (${response.status} ${response.statusText}): ${requestUrl.toString()}`,
     );
   }
 
-  if (response.status === 204) {
-    return {};
+  if (response.status === 204 || !response.json) {
+    return {} as T;
   }
 
   try {
-    return await response.json();
+    return (await response.json()) as T;
   } catch (error) {
     throw new SonarDiagnosticError(
       "api",
-      `SonarQube returned invalid JSON for ${requestUrl}.`,
+      `SonarQube returned invalid JSON for ${requestUrl.toString()}.`,
       { cause: error },
     );
   }
 }
 
-export function parseProperties(contents) {
+export function parseProperties(contents: string): Record<string, string> {
   return Object.fromEntries(
     contents
       .split(/\r?\n/u)
@@ -208,7 +257,10 @@ export function parseProperties(contents) {
   );
 }
 
-export function assertSameServer(configuredUrl, reportedUrl) {
+export function assertSameServer(
+  configuredUrl: string,
+  reportedUrl: string,
+): void {
   if (new URL(configuredUrl).origin !== new URL(reportedUrl).origin) {
     throw new SonarDiagnosticError(
       "scanner",
@@ -217,7 +269,11 @@ export function assertSameServer(configuredUrl, reportedUrl) {
   }
 }
 
-export function formatLocation(component, line, key) {
+export function formatLocation(
+  component: string | undefined,
+  line: number | undefined,
+  key: string,
+): string {
   const prefix = `${key}:`;
   const path = component?.startsWith(prefix)
     ? component.slice(prefix.length)
@@ -225,6 +281,7 @@ export function formatLocation(component, line, key) {
   return line ? `${path}:${line}` : path;
 }
 
-function delay(milliseconds) {
+function delay(milliseconds: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 }
+

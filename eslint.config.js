@@ -1,11 +1,11 @@
 // @ts-check
-import eslint from "@eslint/js";
-import { defineConfig } from "eslint/config";
-import sonarjs from "eslint-plugin-sonarjs";
-import globals from "globals";
-import tseslint from "typescript-eslint";
+const eslint = require("@eslint/js");
+const { defineConfig } = require("eslint/config");
+const sonarjs = require("eslint-plugin-sonarjs");
+const globals = require("globals");
+const tseslint = require("typescript-eslint");
 
-export default defineConfig([
+module.exports = defineConfig([
   {
     ignores: [
       "**/node_modules/**",
@@ -16,15 +16,11 @@ export default defineConfig([
     ],
   },
   {
-    files: [
-      "eslint.config.mjs",
-      "scripts/**/*.mjs",
-      "verification/scripts/**/*.mjs",
-    ],
+    files: ["eslint.config.js"],
     extends: [eslint.configs.recommended],
     languageOptions: {
       globals: globals.node,
-      sourceType: "module",
+      sourceType: "commonjs",
     },
     plugins: { sonarjs },
     rules: {
@@ -32,7 +28,12 @@ export default defineConfig([
     },
   },
   {
-    files: ["playwright.config.ts", "e2e/**/*.ts"],
+    files: [
+      "playwright.config.ts",
+      "e2e/**/*.ts",
+      "scripts/**/*.ts",
+      "verification/scripts/**/*.ts",
+    ],
     extends: [
       eslint.configs.recommended,
       ...tseslint.configs.recommendedTypeChecked,
@@ -41,7 +42,7 @@ export default defineConfig([
       globals: globals.node,
       parserOptions: {
         projectService: true,
-        tsconfigRootDir: import.meta.dirname,
+        tsconfigRootDir: __dirname,
       },
     },
     plugins: { sonarjs },
@@ -51,3 +52,4 @@ export default defineConfig([
     },
   },
 ]);
+

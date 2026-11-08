@@ -30,7 +30,7 @@ definitions and enforce the external module structure.
 | Angular components/services | unit | quick |
 | Angular API services/mappers | unit plus contract fixtures | quick/full |
 | Critical user flows | automated curl/DB verification | full |
-| Scripts/config/docs | build/docs review | build |
+| Scripts/config/docs | unit plus build/docs review | quick/build |
 
 ## Rules
 
@@ -47,7 +47,7 @@ These commands evolve with the runner migration; task commits update this file i
 
 | Gate | Command | Purpose |
 | --- | --- | --- |
-| Unit | `npm run test:unit` | Runs all three package unit suites concurrently and fails if any package fails. |
+| Unit | `npm run test:unit` | Runs all three package unit suites and the repository script unit suite (`npm run test:scripts`) concurrently and fails if any suite fails. |
 | Integration | `npm run test:integration` | Creates, migrates, exercises, and removes the isolated API PostgreSQL test database. |
 | Contract | `npm run test:contract` | Checks OpenAPI drift/schema coverage, generated types, and frontend contract fixtures. |
 | API health e2e | `npm run test:e2e` | Boots Nest through the production app factory and asserts `/health` with Supertest. |
