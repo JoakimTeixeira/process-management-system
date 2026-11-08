@@ -10,7 +10,7 @@
     "src/modules/workflow_support/workflow-authorization.service.spec.ts"
   ],
   "vitest": {
-    "configFile": "vitest.config.ts",
+    "configFile": "vitest.config.mts",
     "related": true
   },
   "reporters": ["clear-text", "progress", "html", "json"],

@@ -1,4 +1,4 @@
-import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import swc from 'unplugin-swc';
 import { defineConfig } from 'vitest/config';
@@ -43,7 +43,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      src: resolve(__dirname, './src'),
+      src: fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
 });

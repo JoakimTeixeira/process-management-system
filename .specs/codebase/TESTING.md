@@ -16,7 +16,7 @@ not an active test runner. Counts are a no-regression floor unless a task record
 reason. The 11 additional backoffice specs compile previously uncovered standalone component
 definitions and enforce the external module structure.
 
-**Runner audit (2026-11-08):** the API uses `vitest.config.ts` plus focused e2e/integration Vitest configs, and both Angular projects use `@angular/build:unit-test`. Active manifests and source/config files contain no direct Jest, ts-jest, Jasmine, or Karma runner dependency/configuration.
+**Runner audit (2026-11-08):** the API uses `vitest.config.mts` plus focused e2e/integration Vitest configs, and both Angular projects use `@angular/build:unit-test`. Active manifests and source/config files contain no direct Jest, ts-jest, Jasmine, or Karma runner dependency/configuration.
 
 ## Coverage matrix
 
