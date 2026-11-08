@@ -30,5 +30,3 @@ export function getBackofficeApiBaseUrl(
 
   return '/api';
 }
-
-export const BACKOFFICE_API_BASE_URL = getBackofficeApiBaseUrl();

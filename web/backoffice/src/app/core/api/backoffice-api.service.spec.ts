@@ -2,13 +2,13 @@ import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
 
-import { BACKOFFICE_API_BASE_URL } from './backoffice-api-base-url';
+import { getBackofficeApiBaseUrl } from './backoffice-api-base-url';
 import { BackofficeApiService } from './backoffice-api.service';
 
 describe('BackofficeApiService', () => {
   let service: BackofficeApiService;
   let httpMock: HttpTestingController;
-  const baseUrl = BACKOFFICE_API_BASE_URL;
+  const baseUrl = getBackofficeApiBaseUrl();
 
   function expectMethod(url: string, method: string, expectedBody?: unknown): void {
     const req = httpMock.expectOne(`${baseUrl}${url}`);
@@ -31,7 +31,7 @@ describe('BackofficeApiService', () => {
     httpMock.verify();
   });
 
-  it('calls authentication and practice endpoints', () => {
+  it('should call authentication and practice endpoints', () => {
     service.login({ email: 'admin@example.com', password: 'secret' }).subscribe();
     expectMethod('/auth/login', 'POST', { email: 'admin@example.com', password: 'secret' });
 
@@ -42,7 +42,7 @@ describe('BackofficeApiService', () => {
     expectMethod('/itil-practices', 'GET');
   });
 
-  it('calls area CRUD endpoints', () => {
+  it('should call area CRUD endpoints', () => {
     service.listAreas().subscribe();
     expectMethod('/areas', 'GET');
 
@@ -67,7 +67,7 @@ describe('BackofficeApiService', () => {
     expectMethod('/areas/a1', 'DELETE');
   });
 
-  it('calls process CRUD endpoints', () => {
+  it('should call process CRUD endpoints', () => {
     service.listProcesses().subscribe();
     expectMethod('/processes', 'GET');
 
@@ -92,7 +92,7 @@ describe('BackofficeApiService', () => {
     expectMethod('/processes/p1', 'DELETE');
   });
 
-  it('calls process version CRUD and lifecycle endpoints', () => {
+  it('should call process version CRUD and lifecycle endpoints', () => {
     service.listProcessVersions('p1').subscribe();
     expectMethod('/processes/p1/versions', 'GET');
 
@@ -151,7 +151,7 @@ describe('BackofficeApiService', () => {
     });
   });
 
-  it('calls procedure, asset, history, audit, and glossary endpoints', () => {
+  it('should call procedure, asset, history, audit, and glossary endpoints', () => {
     service.listAssets('v1').subscribe();
     expectMethod('/process-versions/v1/assets', 'GET');
 
@@ -207,7 +207,7 @@ describe('BackofficeApiService', () => {
     expectMethod('/glossary/g1', 'PATCH', { definition: 'Updated' });
   });
 
-  it('calls user and team administration endpoints', () => {
+  it('should call user and team administration endpoints', () => {
     service.listOwnerOptions('t1').subscribe();
     expectMethod('/users/owner-options/team/t1', 'GET');
 

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 
-import { BACKOFFICE_API_BASE_URL } from './backoffice-api-base-url';
+import { getBackofficeApiBaseUrl } from './backoffice-api-base-url';
 import {
   AdminUser,
   AreaRecord,
@@ -28,7 +28,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class BackofficeApiService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = BACKOFFICE_API_BASE_URL;
+  private readonly baseUrl = getBackofficeApiBaseUrl();
 
   login(payload: { email: string; password: string }) {
     return this.http.post<LoginResponse>(`${this.baseUrl}/auth/login`, payload);
