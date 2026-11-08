@@ -27,7 +27,9 @@
       }
 
       <div class="catalog-search__field">
+        <label class="visually-hidden" for="catalog-search-input">Search the catalog</label>
         <input
+          id="catalog-search-input"
           type="search"
           [value]="searchQuery()"
           (input)="handleSearchInput($event)"

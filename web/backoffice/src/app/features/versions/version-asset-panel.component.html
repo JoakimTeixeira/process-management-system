@@ -12,8 +12,10 @@
             <input matInput formControlName="caption" />
           </mat-form-field>
 
+          <label class="visually-hidden" for="bpmn-file-input">Choose a BPMN file</label>
           <input
             #bpmnFileInput
+            id="bpmn-file-input"
             class="upload-file-input"
             type="file"
             accept=".bpmn,.xml,text/xml,application/xml"

@@ -38,6 +38,12 @@ describe('CatalogSearchComponent', () => {
     const fixture = TestBed.createComponent(CatalogSearchComponent);
     fixture.detectChanges();
     const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
+    const label = fixture.nativeElement.querySelector(
+      'label[for="catalog-search-input"]',
+    ) as HTMLLabelElement;
+
+    expect(input.id).toBe('catalog-search-input');
+    expect(label.textContent).toContain('Search the catalog');
 
     input.value = 'incident';
     input.dispatchEvent(new Event('input'));
