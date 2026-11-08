@@ -98,5 +98,22 @@ services:
       web-backoffice:
         condition: service_started
 
+  sonarqube:
+    image: sonarqube:26.11.0.134175-community
+    profiles:
+      - diagnostics
+    restart: unless-stopped
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: 'true'
+    ports:
+      - '${SONAR_PORT:-9000}:9000'
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs
+
 volumes:
   pgdata:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:
