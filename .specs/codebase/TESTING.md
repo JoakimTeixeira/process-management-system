@@ -45,15 +45,18 @@ definitions and enforce the external module structure.
 
 These commands evolve with the runner migration; task commits update this file in the same commit as script changes.
 
-| Gate | Command |
-| --- | --- |
+| Gate | Command | Purpose |
+| --- | --- | --- |
 | Unit | `npm run test:unit` | Runs all three package unit suites concurrently and fails if any package fails. |
 | Integration | `npm run test:integration` | Creates, migrates, exercises, and removes the isolated API PostgreSQL test database. |
 | Contract | `npm run test:contract` | Checks OpenAPI drift/schema coverage, generated types, and frontend contract fixtures. |
 | API health e2e | `npm run test:e2e` | Boots Nest through the production app factory and asserts `/health` with Supertest. |
 | Browser smoke | `npm run test:browser` | Starts isolated public/backoffice Angular servers and checks their entry routes in Chromium. |
 | Non-release aggregate | `npm run test:all` | Runs unit, integration, contract, and API health gates; shared-state layers are serialized. |
-| Diagnostics aggregate | `npm run diagnostics` | Runs every package's TypeScript and read-only ESLint checks, including SonarJS deprecation parity, plus the backoffice module audit; all checks run even after an earlier failure. |
+| Diagnostics aggregate | `npm run diagnostics` | Runs every package's TypeScript and zero-warning ESLint checks, the backoffice module audit, and an authenticated full-project SonarQube scan; prints all unresolved Sonar issues/hotspots and continues after earlier local failures. |
+| Fast diagnostics | `npm run diagnostics:fast` | Runs TypeScript, zero-warning ESLint/SonarJS, the module audit, and deterministic internal documentation-link checks without claiming full SonarQube parity. |
+| SonarQube diagnostics | `npm run diagnostics:sonar` | Runs the authenticated full-project scan, waits for server processing, and fails for analyzer infrastructure or any unresolved finding. |
+| Diagnostics regression | `npm run test:diagnostics` | Uses controlled fixtures to prove local and live SonarQube detection, failure classification, cleanup, and clean rescans. |
 | Strict lint | `npm run lint` | Runs ESLint read-only with zero warnings across all packages, then audits backoffice component companions. |
 | TypeScript | `npm run typecheck` | Type-checks production and test TypeScript configs across all packages without emitting files. |
 | Build | `npm run build` | Builds API, public, and backoffice packages. |
@@ -64,7 +67,8 @@ Package-level focused commands remain useful while iterating: `npm test --prefix
 ## Recommended use
 
 1. During a focused change, run the affected package or spec.
-2. Before committing, run the relevant root layer plus `npm run diagnostics`.
+2. During iteration run `npm run diagnostics:fast`; before handoff run `npm run diagnostics` with
+   the local SonarQube service available.
 3. Before release handoff, run `npm run test:all`, `npm run test:browser`, `npm run build`, and
    `npm run verify` serially.
 
@@ -73,6 +77,16 @@ Package-level focused commands remain useful while iterating: `npm test --prefix
 Package `lint:check` scripts are read-only and fail on any warning. Package `lint` scripts may retain
 their existing fix behavior for contributor workflows; the root `npm run lint` gate always uses the
 strict read-only variants.
+
+The full diagnostics gate reads the ignored local token created by `npm run sonar:start`, or a
+`SONAR_TOKEN` environment override, and uses `SONAR_HOST_URL` (default `http://localhost:9000`).
+VS Code must be bound in SonarQube Connected Mode to the shared
+`process-management-system` project so the IDE and CLI use the same server quality profiles. The
+scanner configuration includes TypeScript, JavaScript, HTML, CSS/SCSS, and infrastructure files
+such as Dockerfiles; scanner output is followed by API queries that render every unresolved issue
+and unreviewed hotspot with its file, line, severity, and rule. Credentials remain outside Git and
+outside the application `.env`; see `docs/diagnostics.md` for lifecycle, rotation, CI, coverage, and
+known parity limits.
 
 The opt-in API mutation pilot runs with `npm run test:mutation --prefix api`. It is intentionally
 scoped and non-blocking (`break: null`); generated reports are written under

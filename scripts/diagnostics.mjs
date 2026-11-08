@@ -20,6 +20,7 @@ const fastChecks = [
   ["Public TypeScript", "typecheck", "web/public"],
   ["Backoffice TypeScript", "typecheck", "web/backoffice"],
   ["Backoffice component modules", "check:component-modules", "web/backoffice"],
+  ["Documentation links", "links:check:internal"],
 ];
 const sonarChecks = [["SonarQube full-project analysis", "sonar:check"]];
 const checks = [

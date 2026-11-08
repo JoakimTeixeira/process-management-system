@@ -5,7 +5,7 @@ COBIT-guided process management system.
 ## Prerequisites
 
 - Docker Desktop with `docker compose`
-- Node.js 20+
+- Node.js 22+
 - npm 10+
 - Git Bash on Windows, or another POSIX-style shell
 
@@ -24,7 +24,9 @@ npm ci --prefix api
 npm ci --prefix web/backoffice
 npm ci --prefix web/public
 npm run test:browser:install
-npm run diagnostics
+npm run diagnostics:fast
+npm run sonar:start
+npm run diagnostics:sonar
 npm run test:all
 npm run test:browser
 npm run build
@@ -42,14 +44,39 @@ npm run verify
 | `npm run test:all` | Run all non-release test layers. |
 | `npm run test:browser` | Run public and backoffice entry-route smokes in Chromium. |
 | `npm run test:mutation --prefix api` | Run the scoped, non-blocking Stryker pilot. |
-| `npm run diagnostics` | List every package's TypeScript, ESLint, SonarJS deprecation, and module-structure result without stopping at the first failure. |
+| `npm run diagnostics` | Run TypeScript, strict ESLint, module conformance, and a full SonarQube project scan; print every unresolved issue and fail on warnings or errors. |
+| `npm run diagnostics:fast` | Run TypeScript, strict ESLint/SonarJS, module, and internal-link checks without requiring SonarQube. |
+| `npm run diagnostics:sonar` | Run only the authenticated full-project SonarQube scan and server result retrieval. |
+| `npm run sonar:check` | Scan all supported project languages, wait for server processing, and print unresolved SonarQube issues and hotspots as CLI file/line diagnostics. |
+| `npm run sonar:start` / `sonar:stop` | Start or stop the optional local SonarQube Compose service while preserving its data volumes. |
+| `npm run test:diagnostics` | Prove analyzer coverage and failure handling with controlled fixtures. |
 | `npm run lint` | Run read-only ESLint with zero warnings and the backoffice module audit. |
 | `npm run typecheck` | Type-check application and test TypeScript across all packages. |
 | `npm run build` | Build all three packages. |
 | `npm run verify` | Run the release-level Compose, curl, and database gate. |
 | `npm run start:all` | Install and start all three development apps. |
 
-See the [contributor contract](AGENTS.md), [testing strategy](.specs/codebase/TESTING.md), and [verification guide](verification/README.md) for the detailed rules and troubleshooting steps.
+See the [diagnostics guide](docs/diagnostics.md), [contributor contract](AGENTS.md), [testing strategy](.specs/codebase/TESTING.md), and [verification guide](verification/README.md) for detailed setup and troubleshooting.
+
+### SonarQube CLI and VS Code parity
+
+Start the pinned free Community Build service and run the full diagnostics gate:
+
+```powershell
+npm run sonar:start
+npm run diagnostics
+```
+
+```bash
+npm run sonar:start
+npm run diagnostics
+```
+
+Local credentials are generated under the ignored `.sonarqube/` directory rather than the
+application `.env`; CI should provide `SONAR_TOKEN` from its encrypted secret store. Bind VS Code
+Connected Mode to `http://localhost:9000` and project key `process-management-system`. The
+[diagnostics guide](docs/diagnostics.md) documents credential rotation, environment overrides,
+coverage, failure categories, and the limits of IDE/CLI parity.
 
 ## Overview
 
