@@ -53,6 +53,23 @@ Run tests:
 npm test
 ```
 
+### Mutation pilot
+
+Run the scoped Stryker pilot:
+
+```bash
+npm run test:mutation
+```
+
+The pilot mutates `HealthService` and `WorkflowAuthorizationService` and uses their 13 focused
+Vitest tests. It writes local HTML and JSON reports under `reports/mutation/`; generated reports are
+ignored by Git. The threshold uses `break: null`, so mutation survivors are visible but do not fail
+the build while the pilot remains opt-in.
+
+Baseline on 2026-11-08: 33 mutants killed, 0 survived, 0 uncovered, 0 timed out, and 0 errored
+(100% mutation score). There are no survivors to triage at this scope; expand the `mutate` and
+`testFiles` lists together when adopting another service.
+
 ## Database Workflows
 
 The backend uses explicit migrations and manual seeding.

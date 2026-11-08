@@ -29,7 +29,8 @@
     "test:watch": "vitest --config ./vitest.config.ts",
     "test:cov": "vitest run --coverage --config ./vitest.config.ts",
     "test:debug": "node --inspect-brk ./node_modules/vitest/vitest.mjs run --config ./vitest.config.ts --no-file-parallelism --maxWorkers=1",
-    "test:e2e": "vitest run --config ./vitest.e2e.config.ts"
+    "test:e2e": "vitest run --config ./vitest.e2e.config.ts",
+    "test:mutation": "stryker run"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -59,6 +60,8 @@
     "@nestjs/cli": "^11.0.0",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.1",
+    "@stryker-mutator/core": "^10.1.1",
+    "@stryker-mutator/vitest-runner": "^10.1.1",
     "@swc/cli": "^0.8.1",
     "@swc/core": "^1.15.32",
     "@types/express": "^5.0.0",
