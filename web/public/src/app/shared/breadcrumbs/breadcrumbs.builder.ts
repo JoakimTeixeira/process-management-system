@@ -53,15 +53,17 @@ export function buildProcessBreadcrumbs(
 
 export function buildProcedureBreadcrumbs(
   detail: PublicProcedureDetail,
-  context: ProcedureBreadcrumbContext = { origin: 'direct' },
+  context?: ProcedureBreadcrumbContext,
 ): BreadcrumbItem[] {
+  const resolvedContext = context ?? { origin: 'direct' };
   const procedureLabel = formatCatalogLabel(detail.procedure.code, detail.procedure.title);
-  const resolvedView = context.view ?? getArchitectureViewId(detail.version.architectureState);
+  const resolvedView =
+    resolvedContext.view ?? getArchitectureViewId(detail.version.architectureState);
 
   if (
-    context.origin !== 'process' ||
-    !context.originProcessId ||
-    context.originProcessId !== detail.process.id
+    resolvedContext.origin !== 'process' ||
+    !resolvedContext.originProcessId ||
+    resolvedContext.originProcessId !== detail.process.id
   ) {
     return [
       { label: 'Home', link: '/' },
@@ -80,7 +82,7 @@ export function buildProcedureBreadcrumbs(
     },
     {
       label: formatCatalogLabel(detail.process.code, detail.process.title),
-      link: getProcessTabRoute(context.originProcessId, 'overview'),
+      link: getProcessTabRoute(resolvedContext.originProcessId, 'overview'),
       queryParams: {
         tab: 'procedures',
         view: resolvedView,
