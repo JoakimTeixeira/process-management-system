@@ -7,7 +7,6 @@ import {
   provideZoneChangeDetection,
 } from '@angular/core';
 import { provideRouter, withComponentInputBinding } from '@angular/router';
-import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { routes } from './app.routes';
@@ -23,7 +22,6 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(
       withInterceptors([authTokenInterceptor, authErrorInterceptor]),
     ),
-    provideAnimationsAsync(),
     MatSnackBarModule,
     provideAppInitializer(() => {
       return inject(AuthService).restoreSession();

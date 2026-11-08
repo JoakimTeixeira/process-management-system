@@ -3,6 +3,7 @@ const eslint = require("@eslint/js");
 const { defineConfig } = require("eslint/config");
 const tseslint = require("typescript-eslint");
 const angular = require("angular-eslint");
+const sonarjs = require("eslint-plugin-sonarjs");
 
 module.exports = defineConfig([
   {
@@ -16,8 +17,17 @@ module.exports = defineConfig([
       tseslint.configs.stylistic,
       angular.configs.tsRecommended,
     ],
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: __dirname,
+      },
+    },
+    plugins: { sonarjs },
     processor: angular.processInlineTemplates,
     rules: {
+      "@typescript-eslint/no-deprecated": "error",
+      "sonarjs/deprecation": "error",
       "@angular-eslint/directive-selector": [
         "error",
         {

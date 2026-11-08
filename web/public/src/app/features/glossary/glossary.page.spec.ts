@@ -87,10 +87,10 @@ describe('GlossaryPageComponent', () => {
     const fixture = TestBed.createComponent(GlossaryPageComponent);
     fixture.detectChanges();
 
-    expect(response$.observers).toHaveLength(1);
+    expect(response$.observed).toBe(true);
 
     fixture.destroy();
 
-    expect(response$.observers).toHaveLength(0);
+    expect(response$.observed).toBe(false);
   });
 });

@@ -24,8 +24,7 @@ npm ci --prefix api
 npm ci --prefix web/backoffice
 npm ci --prefix web/public
 npm run test:browser:install
-npm run lint
-npm run typecheck
+npm run diagnostics
 npm run test:all
 npm run test:browser
 npm run build
@@ -43,6 +42,7 @@ npm run verify
 | `npm run test:all` | Run all non-release test layers. |
 | `npm run test:browser` | Run public and backoffice entry-route smokes in Chromium. |
 | `npm run test:mutation --prefix api` | Run the scoped, non-blocking Stryker pilot. |
+| `npm run diagnostics` | List every package's TypeScript, ESLint, SonarJS deprecation, and module-structure result without stopping at the first failure. |
 | `npm run lint` | Run read-only ESLint with zero warnings and the backoffice module audit. |
 | `npm run typecheck` | Type-check application and test TypeScript across all packages. |
 | `npm run build` | Build all three packages. |

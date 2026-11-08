@@ -12,6 +12,8 @@
     "test:browser": "playwright test",
     "test:browser:install": "playwright install chromium",
     "test:all": "npm run test:unit && npm run test:integration && npm run test:contract && npm run test:e2e",
+    "diagnostics": "node ./scripts/diagnostics.mjs",
+    "quality:check": "npm run diagnostics",
     "lint": "npm run lint:check --prefix api && npm run lint:check --prefix web/public && npm run lint:check --prefix web/backoffice && npm run check:component-modules --prefix web/backoffice",
     "typecheck": "npm run typecheck --prefix api && npm run typecheck --prefix web/public && npm run typecheck --prefix web/backoffice",
     "build": "npm run build --prefix api && npm run build --prefix web/public && npm run build --prefix web/backoffice",
@@ -20,6 +22,7 @@
   "devDependencies": {
     "@playwright/test": "^1.65.0",
     "concurrently": "^8.2.2",
+    "eslint-plugin-sonarjs": "^4.2.2",
     "wait-on": "^9.0.5"
   }
 }
