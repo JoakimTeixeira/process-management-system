@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -29,7 +29,7 @@ import { getHttpErrorMessage } from '../../core/http/http-error-message';
   templateUrl: './team-list.page.html',
   styleUrl: './team-list.page.scss',
 })
-export class TeamListPageComponent {
+export class TeamListPageComponent implements OnInit {
   private readonly api = inject(BackofficeApiService);
 
   protected readonly teams = signal<TeamRecord[]>([]);
@@ -37,7 +37,7 @@ export class TeamListPageComponent {
   protected readonly errorMessage = signal<string | null>(null);
   protected readonly displayedColumns = ['code', 'name', 'description', 'isActive', 'actions'];
 
-  constructor() {
+  ngOnInit(): void {
     void this.loadTeams();
   }
 
