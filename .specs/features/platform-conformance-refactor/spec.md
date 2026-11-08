@@ -54,10 +54,10 @@ As a maintainer, I want audited legacy patterns modernized with a dependable saf
 
 ## Conditional API decisions
 
-Pending C2 evaluation:
+C2 evaluation completed 2026-11-08:
 
-| Gap | Initial position | Final rationale |
+| Gap | Decision | Final rationale |
 | --- | --- | --- |
-| API versioning | Defer unless external compatibility needs exist | Pending |
-| Global exception filter | Evaluate actual response inconsistency first | Pending |
-| Caching | Defer unless measured read pressure/staleness policy exists | Pending |
+| API versioning | Defer | The API and both in-repository frontends ship together from one generated OpenAPI contract, and contract drift already fails before merge. There is no external consumer, supported compatibility window, or requirement to serve parallel representations. Introduce URI/header versioning only when an independently deployed consumer requires a documented compatibility period. |
+| Global exception filter | Reject for current scope | Validation and domain failures already use Nest's standard `ValidationPipe` and `HttpException` responses; the audit found no competing application-wide error envelope. Repository `Error`/`TypeError` paths represent unexpected invariants and should remain opaque 500 responses. A filter without an agreed public error schema would only reshape responses and risk leaking internals; observability/log correlation is a separate requirement. |
+| Caching | Defer | No measured latency/read-pressure problem or cache hit target exists, and published visibility changes during publish/archive/promotion require an explicit invalidation and staleness policy. Add endpoint or HTTP caching only after metrics identify a target and lifecycle-triggered invalidation, tenant/user scope, and TTL semantics are specified and tested. |

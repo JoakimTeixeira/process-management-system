@@ -27,13 +27,15 @@ A5  + B3 → C5 → C6 → C7
 
 **Complete:** 2026-11-08 — procedure existence and transactional procedure/asset cloning now execute through `ProcessVersionsRepository`; the service retains validation and transaction orchestration, and the health probe remains intentional. Focused 28 tests, all 48 API unit files / 353 tests, 10 PostgreSQL integration tests, contract, lint, and build gates pass.
 
-### C2 — Decide conditional API gaps
+### C2 — Decide conditional API gaps ✅
 
 **Where:** this spec and, only when justified, focused API code/tests  
 **Depends on:** C1  
 **Requirement:** REF-01  
 **Tests/Gate:** docs review; any implementation receives its own tested task/commit  
 **Done when:** versioning, exception filter, and caching each have implement/defer/reject rationale and no speculative code is added.
+
+**Complete:** 2026-11-08 — API versioning and caching are deferred behind concrete compatibility/measurement and invalidation triggers; a global exception filter is rejected for the current scope because no competing error envelope exists. The evidence and future adoption criteria are recorded in the specification, with no speculative production code.
 
 ### C3 — Modernize backoffice BPMN and area detail ✅
 
