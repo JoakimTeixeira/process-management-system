@@ -10,7 +10,10 @@ RUN npm run build
 
 FROM nginxinc/nginx-unprivileged:1.27-alpine
 
-COPY --chown=nginx:nginx nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=builder --chown=nginx:nginx /app/dist/backoffice/browser /usr/share/nginx/html
+USER root
+RUN rm /docker-entrypoint.d/10-listen-on-ipv6-by-default.sh
+COPY --chown=root:root --chmod=0444 nginx.conf /etc/nginx/conf.d/default.conf
+COPY --from=builder --chown=root:root /app/dist/backoffice/browser /usr/share/nginx/html
+USER nginx
 
 EXPOSE 8080

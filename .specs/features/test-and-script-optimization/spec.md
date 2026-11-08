@@ -38,6 +38,12 @@ The naming audit, optimized orchestration, coverage normalization, and bounded l
 focused tests. The final tree must pass the naming audit, script tests, unit suites, diagnostics,
 build, and release-level gates required by `.specs/codebase/TESTING.md`.
 
+### TSO-06 — Web container runtime integrity
+
+Public and backoffice nginx configuration and static assets must be owned by root and remain
+read-only to the non-root runtime user. Both images must build, start as non-root, serve their health
+paths, and produce no startup errors in Compose logs.
+
 ## Non-goals
 
 - Parallelizing shared-database integration or release verification workflows.

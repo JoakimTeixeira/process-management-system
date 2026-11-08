@@ -41,3 +41,13 @@
 - **Depends on:** T2, T3, T4, T5
 - **Done when:** script tests, unit, integration, contract, e2e, browser, diagnostics, build, and verify
   pass serially where shared state requires it, with final timing and coverage evidence recorded.
+
+## T7 — Harden and validate web containers
+
+- **Requirements:** TSO-06
+- **Status:** Complete
+- **Done when:** both runtime images contain root-owned, non-writable configuration and static files;
+  run as non-root; answer their health endpoints; and show no error-level startup log entries.
+- **Evidence:** both images build; runtime UID is 101; nginx config is `root:root` mode `0444`;
+  static roots are `root:root` and non-writable; public, backoffice, and API return HTTP 200; recent
+  application Compose logs contain notices and access records only.
