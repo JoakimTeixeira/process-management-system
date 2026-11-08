@@ -4,10 +4,23 @@ const { defineConfig } = require("eslint/config");
 const tseslint = require("typescript-eslint");
 const angular = require("angular-eslint");
 const sonarjs = require("eslint-plugin-sonarjs");
+const globals = require("globals");
 
 module.exports = defineConfig([
   {
     ignores: ["src/app/core/api/generated/**"],
+  },
+  {
+    files: ["eslint.config.js"],
+    extends: [eslint.configs.recommended],
+    languageOptions: {
+      globals: globals.node,
+      sourceType: "commonjs",
+    },
+    plugins: { sonarjs },
+    rules: {
+      "sonarjs/deprecation": "error",
+    },
   },
   {
     files: ["**/*.ts"],

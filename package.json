@@ -13,16 +13,27 @@
     "test:browser:install": "playwright install chromium",
     "test:all": "npm run test:unit && npm run test:integration && npm run test:contract && npm run test:e2e",
     "diagnostics": "node ./scripts/diagnostics.mjs",
+    "diagnostics:local": "node ./scripts/diagnostics.mjs --local",
+    "sonar:check": "node ./scripts/sonar-check.mjs",
     "quality:check": "npm run diagnostics",
-    "lint": "npm run lint:check --prefix api && npm run lint:check --prefix web/public && npm run lint:check --prefix web/backoffice && npm run check:component-modules --prefix web/backoffice",
-    "typecheck": "npm run typecheck --prefix api && npm run typecheck --prefix web/public && npm run typecheck --prefix web/backoffice",
+    "lint": "npm run lint:root && npm run lint:check --prefix api && npm run lint:check --prefix web/public && npm run lint:check --prefix web/backoffice && npm run check:component-modules --prefix web/backoffice",
+    "lint:root": "eslint \"scripts/**/*.mjs\" \"verification/scripts/**/*.mjs\" \"playwright.config.ts\" \"e2e/**/*.ts\" eslint.config.mjs --max-warnings=0",
+    "typecheck": "npm run typecheck:root && npm run typecheck --prefix api && npm run typecheck --prefix web/public && npm run typecheck --prefix web/backoffice",
+    "typecheck:root": "tsc --noEmit -p tsconfig.json",
     "build": "npm run build --prefix api && npm run build --prefix web/public && npm run build --prefix web/backoffice",
     "verify": "node ./verification/scripts/verify.mjs"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.65.0",
+    "@sonar/scan": "^4.3.5",
+    "@types/node": "^26.6.6",
     "concurrently": "^8.2.2",
+    "eslint": "^10.14.0",
     "eslint-plugin-sonarjs": "^4.2.2",
+    "globals": "^17.14.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.1",
     "wait-on": "^9.0.5"
   }
 }
