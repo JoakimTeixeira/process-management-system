@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
@@ -18,7 +17,6 @@ interface NavItem {
 @Component({
   selector: 'app-backoffice-shell',
   imports: [
-    CommonModule,
     RouterLink,
     RouterLinkActive,
     RouterOutlet,
@@ -43,41 +41,34 @@ export class BackofficeShellComponent {
 
   protected readonly navItems = computed<NavItem[]>(() => {
     const role = this.auth.currentUser()?.role.name;
+    const contentIcons: Record<string, readonly [string, string]> = {
+      EDITOR: ['account_tree', 'assignment'],
+      REVIEWER: ['fact_check', 'assignment_turned_in'],
+      PUBLISHER: ['publish', 'description'],
+      VIEWER: ['visibility', 'article'],
+    };
 
-    switch (role) {
-      case 'EDITOR':
-        return [
-          { label: 'Areas', icon: 'domain', href: '/areas' },
-          { label: 'Processes', icon: 'account_tree', href: '/processes' },
-          { label: 'Procedures', icon: 'assignment', href: '/procedures' },
-          { label: 'Glossary', icon: 'menu_book', href: '/glossary' },
-        ];
-      case 'REVIEWER':
-        return [
-          { label: 'Processes', icon: 'fact_check', href: '/processes' },
-          { label: 'Procedures', icon: 'assignment_turned_in', href: '/procedures' },
-          { label: 'Glossary', icon: 'menu_book', href: '/glossary' },
-        ];
-      case 'PUBLISHER':
-        return [
-          { label: 'Processes', icon: 'publish', href: '/processes' },
-          { label: 'Procedures', icon: 'description', href: '/procedures' },
-          { label: 'Glossary', icon: 'menu_book', href: '/glossary' },
-        ];
-      case 'VIEWER':
-        return [
-          { label: 'Processes', icon: 'visibility', href: '/processes' },
-          { label: 'Procedures', icon: 'article', href: '/procedures' },
-          { label: 'Glossary', icon: 'menu_book', href: '/glossary' },
-        ];
-      case 'SYSTEM_ADMIN':
-        return [
-          { label: 'Users', icon: 'person', href: '/admin/users' },
-          { label: 'Teams', icon: 'groups', href: '/admin/teams' },
-        ];
-      default:
-        return [];
+    if (role === 'SYSTEM_ADMIN') {
+      return [
+        { label: 'Users', icon: 'person', href: '/admin/users' },
+        { label: 'Teams', icon: 'groups', href: '/admin/teams' },
+      ];
     }
+
+    const icons = role ? contentIcons[role] : undefined;
+    if (!icons) {
+      return [];
+    }
+
+    const baseItems: NavItem[] = [
+      { label: 'Processes', icon: icons[0], href: '/processes' },
+      { label: 'Procedures', icon: icons[1], href: '/procedures' },
+      { label: 'Glossary', icon: 'menu_book', href: '/glossary' },
+    ];
+
+    return role === 'EDITOR'
+      ? [{ label: 'Areas', icon: 'domain', href: '/areas' }, ...baseItems]
+      : baseItems;
   });
 
   protected toggleMobileMenu(): void {

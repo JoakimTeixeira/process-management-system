@@ -1,149 +1,84 @@
+type HttpMethod = 'get' | 'post' | 'patch' | 'delete';
+type ResponseKind = 'json' | 'text' | 'none';
+
 type FrontendApiOperation = {
-  method: 'get' | 'post' | 'patch' | 'delete';
+  method: HttpMethod;
   path: string;
-  responseKind: 'json' | 'text' | 'none';
+  responseKind: ResponseKind;
 };
 
-export const FRONTEND_API_OPERATIONS = [
-  { method: 'post', path: '/auth/login', responseKind: 'json' },
-  { method: 'get', path: '/auth/me', responseKind: 'json' },
-  { method: 'get', path: '/itil-practices', responseKind: 'json' },
-  { method: 'get', path: '/areas', responseKind: 'json' },
-  { method: 'get', path: '/areas/{id}', responseKind: 'json' },
-  { method: 'post', path: '/areas', responseKind: 'json' },
-  { method: 'patch', path: '/areas/{id}', responseKind: 'json' },
-  { method: 'delete', path: '/areas/{id}', responseKind: 'none' },
-  { method: 'get', path: '/processes', responseKind: 'json' },
-  { method: 'get', path: '/processes/{id}', responseKind: 'json' },
-  { method: 'post', path: '/processes', responseKind: 'json' },
-  { method: 'patch', path: '/processes/{id}', responseKind: 'json' },
-  { method: 'delete', path: '/processes/{id}', responseKind: 'none' },
-  {
-    method: 'get',
-    path: '/processes/{processId}/versions',
-    responseKind: 'json',
-  },
-  {
-    method: 'post',
-    path: '/processes/{processId}/versions',
-    responseKind: 'json',
-  },
-  { method: 'get', path: '/process-versions/{id}', responseKind: 'json' },
-  { method: 'patch', path: '/process-versions/{id}', responseKind: 'json' },
-  {
-    method: 'post',
-    path: '/process-versions/{id}/submit-for-review',
-    responseKind: 'json',
-  },
-  {
-    method: 'post',
-    path: '/process-versions/{id}/approve',
-    responseKind: 'json',
-  },
-  {
-    method: 'post',
-    path: '/process-versions/{id}/reject',
-    responseKind: 'json',
-  },
-  {
-    method: 'post',
-    path: '/process-versions/{id}/reopen',
-    responseKind: 'json',
-  },
-  {
-    method: 'post',
-    path: '/process-versions/{id}/publish',
-    responseKind: 'json',
-  },
-  {
-    method: 'post',
-    path: '/process-versions/{id}/archive',
-    responseKind: 'json',
-  },
-  {
-    method: 'post',
-    path: '/process-versions/{id}/promote',
-    responseKind: 'json',
-  },
-  {
-    method: 'get',
-    path: '/process-versions/{processVersionId}/assets',
-    responseKind: 'json',
-  },
-  {
-    method: 'get',
-    path: '/process-versions/{processVersionId}/procedures',
-    responseKind: 'json',
-  },
-  {
-    method: 'post',
-    path: '/process-versions/{processVersionId}/procedures',
-    responseKind: 'json',
-  },
-  { method: 'patch', path: '/procedures/{id}', responseKind: 'json' },
-  { method: 'get', path: '/procedures', responseKind: 'json' },
-  {
-    method: 'post',
-    path: '/process-versions/{processVersionId}/assets/bpmn',
-    responseKind: 'json',
-  },
-  {
-    method: 'get',
-    path: '/process-versions/{processVersionId}/assets/{assetId}/content',
-    responseKind: 'json',
-  },
-  {
-    method: 'get',
-    path: '/process-versions/{processVersionId}/state-history',
-    responseKind: 'json',
-  },
-  {
-    method: 'get',
-    path: '/audit-logs/{entityType}/{entityId}',
-    responseKind: 'json',
-  },
-  { method: 'get', path: '/public/glossary', responseKind: 'json' },
-  { method: 'post', path: '/glossary', responseKind: 'json' },
-  { method: 'patch', path: '/glossary/{id}', responseKind: 'json' },
-  {
-    method: 'get',
-    path: '/users/owner-options/team/{id}',
-    responseKind: 'json',
-  },
-  { method: 'get', path: '/users', responseKind: 'json' },
-  { method: 'get', path: '/users/{id}', responseKind: 'json' },
-  { method: 'get', path: '/users/team-options', responseKind: 'json' },
-  { method: 'get', path: '/teams', responseKind: 'json' },
-  { method: 'get', path: '/teams/{id}', responseKind: 'json' },
-  { method: 'post', path: '/teams', responseKind: 'json' },
-  { method: 'patch', path: '/teams/{id}', responseKind: 'json' },
-  { method: 'patch', path: '/teams/{id}/deactivate', responseKind: 'json' },
-  { method: 'post', path: '/users', responseKind: 'json' },
-  { method: 'patch', path: '/users/{id}', responseKind: 'json' },
-  { method: 'patch', path: '/users/{id}/deactivate', responseKind: 'json' },
-  { method: 'patch', path: '/users/{id}/reset-password', responseKind: 'json' },
-  { method: 'get', path: '/public/areas', responseKind: 'json' },
-  { method: 'get', path: '/public/processes', responseKind: 'json' },
-  { method: 'get', path: '/public/procedures', responseKind: 'json' },
-  { method: 'get', path: '/public/search', responseKind: 'json' },
-  {
-    method: 'get',
-    path: '/public/processes/{processId}',
-    responseKind: 'json',
-  },
-  {
-    method: 'get',
-    path: '/public/processes/{processId}/versions',
-    responseKind: 'json',
-  },
-  {
-    method: 'get',
-    path: '/public/process-versions/{id}/bpmn',
-    responseKind: 'text',
-  },
-  {
-    method: 'get',
-    path: '/public/procedures/{id}',
-    responseKind: 'json',
-  },
-] as const satisfies readonly FrontendApiOperation[];
+const OPERATION_SPECS = `
+post /auth/login
+get /auth/me
+get /itil-practices
+get /areas
+get /areas/{id}
+post /areas
+patch /areas/{id}
+delete /areas/{id} none
+get /processes
+get /processes/{id}
+post /processes
+patch /processes/{id}
+delete /processes/{id} none
+get /processes/{processId}/versions
+post /processes/{processId}/versions
+get /process-versions/{id}
+patch /process-versions/{id}
+post /process-versions/{id}/submit-for-review
+post /process-versions/{id}/approve
+post /process-versions/{id}/reject
+post /process-versions/{id}/reopen
+post /process-versions/{id}/publish
+post /process-versions/{id}/archive
+post /process-versions/{id}/promote
+get /process-versions/{processVersionId}/assets
+get /process-versions/{processVersionId}/procedures
+post /process-versions/{processVersionId}/procedures
+patch /procedures/{id}
+get /procedures
+post /process-versions/{processVersionId}/assets/bpmn
+get /process-versions/{processVersionId}/assets/{assetId}/content
+get /process-versions/{processVersionId}/state-history
+get /audit-logs/{entityType}/{entityId}
+get /public/glossary
+post /glossary
+patch /glossary/{id}
+get /users/owner-options/team/{id}
+get /users
+get /users/{id}
+get /users/team-options
+get /teams
+get /teams/{id}
+post /teams
+patch /teams/{id}
+patch /teams/{id}/deactivate
+post /users
+patch /users/{id}
+patch /users/{id}/deactivate
+patch /users/{id}/reset-password
+get /public/areas
+get /public/processes
+get /public/procedures
+get /public/search
+get /public/processes/{processId}
+get /public/processes/{processId}/versions
+get /public/process-versions/{id}/bpmn text
+get /public/procedures/{id}
+`;
+
+export const FRONTEND_API_OPERATIONS: readonly FrontendApiOperation[] =
+  OPERATION_SPECS.trim()
+    .split('\n')
+    .map((line) => {
+      const [method, path, responseKind = 'json'] = line.trim().split(' ') as [
+        HttpMethod,
+        string,
+        ResponseKind?,
+      ];
+      return {
+        method,
+        path,
+        responseKind,
+      };
+    });

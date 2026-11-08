@@ -379,30 +379,13 @@ export class ProcessVersionsService {
     justificationDto: RequiredJustificationDto,
     currentUser: AuthenticatedUser,
   ): Promise<ProcessVersionRecord> {
-    this.assertRole(
-      currentUser,
-      Role.REVIEWER,
-      'Only reviewers can reject versions',
-    );
-    const version = await this.getByIdInternal(id);
-
-    await this.workflowAuthorizationService.assertSameTeamAsProcessVersionOwner(
+    return await this.returnVersionToDraft({
       id,
       currentUser,
-    );
-
-    this.ensureLifecycle(
-      version,
-      'In Review',
-      'Only versions in review can be rejected',
-    );
-
-    return await this.transitionVersionState({
-      version,
-      currentUser,
-      toState: 'Draft',
+      roleErrorMessage: 'Only reviewers can reject versions',
+      expectedState: 'In Review',
+      stateErrorMessage: 'Only versions in review can be rejected',
       action: 'REJECT',
-      checklistCompleted: false,
       reason: justificationDto.reason,
     });
   }
@@ -412,31 +395,47 @@ export class ProcessVersionsService {
     justificationDto: RequiredJustificationDto,
     currentUser: AuthenticatedUser,
   ): Promise<ProcessVersionRecord> {
-    this.assertRole(
-      currentUser,
-      Role.REVIEWER,
-      'Only reviewers can reopen versions',
-    );
-    const version = await this.getByIdInternal(id);
-
-    await this.workflowAuthorizationService.assertSameTeamAsProcessVersionOwner(
+    return await this.returnVersionToDraft({
       id,
       currentUser,
+      roleErrorMessage: 'Only reviewers can reopen versions',
+      expectedState: 'Approved',
+      stateErrorMessage: 'Only approved versions can be reopened to Draft',
+      action: 'REOPEN',
+      reason: justificationDto.reason,
+    });
+  }
+
+  private async returnVersionToDraft(params: {
+    id: string;
+    currentUser: AuthenticatedUser;
+    roleErrorMessage: string;
+    expectedState: ProcessVersionRecord['lifecycleState'];
+    stateErrorMessage: string;
+    action: 'REJECT' | 'REOPEN';
+    reason: string;
+  }): Promise<ProcessVersionRecord> {
+    this.assertRole(params.currentUser, Role.REVIEWER, params.roleErrorMessage);
+    const version = await this.getByIdInternal(params.id);
+
+    await this.workflowAuthorizationService.assertSameTeamAsProcessVersionOwner(
+      params.id,
+      params.currentUser,
     );
 
     this.ensureLifecycle(
       version,
-      'Approved',
-      'Only approved versions can be reopened to Draft',
+      params.expectedState,
+      params.stateErrorMessage,
     );
 
     return await this.transitionVersionState({
       version,
-      currentUser,
+      currentUser: params.currentUser,
       toState: 'Draft',
-      action: 'REOPEN',
+      action: params.action,
       checklistCompleted: false,
-      reason: justificationDto.reason,
+      reason: params.reason,
     });
   }
 

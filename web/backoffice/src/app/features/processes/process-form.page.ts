@@ -3,12 +3,10 @@ import {
   Component,
   computed,
   DestroyRef,
-  effect,
   inject,
   input,
   signal,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -26,12 +24,14 @@ import { BreadcrumbService } from '../../core/navigation/breadcrumb.service';
 import { AreaRecord, ProcessRecord } from '../../core/models/backoffice.models';
 import { getHttpErrorMessage } from '../../core/http/http-error-message';
 import { ToastService } from '../../core/toast/toast.service';
-import { createTeamOwnerDropdown } from '../../core/ui/team-owner-dropdown.util';
+import {
+  bindFormPageLifecycle,
+  createTeamOwnerDropdown,
+} from '../../core/ui/team-owner-dropdown.util';
 
 @Component({
   selector: 'app-process-form-page',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     MatButtonModule,
     MatCardModule,
@@ -63,7 +63,6 @@ export class ProcessFormPageComponent {
   protected readonly isLoading = signal(true);
   protected readonly isSaving = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
-  protected readonly ownerLoadError = signal<string | null>(null);
   protected readonly pageTitle = computed(() => (this.id() ? 'Edit process' : 'Create process'));
   protected readonly availableTeams = computed(() => this.accessControl.getAvailableTeams(this.teams()));
   protected readonly canManageProcess = computed(() => this.accessControl.canManageProcess(this.processRecord()));
@@ -79,37 +78,22 @@ export class ProcessFormPageComponent {
   private readonly dropdown = createTeamOwnerDropdown(
     this.form.controls.teamId,
     this.form.controls.ownerId,
+    (teamId) => this.api.listOwnerOptions(teamId),
   );
 
   protected readonly owners = this.dropdown.owners;
   protected readonly teams = this.dropdown.teams;
   protected readonly selectedTeamId = this.dropdown.selectedTeamId;
   protected readonly filteredOwners = this.dropdown.filteredOwners;
-  private cleanupDropdown: (() => void) | null = null;
-  private ownerOptionsRequestId = 0;
+  protected readonly ownerLoadError = this.dropdown.ownerLoadError;
 
   constructor() {
-    this.destroyRef.onDestroy(() => {
-      this.breadcrumbs.clearOverride(this.breadcrumbOwner);
-    });
-
-    effect(() => {
-      void this.loadPage(this.id());
-    });
-
-    // Clear owner if not in filtered list
-    effect(() => {
-      const selectedTeamId = this.form.controls.teamId.value;
-      const selectedOwnerId = this.form.controls.ownerId.value;
-      const availableOwners = this.filteredOwners();
-
-      if (selectedTeamId && selectedOwnerId) {
-        const ownerExists = availableOwners.some((owner) => owner.id === selectedOwnerId);
-        if (!ownerExists) {
-          this.form.controls.ownerId.setValue('');
-        }
-      }
-    });
+    bindFormPageLifecycle(
+      this.destroyRef,
+      this.breadcrumbs,
+      this.breadcrumbOwner,
+      () => void this.loadPage(this.id()),
+    );
   }
 
   protected async submit(): Promise<void> {
@@ -155,9 +139,7 @@ export class ProcessFormPageComponent {
   private async loadPage(processId: string | undefined): Promise<void> {
     this.isLoading.set(true);
     this.errorMessage.set(null);
-    this.ownerLoadError.set(null);
-    this.ownerOptionsRequestId += 1;
-    this.owners.set([]);
+    this.dropdown.resetLoadState();
 
     try {
       const [areas, teams, process] = await Promise.all([
@@ -186,64 +168,24 @@ export class ProcessFormPageComponent {
         return;
       }
 
-      // Initialize dropdown logic
-      if (this.cleanupDropdown) {
-        this.cleanupDropdown();
-      }
       const lockedTeamId = this.accessControl.getLockedTeamId(process);
-      this.cleanupDropdown = this.dropdown.initialize(
-        lockedTeamId,
-        (teamId) => this.loadOwnersForTeam(teamId),
+      await this.dropdown.bindTeamAndLoadOwners(lockedTeamId);
+
+      this.form.reset(
+        {
+          title: process?.title ?? '',
+          description: process?.description ?? '',
+          areaId: process?.areaId ?? '',
+          teamId: lockedTeamId,
+          ownerId: process?.ownerId ?? '',
+        },
+        { emitEvent: false },
       );
-
-      if (lockedTeamId) {
-        await this.loadOwnersForTeam(lockedTeamId);
-      }
-
-      this.form.reset({
-        title: process?.title ?? '',
-        description: process?.description ?? '',
-        areaId: process?.areaId ?? '',
-        teamId: lockedTeamId,
-        ownerId: process?.ownerId ?? '',
-      }, { emitEvent: false });
       this.form.controls.teamId.disable({ emitEvent: false });
     } catch (error) {
       this.errorMessage.set(getHttpErrorMessage(error, 'Unable to load the process form.'));
     } finally {
       this.isLoading.set(false);
-    }
-  }
-
-  private async loadOwnersForTeam(teamId: string): Promise<void> {
-    const requestId = ++this.ownerOptionsRequestId;
-    this.ownerLoadError.set(null);
-    this.owners.set([]);
-
-    if (!teamId) {
-      return;
-    }
-
-    try {
-      const owners = await firstValueFrom(this.api.listOwnerOptions(teamId));
-
-      if (
-        requestId !== this.ownerOptionsRequestId ||
-        this.selectedTeamId() !== teamId
-      ) {
-        return;
-      }
-
-      this.owners.set(owners);
-    } catch {
-      if (
-        requestId !== this.ownerOptionsRequestId ||
-        this.selectedTeamId() !== teamId
-      ) {
-        return;
-      }
-
-      this.ownerLoadError.set('Unable to load owners for the selected team.');
     }
   }
 

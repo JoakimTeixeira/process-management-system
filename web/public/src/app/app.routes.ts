@@ -1,10 +1,31 @@
 import { Routes } from '@angular/router';
 
+const loadProcessListPage = () =>
+  import('./features/process-list/process-list.page').then(
+    (module) => module.ProcessListPageComponent,
+  );
+
+const loadProcessDetailPage = () =>
+  import('./features/process-detail/process-detail.page').then(
+    (module) => module.ProcessDetailPageComponent,
+  );
+
+const PROCESS_DETAIL_TABS = [
+  ['', 'default'],
+  ['/overview', 'overview'],
+  ['/diagram', 'diagram'],
+  ['/procedures', 'procedures'],
+  ['/history', 'history'],
+  ['/compare', 'compare'],
+] as const;
+
 export const routes: Routes = [
   {
     path: '',
     loadComponent: () =>
-      import('./features/home/home.page').then((module) => module.HomePageComponent),
+      import('./features/home/home.page').then(
+        (module) => module.HomePageComponent,
+      ),
   },
   {
     path: 'catalog',
@@ -13,68 +34,19 @@ export const routes: Routes = [
   },
   {
     path: 'catalog/processes',
-    loadComponent: () =>
-      import('./features/process-list/process-list.page').then(
-        (module) => module.ProcessListPageComponent,
-      ),
+    loadComponent: loadProcessListPage,
     data: { defaultCatalogTab: 'processes', pageTitle: 'Processes' },
   },
   {
     path: 'catalog/procedures',
-    loadComponent: () =>
-      import('./features/process-list/process-list.page').then(
-        (module) => module.ProcessListPageComponent,
-      ),
+    loadComponent: loadProcessListPage,
     data: { defaultCatalogTab: 'procedures', pageTitle: 'Procedures' },
   },
-  {
-    path: 'catalog/processes/:processId',
-    loadComponent: () =>
-      import('./features/process-detail/process-detail.page').then(
-        (module) => module.ProcessDetailPageComponent,
-      ),
-    data: { tab: 'default' },
-  },
-  {
-    path: 'catalog/processes/:processId/overview',
-    loadComponent: () =>
-      import('./features/process-detail/process-detail.page').then(
-        (module) => module.ProcessDetailPageComponent,
-      ),
-    data: { tab: 'overview' },
-  },
-  {
-    path: 'catalog/processes/:processId/diagram',
-    loadComponent: () =>
-      import('./features/process-detail/process-detail.page').then(
-        (module) => module.ProcessDetailPageComponent,
-      ),
-    data: { tab: 'diagram' },
-  },
-  {
-    path: 'catalog/processes/:processId/procedures',
-    loadComponent: () =>
-      import('./features/process-detail/process-detail.page').then(
-        (module) => module.ProcessDetailPageComponent,
-      ),
-    data: { tab: 'procedures' },
-  },
-  {
-    path: 'catalog/processes/:processId/history',
-    loadComponent: () =>
-      import('./features/process-detail/process-detail.page').then(
-        (module) => module.ProcessDetailPageComponent,
-      ),
-    data: { tab: 'history' },
-  },
-  {
-    path: 'catalog/processes/:processId/compare',
-    loadComponent: () =>
-      import('./features/process-detail/process-detail.page').then(
-        (module) => module.ProcessDetailPageComponent,
-      ),
-    data: { tab: 'compare' },
-  },
+  ...PROCESS_DETAIL_TABS.map(([suffix, tab]) => ({
+    path: `catalog/processes/:processId${suffix}`,
+    loadComponent: loadProcessDetailPage,
+    data: { tab },
+  })),
   {
     path: 'catalog/procedures/:id',
     loadComponent: () =>
@@ -85,7 +57,9 @@ export const routes: Routes = [
   {
     path: 'glossary',
     loadComponent: () =>
-      import('./features/glossary/glossary.page').then((module) => module.GlossaryPageComponent),
+      import('./features/glossary/glossary.page').then(
+        (module) => module.GlossaryPageComponent,
+      ),
   },
   {
     path: 'methodology',
@@ -97,6 +71,8 @@ export const routes: Routes = [
   {
     path: 'faq',
     loadComponent: () =>
-      import('./features/faq/faq.page').then((module) => module.FaqPageComponent),
+      import('./features/faq/faq.page').then(
+        (module) => module.FaqPageComponent,
+      ),
   },
 ];

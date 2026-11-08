@@ -1,88 +1,50 @@
-import { Expose, Type } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
+import {
+  ExposedNestedProperty,
+  ExposedNullableStringProperty,
+  ExposedStringProperty,
+  ExposedUuidProperty,
+} from '../../../common/dto/swagger-property.decorators';
 
 class AreaItilPracticeSummaryDto {
-  @ApiProperty({
-    description: 'Unique identifier for the linked ITIL practice.',
-    format: 'uuid',
-  })
-  @Expose()
+  @ExposedUuidProperty('Unique identifier for the linked ITIL practice.')
   id!: string;
 
-  @ApiProperty({
-    description: 'Display name for the linked ITIL practice.',
-  })
-  @Expose()
+  @ExposedStringProperty('Display name for the linked ITIL practice.')
   name!: string;
 }
 
 export class AreaResponseDto {
-  @ApiProperty({
-    description: 'Unique identifier for the area.',
-    format: 'uuid',
-  })
-  @Expose()
+  @ExposedUuidProperty('Unique identifier for the area.')
   id!: string;
 
-  @ApiProperty({
-    description: 'System-generated area code.',
-  })
-  @Expose()
+  @ExposedStringProperty('System-generated area code.')
   code!: string;
 
-  @ApiProperty({
-    description: 'Business-facing title of the area.',
-  })
-  @Expose()
+  @ExposedStringProperty('Business-facing title of the area.')
   title!: string;
 
-  @ApiProperty({
-    description: 'Description of the area scope.',
-    type: String,
-    nullable: true,
-  })
-  @Expose()
+  @ExposedNullableStringProperty('Description of the area scope.')
   description!: string | null;
 
-  @ApiProperty({
-    description: 'Owning team UUID.',
-    format: 'uuid',
-  })
-  @Expose()
+  @ExposedUuidProperty('Owning team UUID.')
   teamId!: string;
 
-  @ApiProperty({
-    description: 'Owning team display name.',
-  })
-  @Expose()
+  @ExposedStringProperty('Owning team display name.')
   teamName!: string;
 
-  @ApiProperty({
-    description: 'Owner UUID.',
-    format: 'uuid',
-  })
-  @Expose()
+  @ExposedUuidProperty('Owner UUID.')
   ownerId!: string;
 
-  @ApiProperty({
-    description: 'Owner display name.',
-  })
-  @Expose()
+  @ExposedStringProperty('Owner display name.')
   ownerName!: string;
 
-  @ApiProperty({
-    description: 'Linked ITIL practice UUID.',
-    format: 'uuid',
-  })
-  @Expose()
+  @ExposedUuidProperty('Linked ITIL practice UUID.')
   itilPracticeId!: string;
 
-  @ApiProperty({
-    description: 'Linked ITIL practice summary.',
-    type: () => AreaItilPracticeSummaryDto,
-  })
-  @Expose()
-  @Type(() => AreaItilPracticeSummaryDto)
+  @ExposedNestedProperty(
+    'Linked ITIL practice summary.',
+    AreaItilPracticeSummaryDto,
+  )
   itilPractice!: AreaItilPracticeSummaryDto;
 
   constructor(partial: Partial<AreaResponseDto>) {

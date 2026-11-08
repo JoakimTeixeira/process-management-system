@@ -2,6 +2,11 @@ import { Expose, Type } from 'class-transformer';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 import {
+  ExposedNullableStringProperty,
+  ExposedStringProperty,
+  ExposedUuidProperty,
+} from '../../../common/dto/swagger-property.decorators';
+import {
   ARCHITECTURE_STATES,
   type ArchitectureState,
 } from '../../../common/enums/architecture-state.enum';
@@ -116,64 +121,31 @@ export class GovernanceSummaryDto {
 }
 
 export class ProcessResponseDto {
-  @ApiProperty({
-    description: 'Unique identifier for the process.',
-    format: 'uuid',
-  })
-  @Expose()
+  @ExposedUuidProperty('Unique identifier for the process.')
   id!: string;
 
-  @ApiProperty({
-    description: 'Parent area UUID for the process.',
-    format: 'uuid',
-  })
-  @Expose()
+  @ExposedUuidProperty('Parent area UUID for the process.')
   areaId!: string;
 
-  @ApiProperty({
-    description: 'System-generated process code.',
-  })
-  @Expose()
+  @ExposedStringProperty('System-generated process code.')
   code!: string;
 
-  @ApiProperty({
-    description: 'Business-facing title of the process.',
-  })
-  @Expose()
+  @ExposedStringProperty('Business-facing title of the process.')
   title!: string;
 
-  @ApiProperty({
-    description: 'Short description of the process scope.',
-    type: String,
-    nullable: true,
-  })
-  @Expose()
+  @ExposedNullableStringProperty('Short description of the process scope.')
   description!: string | null;
 
-  @ApiProperty({
-    description: 'Owning team UUID.',
-    format: 'uuid',
-  })
-  @Expose()
+  @ExposedUuidProperty('Owning team UUID.')
   teamId!: string;
 
-  @ApiProperty({
-    description: 'Owning team display name.',
-  })
-  @Expose()
+  @ExposedStringProperty('Owning team display name.')
   teamName!: string;
 
-  @ApiProperty({
-    description: 'Owner UUID.',
-    format: 'uuid',
-  })
-  @Expose()
+  @ExposedUuidProperty('Owner UUID.')
   ownerId!: string;
 
-  @ApiProperty({
-    description: 'Owner display name.',
-  })
-  @Expose()
+  @ExposedStringProperty('Owner display name.')
   ownerName!: string;
 
   @ApiPropertyOptional({

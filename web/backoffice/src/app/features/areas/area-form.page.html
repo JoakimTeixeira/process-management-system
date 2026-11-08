@@ -39,18 +39,6 @@
             </mat-select>
           </mat-form-field>
 
-          <mat-form-field appearance="outline" [class.muted-field]="!selectedTeamId()">
-            <mat-label>Owner</mat-label>
-            <mat-select formControlName="ownerId">
-              @for (owner of filteredOwners(); track owner.id) {
-                <mat-option [value]="owner.id">{{ owner.name }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-          @if (ownerLoadError(); as ownerLoadError) {
-            <p class="error-message field-error-message">{{ ownerLoadError }}</p>
-          }
-
           <mat-form-field appearance="outline">
             <mat-label>ITIL practice</mat-label>
             <mat-select formControlName="itilPracticeId">
@@ -59,6 +47,16 @@
               }
             </mat-select>
           </mat-form-field>
+
+          <mat-form-field appearance="outline" [class.muted-field]="!selectedTeamId()">
+            <mat-label>Owner</mat-label>
+            <mat-select formControlName="ownerId">
+              @for (owner of filteredOwners(); track owner.id) {
+                <mat-option [value]="owner.id">{{ owner.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          @if (ownerLoadError(); as ownerLoadError) { <p class="error-message field-error-message">{{ ownerLoadError }}</p> }
 
           @if (errorMessage(); as errorMessage) {
             <p class="error-message">{{ errorMessage }}</p>

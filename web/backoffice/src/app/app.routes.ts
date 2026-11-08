@@ -1,9 +1,35 @@
-import { Routes } from '@angular/router';
+import { Route, Routes } from '@angular/router';
 
 import { anonymousOnlyGuard, authGuard, roleGuard } from './core/auth/auth.guard';
 import { AppRole } from './core/models/backoffice.models';
 
 const CONTENT_ROLES: AppRole[] = ['EDITOR', 'REVIEWER', 'PUBLISHER', 'VIEWER'];
+
+function createAdminFormRoutes(
+  sectionPath: string,
+  sectionLabel: string,
+  entityLabel: string,
+  loadComponent: NonNullable<Route['loadComponent']>,
+): Route[] {
+  return (
+    [
+      [`${sectionPath}/new`, `Create ${entityLabel}`],
+      [`${sectionPath}/:id/edit`, `Edit ${entityLabel}`],
+    ] as const
+  ).map(([path, actionLabel]) => ({
+    path,
+    loadComponent,
+    canActivate: [roleGuard],
+    data: {
+      roles: ['SYSTEM_ADMIN'] satisfies AppRole[],
+      breadcrumb: [
+        { label: 'Admin' },
+        { label: sectionLabel, url: `/${sectionPath}` },
+        { label: actionLabel },
+      ],
+    },
+  }));
+}
 
 export const routes: Routes = [
   {
@@ -219,70 +245,16 @@ export const routes: Routes = [
           breadcrumbVisible: false,
         },
       },
-      {
-        path: 'admin/teams/new',
-        loadComponent: () =>
-          import('./features/admin/team-form.page').then(
-            (m) => m.TeamFormPageComponent,
-          ),
-        canActivate: [roleGuard],
-        data: {
-          roles: ['SYSTEM_ADMIN'] satisfies AppRole[],
-          breadcrumb: [
-            { label: 'Admin' },
-            { label: 'Teams', url: '/admin/teams' },
-            { label: 'Create team' },
-          ],
-        },
-      },
-      {
-        path: 'admin/teams/:id/edit',
-        loadComponent: () =>
-          import('./features/admin/team-form.page').then(
-            (m) => m.TeamFormPageComponent,
-          ),
-        canActivate: [roleGuard],
-        data: {
-          roles: ['SYSTEM_ADMIN'] satisfies AppRole[],
-          breadcrumb: [
-            { label: 'Admin' },
-            { label: 'Teams', url: '/admin/teams' },
-            { label: 'Edit team' },
-          ],
-        },
-      },
-      {
-        path: 'admin/users/new',
-        loadComponent: () =>
-          import('./features/admin/user-form.page').then(
-            (m) => m.UserFormPageComponent,
-          ),
-        canActivate: [roleGuard],
-        data: {
-          roles: ['SYSTEM_ADMIN'] satisfies AppRole[],
-          breadcrumb: [
-            { label: 'Admin' },
-            { label: 'Users', url: '/admin/users' },
-            { label: 'Create user' },
-          ],
-        },
-      },
-      {
-        path: 'admin/users/:id/edit',
-        loadComponent: () =>
-          import('./features/admin/user-form.page').then(
-            (m) => m.UserFormPageComponent,
-          ),
-        canActivate: [roleGuard],
-        data: {
-          roles: ['SYSTEM_ADMIN'] satisfies AppRole[],
-          breadcrumb: [
-            { label: 'Admin' },
-            { label: 'Users', url: '/admin/users' },
-            { label: 'Edit user' },
-          ],
-        },
-      },
+      ...createAdminFormRoutes('admin/teams', 'Teams', 'team', () =>
+        import('./features/admin/team-form.page').then(
+          (m) => m.TeamFormPageComponent,
+        ),
+      ),
+      ...createAdminFormRoutes('admin/users', 'Users', 'user', () =>
+        import('./features/admin/user-form.page').then(
+          (m) => m.UserFormPageComponent,
+        ),
+      ),
     ],
   },
   {

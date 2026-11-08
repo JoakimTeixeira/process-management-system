@@ -1,51 +1,27 @@
-import { Transform } from 'class-transformer';
-import { IsString, IsUUID, MaxLength, MinLength } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
-
-import { MAX_TEXT_LENGTH } from '../../../common/constants/workflow.constants';
-import { trimString } from '../../../common/utils/trim-string-transform.util';
+import {
+  RequiredUuidProperty,
+  TrimmedRequiredTextProperty,
+} from '../../../common/dto/swagger-property.decorators';
 
 export class CreateAreaDto {
-  @ApiProperty({
-    description: 'Business-facing title of the area.',
-    example: 'Service Transition',
-    maxLength: MAX_TEXT_LENGTH,
-  })
-  @Transform(trimString)
-  @IsString()
-  @MinLength(1)
-  @MaxLength(MAX_TEXT_LENGTH)
+  @TrimmedRequiredTextProperty(
+    'Business-facing title of the area.',
+    'Service Transition',
+  )
   title!: string;
 
-  @ApiProperty({
-    description: 'Short description of the area scope.',
-    example: 'Coordinates controlled changes into live service.',
-    maxLength: MAX_TEXT_LENGTH,
-  })
-  @Transform(trimString)
-  @IsString()
-  @MinLength(1)
-  @MaxLength(MAX_TEXT_LENGTH)
+  @TrimmedRequiredTextProperty(
+    'Short description of the area scope.',
+    'Coordinates controlled changes into live service.',
+  )
   description!: string;
 
-  @ApiProperty({
-    description: 'Owning team UUID for the area.',
-    format: 'uuid',
-  })
-  @IsUUID()
+  @RequiredUuidProperty('Owning team UUID for the area.')
   teamId!: string;
 
-  @ApiProperty({
-    description: 'Owner UUID for the area.',
-    format: 'uuid',
-  })
-  @IsUUID()
+  @RequiredUuidProperty('Owner UUID for the area.')
   ownerId!: string;
 
-  @ApiProperty({
-    description: 'Linked ITIL practice UUID.',
-    format: 'uuid',
-  })
-  @IsUUID()
+  @RequiredUuidProperty('Linked ITIL practice UUID.')
   itilPracticeId!: string;
 }

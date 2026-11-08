@@ -1,46 +1,31 @@
-import { CommonModule } from '@angular/common';
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
-  OnChanges,
   OnDestroy,
-  SimpleChanges,
-  ViewChild,
+  computed,
+  effect,
   input,
   signal,
+  viewChild,
 } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import BpmnViewer from 'bpmn-js/lib/NavigatedViewer';
 
-interface BpmnCanvas {
-  zoom(level?: number): number;
-  zoom(value: 'fit-viewport', center?: { x: number; y: number }): number;
-  viewbox(): BpmnViewbox;
+interface BackofficeCanvasAdapter {
+  zoom(level?: number | 'fit-viewport', center?: { x: number; y: number }): number;
+  viewbox(): {
+    inner: { width: number; height: number };
+    outer: { width: number; height: number };
+  };
   resized(): void;
-}
-
-interface BpmnViewbox {
-  inner: {
-    width: number;
-    height: number;
-  };
-  outer: {
-    width: number;
-    height: number;
-  };
-}
-
-function isBpmnCanvas(obj: unknown): obj is BpmnCanvas {
-  return typeof obj === 'object' && obj !== null && 'zoom' in obj;
 }
 
 @Component({
   selector: 'app-backoffice-bpmn-viewer',
-  imports: [CommonModule, MatIconModule, MatProgressSpinnerModule, MatTooltipModule],
+  imports: [MatIconModule, MatProgressSpinnerModule, MatTooltipModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './backoffice-bpmn-viewer.component.html',
   styleUrl: './backoffice-bpmn-viewer.component.scss',
@@ -48,35 +33,39 @@ function isBpmnCanvas(obj: unknown): obj is BpmnCanvas {
     '(document:fullscreenchange)': 'handleFullscreenChange()',
   },
 })
-export class BackofficeBpmnViewerComponent implements AfterViewInit, OnChanges, OnDestroy {
+export class BackofficeBpmnViewerComponent implements OnDestroy {
   readonly xml = input<string | null>(null);
   readonly title = input('Visualize the BPMN diagram');
   readonly subtitle = input('Use the controls to fit, zoom, and inspect the latest model.');
   readonly emptyMessage = input('Select a BPMN asset to visualise.');
-  @ViewChild('canvas') private readonly canvas?: ElementRef<HTMLDivElement>;
-  @ViewChild('stage') private readonly stage?: ElementRef<HTMLDivElement>;
+  private readonly canvas = viewChild<ElementRef<HTMLDivElement>>('canvas');
+  private readonly stage = viewChild<ElementRef<HTMLDivElement>>('stage');
 
   private viewer: BpmnViewer | null = null;
-  private renderRequestToken = 0;
-  private wasStageFullscreen = false;
+  private renderSequence = 0;
+  private hadStageFullscreen = false;
 
   protected readonly loading = signal(false);
   protected readonly errorMessage = signal<string | null>(null);
+  private readonly statePanelVisible = computed(
+    () => this.loading() || Boolean(this.errorMessage()) || !this.xml(),
+  );
   protected readonly canFullscreen =
-    typeof document !== 'undefined' && !!document.documentElement.requestFullscreen;
+    typeof document !== 'undefined' && typeof document.documentElement.requestFullscreen === 'function';
+
+  constructor() {
+    effect(() => {
+      const container = this.canvas()?.nativeElement;
+      const sourceXml = this.xml();
+      const fallbackMessage = this.emptyMessage();
+      if (container) {
+        void this.renderMarkup(container, sourceXml, fallbackMessage);
+      }
+    });
+  }
 
   get showStatePanel(): boolean {
-    return this.loading() || !!this.errorMessage() || !this.xml();
-  }
-
-  ngAfterViewInit(): void {
-    void this.renderDiagram();
-  }
-
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['xml']) {
-      void this.renderDiagram();
-    }
+    return this.statePanelVisible();
   }
 
   ngOnDestroy(): void {
@@ -85,141 +74,103 @@ export class BackofficeBpmnViewerComponent implements AfterViewInit, OnChanges, 
   }
 
   protected zoom(delta: number): void {
-    const canvas = this.viewer?.get('canvas');
-
-    if (!canvas || !isBpmnCanvas(canvas)) {
+    const adapter = this.resolveCanvas();
+    if (!adapter) {
       return;
     }
 
-    const currentZoom = canvas.zoom();
-    const nextZoom = currentZoom + delta;
-    const fitZoom = this.getFitViewportZoom(canvas);
+    const targetLevel = adapter.zoom() + delta;
+    const { inner, outer } = adapter.viewbox();
+    const fitRatio =
+      inner.width > 0 && inner.height > 0 && outer.width > 0 && outer.height > 0
+        ? Math.min(1, outer.width / inner.width, outer.height / inner.height)
+        : null;
 
-    if (delta < 0 && fitZoom !== null && nextZoom <= fitZoom + 0.001) {
+    if (delta < 0 && fitRatio !== null && targetLevel <= fitRatio + 0.001) {
       this.fitViewport();
       return;
     }
 
-    canvas.zoom(nextZoom);
+    adapter.zoom(targetLevel);
   }
 
   protected fitViewport(): void {
-    const canvas = this.viewer?.get('canvas');
-    const center = this.getViewportCenter();
-
-    if (canvas && isBpmnCanvas(canvas)) {
-      canvas.zoom('fit-viewport', center);
+    const adapter = this.resolveCanvas();
+    if (!adapter) {
+      return;
     }
+    const element = this.stage()?.nativeElement;
+    const center =
+      element && element.clientWidth > 0 && element.clientHeight > 0
+        ? { x: element.clientWidth / 2, y: element.clientHeight / 2 }
+        : undefined;
+    adapter.zoom('fit-viewport', center);
   }
 
   protected async toggleFullscreen(): Promise<void> {
-    if (!this.stage?.nativeElement || !this.canFullscreen) {
+    const stageElement = this.stage()?.nativeElement;
+    if (!stageElement || !this.canFullscreen) {
       return;
     }
-
-    if (this.isStageFullscreen()) {
+    if (document.fullscreenElement === stageElement) {
       await document.exitFullscreen();
-      return;
+    } else {
+      await stageElement.requestFullscreen();
     }
-
-    await this.stage.nativeElement.requestFullscreen();
   }
 
   protected handleFullscreenChange(): void {
-    const isStageFullscreen = this.isStageFullscreen();
-
-    if (isStageFullscreen || this.wasStageFullscreen) {
-      this.scheduleFitViewport();
+    const stageElement = this.stage()?.nativeElement;
+    const active = Boolean(stageElement && document.fullscreenElement === stageElement);
+    if (active || this.hadStageFullscreen) {
+      const refresh = () => {
+        this.resolveCanvas()?.resized();
+        this.fitViewport();
+      };
+      if (typeof requestAnimationFrame === 'function') {
+        requestAnimationFrame(() => requestAnimationFrame(refresh));
+      } else {
+        refresh();
+      }
     }
-
-    this.wasStageFullscreen = isStageFullscreen;
+    this.hadStageFullscreen = active;
   }
 
-  private async renderDiagram(): Promise<void> {
-    if (!this.canvas?.nativeElement) {
-      return;
-    }
+  private resolveCanvas(): BackofficeCanvasAdapter | null {
+    const candidate = this.viewer?.get('canvas');
+    return typeof candidate === 'object' && candidate !== null && 'zoom' in candidate
+      ? (candidate as BackofficeCanvasAdapter)
+      : null;
+  }
 
-    const xml = this.xml();
-
-    if (!xml) {
+  private async renderMarkup(
+    container: HTMLDivElement,
+    sourceXml: string | null,
+    fallbackMessage: string,
+  ): Promise<void> {
+    if (!sourceXml) {
       this.loading.set(false);
-      this.errorMessage.set(this.emptyMessage());
+      this.errorMessage.set(fallbackMessage);
       return;
     }
 
-    const requestToken = ++this.renderRequestToken;
+    const token = ++this.renderSequence;
     this.loading.set(true);
     this.errorMessage.set(null);
-
-    this.viewer ??= new BpmnViewer({
-      container: this.canvas.nativeElement,
-    });
+    this.viewer ??= new BpmnViewer({ container });
 
     try {
-      await this.viewer.importXML(xml);
-
-      if (requestToken !== this.renderRequestToken) {
-        return;
+      await this.viewer.importXML(sourceXml);
+      if (token === this.renderSequence) {
+        this.fitViewport();
+        this.loading.set(false);
+        this.errorMessage.set(null);
       }
-
-      this.fitViewport();
-      this.loading.set(false);
-      this.errorMessage.set(null);
     } catch {
-      if (requestToken !== this.renderRequestToken) {
-        return;
+      if (token === this.renderSequence) {
+        this.loading.set(false);
+        this.errorMessage.set('The BPMN diagram could not be rendered.');
       }
-
-      this.loading.set(false);
-      this.errorMessage.set('The BPMN diagram could not be rendered.');
     }
-  }
-
-  private getViewportCenter(): { x: number; y: number } | undefined {
-    const stage = this.stage?.nativeElement;
-
-    if (!stage || !stage.clientWidth || !stage.clientHeight) {
-      return undefined;
-    }
-
-    return {
-      x: stage.clientWidth / 2,
-      y: stage.clientHeight / 2,
-    };
-  }
-
-  private getFitViewportZoom(canvas: BpmnCanvas): number | null {
-    const viewbox = canvas.viewbox();
-    const { inner, outer } = viewbox;
-
-    if (!inner.width || !inner.height || !outer.width || !outer.height) {
-      return null;
-    }
-
-    return Math.min(1, outer.width / inner.width, outer.height / inner.height);
-  }
-
-  private scheduleFitViewport(): void {
-    const rerenderViewport = () => {
-      const canvas = this.viewer?.get('canvas');
-
-      if (canvas && isBpmnCanvas(canvas)) {
-        canvas.resized();
-      }
-
-      this.fitViewport();
-    };
-
-    if (typeof requestAnimationFrame === 'function') {
-      requestAnimationFrame(() => requestAnimationFrame(rerenderViewport));
-      return;
-    }
-
-    rerenderViewport();
-  }
-
-  private isStageFullscreen(): boolean {
-    return !!this.stage?.nativeElement && document.fullscreenElement === this.stage.nativeElement;
   }
 }

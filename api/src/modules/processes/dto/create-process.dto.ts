@@ -1,51 +1,27 @@
-import { Transform } from 'class-transformer';
-import { IsString, IsUUID, MaxLength, MinLength } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
-
-import { MAX_TEXT_LENGTH } from '../../../common/constants/workflow.constants';
-import { trimString } from '../../../common/utils/trim-string-transform.util';
+import {
+  RequiredUuidProperty,
+  TrimmedRequiredTextProperty,
+} from '../../../common/dto/swagger-property.decorators';
 
 export class CreateProcessDto {
-  @ApiProperty({
-    description: 'Business-facing title of the process.',
-    example: 'Incident Resolution',
-    maxLength: MAX_TEXT_LENGTH,
-  })
-  @Transform(trimString)
-  @IsString()
-  @MinLength(1)
-  @MaxLength(MAX_TEXT_LENGTH)
+  @TrimmedRequiredTextProperty(
+    'Business-facing title of the process.',
+    'Incident Resolution',
+  )
   title!: string;
 
-  @ApiProperty({
-    description: 'Short description of the process scope.',
-    example: 'Restores affected services after incidents are diagnosed.',
-    maxLength: MAX_TEXT_LENGTH,
-  })
-  @Transform(trimString)
-  @IsString()
-  @MinLength(1)
-  @MaxLength(MAX_TEXT_LENGTH)
+  @TrimmedRequiredTextProperty(
+    'Short description of the process scope.',
+    'Restores affected services after incidents are diagnosed.',
+  )
   description!: string;
 
-  @ApiProperty({
-    description: 'Owning team UUID for the process.',
-    format: 'uuid',
-  })
-  @IsUUID()
+  @RequiredUuidProperty('Owning team UUID for the process.')
   teamId!: string;
 
-  @ApiProperty({
-    description: 'Owner UUID for the process.',
-    format: 'uuid',
-  })
-  @IsUUID()
+  @RequiredUuidProperty('Owner UUID for the process.')
   ownerId!: string;
 
-  @ApiProperty({
-    description: 'Parent area UUID for the process.',
-    format: 'uuid',
-  })
-  @IsUUID()
+  @RequiredUuidProperty('Parent area UUID for the process.')
   areaId!: string;
 }

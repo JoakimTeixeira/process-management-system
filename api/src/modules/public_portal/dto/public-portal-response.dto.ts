@@ -2,6 +2,12 @@ import { Expose, Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 import {
+  ExposedNestedProperty,
+  ExposedNullableStringProperty,
+  ExposedStringProperty,
+  ExposedUuidProperty,
+} from '../../../common/dto/swagger-property.decorators';
+import {
   ARCHITECTURE_STATES,
   type ArchitectureState,
 } from '../../../common/enums/architecture-state.enum';
@@ -166,47 +172,28 @@ export class PublicCatalogSearchResultResponseDto {
 }
 
 export class PublicProcessSummaryResponseDto {
-  @ApiProperty({
-    description: 'Unique identifier for the published process.',
-    format: 'uuid',
-  })
-  @Expose()
+  @ExposedUuidProperty('Unique identifier for the published process.')
   id!: string;
 
-  @ApiProperty({
-    description: 'Short process reference code.',
-  })
-  @Expose()
+  @ExposedStringProperty('Short process reference code.')
   code!: string;
 
-  @ApiProperty({
-    description: 'Display title for the process.',
-  })
-  @Expose()
+  @ExposedStringProperty('Display title for the process.')
   title!: string;
 
-  @ApiProperty({
-    description: 'Short description of the published process.',
-    type: String,
-    nullable: true,
-  })
-  @Expose()
+  @ExposedNullableStringProperty('Short description of the published process.')
   description!: string | null;
 
-  @ApiProperty({
-    description: 'Owning area summary for the published process.',
-    type: () => PublicAreaSummaryResponseDto,
-  })
-  @Expose()
-  @Type(() => PublicAreaSummaryResponseDto)
+  @ExposedNestedProperty(
+    'Owning area summary for the published process.',
+    PublicAreaSummaryResponseDto,
+  )
   area!: PublicAreaSummaryResponseDto;
 
-  @ApiProperty({
-    description: 'Linked ITIL practice summary.',
-    type: () => PublicItilPracticeSummaryResponseDto,
-  })
-  @Expose()
-  @Type(() => PublicItilPracticeSummaryResponseDto)
+  @ExposedNestedProperty(
+    'Linked ITIL practice summary.',
+    PublicItilPracticeSummaryResponseDto,
+  )
   itilPractice!: PublicItilPracticeSummaryResponseDto;
 
   @ApiProperty({
@@ -408,47 +395,28 @@ export class PublicProcessVersionViewResponseDto {
 }
 
 class PublicProcessDetailProcessResponseDto {
-  @ApiProperty({
-    description: 'Unique identifier for the published process.',
-    format: 'uuid',
-  })
-  @Expose()
+  @ExposedUuidProperty('Unique identifier for the published process.')
   id!: string;
 
-  @ApiProperty({
-    description: 'Short process reference code.',
-  })
-  @Expose()
+  @ExposedStringProperty('Short process reference code.')
   code!: string;
 
-  @ApiProperty({
-    description: 'Display title for the process.',
-  })
-  @Expose()
+  @ExposedStringProperty('Display title for the process.')
   title!: string;
 
-  @ApiProperty({
-    description: 'Short description of the published process.',
-    type: String,
-    nullable: true,
-  })
-  @Expose()
+  @ExposedNullableStringProperty('Short description of the published process.')
   description!: string | null;
 
-  @ApiProperty({
-    description: 'Owning area summary for the process.',
-    type: () => PublicAreaSummaryResponseDto,
-  })
-  @Expose()
-  @Type(() => PublicAreaSummaryResponseDto)
+  @ExposedNestedProperty(
+    'Owning area summary for the process.',
+    PublicAreaSummaryResponseDto,
+  )
   area!: PublicAreaSummaryResponseDto;
 
-  @ApiProperty({
-    description: 'Linked ITIL practice summary.',
-    type: () => PublicItilPracticeSummaryResponseDto,
-  })
-  @Expose()
-  @Type(() => PublicItilPracticeSummaryResponseDto)
+  @ExposedNestedProperty(
+    'Linked ITIL practice summary.',
+    PublicItilPracticeSummaryResponseDto,
+  )
   itilPractice!: PublicItilPracticeSummaryResponseDto;
 }
 

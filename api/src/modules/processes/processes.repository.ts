@@ -2,6 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 
+import {
+  activeOwnerExists,
+  activeTeamExists,
+  activeUserBelongsToTeam,
+  buildParameterizedUpdateStatement,
+} from '../../common/database/catalog-ownership.queries';
 import type { SqlExecutor } from '../../common/types/sql-executor.type';
 
 interface QueryRow {
@@ -330,55 +336,15 @@ export class ProcessesRepository {
   }
 
   async ownerExists(ownerId: string): Promise<boolean> {
-    const rows = await queryRows<ExistsRow>(
-      this.dataSource,
-      `
-        SELECT EXISTS (
-          SELECT 1
-          FROM users u
-          WHERE u.id = $1
-            AND u.is_active = TRUE
-        ) AS exists
-      `,
-      [ownerId],
-    );
-
-    return rows[0]?.exists ?? false;
+    return await activeOwnerExists(this.dataSource, ownerId);
   }
 
   async teamExists(teamId: string): Promise<boolean> {
-    const rows = await queryRows<ExistsRow>(
-      this.dataSource,
-      `
-        SELECT EXISTS (
-          SELECT 1
-          FROM teams t
-          WHERE t.id = $1
-            AND t.is_active = TRUE
-        ) AS exists
-      `,
-      [teamId],
-    );
-
-    return rows[0]?.exists ?? false;
+    return await activeTeamExists(this.dataSource, teamId);
   }
 
   async userBelongsToTeam(userId: string, teamId: string): Promise<boolean> {
-    const rows = await queryRows<ExistsRow>(
-      this.dataSource,
-      `
-        SELECT EXISTS (
-          SELECT 1
-          FROM users u
-          WHERE u.id = $1
-            AND u.team_id = $2
-            AND u.is_active = TRUE
-        ) AS exists
-      `,
-      [userId, teamId],
-    );
-
-    return rows[0]?.exists ?? false;
+    return await activeUserBelongsToTeam(this.dataSource, userId, teamId);
   }
 
   async create(input: CreateProcessInput): Promise<ProcessRecord> {
@@ -417,46 +383,20 @@ export class ProcessesRepository {
     input: UpdateProcessInput,
     actorId: string,
   ): Promise<ProcessRecord> {
-    const setClauses: string[] = [];
-    const parameters: unknown[] = [];
-
-    if (input.areaId !== undefined) {
-      parameters.push(input.areaId);
-      setClauses.push(`area_id = $${parameters.length}`);
-    }
-
-    if (input.title !== undefined) {
-      parameters.push(input.title);
-      setClauses.push(`title = $${parameters.length}`);
-    }
-
-    if (input.description !== undefined) {
-      parameters.push(input.description);
-      setClauses.push(`description = $${parameters.length}`);
-    }
-
-    if (input.teamId !== undefined) {
-      parameters.push(input.teamId);
-      setClauses.push(`team_id = $${parameters.length}`);
-    }
-
-    if (input.ownerId !== undefined) {
-      parameters.push(input.ownerId);
-      setClauses.push(`owner_id = $${parameters.length}`);
-    }
-
-    parameters.push(actorId);
-    setClauses.push(`updated_by = $${parameters.length}`);
-    parameters.push(id);
-
-    await this.dataSource.query(
-      `
-        UPDATE processes
-        SET ${setClauses.join(', ')}
-        WHERE id = $${parameters.length}
-      `,
-      parameters,
+    const { sql, parameters } = buildParameterizedUpdateStatement(
+      'processes',
+      [
+        ['area_id', input.areaId],
+        ['title', input.title],
+        ['description', input.description],
+        ['team_id', input.teamId],
+        ['owner_id', input.ownerId],
+      ],
+      actorId,
+      id,
     );
+
+    await this.dataSource.query(sql, parameters);
 
     return this.findRequiredById(id);
   }

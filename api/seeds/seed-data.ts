@@ -342,117 +342,46 @@ export const processes: ProcessSeed[] = [
   },
 ];
 
-export const processVersions: ProcessVersionSeed[] = [
-  {
-    processCode: '1',
-    versionNumber: 1,
-    architectureState: 'AS-IS',
-    lifecycleState: 'Published',
-    title: 'Employee Workplace Relocation v1.0',
-    checklistCompleted: true,
-    changeDescription:
-      'Initial publication of the standard employee relocation workflow.',
-    reasonForChange:
-      'Document the existing relocation process to ensure consistency across all departments.',
-    updatedByEmail: 'peter.publisher@example.com',
-  },
-  {
-    processCode: '1',
-    versionNumber: 2,
-    architectureState: 'TO-BE',
-    lifecycleState: 'Published',
-    title: 'Employee Workplace Relocation v2.0 - Improved Coordination',
-    checklistCompleted: true,
-    changeDescription:
-      'Redesigned workflow to reduce relocation time from 5 to 3 business days.',
-    reasonForChange:
-      'Stakeholder feedback indicated delays in equipment delivery and lack of coordination between departments.',
-    derivedFromVersionRef: '1@1',
-    updatedByEmail: 'peter.publisher@example.com',
-  },
-  {
-    processCode: '1',
-    versionNumber: 3,
-    architectureState: 'TO-BE',
-    lifecycleState: 'Draft',
-    title: 'Employee Workplace Relocation v3.0 - Rejected Draft',
-    checklistCompleted: false,
-    changeDescription:
-      'Proposed additional automation for relocation workflow.',
-    reasonForChange:
-      'Explore automation opportunities to further reduce relocation time.',
-    derivedFromVersionRef: '1@2',
-    updatedByEmail: 'alice.editor@example.com',
-  },
-  {
-    processCode: '2',
-    versionNumber: 1,
-    architectureState: 'AS-IS',
-    lifecycleState: 'Archived',
-    title: 'Employee Onboarding and Allocation v1.0',
-    checklistCompleted: true,
-    changeDescription:
-      'Initial publication of the standard employee onboarding process.',
-    reasonForChange:
-      'Establish a consistent onboarding procedure across all departments.',
-    updatedByEmail: 'peter.publisher@example.com',
-  },
-  {
-    processCode: '2',
-    versionNumber: 2,
-    architectureState: 'TO-BE',
-    lifecycleState: 'Archived',
-    title: 'Employee Onboarding and Allocation v2.0 - Streamlined Process',
-    checklistCompleted: true,
-    changeDescription:
-      'Streamlined onboarding process to reduce first-day setup time from 4 to 2 hours.',
-    reasonForChange:
-      'New employee surveys indicated lengthy setup times and redundant paperwork.',
-    derivedFromVersionRef: '2@1',
-    updatedByEmail: 'peter.publisher@example.com',
-  },
-  {
-    processCode: '2',
-    versionNumber: 3,
-    architectureState: 'AS-IS',
-    lifecycleState: 'Published',
-    title: 'Employee Onboarding and Allocation v3.0 - Current Standard',
-    checklistCompleted: true,
-    changeDescription:
-      'Promoted the streamlined onboarding workflow to production as the new standard.',
-    reasonForChange:
-      'Successful pilot implementation demonstrated 50% reduction in first-day setup time.',
-    derivedFromVersionRef: '2@2',
-    updatedByEmail: 'peter.publisher@example.com',
-  },
-  {
-    processCode: '2',
-    versionNumber: 4,
-    architectureState: 'TO-BE',
-    lifecycleState: 'Approved',
-    title: 'Employee Onboarding and Allocation v4.0 - AI-Assisted',
-    checklistCompleted: true,
-    changeDescription:
-      'Proposed AI-assisted onboarding with predictive resource allocation.',
-    reasonForChange:
-      'Leverage machine learning to predict and pre-allocate resources based on new employee profile.',
-    derivedFromVersionRef: '2@3',
-    updatedByEmail: 'alice.editor@example.com',
-  },
-  {
-    processCode: '3',
-    versionNumber: 1,
-    architectureState: 'AS-IS',
-    lifecycleState: 'Published',
-    title: 'Quality Compliance Review v1.0',
-    checklistCompleted: true,
-    changeDescription:
-      'Initial publication of the standard quality compliance review workflow.',
-    reasonForChange:
-      'Establish a consistent quality review process across all departments.',
-    updatedByEmail: 'peter.publisher@example.com',
-  },
+const PROCESS_VERSION_ROWS = [
+  '1|1|AS-IS|Published|Employee Workplace Relocation v1.0|true|Initial publication of the standard employee relocation workflow.|Document the existing relocation process to ensure consistency across all departments.|peter.publisher@example.com|',
+  '1|2|TO-BE|Published|Employee Workplace Relocation v2.0 - Improved Coordination|true|Redesigned workflow to reduce relocation time from 5 to 3 business days.|Stakeholder feedback indicated delays in equipment delivery and lack of coordination between departments.|peter.publisher@example.com|1@1',
+  '1|3|TO-BE|Draft|Employee Workplace Relocation v3.0 - Rejected Draft|false|Proposed additional automation for relocation workflow.|Explore automation opportunities to further reduce relocation time.|alice.editor@example.com|1@2',
+  '2|1|AS-IS|Archived|Employee Onboarding and Allocation v1.0|true|Initial publication of the standard employee onboarding process.|Establish a consistent onboarding procedure across all departments.|peter.publisher@example.com|',
+  '2|2|TO-BE|Archived|Employee Onboarding and Allocation v2.0 - Streamlined Process|true|Streamlined onboarding process to reduce first-day setup time from 4 to 2 hours.|New employee surveys indicated lengthy setup times and redundant paperwork.|peter.publisher@example.com|2@1',
+  '2|3|AS-IS|Published|Employee Onboarding and Allocation v3.0 - Current Standard|true|Promoted the streamlined onboarding workflow to production as the new standard.|Successful pilot implementation demonstrated 50% reduction in first-day setup time.|peter.publisher@example.com|2@2',
+  '2|4|TO-BE|Approved|Employee Onboarding and Allocation v4.0 - AI-Assisted|true|Proposed AI-assisted onboarding with predictive resource allocation.|Leverage machine learning to predict and pre-allocate resources based on new employee profile.|alice.editor@example.com|2@3',
+  '3|1|AS-IS|Published|Quality Compliance Review v1.0|true|Initial publication of the standard quality compliance review workflow.|Establish a consistent quality review process across all departments.|peter.publisher@example.com|',
 ];
+
+export const processVersions: ProcessVersionSeed[] = PROCESS_VERSION_ROWS.map(
+  (row) => {
+    const [
+      processCode,
+      versionNumber,
+      architectureState,
+      lifecycleState,
+      title,
+      checklistCompleted,
+      changeDescription,
+      reasonForChange,
+      updatedByEmail,
+      derivedFromVersionRef,
+    ] = row.split('|');
+
+    return {
+      processCode,
+      versionNumber: Number(versionNumber),
+      architectureState: architectureState as ArchitectureState,
+      lifecycleState: lifecycleState as LifecycleState,
+      title,
+      checklistCompleted: checklistCompleted === 'true',
+      changeDescription,
+      reasonForChange,
+      ...(derivedFromVersionRef ? { derivedFromVersionRef } : {}),
+      updatedByEmail,
+    };
+  },
+);
 
 const comparisonActivities: ProcedureActivitySeed[] = [
   {
@@ -624,265 +553,53 @@ export const procedures: ProcedureSeed[] = [
   },
 ];
 
-export const versionStateHistory: VersionHistorySeed[] = [
-  {
-    processCode: '1',
-    versionNumber: 1,
-    fromState: null,
-    toState: 'Draft',
-    actorEmail: 'alice.editor@example.com',
-    reason: 'Created initial draft of the employee relocation workflow.',
-  },
-  {
-    processCode: '1',
-    versionNumber: 1,
-    fromState: 'Draft',
-    toState: 'In Review',
-    actorEmail: 'alice.editor@example.com',
-    reason: 'Submitted the employee relocation workflow for formal review.',
-  },
-  {
-    processCode: '1',
-    versionNumber: 1,
-    fromState: 'In Review',
-    toState: 'Approved',
-    actorEmail: 'rachel.reviewer@example.com',
-    reason:
-      'Approved the employee relocation workflow after validation review.',
-  },
-  {
-    processCode: '1',
-    versionNumber: 1,
-    fromState: 'Approved',
-    toState: 'Published',
-    actorEmail: 'peter.publisher@example.com',
-    reason:
-      'Released the employee relocation workflow as the official standard.',
-  },
-  {
-    processCode: '1',
-    versionNumber: 2,
-    fromState: null,
-    toState: 'Draft',
-    actorEmail: 'alice.editor@example.com',
-    reason: 'Created initial draft of the improved relocation workflow.',
-  },
-  {
-    processCode: '1',
-    versionNumber: 2,
-    fromState: 'Draft',
-    toState: 'In Review',
-    actorEmail: 'alice.editor@example.com',
-    reason: 'Submitted the improved relocation workflow for formal review.',
-  },
-  {
-    processCode: '1',
-    versionNumber: 2,
-    fromState: 'In Review',
-    toState: 'Approved',
-    actorEmail: 'rachel.reviewer@example.com',
-    reason:
-      'Approved the improved relocation workflow after validation review.',
-  },
-  {
-    processCode: '1',
-    versionNumber: 2,
-    fromState: 'Approved',
-    toState: 'Published',
-    actorEmail: 'peter.publisher@example.com',
-    reason:
-      'Released the improved relocation workflow as the proposed target state.',
-  },
-  {
-    processCode: '1',
-    versionNumber: 3,
-    fromState: null,
-    toState: 'Draft',
-    actorEmail: 'alice.editor@example.com',
-    reason: 'Created initial draft of the automation proposal.',
-  },
-  {
-    processCode: '1',
-    versionNumber: 3,
-    fromState: 'Draft',
-    toState: 'In Review',
-    actorEmail: 'alice.editor@example.com',
-    reason: 'Submitted the automation proposal for formal review.',
-  },
-  {
-    processCode: '1',
-    versionNumber: 3,
-    fromState: 'In Review',
-    toState: 'Draft',
-    actorEmail: 'rachel.reviewer@example.com',
-    reason:
-      'Rejected the automation proposal due to insufficient cost-benefit analysis and unclear ROI.',
-  },
-  {
-    processCode: '2',
-    versionNumber: 1,
-    fromState: null,
-    toState: 'Draft',
-    actorEmail: 'alice.editor@example.com',
-    reason: 'Created initial draft of the employee onboarding workflow.',
-  },
-  {
-    processCode: '2',
-    versionNumber: 1,
-    fromState: 'Draft',
-    toState: 'In Review',
-    actorEmail: 'alice.editor@example.com',
-    reason: 'Submitted the employee onboarding workflow for formal review.',
-  },
-  {
-    processCode: '2',
-    versionNumber: 1,
-    fromState: 'In Review',
-    toState: 'Approved',
-    actorEmail: 'rachel.reviewer@example.com',
-    reason:
-      'Approved the employee onboarding workflow after validation review.',
-  },
-  {
-    processCode: '2',
-    versionNumber: 1,
-    fromState: 'Approved',
-    toState: 'Published',
-    actorEmail: 'peter.publisher@example.com',
-    reason:
-      'Released the employee onboarding workflow as the official standard.',
-  },
-  {
-    processCode: '2',
-    versionNumber: 1,
-    fromState: 'Published',
-    toState: 'Archived',
-    actorEmail: 'peter.publisher@example.com',
-    reason:
-      'Archived the original onboarding workflow after process improvement implementation.',
-  },
-  {
-    processCode: '2',
-    versionNumber: 2,
-    fromState: null,
-    toState: 'Draft',
-    actorEmail: 'alice.editor@example.com',
-    reason: 'Created initial draft of the streamlined onboarding workflow.',
-  },
-  {
-    processCode: '2',
-    versionNumber: 2,
-    fromState: 'Draft',
-    toState: 'In Review',
-    actorEmail: 'alice.editor@example.com',
-    reason: 'Submitted the streamlined onboarding workflow for formal review.',
-  },
-  {
-    processCode: '2',
-    versionNumber: 2,
-    fromState: 'In Review',
-    toState: 'Approved',
-    actorEmail: 'rachel.reviewer@example.com',
-    reason:
-      'Approved the streamlined onboarding workflow after validation review.',
-  },
-  {
-    processCode: '2',
-    versionNumber: 2,
-    fromState: 'Approved',
-    toState: 'Published',
-    actorEmail: 'peter.publisher@example.com',
-    reason:
-      'Released the streamlined onboarding workflow for pilot implementation.',
-  },
-  {
-    processCode: '2',
-    versionNumber: 2,
-    fromState: 'Published',
-    toState: 'Archived',
-    actorEmail: 'peter.publisher@example.com',
-    reason:
-      'Archived the streamlined workflow after successful promotion to production.',
-  },
-  {
-    processCode: '2',
-    versionNumber: 3,
-    fromState: null,
-    toState: 'Published',
-    actorEmail: 'peter.publisher@example.com',
-    reason:
-      'Promoted the streamlined onboarding workflow to production as the new standard.',
-  },
-  {
-    processCode: '2',
-    versionNumber: 4,
-    fromState: null,
-    toState: 'Draft',
-    actorEmail: 'alice.editor@example.com',
-    reason: 'Created initial draft of the AI-assisted onboarding proposal.',
-  },
-  {
-    processCode: '2',
-    versionNumber: 4,
-    fromState: 'Draft',
-    toState: 'In Review',
-    actorEmail: 'alice.editor@example.com',
-    reason: 'Submitted the AI-assisted onboarding proposal for formal review.',
-  },
-  {
-    processCode: '2',
-    versionNumber: 4,
-    fromState: 'In Review',
-    toState: 'Approved',
-    actorEmail: 'rachel.reviewer@example.com',
-    reason:
-      'Approved the AI-assisted onboarding proposal after validation review.',
-  },
-  {
-    processCode: '2',
-    versionNumber: 4,
-    fromState: 'Approved',
-    toState: 'Draft',
-    actorEmail: 'rachel.reviewer@example.com',
-    reason:
-      'Controlled reopening: Additional data privacy review required before publication due to new ML model integration.',
-  },
-  {
-    processCode: '3',
-    versionNumber: 1,
-    fromState: null,
-    toState: 'Draft',
-    actorEmail: 'sam.admin@example.com',
-    reason: 'Created initial draft of the quality compliance review workflow.',
-  },
-  {
-    processCode: '3',
-    versionNumber: 1,
-    fromState: 'Draft',
-    toState: 'In Review',
-    actorEmail: 'sam.admin@example.com',
-    reason:
-      'Submitted the quality compliance review workflow for formal review.',
-  },
-  {
-    processCode: '3',
-    versionNumber: 1,
-    fromState: 'In Review',
-    toState: 'Approved',
-    actorEmail: 'rachel.reviewer@example.com',
-    reason:
-      'Approved the quality compliance review workflow after validation review.',
-  },
-  {
-    processCode: '3',
-    versionNumber: 1,
-    fromState: 'Approved',
-    toState: 'Published',
-    actorEmail: 'peter.publisher@example.com',
-    reason:
-      'Released the quality compliance review workflow as the official standard.',
-  },
+const VERSION_HISTORY_ROWS = [
+  '1|1||Draft|alice.editor@example.com|Created initial draft of the employee relocation workflow.',
+  '1|1|Draft|In Review|alice.editor@example.com|Submitted the employee relocation workflow for formal review.',
+  '1|1|In Review|Approved|rachel.reviewer@example.com|Approved the employee relocation workflow after validation review.',
+  '1|1|Approved|Published|peter.publisher@example.com|Released the employee relocation workflow as the official standard.',
+  '1|2||Draft|alice.editor@example.com|Created initial draft of the improved relocation workflow.',
+  '1|2|Draft|In Review|alice.editor@example.com|Submitted the improved relocation workflow for formal review.',
+  '1|2|In Review|Approved|rachel.reviewer@example.com|Approved the improved relocation workflow after validation review.',
+  '1|2|Approved|Published|peter.publisher@example.com|Released the improved relocation workflow as the proposed target state.',
+  '1|3||Draft|alice.editor@example.com|Created initial draft of the automation proposal.',
+  '1|3|Draft|In Review|alice.editor@example.com|Submitted the automation proposal for formal review.',
+  '1|3|In Review|Draft|rachel.reviewer@example.com|Rejected the automation proposal due to insufficient cost-benefit analysis and unclear ROI.',
+  '2|1||Draft|alice.editor@example.com|Created initial draft of the employee onboarding workflow.',
+  '2|1|Draft|In Review|alice.editor@example.com|Submitted the employee onboarding workflow for formal review.',
+  '2|1|In Review|Approved|rachel.reviewer@example.com|Approved the employee onboarding workflow after validation review.',
+  '2|1|Approved|Published|peter.publisher@example.com|Released the employee onboarding workflow as the official standard.',
+  '2|1|Published|Archived|peter.publisher@example.com|Archived the original onboarding workflow after process improvement implementation.',
+  '2|2||Draft|alice.editor@example.com|Created initial draft of the streamlined onboarding workflow.',
+  '2|2|Draft|In Review|alice.editor@example.com|Submitted the streamlined onboarding workflow for formal review.',
+  '2|2|In Review|Approved|rachel.reviewer@example.com|Approved the streamlined onboarding workflow after validation review.',
+  '2|2|Approved|Published|peter.publisher@example.com|Released the streamlined onboarding workflow for pilot implementation.',
+  '2|2|Published|Archived|peter.publisher@example.com|Archived the streamlined workflow after successful promotion to production.',
+  '2|3||Published|peter.publisher@example.com|Promoted the streamlined onboarding workflow to production as the new standard.',
+  '2|4||Draft|alice.editor@example.com|Created initial draft of the AI-assisted onboarding proposal.',
+  '2|4|Draft|In Review|alice.editor@example.com|Submitted the AI-assisted onboarding proposal for formal review.',
+  '2|4|In Review|Approved|rachel.reviewer@example.com|Approved the AI-assisted onboarding proposal after validation review.',
+  '2|4|Approved|Draft|rachel.reviewer@example.com|Controlled reopening: Additional data privacy review required before publication due to new ML model integration.',
+  '3|1||Draft|sam.admin@example.com|Created initial draft of the quality compliance review workflow.',
+  '3|1|Draft|In Review|sam.admin@example.com|Submitted the quality compliance review workflow for formal review.',
+  '3|1|In Review|Approved|rachel.reviewer@example.com|Approved the quality compliance review workflow after validation review.',
+  '3|1|Approved|Published|peter.publisher@example.com|Released the quality compliance review workflow as the official standard.',
 ];
+
+export const versionStateHistory: VersionHistorySeed[] =
+  VERSION_HISTORY_ROWS.map((row) => {
+    const [processCode, versionNumber, fromState, toState, actorEmail, reason] =
+      row.split('|');
+
+    return {
+      processCode,
+      versionNumber: Number(versionNumber),
+      fromState: (fromState || null) as LifecycleState | null,
+      toState: toState as LifecycleState,
+      actorEmail,
+      reason,
+    };
+  });
 
 export const bpmnAssets: BpmnAssetSeed[] = processVersions.map((version) => ({
   processCode: version.processCode,
@@ -951,121 +668,35 @@ export const auditLogs: AuditLogSeed[] = [
       },
     };
   }),
-  {
-    entityType: 'process_version',
-    entityRef: '1@1',
-    action: 'APPROVE',
-    actorEmail: 'rachel.reviewer@example.com',
-    reasonForChange:
-      'Approved employee relocation workflow after validation review.',
-  },
-  {
-    entityType: 'process_version',
-    entityRef: '1@1',
-    action: 'PUBLISH',
-    actorEmail: 'peter.publisher@example.com',
-    reasonForChange:
-      'Released employee relocation workflow as official standard.',
-  },
-  {
-    entityType: 'process_version',
-    entityRef: '1@2',
-    action: 'APPROVE',
-    actorEmail: 'rachel.reviewer@example.com',
-    reasonForChange:
-      'Approved improved relocation workflow after validation review.',
-  },
-  {
-    entityType: 'process_version',
-    entityRef: '1@2',
-    action: 'PUBLISH',
-    actorEmail: 'peter.publisher@example.com',
-    reasonForChange:
-      'Released improved relocation workflow as proposed target state.',
-  },
-  {
-    entityType: 'process_version',
-    entityRef: '1@3',
-    action: 'REJECT',
-    actorEmail: 'rachel.reviewer@example.com',
-    reasonForChange:
-      'Rejected the automation proposal due to insufficient cost-benefit analysis and unclear ROI.',
-  },
-  {
-    entityType: 'process_version',
-    entityRef: '2@1',
-    action: 'APPROVE',
-    actorEmail: 'rachel.reviewer@example.com',
-    reasonForChange:
-      'Approved employee onboarding workflow after validation review.',
-  },
-  {
-    entityType: 'process_version',
-    entityRef: '2@1',
-    action: 'PUBLISH',
-    actorEmail: 'peter.publisher@example.com',
-    reasonForChange:
-      'Released employee onboarding workflow as official standard.',
-  },
-  {
-    entityType: 'process_version',
-    entityRef: '2@1',
-    action: 'ARCHIVE',
-    actorEmail: 'peter.publisher@example.com',
-    reasonForChange:
-      'Archived original onboarding workflow after process improvement implementation.',
-  },
-  {
-    entityType: 'process_version',
-    entityRef: '2@2',
-    action: 'APPROVE',
-    actorEmail: 'rachel.reviewer@example.com',
-    reasonForChange:
-      'Approved streamlined onboarding workflow after validation review.',
-  },
-  {
-    entityType: 'process_version',
-    entityRef: '2@2',
-    action: 'PUBLISH',
-    actorEmail: 'peter.publisher@example.com',
-    reasonForChange:
-      'Released streamlined onboarding workflow for pilot implementation.',
-  },
-  {
-    entityType: 'process_version',
-    entityRef: '2@2',
-    action: 'ARCHIVE',
-    actorEmail: 'peter.publisher@example.com',
-    reasonForChange:
-      'Archived streamlined workflow after successful promotion to production.',
-  },
-  {
-    entityType: 'process_version',
-    entityRef: '2@3',
-    action: 'PROMOTE',
-    actorEmail: 'peter.publisher@example.com',
-    reasonForChange:
-      'Promoted streamlined onboarding workflow to production as new standard.',
-    newData: {
-      derivedFromVersionNumber: 2,
-    },
-  },
-  {
-    entityType: 'process_version',
-    entityRef: '2@4',
-    action: 'APPROVE',
-    actorEmail: 'rachel.reviewer@example.com',
-    reasonForChange:
-      'Approved the AI-assisted onboarding proposal after validation review.',
-  },
-  {
-    entityType: 'process_version',
-    entityRef: '2@4',
-    action: 'REOPEN',
-    actorEmail: 'rachel.reviewer@example.com',
-    reasonForChange:
-      'Controlled reopening: Additional data privacy review required before publication due to new ML model integration.',
-  },
+  ...[
+    '1@1|APPROVE|rachel.reviewer@example.com|Approved employee relocation workflow after validation review.|',
+    '1@1|PUBLISH|peter.publisher@example.com|Released employee relocation workflow as official standard.|',
+    '1@2|APPROVE|rachel.reviewer@example.com|Approved improved relocation workflow after validation review.|',
+    '1@2|PUBLISH|peter.publisher@example.com|Released improved relocation workflow as proposed target state.|',
+    '1@3|REJECT|rachel.reviewer@example.com|Rejected the automation proposal due to insufficient cost-benefit analysis and unclear ROI.|',
+    '2@1|APPROVE|rachel.reviewer@example.com|Approved employee onboarding workflow after validation review.|',
+    '2@1|PUBLISH|peter.publisher@example.com|Released employee onboarding workflow as official standard.|',
+    '2@1|ARCHIVE|peter.publisher@example.com|Archived original onboarding workflow after process improvement implementation.|',
+    '2@2|APPROVE|rachel.reviewer@example.com|Approved streamlined onboarding workflow after validation review.|',
+    '2@2|PUBLISH|peter.publisher@example.com|Released streamlined onboarding workflow for pilot implementation.|',
+    '2@2|ARCHIVE|peter.publisher@example.com|Archived streamlined workflow after successful promotion to production.|',
+    '2@3|PROMOTE|peter.publisher@example.com|Promoted streamlined onboarding workflow to production as new standard.|2',
+    '2@4|APPROVE|rachel.reviewer@example.com|Approved the AI-assisted onboarding proposal after validation review.|',
+    '2@4|REOPEN|rachel.reviewer@example.com|Controlled reopening: Additional data privacy review required before publication due to new ML model integration.|',
+  ].map((row) => {
+    const [entityRef, action, actorEmail, reasonForChange, derivedFrom] =
+      row.split('|');
+    return {
+      entityType: 'process_version' as const,
+      entityRef,
+      action: action as AuditLogSeed['action'],
+      actorEmail,
+      reasonForChange,
+      ...(derivedFrom
+        ? { newData: { derivedFromVersionNumber: Number(derivedFrom) } }
+        : {}),
+    };
+  }),
   {
     entityType: 'process',
     entityRef: '3',
@@ -1091,22 +722,28 @@ export const auditLogs: AuditLogSeed[] = [
       architectureState: 'AS-IS',
     },
   },
-  {
-    entityType: 'process_version',
-    entityRef: '3@1',
-    action: 'APPROVE',
-    actorEmail: 'rachel.reviewer@example.com',
-    reasonForChange:
-      'Approved the quality compliance review workflow after validation review.',
-  },
-  {
-    entityType: 'process_version',
-    entityRef: '3@1',
-    action: 'PUBLISH',
-    actorEmail: 'peter.publisher@example.com',
-    reasonForChange:
-      'Released the quality compliance review workflow as the official standard.',
-  },
+  ...(
+    [
+      [
+        '3@1',
+        'APPROVE',
+        'rachel.reviewer@example.com',
+        'Approved the quality compliance review workflow after validation review.',
+      ],
+      [
+        '3@1',
+        'PUBLISH',
+        'peter.publisher@example.com',
+        'Released the quality compliance review workflow as the official standard.',
+      ],
+    ] as const
+  ).map(([entityRef, action, actorEmail, reasonForChange]) => ({
+    entityType: 'process_version' as const,
+    entityRef,
+    action,
+    actorEmail,
+    reasonForChange,
+  })),
   {
     entityType: 'user',
     entityRef: 'victor.viewer@example.com',
@@ -1133,45 +770,25 @@ export const auditLogs: AuditLogSeed[] = [
       teamCode: 'IT',
     },
   },
-  {
-    entityType: 'user',
-    entityRef: 'alice.editor@example.com',
-    action: 'ROLE_ASSIGN',
+  ...(
+    [
+      ['alice.editor@example.com', 'EDITOR', 'Alice Editor'],
+      ['rachel.reviewer@example.com', 'REVIEWER', 'Rachel Reviewer'],
+      ['peter.publisher@example.com', 'PUBLISHER', 'Peter Publisher'],
+    ] as const
+  ).map(([entityRef, roleName, displayName]) => ({
+    entityType: 'user' as const,
+    entityRef,
+    action: 'ROLE_ASSIGN' as const,
     actorEmail: 'sam.admin@example.com',
-    reasonForChange: 'Assigned EDITOR role to Alice Editor.',
+    reasonForChange: `Assigned ${roleName} role to ${displayName}.`,
     oldData: {
       roleName: null,
     },
     newData: {
-      roleName: 'EDITOR',
+      roleName,
     },
-  },
-  {
-    entityType: 'user',
-    entityRef: 'rachel.reviewer@example.com',
-    action: 'ROLE_ASSIGN',
-    actorEmail: 'sam.admin@example.com',
-    reasonForChange: 'Assigned REVIEWER role to Rachel Reviewer.',
-    oldData: {
-      roleName: null,
-    },
-    newData: {
-      roleName: 'REVIEWER',
-    },
-  },
-  {
-    entityType: 'user',
-    entityRef: 'peter.publisher@example.com',
-    action: 'ROLE_ASSIGN',
-    actorEmail: 'sam.admin@example.com',
-    reasonForChange: 'Assigned PUBLISHER role to Peter Publisher.',
-    oldData: {
-      roleName: null,
-    },
-    newData: {
-      roleName: 'PUBLISHER',
-    },
-  },
+  })),
   {
     entityType: 'user',
     entityRef: 'sam.admin@example.com',
