@@ -20,7 +20,7 @@ guidance.
 | Command | Scope | Failure behavior |
 | --- | --- | --- |
 | `npm run diagnostics:fast` | TypeScript, ESLint, Angular templates, backoffice module structure, and internal documentation links | Runs every check and fails if any TypeScript error, ESLint warning/error, module violation, or broken internal link remains. |
-| `npm run diagnostics:sonar` | Full SonarQube analysis and server result retrieval | Fails for infrastructure, authentication, scanner, processing, timeout, API, quality-gate, issue, or hotspot failures. |
+| `npm run diagnostics:sonar` | Package coverage, full SonarQube analysis, and server result retrieval | Regenerates LCOV reports and fails for test, infrastructure, authentication, scanner, processing, timeout, API, quality-gate, issue, or hotspot failures. |
 | `npm run diagnostics` | Fast and SonarQube layers | Runs both layers, summarizes failed analyzers, and never silently skips SonarQube. |
 | `npm run sonar:start` | Optional `diagnostics` Compose profile | Starts only SonarQube in the `process-management-system` Compose project, waits for readiness, and bootstraps local credentials when required. |
 | `npm run sonar:status` | Local server health | Displays the exact Compose service and server status. |

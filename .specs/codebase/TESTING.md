@@ -55,7 +55,7 @@ These commands evolve with the runner migration; task commits update this file i
 | Non-release aggregate | `npm run test:all` | Runs unit, integration, contract, and API health gates; shared-state layers are serialized. |
 | Diagnostics aggregate | `npm run diagnostics` | Runs every package's TypeScript and zero-warning ESLint checks, the backoffice module audit, and an authenticated full-project SonarQube scan; prints all unresolved Sonar issues/hotspots and continues after earlier local failures. |
 | Fast diagnostics | `npm run diagnostics:fast` | Runs TypeScript, zero-warning ESLint/SonarJS, the module audit, and deterministic internal documentation-link checks without claiming full SonarQube parity. |
-| SonarQube diagnostics | `npm run diagnostics:sonar` | Runs the authenticated full-project scan, waits for server processing, and fails for analyzer infrastructure or any unresolved finding. |
+| SonarQube diagnostics | `npm run diagnostics:sonar` | Regenerates package LCOV coverage, runs the authenticated full-project scan, waits for server processing, and fails for analyzer infrastructure, quality-gate failure, or any unresolved finding. |
 | Diagnostics regression | `npm run test:diagnostics` | Uses controlled fixtures to prove local and live SonarQube detection, failure classification, cleanup, and clean rescans. |
 | Strict lint | `npm run lint` | Runs ESLint read-only with zero warnings across all packages, then audits backoffice component companions. |
 | TypeScript | `npm run typecheck` | Type-checks production and test TypeScript configs across all packages without emitting files. |

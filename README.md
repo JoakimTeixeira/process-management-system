@@ -46,7 +46,7 @@ npm run verify
 | `npm run test:mutation --prefix api` | Run the scoped, non-blocking Stryker pilot. |
 | `npm run diagnostics` | Run TypeScript, strict ESLint, module conformance, and a full SonarQube project scan; print every unresolved issue and fail on warnings or errors. |
 | `npm run diagnostics:fast` | Run TypeScript, strict ESLint/SonarJS, module, and internal-link checks without requiring SonarQube. |
-| `npm run diagnostics:sonar` | Run only the authenticated full-project SonarQube scan and server result retrieval. |
+| `npm run diagnostics:sonar` | Generate package coverage, then run the authenticated full-project SonarQube scan and server result retrieval. |
 | `npm run sonar:check` | Scan all supported project languages, wait for server processing, and print unresolved SonarQube issues and hotspots as CLI file/line diagnostics. |
 | `npm run sonar:start` / `sonar:stop` | Start or stop the optional local SonarQube Compose service while preserving its data volumes. |
 | `npm run test:diagnostics` | Prove analyzer coverage and failure handling with controlled fixtures. |

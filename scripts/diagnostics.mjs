@@ -22,7 +22,10 @@ const fastChecks = [
   ["Backoffice component modules", "check:component-modules", "web/backoffice"],
   ["Documentation links", "links:check:internal"],
 ];
-const sonarChecks = [["SonarQube full-project analysis", "sonar:check"]];
+const sonarChecks = [
+  ["Test coverage reports", "test:coverage"],
+  ["SonarQube full-project analysis", "sonar:check"],
+];
 const checks = [
   ...(mode === "sonar" ? [] : fastChecks),
   ...(mode === "fast" ? [] : sonarChecks),
