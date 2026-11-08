@@ -59,7 +59,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     expose:
-      - '80'
+      - '8080'
     depends_on:
       api-lb:
         condition: service_started
@@ -82,7 +82,7 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     expose:
-      - '80'
+      - '8080'
     depends_on:
       api-lb:
         condition: service_started
