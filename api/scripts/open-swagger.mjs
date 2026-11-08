@@ -1,4 +1,4 @@
-const { spawn } = require('child_process');
+import { spawn } from 'node:child_process';
 
 const port = process.env.PORT || '3000';
 const swaggerPath = process.env.SWAGGER_PATH || 'docs';

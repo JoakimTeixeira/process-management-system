@@ -19,7 +19,7 @@ export default defineConfig(
       sourceType: 'commonjs',
       parserOptions: {
         projectService: {
-          allowDefaultProject: ['eslint.config.mjs'],
+          allowDefaultProject: ['eslint.config.mjs', 'scripts/*.mjs'],
         },
         tsconfigRootDir: import.meta.dirname,
       },
