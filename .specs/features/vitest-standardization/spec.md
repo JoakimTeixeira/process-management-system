@@ -1,6 +1,6 @@
 # Vitest Standardization Specification
 
-**Status:** Complete
+**Status:** In Progress
 
 ## Problem statement
 
@@ -19,7 +19,6 @@ API tests use Jest while both Angular apps use Karma/Jasmine and require Chrome.
 | Item | Reason |
 | --- | --- |
 | Required mutation gate | Optional pilot only. |
-| Broad browser E2E | P3 after curl verification stabilizes. |
 | GitHub Actions | No existing workflow. |
 
 ## User stories
@@ -44,7 +43,9 @@ As a new maintainer, I want setup and the core script map in one short README se
 
 ### P3: E2E-01 — Browser smoke tests
 
-Deferred until API/verify gates stabilize; proposed tool is Playwright.
+Add Playwright smoke coverage for the public and backoffice application shells after the API/verify
+gates have stabilized. The initial scope proves real browser bootstrap and critical unauthenticated
+entry routes; curl/DB verification remains the deeper workflow gate.
 
 ### P3: PYR-03 — Mutation testing pilot
 
@@ -62,7 +63,7 @@ Optional Stryker pilot for selected API services; survivors do not initially blo
 | --- | --- | --- |
 | TEST-01 | B1–B5 | Complete |
 | DOCS-01 | B7 | Complete |
-| E2E-01 | Deferred | P3 |
-| PYR-03 | B6 | P3 optional |
+| E2E-01 | B8 | In Progress |
+| PYR-03 | B6 | In Progress |
 
-**Coverage:** 4 total, 3 mapped to executable tasks, 1 explicitly deferred.
+**Coverage:** 4 total, 4 mapped to executable tasks, 0 unmapped.
