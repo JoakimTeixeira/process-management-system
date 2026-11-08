@@ -16,6 +16,7 @@
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test,seeds,scripts}/**/*.ts\" --fix",
+    "lint:check": "eslint \"{src,apps,libs,test,seeds,scripts}/**/*.ts\" --max-warnings=0",
     "seed": "node --require ts-node/register --require tsconfig-paths/register ./seeds/run.ts",
     "typeorm": "node --require ts-node/register --require tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "migrate": "npm run db:init && node --require ts-node/register --require tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d src/database/typeorm.datasource.ts",
@@ -30,7 +31,8 @@
     "test:cov": "vitest run --coverage --config ./vitest.config.ts",
     "test:debug": "node --inspect-brk ./node_modules/vitest/vitest.mjs run --config ./vitest.config.ts --no-file-parallelism --maxWorkers=1",
     "test:e2e": "vitest run --config ./vitest.e2e.config.ts",
-    "test:mutation": "stryker run"
+    "test:mutation": "stryker run",
+    "typecheck": "tsc --noEmit -p tsconfig.json"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

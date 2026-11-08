@@ -23,7 +23,11 @@ npm ci
 npm ci --prefix api
 npm ci --prefix web/backoffice
 npm ci --prefix web/public
+npm run test:browser:install
+npm run lint
+npm run typecheck
 npm run test:all
+npm run test:browser
 npm run build
 npm run verify
 ```
@@ -37,6 +41,10 @@ npm run verify
 | `npm run test:contract` | Check OpenAPI, generated types, schemas, and frontend fixtures. |
 | `npm run test:e2e` | Run the API bootstrap and `/health` Supertest smoke. |
 | `npm run test:all` | Run all non-release test layers. |
+| `npm run test:browser` | Run public and backoffice entry-route smokes in Chromium. |
+| `npm run test:mutation --prefix api` | Run the scoped, non-blocking Stryker pilot. |
+| `npm run lint` | Run read-only ESLint with zero warnings and the backoffice module audit. |
+| `npm run typecheck` | Type-check application and test TypeScript across all packages. |
 | `npm run build` | Build all three packages. |
 | `npm run verify` | Run the release-level Compose, curl, and database gate. |
 | `npm run start:all` | Install and start all three development apps. |

@@ -39,12 +39,12 @@ describe('AuthService', () => {
     findUserByIdSpy = vi.spyOn(authRepository, 'findUserById');
     jwtSigner = {
       signAsync: vi
-        .fn<Promise<string>, [JwtPayload]>()
+        .fn<(payload: JwtPayload) => Promise<string>>()
         .mockResolvedValue('signed-token'),
     };
     authService = new AuthService(authRepository, authConfiguration, jwtSigner);
-    vi.spyOn(authService['logger'], 'log').mockImplementation();
-    vi.spyOn(authService['logger'], 'warn').mockImplementation();
+    vi.spyOn(authService['logger'], 'log').mockImplementation(() => undefined);
+    vi.spyOn(authService['logger'], 'warn').mockImplementation(() => undefined);
   });
 
   afterEach(() => {

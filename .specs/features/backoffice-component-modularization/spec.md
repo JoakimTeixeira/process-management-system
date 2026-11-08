@@ -1,6 +1,6 @@
 # Backoffice Component Modularization Specification
 
-**Status:** In Progress
+**Status:** Complete
 
 ## Problem statement
 
@@ -11,13 +11,13 @@ and SCSS linting to be obscured inside TypeScript.
 
 ## Goals
 
-- [ ] Give every backoffice production component a `.ts`, `.html`, `.scss`, and `.spec.ts`
+- [x] Give every backoffice production component a `.ts`, `.html`, `.scss`, and `.spec.ts`
   companion file.
-- [ ] Replace every production `template:` and `styles:` metadata entry with `templateUrl` and
+- [x] Replace every production `template:` and `styles:` metadata entry with `templateUrl` and
   `styleUrl` without changing selectors, rendering, or behavior.
-- [ ] Add focused characterization coverage for components that currently lack a spec.
-- [ ] Make TypeScript, Angular template, and SCSS ownership independently visible to tooling.
-- [ ] Enforce a repeatable structural audit and zero-warning lint/typecheck gate.
+- [x] Add focused characterization coverage for components that currently lack a spec.
+- [x] Make TypeScript, Angular template, and SCSS ownership independently visible to tooling.
+- [x] Enforce a repeatable structural audit and zero-warning lint/typecheck gate.
 
 ## User story
 
@@ -48,6 +48,6 @@ TypeScript, HTML, SCSS, and tests can be reviewed and linted independently.
 
 | Requirement | Tasks | Status |
 | --- | --- | --- |
-| MOD-01 | M1–M4 | In Progress |
+| MOD-01 | M1–M4 | Complete |
 
 **Coverage:** 1 total, 1 mapped, 0 unmapped.

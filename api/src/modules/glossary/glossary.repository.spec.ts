@@ -1,23 +1,21 @@
-import type { Mocked } from 'vitest';
+import type { Mock } from 'vitest';
 
 import type { DataSource } from 'typeorm';
 
 import { GlossaryRepository } from './glossary.repository';
 
 describe('GlossaryRepository', () => {
-  let dataSource: Mocked<Pick<DataSource, 'query'>>;
+  let query: Mock;
   let repository: GlossaryRepository;
 
   beforeEach(() => {
-    dataSource = {
-      query: vi.fn(),
-    };
+    query = vi.fn();
 
-    repository = new GlossaryRepository(dataSource as unknown as DataSource);
+    repository = new GlossaryRepository({ query } as unknown as DataSource);
   });
 
   it('maps INSERT ... RETURNING results when TypeORM returns [rows, rowCount]', async () => {
-    dataSource.query.mockResolvedValue([
+    query.mockResolvedValue([
       [
         {
           id: 'term-1',
@@ -50,7 +48,7 @@ describe('GlossaryRepository', () => {
   });
 
   it('maps UPDATE ... RETURNING results when TypeORM returns [rows, rowCount]', async () => {
-    dataSource.query.mockResolvedValue([
+    query.mockResolvedValue([
       [
         {
           id: 'term-1',

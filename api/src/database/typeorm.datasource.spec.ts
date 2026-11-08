@@ -57,7 +57,7 @@ describe('typeorm.datasource', () => {
       };
     });
 
-    await import('./typeorm.datasource');
+    await import('./typeorm.datasource.js');
 
     expect(buildDatabaseConfig).toHaveBeenCalled();
     expect(createDataSourceOptions).toHaveBeenCalledWith(mockDbConfig);

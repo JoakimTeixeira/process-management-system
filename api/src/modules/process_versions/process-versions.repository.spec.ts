@@ -1,4 +1,4 @@
-import type { Mock, Mocked } from 'vitest';
+import type { Mock } from 'vitest';
 
 import type { DataSource } from 'typeorm';
 
@@ -6,28 +6,26 @@ import type { SqlExecutor } from '../../common/types/sql-executor.type';
 import { ProcessVersionsRepository } from './process-versions.repository';
 
 describe('ProcessVersionsRepository procedure and asset queries', () => {
-  let dataSource: Mocked<Pick<DataSource, 'query'>>;
-  let executorQuery: Mock<SqlExecutor['query']>;
-  let executor: Mocked<SqlExecutor>;
+  let dataSourceQuery: Mock;
+  let executorQuery: Mock;
+  let executor: SqlExecutor;
   let repository: ProcessVersionsRepository;
 
   beforeEach(() => {
-    dataSource = {
-      query: vi.fn(),
-    };
+    dataSourceQuery = vi.fn();
     executorQuery = vi.fn();
-    executor = { query: executorQuery };
-    repository = new ProcessVersionsRepository(
-      dataSource as unknown as DataSource,
-    );
+    executor = { query: executorQuery as SqlExecutor['query'] };
+    repository = new ProcessVersionsRepository({
+      query: dataSourceQuery,
+    } as unknown as DataSource);
   });
 
   it('checks procedure existence for a process version', async () => {
-    dataSource.query.mockResolvedValue([{ exists: true }]);
+    dataSourceQuery.mockResolvedValue([{ exists: true }]);
 
     await expect(repository.procedureExists('version-1')).resolves.toBe(true);
 
-    expect(dataSource.query).toHaveBeenCalledWith(
+    expect(dataSourceQuery).toHaveBeenCalledWith(
       expect.stringContaining('FROM procedures pr'),
       ['version-1'],
     );

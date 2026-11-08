@@ -215,7 +215,10 @@ describe('ProcessVersionsController', () => {
   });
 
   it('should submit for review', async () => {
-    const reviewedVersion = { ...mockVersion, lifecycleState: 'In Review' };
+    const reviewedVersion: ProcessVersionRecord = {
+      ...mockVersion,
+      lifecycleState: 'In Review',
+    };
     processVersionsService.submitForReview.mockResolvedValue(reviewedVersion);
 
     const result = await controller.submitForReview(
@@ -233,7 +236,10 @@ describe('ProcessVersionsController', () => {
   });
 
   it('should approve a version', async () => {
-    const approvedVersion = { ...mockVersion, lifecycleState: 'Approved' };
+    const approvedVersion: ProcessVersionRecord = {
+      ...mockVersion,
+      lifecycleState: 'Approved',
+    };
     processVersionsService.approve.mockResolvedValue(approvedVersion);
 
     const result = await controller.approve(
@@ -251,7 +257,10 @@ describe('ProcessVersionsController', () => {
   });
 
   it('should reject a version', async () => {
-    const rejectedVersion = { ...mockVersion, lifecycleState: 'Draft' };
+    const rejectedVersion: ProcessVersionRecord = {
+      ...mockVersion,
+      lifecycleState: 'Draft',
+    };
     processVersionsService.reject.mockResolvedValue(rejectedVersion);
 
     const result = await controller.reject(
@@ -269,7 +278,10 @@ describe('ProcessVersionsController', () => {
   });
 
   it('should publish a version', async () => {
-    const publishedVersion = { ...mockVersion, lifecycleState: 'Published' };
+    const publishedVersion: ProcessVersionRecord = {
+      ...mockVersion,
+      lifecycleState: 'Published',
+    };
     processVersionsService.publish.mockResolvedValue(publishedVersion);
 
     const result = await controller.publish(
@@ -287,7 +299,7 @@ describe('ProcessVersionsController', () => {
   });
 
   it('should promote a version', async () => {
-    const promotedVersion = {
+    const promotedVersion: ProcessVersionRecord = {
       ...mockVersion,
       architectureState: 'AS-IS',
       lifecycleState: 'Published',

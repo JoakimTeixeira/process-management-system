@@ -9,7 +9,10 @@ import type { AuditLogWriterService } from '../audit/audit-log-writer.service';
 import type { AuthenticatedUser } from '../auth/interfaces/authenticated-user.interface';
 import type { ProcessesRepository } from '../processes/processes.repository';
 import type { WorkflowAuthorizationService } from '../workflow_support/workflow-authorization.service';
-import type { ProcessVersionsRepository } from './process-versions.repository';
+import type {
+  ProcessVersionRecord,
+  ProcessVersionsRepository,
+} from './process-versions.repository';
 import { ProcessVersionsService } from './process-versions.service';
 
 describe('ProcessVersionsService', () => {
@@ -56,7 +59,7 @@ describe('ProcessVersionsService', () => {
     },
   };
 
-  const approvedVersion = {
+  const approvedVersion: ProcessVersionRecord = {
     id: 'version-1',
     processId: 'process-1',
     versionNumber: 2,
@@ -197,7 +200,7 @@ describe('ProcessVersionsService', () => {
   });
 
   it('should auto-assign the next version number when creating a version', async () => {
-    const createdVersion = {
+    const createdVersion: ProcessVersionRecord = {
       ...approvedVersion,
       id: 'version-2',
       versionNumber: 4,
@@ -329,7 +332,7 @@ describe('ProcessVersionsService', () => {
   });
 
   it('should mark the reviewer checklist complete when a version is approved', async () => {
-    const inReviewVersion = {
+    const inReviewVersion: ProcessVersionRecord = {
       ...approvedVersion,
       lifecycleState: 'In Review',
       checklistCompleted: false,
@@ -363,11 +366,11 @@ describe('ProcessVersionsService', () => {
   });
 
   it('should transition rejected versions back to Draft and write history plus audit', async () => {
-    const inReviewVersion = {
+    const inReviewVersion: ProcessVersionRecord = {
       ...approvedVersion,
       lifecycleState: 'In Review',
     };
-    const rejectedVersion = {
+    const rejectedVersion: ProcessVersionRecord = {
       ...inReviewVersion,
       lifecycleState: 'Draft',
     };
@@ -415,7 +418,7 @@ describe('ProcessVersionsService', () => {
   });
 
   it('should transition approved versions back to Draft through reopen and write governance evidence', async () => {
-    const reopenedVersion = {
+    const reopenedVersion: ProcessVersionRecord = {
       ...approvedVersion,
       lifecycleState: 'Draft',
     };
@@ -509,16 +512,16 @@ describe('ProcessVersionsService', () => {
   });
 
   it('should publish an approved version and automatically archive the previous published version', async () => {
-    const existingPublishedVersion = {
+    const existingPublishedVersion: ProcessVersionRecord = {
       ...approvedVersion,
       id: 'version-0',
       lifecycleState: 'Published',
     };
-    const archivedExistingVersion = {
+    const archivedExistingVersion: ProcessVersionRecord = {
       ...existingPublishedVersion,
       lifecycleState: 'Archived',
     };
-    const publishedVersion = {
+    const publishedVersion: ProcessVersionRecord = {
       ...approvedVersion,
       lifecycleState: 'Published',
     };
@@ -607,11 +610,11 @@ describe('ProcessVersionsService', () => {
   });
 
   it('should archive published versions and write justification to history and audit', async () => {
-    const publishedVersion = {
+    const publishedVersion: ProcessVersionRecord = {
       ...approvedVersion,
       lifecycleState: 'Published',
     };
-    const archivedVersion = {
+    const archivedVersion: ProcessVersionRecord = {
       ...publishedVersion,
       lifecycleState: 'Archived',
     };
@@ -647,19 +650,19 @@ describe('ProcessVersionsService', () => {
   });
 
   it('should promote a published TO-BE version into a new published AS-IS version', async () => {
-    const sourceVersion = {
+    const sourceVersion: ProcessVersionRecord = {
       ...approvedVersion,
       id: 'to-be-version',
       lifecycleState: 'Published',
       architectureState: 'TO-BE',
     };
-    const existingAsIsVersion = {
+    const existingAsIsVersion: ProcessVersionRecord = {
       ...approvedVersion,
       id: 'as-is-version',
       lifecycleState: 'Published',
       architectureState: 'AS-IS',
     };
-    const promotedVersion = {
+    const promotedVersion: ProcessVersionRecord = {
       ...sourceVersion,
       id: 'promoted-version',
       versionNumber: 4,
@@ -740,7 +743,7 @@ describe('ProcessVersionsService', () => {
   });
 
   it('should reject promote when source version is not Published', async () => {
-    const draftVersion = {
+    const draftVersion: ProcessVersionRecord = {
       ...approvedVersion,
       id: 'to-be-version',
       lifecycleState: 'Draft',
@@ -759,7 +762,7 @@ describe('ProcessVersionsService', () => {
   });
 
   it('should reject promote when source version is not TO-BE', async () => {
-    const asIsVersion = {
+    const asIsVersion: ProcessVersionRecord = {
       ...approvedVersion,
       id: 'as-is-version',
       lifecycleState: 'Published',
@@ -778,19 +781,19 @@ describe('ProcessVersionsService', () => {
   });
 
   it('should validate that procedures and assets are copied during promotion', async () => {
-    const sourceVersion = {
+    const sourceVersion: ProcessVersionRecord = {
       ...approvedVersion,
       id: 'to-be-version',
       lifecycleState: 'Published',
       architectureState: 'TO-BE',
     };
-    const existingAsIsVersion = {
+    const existingAsIsVersion: ProcessVersionRecord = {
       ...approvedVersion,
       id: 'as-is-version',
       lifecycleState: 'Published',
       architectureState: 'AS-IS',
     };
-    const promotedVersion = {
+    const promotedVersion: ProcessVersionRecord = {
       ...sourceVersion,
       id: 'promoted-version',
       versionNumber: 4,
@@ -841,7 +844,7 @@ describe('ProcessVersionsService', () => {
   });
 
   it('should require same-team authorization before approve', async () => {
-    const inReviewVersion = {
+    const inReviewVersion: ProcessVersionRecord = {
       ...approvedVersion,
       lifecycleState: 'In Review',
     };
@@ -871,7 +874,7 @@ describe('ProcessVersionsService', () => {
   });
 
   it('should require same-team authorization before publish and promote', async () => {
-    const publishedToBeVersion = {
+    const publishedToBeVersion: ProcessVersionRecord = {
       ...approvedVersion,
       lifecycleState: 'Published',
       architectureState: 'TO-BE',

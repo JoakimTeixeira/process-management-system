@@ -1,6 +1,6 @@
 # Vitest Standardization Specification
 
-**Status:** In Progress
+**Status:** Complete
 
 ## Problem statement
 
@@ -63,7 +63,7 @@ Optional Stryker pilot for selected API services; survivors do not initially blo
 | --- | --- | --- |
 | TEST-01 | B1–B5 | Complete |
 | DOCS-01 | B7 | Complete |
-| E2E-01 | B8 | In Progress |
-| PYR-03 | B6 | In Progress |
+| E2E-01 | B8 | Complete |
+| PYR-03 | B6 | Complete |
 
 **Coverage:** 4 total, 4 mapped to executable tasks, 0 unmapped.

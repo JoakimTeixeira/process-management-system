@@ -1,7 +1,7 @@
 # Backoffice Component Modularization Tasks
 
 **Design:** `.specs/features/backoffice-component-modularization/design.md`  
-**Status:** In Progress
+**Status:** Complete
 
 ## Execution plan
 
@@ -22,6 +22,9 @@ the backoffice test/build outputs and are committed one at a time.
 **Tests/Gate:** unit/quick — all backoffice tests pass and the test count increases  
 **Done when:** every production component has a focused spec before its template/style moves.
 
+**Complete:** 2026-11-08 — 11 standalone-definition specs were added before extraction; the
+backoffice floor increased from 21 files / 75 tests to 32 files / 86 tests.
+
 ### M2 — Externalize each production component module
 
 **Depends on:** M1  
@@ -32,31 +35,31 @@ the backoffice test/build outputs and are committed one at a time.
 
 | Task | Component | Existing spec | Status |
 | --- | --- | --- | --- |
-| M2.01 | `app` | Added by M1 | Pending |
-| M2.02 | `shared/backoffice-shell.component` | Yes | Pending |
-| M2.03 | `shared/confirm-delete-dialog.component` | Added by M1 | Pending |
-| M2.04 | `shared/bpmn/backoffice-bpmn-viewer.component` | Yes | Pending |
-| M2.05 | `features/auth/login.page` | Added by M1 | Pending |
-| M2.06 | `features/home/role-home.page` | Added by M1 | Pending |
-| M2.07 | `features/admin/team-form.page` | Yes | Pending |
-| M2.08 | `features/admin/team-list.page` | Yes | Pending |
-| M2.09 | `features/admin/user-form.page` | Yes | Pending |
-| M2.10 | `features/admin/user-list.page` | Added by M1 | Pending |
-| M2.11 | `features/areas/area-detail.page` | Yes | Pending |
-| M2.12 | `features/areas/area-form.page` | Yes | Pending |
-| M2.13 | `features/areas/area-list.page` | Yes | Pending |
-| M2.14 | `features/glossary/glossary-form.page` | Added by M1 | Pending |
-| M2.15 | `features/glossary/glossary.page` | Added by M1 | Pending |
-| M2.16 | `features/procedures/procedure-list.page` | Yes | Pending |
-| M2.17 | `features/processes/process-form.page` | Yes | Pending |
-| M2.18 | `features/processes/process-list.page` | Yes | Pending |
-| M2.19 | `features/processes/process-versions.page` | Yes | Pending |
-| M2.20 | `features/versions/version-asset-panel.component` | Added by M1 | Pending |
-| M2.21 | `features/versions/version-detail.page` | Yes | Pending |
-| M2.22 | `features/versions/version-form.page` | Yes | Pending |
-| M2.23 | `features/versions/version-history-panel.component` | Added by M1 | Pending |
-| M2.24 | `features/versions/version-lifecycle-panel.component` | Added by M1 | Pending |
-| M2.25 | `features/versions/version-procedure-panel.component` | Added by M1 | Pending |
+| M2.01 | `app` | Added by M1 | ✅ |
+| M2.02 | `shared/backoffice-shell.component` | Yes | ✅ |
+| M2.03 | `shared/confirm-delete-dialog.component` | Added by M1 | ✅ |
+| M2.04 | `shared/bpmn/backoffice-bpmn-viewer.component` | Yes | ✅ |
+| M2.05 | `features/auth/login.page` | Added by M1 | ✅ |
+| M2.06 | `features/home/role-home.page` | Added by M1 | ✅ |
+| M2.07 | `features/admin/team-form.page` | Yes | ✅ |
+| M2.08 | `features/admin/team-list.page` | Yes | ✅ |
+| M2.09 | `features/admin/user-form.page` | Yes | ✅ |
+| M2.10 | `features/admin/user-list.page` | Added by M1 | ✅ |
+| M2.11 | `features/areas/area-detail.page` | Yes | ✅ |
+| M2.12 | `features/areas/area-form.page` | Yes | ✅ |
+| M2.13 | `features/areas/area-list.page` | Yes | ✅ |
+| M2.14 | `features/glossary/glossary-form.page` | Added by M1 | ✅ |
+| M2.15 | `features/glossary/glossary.page` | Added by M1 | ✅ |
+| M2.16 | `features/procedures/procedure-list.page` | Yes | ✅ |
+| M2.17 | `features/processes/process-form.page` | Yes | ✅ |
+| M2.18 | `features/processes/process-list.page` | Yes | ✅ |
+| M2.19 | `features/processes/process-versions.page` | Yes | ✅ |
+| M2.20 | `features/versions/version-asset-panel.component` | Added by M1 | ✅ |
+| M2.21 | `features/versions/version-detail.page` | Yes | ✅ |
+| M2.22 | `features/versions/version-form.page` | Yes | ✅ |
+| M2.23 | `features/versions/version-history-panel.component` | Added by M1 | ✅ |
+| M2.24 | `features/versions/version-lifecycle-panel.component` | Added by M1 | ✅ |
+| M2.25 | `features/versions/version-procedure-panel.component` | Added by M1 | ✅ |
 
 ### M3 — Enforce the module structure audit
 
@@ -67,6 +70,9 @@ the backoffice test/build outputs and are committed one at a time.
 template/style metadata  
 **Done when:** the invariant is executable locally and in the root lint gate.
 
+**Complete:** 2026-11-08 — `check:component-modules` reports 25 complete modules, verifies each
+companion file, and rejects inline production template/style metadata.
+
 ### M4 — Run strict lint, typecheck, unit, and build gates
 
 **Where:** package/root scripts and testing documentation  
@@ -75,6 +81,10 @@ template/style metadata
 **Tests/Gate:** build/full — ESLint uses `--max-warnings=0`; TypeScript, unit, browser, mutation,
 and production build gates pass  
 **Done when:** no TypeScript or ESLint issue appears in validation output.
+
+**Complete:** 2026-11-08 — root lint is read-only with `--max-warnings=0`, all production/test
+TypeScript configs pass, all 486 unit tests and deeper pyramid layers pass, both production Angular
+builds pass, two Chromium smokes pass, and the mutation pilot kills 33/33 mutants.
 
 ## Dependency cross-check
 

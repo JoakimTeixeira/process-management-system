@@ -1,4 +1,4 @@
-import type { Mocked } from 'vitest';
+import type { Mock } from 'vitest';
 
 import { ServiceUnavailableException } from '@nestjs/common';
 import type { DataSource } from 'typeorm';
@@ -7,14 +7,12 @@ import { HealthService } from './health.service';
 
 describe('HealthService', () => {
   let service: HealthService;
-  let dataSource: Mocked<Pick<DataSource, 'query'>>;
+  let query: Mock;
 
   beforeEach(() => {
-    dataSource = {
-      query: vi.fn(),
-    };
+    query = vi.fn();
 
-    service = new HealthService(dataSource as unknown as DataSource);
+    service = new HealthService({ query } as unknown as DataSource);
   });
 
   it('should be defined', () => {
@@ -22,7 +20,7 @@ describe('HealthService', () => {
   });
 
   it('should return up status when database probe succeeds', async () => {
-    dataSource.query.mockResolvedValue([{ '?column?': 1 }]);
+    query.mockResolvedValue([{ '?column?': 1 }]);
 
     await expect(service.getStatus()).resolves.toEqual({
       status: 'UP',
@@ -30,11 +28,11 @@ describe('HealthService', () => {
         database: 'UP',
       },
     });
-    expect(dataSource.query).toHaveBeenCalledWith('SELECT 1');
+    expect(query).toHaveBeenCalledWith('SELECT 1');
   });
 
   it('should throw service unavailable when database probe fails', async () => {
-    dataSource.query.mockRejectedValue(new Error('connection failed'));
+    query.mockRejectedValue(new Error('connection failed'));
 
     try {
       await service.getStatus();
