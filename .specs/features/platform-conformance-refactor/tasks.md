@@ -73,13 +73,15 @@ A5  + B3 → C5 → C6 → C7
 
 **Complete:** 2026-11-07 — process/procedure detail state is signal-first, glossary/procedure HTTP subscriptions tear down deterministically, glossary loading starts in `ngOnInit`, and redundant manual change detection is removed. Stable `HttpClient` observables remain the service boundary because Angular 20 marks `httpResource` experimental. All 15 public test files / 41 tests, lint, contract, and production build pass.
 
-### C7 — Modernize public shared components
+### C7 — Modernize public shared components ✅
 
 **Where:** breadcrumbs, BPMN viewer, catalog search/route adapter and specs  
 **Depends on:** C6  
 **Requirement:** REF-01  
 **Tests/Gate:** unit/full — public suite/build plus verify  
 **Done when:** signal inputs and host metadata/directives replace audited decorators, route normalization is centralized, and async/fullscreen behavior remains characterized.
+
+**Complete:** 2026-11-08 — breadcrumbs and BPMN inputs use signals, BPMN fullscreen and catalog outside-click listeners use component host metadata, and focused tests cover query links, debounce/normalization, stale async suppression, and fullscreen resize/refit. Route parsing remains centralized in `process-route.helper.ts`; all 18 public test files / 47 tests, lint, contract, and production build pass.
 
 ## Dependency cross-check
 

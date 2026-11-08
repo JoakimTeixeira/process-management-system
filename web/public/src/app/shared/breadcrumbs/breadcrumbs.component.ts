@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -11,7 +11,7 @@ import { BreadcrumbItem } from './breadcrumbs.builder';
   imports: [CommonModule, RouterLink, MatIconModule],
   template: `
     <nav aria-label="Breadcrumb" class="breadcrumbs">
-      @for (item of items; track item.label; let last = $last) {
+      @for (item of items(); track item.label; let last = $last) {
         <span class="breadcrumb-item">
           @if (item.link && !last) {
             <a [routerLink]="item.link" [queryParams]="item.queryParams">
@@ -62,5 +62,5 @@ import { BreadcrumbItem } from './breadcrumbs.builder';
   `,
 })
 export class BreadcrumbsComponent {
-  @Input() items: BreadcrumbItem[] = [];
+  readonly items = input<BreadcrumbItem[]>([]);
 }

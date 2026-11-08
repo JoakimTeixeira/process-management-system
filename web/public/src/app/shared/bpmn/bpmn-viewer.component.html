@@ -1,5 +1,5 @@
-<section class="viewer-layout" [class.viewer-layout--compact]="layout === 'compact'">
-  @if (layout !== 'compact') {
+<section class="viewer-layout" [class.viewer-layout--compact]="layout() === 'compact'">
+  @if (layout() !== 'compact') {
     <aside class="viewer-list-panel">
       <div class="viewer-panel-header">
         <p class="portal-section-kicker">Diagram</p>
@@ -9,7 +9,7 @@
         </p>
       </div>
 
-      @if (processVersionId) {
+      @if (processVersionId()) {
         <button
           type="button"
           class="viewer-asset-card viewer-asset-card--active"
@@ -32,21 +32,31 @@
       <div>
         <p class="portal-section-kicker">Visualisation</p>
         <span class="viewer-title">
-          {{ layout === 'compact' ? 'Diagram preview' : 'Visualize the diagram' }}
+          {{ layout() === 'compact' ? 'Diagram preview' : 'Visualize the diagram' }}
         </span>
         <p class="viewer-subtitle">
           {{
-            layout === 'compact'
+            layout() === 'compact'
               ? 'Fit and zoom the published BPMN for this version.'
               : 'Use the controls to fit, zoom, and open fullscreen.'
           }}
         </p>
       </div>
       <div class="viewer-actions">
-        <button class="viewer-action-button" type="button" (click)="fitViewport()" matTooltip="Fit to viewport">
+        <button
+          class="viewer-action-button"
+          type="button"
+          (click)="fitViewport()"
+          matTooltip="Fit to viewport"
+        >
           <mat-icon>fit_screen</mat-icon>
         </button>
-        <button class="viewer-action-button" type="button" (click)="zoom(-0.1)" matTooltip="Zoom out">
+        <button
+          class="viewer-action-button"
+          type="button"
+          (click)="zoom(-0.1)"
+          matTooltip="Zoom out"
+        >
           <mat-icon>remove</mat-icon>
         </button>
         <button class="viewer-action-button" type="button" (click)="zoom(0.1)" matTooltip="Zoom in">

@@ -4,7 +4,6 @@ import {
   Component,
   DestroyRef,
   ElementRef,
-  HostListener,
   OnInit,
   inject,
   input,
@@ -36,6 +35,9 @@ type CatalogSearchNavigationResult = PublicCatalogSearchResult & {
   imports: [CommonModule, MatIconModule, RouterLink],
   templateUrl: './catalog-search.component.html',
   styleUrl: './catalog-search.component.scss',
+  host: {
+    '(document:click)': 'onDocumentClick($event)',
+  },
 })
 export class CatalogSearchComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
@@ -62,7 +64,6 @@ export class CatalogSearchComponent implements OnInit {
     this.bindSearch();
   }
 
-  @HostListener('document:click', ['$event'])
   protected onDocumentClick(event: Event): void {
     const clickedInside = this.elementRef.nativeElement.contains(event.target as Node);
     if (!clickedInside) {
@@ -174,8 +175,7 @@ export class CatalogSearchComponent implements OnInit {
 
   private mapSearchResult(result: PublicCatalogSearchResult): CatalogSearchNavigationResult {
     const normalizedHref = normalizeCatalogSearchHref(result.kind, result.href);
-    const { routePath, routeSegments, queryParams } =
-      parseCatalogNavigationTarget(normalizedHref);
+    const { routePath, routeSegments, queryParams } = parseCatalogNavigationTarget(normalizedHref);
 
     return {
       ...result,

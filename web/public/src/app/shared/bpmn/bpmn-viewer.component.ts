@@ -6,13 +6,12 @@ import {
   Component,
   DestroyRef,
   ElementRef,
-  HostListener,
-  Input,
   OnChanges,
   OnDestroy,
   SimpleChanges,
   ViewChild,
   inject,
+  input,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { MatButtonModule } from '@angular/material/button';
@@ -48,15 +47,24 @@ function isBpmnCanvas(obj: unknown): obj is BpmnCanvas {
 @Component({
   selector: 'app-bpmn-viewer',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, MatButtonModule, MatIconModule, MatProgressSpinnerModule, MatTooltipModule],
+  imports: [
+    CommonModule,
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule,
+    MatTooltipModule,
+  ],
   templateUrl: './bpmn-viewer.component.html',
   styleUrl: './bpmn-viewer.component.scss',
+  host: {
+    '(document:fullscreenchange)': 'handleFullscreenChange()',
+  },
 })
 export class BpmnViewerComponent implements AfterViewInit, OnChanges, OnDestroy {
   private readonly cdr = inject(ChangeDetectorRef);
   private readonly destroyRef = inject(DestroyRef);
-  @Input() processVersionId: string | null = null;
-  @Input() layout: 'default' | 'compact' = 'default';
+  readonly processVersionId = input<string | null>(null);
+  readonly layout = input<'default' | 'compact'>('default');
   @ViewChild('canvas') private readonly canvas?: ElementRef<HTMLDivElement>;
   @ViewChild('stage') private readonly stage?: ElementRef<HTMLDivElement>;
 
@@ -71,7 +79,7 @@ export class BpmnViewerComponent implements AfterViewInit, OnChanges, OnDestroy 
     typeof document !== 'undefined' && !!document.documentElement.requestFullscreen;
 
   get showStatePanel(): boolean {
-    return this.loading || !!this.errorMessage || !this.processVersionId;
+    return this.loading || !!this.errorMessage || !this.processVersionId();
   }
 
   ngAfterViewInit(): void {
@@ -130,7 +138,6 @@ export class BpmnViewerComponent implements AfterViewInit, OnChanges, OnDestroy 
     await this.stage.nativeElement.requestFullscreen();
   }
 
-  @HostListener('document:fullscreenchange')
   protected handleFullscreenChange(): void {
     const isStageFullscreen = this.isStageFullscreen();
 
@@ -146,7 +153,9 @@ export class BpmnViewerComponent implements AfterViewInit, OnChanges, OnDestroy 
       return;
     }
 
-    if (!this.processVersionId) {
+    const processVersionId = this.processVersionId();
+
+    if (!processVersionId) {
       this.loading = false;
       this.errorMessage = 'No published BPMN diagram is available for this view.';
       this.cdr.markForCheck();
@@ -163,7 +172,7 @@ export class BpmnViewerComponent implements AfterViewInit, OnChanges, OnDestroy 
     });
 
     this.bpmnXmlService
-      .getXml(this.processVersionId)
+      .getXml(processVersionId)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: async (xml) => {
