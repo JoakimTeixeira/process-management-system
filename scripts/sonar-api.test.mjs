@@ -2,8 +2,11 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
   SonarDiagnosticError,
+  assertSameServer,
   assertServerReady,
   fetchPages,
+  formatLocation,
+  sonarRequest,
   waitForComputeTask,
 } from "./sonar-api.mjs";
 import { runSonarCheck } from "./sonar-check.mjs";
@@ -188,6 +191,203 @@ await test("reports the metric details for a failed quality gate", async () => {
   );
 });
 
+await test("fails when overall coverage is below 80 percent or duplication is above 0", async () => {
+  const logged = [];
+  const result = await runSonarCheck({
+    environment: configuredEnvironment(),
+    fetchImpl: routeFetch({
+      measures: [
+        { metric: "coverage", value: "63.8" },
+        { metric: "lines_to_cover", value: "9974" },
+        { metric: "duplicated_lines", value: "11242" },
+        { metric: "duplicated_lines_density", value: "23.1" },
+      ],
+    }),
+    logger: {
+      error: (message) => logged.push(message),
+      log: (message) => logged.push(message),
+    },
+    readFileImpl: async () =>
+      [
+        `serverUrl=${serverUrl}`,
+        `ceTaskUrl=${serverUrl}/api/ce/task?id=overall-measures`,
+        `${serverUrl}/dashboard?id=fixture`,
+      ].join("\n"),
+    scanImpl: async () => {},
+  });
+
+  assert.equal(result.clean, false);
+  assert.equal(result.gateStatus, "ERROR");
+  assert.ok(
+    logged.some((message) => message.includes("coverage LT 80 (actual 63.8)")),
+  );
+  assert.ok(
+    logged.some((message) =>
+      message.includes("duplicated_lines_density GT 0 (actual 23.1)"),
+    ),
+  );
+});
+
+await test("covers sonar-api error branches and formatting helpers", async () => {
+  await assert.rejects(
+    assertServerReady(serverUrl, token, async () =>
+      jsonResponse({ status: "STARTING" }),
+    ),
+    hasCategory("infrastructure"),
+  );
+
+  await assert.rejects(
+    assertServerReady(serverUrl, token, async (url) => {
+      if (new URL(url).pathname === "/api/system/status") {
+        return jsonResponse({ status: "UP" });
+      }
+      return jsonResponse({}, 401);
+    }),
+    hasCategory("authentication"),
+  );
+
+  await assert.rejects(
+    waitForComputeTask("http://other:9000/api/ce/task", serverUrl, token),
+    hasCategory("api"),
+  );
+
+  await assert.rejects(
+    waitForComputeTask(`${serverUrl}/api/ce/task`, serverUrl, token, {
+      fetchImpl: async () => jsonResponse({ task: { status: "SUCCESS" } }),
+    }),
+    hasCategory("api"),
+  );
+
+  await assert.rejects(
+    waitForComputeTask(`${serverUrl}/api/ce/task`, serverUrl, token, {
+      fetchImpl: async () =>
+        jsonResponse({
+          task: { status: "FAILED", errorMessage: "out of memory" },
+        }),
+    }),
+    hasCategory("analysis"),
+  );
+
+  await assert.rejects(
+    sonarRequest(serverUrl, token, "http://evil.example.com/steal"),
+    hasCategory("api"),
+  );
+
+  await assert.rejects(
+    sonarRequest(serverUrl, token, "api/system/status", async () =>
+      jsonResponse({}, 500),
+    ),
+    hasCategory("api"),
+  );
+
+  assert.deepEqual(
+    await sonarRequest(serverUrl, token, "api/system/status", async () => ({
+      ok: true,
+      status: 204,
+      statusText: "No Content",
+    })),
+    {},
+  );
+
+  await assert.rejects(
+    sonarRequest(serverUrl, token, "api/system/status", async () => ({
+      ok: true,
+      status: 200,
+      statusText: "OK",
+      json: async () => {
+        throw new SyntaxError("bad json");
+      },
+    })),
+    hasCategory("api"),
+  );
+
+  assert.throws(
+    () => assertSameServer(serverUrl, "http://other:9000"),
+    hasCategory("scanner"),
+  );
+
+  assert.equal(formatLocation("fixture:src/a.ts", 12, "fixture"), "src/a.ts:12");
+  assert.equal(formatLocation("other/b.ts", undefined, "fixture"), "other/b.ts");
+});
+
+await test("loads token from file and formats unresolved issues and hotspots", async () => {
+  const logged = [];
+  const result = await runSonarCheck({
+    environment: {
+      SONAR_HOST_URL: `${serverUrl}///`,
+      SONAR_ORGANIZATION: "org-1",
+      SONAR_PROJECT_KEY: "fixture",
+    },
+    fetchImpl: async (input) => {
+      const url = new URL(input);
+      if (url.pathname === "/api/issues/search") {
+        return jsonResponse({
+          issues: [
+            {
+              key: "i1",
+              component: "fixture:src/index.ts",
+              line: 5,
+              severity: "MAJOR",
+              rule: "typescript:S1",
+              message: "Fix this",
+            },
+          ],
+          paging: { total: 1 },
+        });
+      }
+      if (url.pathname === "/api/hotspots/search") {
+        return jsonResponse({
+          hotspots: [
+            {
+              key: "h1",
+              component: "fixture:Dockerfile",
+              line: 2,
+              ruleKey: "docker:S1",
+              message: "Review this",
+            },
+          ],
+          paging: { total: 1 },
+        });
+      }
+      return routeFetch()(input);
+    },
+    logger: {
+      error: (message) => logged.push(message),
+      log: (message) => logged.push(message),
+    },
+    readFileImpl: async (filePath) => {
+      if (String(filePath).endsWith("token")) {
+        return `${token}\n`;
+      }
+      return [
+        `serverUrl=${serverUrl}`,
+        `ceTaskUrl=${serverUrl}/api/ce/task?id=issues`,
+      ].join("\n");
+    },
+    scanImpl: async () => {},
+  });
+
+  assert.equal(result.clean, false);
+  assert.equal(result.issues.length, 1);
+  assert.equal(result.hotspots.length, 1);
+  assert.ok(logged.some((line) => line.includes("src/index.ts:5")));
+  assert.ok(logged.some((line) => line.includes("Dockerfile:2")));
+
+  await assert.rejects(
+    runSonarCheck({
+      environment: {
+        ...configuredEnvironment(),
+        SONAR_ANALYSIS_TIMEOUT_MS: "-5",
+      },
+      fetchImpl: routeFetch(),
+      readFileImpl: async () =>
+        `serverUrl=${serverUrl}\nceTaskUrl=${serverUrl}/api/ce/task?id=bad`,
+      scanImpl: async () => {},
+    }),
+    hasCategory("configuration"),
+  );
+});
+
 function configuredEnvironment() {
   return {
     SONAR_HOST_URL: serverUrl,
@@ -198,6 +398,12 @@ function configuredEnvironment() {
 
 function routeFetch({
   authenticationValid = true,
+  measures = [
+    { metric: "coverage", value: "100.0" },
+    { metric: "lines_to_cover", value: "10" },
+    { metric: "duplicated_lines", value: "0" },
+    { metric: "duplicated_lines_density", value: "0.0" },
+  ],
   qualityGate = { status: "OK" },
 } = {}) {
   return async (input) => {
@@ -221,6 +427,9 @@ function routeFetch({
     }
     if (url.pathname === "/api/qualitygates/project_status") {
       return jsonResponse({ projectStatus: qualityGate });
+    }
+    if (url.pathname === "/api/measures/component") {
+      return jsonResponse({ component: { measures } });
     }
     throw new Error(`Unexpected SonarQube route: ${url}`);
   };

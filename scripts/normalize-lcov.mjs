@@ -4,12 +4,25 @@ import { pathToFileURL } from "node:url";
 
 const repositoryRoot = resolve(import.meta.dirname, "..");
 const defaultReports = [
-  ["api/coverage/lcov.info", "api"],
-  ["web/backoffice/coverage/lcov.info", "web/backoffice"],
-  ["web/public/coverage/lcov.info", "web/public"],
+  { reportPath: "api/coverage/lcov.info", sourceRoot: "api" },
+  {
+    reportPath: "web/backoffice/coverage/lcov.info",
+    sourceRoot: "web/backoffice",
+  },
+  { reportPath: "web/public/coverage/lcov.info", sourceRoot: "web/public" },
+  {
+    reportPath: "scripts/coverage/lcov.info",
+    sourceRoot: ".",
+    sourceMarkerText: "scripts/",
+  },
 ];
 
-export function normalizeLcov(content, sourceRoot, root = repositoryRoot) {
+export function normalizeLcov(
+  content,
+  sourceRoot,
+  root = repositoryRoot,
+  sourceMarkerText = "src/",
+) {
   const absoluteSourceRoot = resolve(root, sourceRoot);
   const records = content.split(/end_of_record\s*/u);
   const normalizedRecords = [];
@@ -27,7 +40,7 @@ export function normalizeLcov(content, sourceRoot, root = repositoryRoot) {
     }
 
     const sourcePath = lines[sourceIndex].slice(3).replaceAll("\\", "/");
-    const sourceMarker = sourcePath.indexOf("src/");
+    const sourceMarker = sourcePath.indexOf(sourceMarkerText);
     if (sourceMarker === -1) {
       continue;
     }
@@ -54,10 +67,22 @@ export async function normalizeCoverageReports(
   reports = defaultReports,
   root = repositoryRoot,
 ) {
-  for (const [reportPath, sourceRoot] of reports) {
+  for (const entry of reports) {
+    const { reportPath, sourceRoot, sourceMarkerText } = Array.isArray(entry)
+      ? {
+          reportPath: entry[0],
+          sourceRoot: entry[1],
+          sourceMarkerText: entry[2],
+        }
+      : entry;
     const absoluteReportPath = resolve(root, reportPath);
     const content = await readFile(absoluteReportPath, "utf8");
-    const normalized = normalizeLcov(content, sourceRoot, root);
+    const normalized = normalizeLcov(
+      content,
+      sourceRoot,
+      root,
+      sourceMarkerText,
+    );
     await writeFile(absoluteReportPath, normalized, "utf8");
     console.log(`[coverage] Normalized ${reportPath}`);
   }

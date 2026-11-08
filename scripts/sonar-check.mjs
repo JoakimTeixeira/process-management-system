@@ -130,13 +130,39 @@ export async function runSonarCheck({
     `api/qualitygates/project_status?analysisId=${encodeURIComponent(task.analysisId)}`,
     fetchImpl,
   );
+  const measureResponse = await sonarRequest(
+    reportServerUrl,
+    token,
+    `api/measures/component?component=${encodeURIComponent(projectKey)}&metricKeys=coverage,lines_to_cover,duplicated_lines,duplicated_lines_density`,
+    fetchImpl,
+  );
 
   printIssues(issues, projectKey, logger);
   printHotspots(hotspots, projectKey, logger);
 
   const projectStatus = qualityGate.projectStatus;
-  const gateStatus = projectStatus?.status ?? "UNKNOWN";
-  printFailedGateConditions(projectStatus?.conditions ?? [], logger);
+  const measures = toMeasureMap(measureResponse.component?.measures ?? []);
+  const measureFailures = evaluateOverallMeasures(measures);
+  const conditions = mergeConditions(
+    projectStatus?.conditions ?? [],
+    measureFailures,
+  );
+  const gateStatus =
+    (projectStatus?.status ?? "UNKNOWN") === "OK" &&
+    measureFailures.length === 0
+      ? "OK"
+      : "ERROR";
+  if (
+    measures.coverage !== undefined ||
+    measures.duplicated_lines_density !== undefined
+  ) {
+    logger.log(
+      `[sonar] Measures: coverage=${measures.coverage ?? "n/a"}%, ` +
+        `duplications=${measures.duplicated_lines_density ?? "0.0"}% ` +
+        `(${measures.duplicated_lines ?? "0"} lines)`,
+    );
+  }
+  printFailedGateConditions(conditions, logger);
   logger.log(`[sonar] Quality gate: ${gateStatus}`);
   logger.log(
     `[sonar] Dashboard: ${report.dashboardUrl ?? `${serverUrl}/dashboard?id=${projectKey}`}`,
@@ -229,6 +255,58 @@ function printFailedGateConditions(conditions, logger) {
         `(actual ${condition.actualValue ?? "unknown"}).`,
     );
   }
+}
+
+function toMeasureMap(measures) {
+  return Object.fromEntries(
+    measures.map((measure) => [measure.metric, measure.value]),
+  );
+}
+
+function evaluateOverallMeasures(measures) {
+  const failures = [];
+  const linesToCover = Number.parseInt(measures.lines_to_cover ?? "0", 10);
+  const coverage = Number.parseFloat(measures.coverage ?? "0");
+  if (linesToCover > 0 && (!Number.isFinite(coverage) || coverage < 80)) {
+    failures.push({
+      actualValue: measures.coverage ?? "0.0",
+      comparator: "LT",
+      errorThreshold: "80",
+      metricKey: "coverage",
+      status: "ERROR",
+    });
+  }
+
+  const duplicatedLines = Number.parseInt(measures.duplicated_lines ?? "0", 10);
+  const duplicatedDensity = Number.parseFloat(
+    measures.duplicated_lines_density ?? "0",
+  );
+  if (duplicatedLines > 0 || duplicatedDensity > 0) {
+    failures.push({
+      actualValue:
+        measures.duplicated_lines_density ?? String(measures.duplicated_lines),
+      comparator: "GT",
+      errorThreshold: "0",
+      metricKey: "duplicated_lines_density",
+      status: "ERROR",
+    });
+  }
+
+  return failures;
+}
+
+function mergeConditions(serverConditions, measureFailures) {
+  const seenErrorMetrics = new Set(
+    serverConditions
+      .filter((condition) => condition.status === "ERROR")
+      .map((condition) => condition.metricKey),
+  );
+  return [
+    ...serverConditions,
+    ...measureFailures.filter(
+      (failure) => !seenErrorMetrics.has(failure.metricKey),
+    ),
+  ];
 }
 
 function deduplicate(results) {

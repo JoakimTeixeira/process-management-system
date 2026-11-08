@@ -83,6 +83,7 @@
             "tsConfig": "tsconfig.spec.json",
             "buildTarget": "backoffice:build:development",
             "runner": "vitest",
+            "setupFiles": ["src/testing/vitest.setup.ts"],
             "codeCoverageReporters": ["text", "text-summary", "html", "lcov"]
           }
         },

@@ -47,6 +47,7 @@ async function start() {
   const configuredToken = process.env.SONAR_TOKEN?.trim();
   if (configuredToken) {
     await assertValidToken(configuredToken);
+    await ensureStrictQualityGate(configuredToken);
     console.log("[sonar-local] Server is ready; SONAR_TOKEN is valid.");
     return;
   }
@@ -54,6 +55,7 @@ async function start() {
   const storedToken = await readOptionalSecret(tokenPath);
   if (storedToken) {
     if (await isValidToken(storedToken)) {
+      await ensureStrictQualityGate(storedToken);
       console.log(
         `[sonar-local] Server is ready; using the token stored at ${tokenPath}.`,
       );
@@ -64,7 +66,8 @@ async function start() {
     );
   }
 
-  await bootstrapLocalCredentials();
+  const token = await bootstrapLocalCredentials();
+  await ensureStrictQualityGate(token);
   console.log(
     `[sonar-local] Server is ready; a user token was stored at ${tokenPath}.`,
   );
@@ -228,6 +231,127 @@ async function bootstrapLocalCredentials() {
 
   const { token } = await response.json();
   await writeSecret(tokenPath, token);
+  return token;
+}
+
+async function ensureStrictQualityGate(token) {
+  const gateName = "Process Management System";
+  const headers = {
+    Authorization: `Bearer ${token}`,
+    "Content-Type": "application/x-www-form-urlencoded",
+  };
+  const listResponse = await fetch(
+    `${normalizedServerUrl}/api/qualitygates/list`,
+    { headers: { Authorization: `Bearer ${token}` } },
+  );
+  if (!listResponse.ok) {
+    throw new Error(
+      `Could not list SonarQube quality gates (${listResponse.status}).`,
+    );
+  }
+  const { qualitygates = [] } = await listResponse.json();
+  if (!qualitygates.some((gate) => gate.name === gateName)) {
+    const createResponse = await fetch(
+      `${normalizedServerUrl}/api/qualitygates/create`,
+      {
+        method: "POST",
+        headers,
+        body: new URLSearchParams({ name: gateName }),
+      },
+    );
+    if (!createResponse.ok) {
+      throw new Error(
+        `Could not create quality gate "${gateName}" (${createResponse.status}).`,
+      );
+    }
+  }
+
+  const showResponse = await fetch(
+    `${normalizedServerUrl}/api/qualitygates/show?${new URLSearchParams({ name: gateName }).toString()}`,
+    { headers: { Authorization: `Bearer ${token}` } },
+  );
+  if (!showResponse.ok) {
+    throw new Error(
+      `Could not inspect quality gate "${gateName}" (${showResponse.status}).`,
+    );
+  }
+  const existingGate = await showResponse.json();
+  const existingConditions = new Map(
+    (existingGate.conditions ?? []).map((condition) => [
+      condition.metric,
+      condition,
+    ]),
+  );
+
+  const desiredConditions = [
+    { metric: "new_violations", op: "GT", error: "0" },
+    { metric: "violations", op: "GT", error: "0" },
+    { metric: "new_coverage", op: "LT", error: "80" },
+    { metric: "coverage", op: "LT", error: "80" },
+    { metric: "new_duplicated_lines_density", op: "GT", error: "0" },
+    { metric: "duplicated_lines_density", op: "GT", error: "0" },
+    { metric: "new_security_hotspots_reviewed", op: "LT", error: "100" },
+    { metric: "security_hotspots_reviewed", op: "LT", error: "100" },
+  ];
+
+  for (const desired of desiredConditions) {
+    const current = existingConditions.get(desired.metric);
+    if (!current) {
+      const response = await fetch(
+        `${normalizedServerUrl}/api/qualitygates/create_condition`,
+        {
+          method: "POST",
+          headers,
+          body: new URLSearchParams({
+            gateName,
+            metric: desired.metric,
+            op: desired.op,
+            error: desired.error,
+          }),
+        },
+      );
+      if (!response.ok) {
+        throw new Error(
+          `Could not create condition ${desired.metric} on "${gateName}" (${response.status}).`,
+        );
+      }
+    } else if (current.op !== desired.op || current.error !== desired.error) {
+      const response = await fetch(
+        `${normalizedServerUrl}/api/qualitygates/update_condition`,
+        {
+          method: "POST",
+          headers,
+          body: new URLSearchParams({
+            id: String(current.id),
+            metric: desired.metric,
+            op: desired.op,
+            error: desired.error,
+          }),
+        },
+      );
+      if (!response.ok) {
+        throw new Error(
+          `Could not update condition ${desired.metric} on "${gateName}" (${response.status}).`,
+        );
+      }
+    }
+  }
+
+  if (!existingGate.isDefault) {
+    const defaultResponse = await fetch(
+      `${normalizedServerUrl}/api/qualitygates/set_as_default`,
+      {
+        method: "POST",
+        headers,
+        body: new URLSearchParams({ name: gateName }),
+      },
+    );
+    if (!defaultResponse.ok) {
+      throw new Error(
+        `Could not set "${gateName}" as the default quality gate (${defaultResponse.status}).`,
+      );
+    }
+  }
 }
 
 async function assertValidToken(token) {

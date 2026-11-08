@@ -39,3 +39,18 @@ await test("normalizes API records that are already relative to src", () => {
 
   assert.match(normalized, /SF:C:\/workspace\/project\/api\/src\/main\.ts/u);
 });
+
+await test("maps tooling records relative to the repository root", () => {
+  const normalized = normalizeLcov(
+    "SF:scripts\\check-links.mjs\nDA:1,1\nend_of_record\nSF:node_modules\\x.js\nDA:1,0\nend_of_record\n",
+    ".",
+    "C:/workspace/project",
+    "scripts/",
+  );
+
+  assert.match(
+    normalized,
+    /SF:C:\/workspace\/project\/scripts\/check-links\.mjs/u,
+  );
+  assert.doesNotMatch(normalized, /node_modules/u);
+});

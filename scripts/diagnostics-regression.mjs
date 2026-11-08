@@ -231,6 +231,7 @@ function sonarProperties(sources) {
     `sonar.sources=${sources}`,
     "sonar.scm.exclusions.disabled=true",
     "sonar.exclusions=.scannerwork/**",
+    "sonar.coverage.exclusions=fixture.ts",
     "sonar.typescript.tsconfigPaths=tsconfig.json",
     "",
   ].join("\n");

@@ -12,3 +12,5 @@
 /.scannerwork
 /.sonarqube
 /.diagnostics-fixtures
+
+/scripts/coverage

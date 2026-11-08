@@ -146,6 +146,7 @@ export async function sonarRequest(
   authToken,
   path,
   fetchImpl = fetch,
+  init = {},
 ) {
   const requestUrl = new URL(path, `${baseUrl}/`);
   if (requestUrl.origin !== new URL(baseUrl).origin) {
@@ -158,6 +159,7 @@ export async function sonarRequest(
   let response;
   try {
     response = await fetchImpl(requestUrl, {
+      ...init,
       headers: authToken ? { Authorization: `Bearer ${authToken}` } : undefined,
     });
   } catch (error) {
@@ -177,6 +179,10 @@ export async function sonarRequest(
       category,
       `SonarQube request failed (${response.status} ${response.statusText}): ${requestUrl}`,
     );
+  }
+
+  if (response.status === 204) {
+    return {};
   }
 
   try {
