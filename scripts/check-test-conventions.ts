@@ -143,7 +143,7 @@ export async function runTestConventionAudit({
     await Promise.all(roots.map((directory) => collectTestFiles(path.resolve(root, directory))))
   )
     .flat()
-    .sort();
+    .sort((left, right) => left.localeCompare(right));
   const violations: TestTitleViolation[] = [];
 
   for (const file of files) {
