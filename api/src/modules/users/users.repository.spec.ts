@@ -145,4 +145,3 @@ describe('UsersRepository team queries', () => {
     expect(afterPassword.id).toBe('user-1');
   });
 });
-
