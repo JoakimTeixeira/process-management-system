@@ -47,8 +47,12 @@
 
 - **Requirements:** TSO-04, TSO-05
 - **Depends on:** T1, T2, T3, T4
+- **Status:** Complete
 - **Done when:** all four fresh LCOV reports import without warnings and SonarQube reports at least 80
   percent overall and new-code coverage with the strict quality gate passing.
+- **Evidence:** the scanner imports API, backoffice, public, and tooling LCOV files without unresolved
+  paths; overall coverage is 83.8 percent, new-code coverage is 86.5 percent, duplication is zero,
+  the quality gate passes, and there are no unresolved issues or unreviewed hotspots.
 
 ## T6 — Run release-level regression gates
 

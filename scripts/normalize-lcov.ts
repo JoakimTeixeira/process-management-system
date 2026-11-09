@@ -18,7 +18,7 @@ const defaultReports: readonly CoverageReportConfig[] = [
   {
     reportPath: "scripts/coverage/lcov.info",
     sourceRoot: ".",
-    sourceMarkerText: "scripts/",
+    sourceMarkerText: "",
   },
 ];
 
@@ -45,12 +45,15 @@ export function normalizeLcov(
     }
 
     const sourcePath = lines[sourceIndex].slice(3).replaceAll("\\", "/");
-    const sourceMarker = sourcePath.indexOf(sourceMarkerText);
-    if (sourceMarker === -1) {
+    const sourceMarker = sourceMarkerText ? sourcePath.indexOf(sourceMarkerText) : 0;
+    if (sourceMarker < 0) {
       continue;
     }
 
     const relativeSource = sourcePath.slice(sourceMarker);
+    if (/(?:^|\/)(?:coverage|dist|node_modules)(?:\/|$)/u.test(relativeSource)) {
+      continue;
+    }
     const absoluteSource = resolve(absoluteSourceRoot, relativeSource);
     const sourceRootRelativePath = relative(absoluteSourceRoot, absoluteSource);
     if (

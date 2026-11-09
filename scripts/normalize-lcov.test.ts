@@ -47,11 +47,13 @@ void test("should normalize API records that are already relative to src", () =>
 
 void test("should map tooling records relative to the repository root", () => {
   const normalized = normalizeLcov(
-    "SF:scripts\\check-links.ts\nDA:1,1\nend_of_record\nSF:node_modules\\x.js\nDA:1,0\nend_of_record\n",
+    "SF:scripts\\check-links.ts\nDA:1,1\nend_of_record\nSF:api\\scripts\\open-swagger.ts\nDA:1,1\nend_of_record\nSF:verification\\scripts\\verify.ts\nDA:1,1\nend_of_record\nSF:node_modules\\x.js\nDA:1,0\nend_of_record\n",
     ".",
     "C:/workspace/project",
-    "scripts/",
+    "",
   );
+  assert.match(normalized, /api\/scripts\/open-swagger\.ts/u);
+  assert.match(normalized, /verification\/scripts\/verify\.ts/u);
 
   assert.match(
     normalized,
