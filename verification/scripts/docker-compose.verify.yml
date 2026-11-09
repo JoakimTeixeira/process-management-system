@@ -1,6 +1,8 @@
 services:
   api:
     image: process-management-system-api-verify:latest
+    build:
+      target: verification
 
   postgres:
     ports: !override
