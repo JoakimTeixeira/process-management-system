@@ -22,7 +22,7 @@ describe('AuditReaderRepository', () => {
     repository = module.get<AuditReaderRepository>(AuditReaderRepository);
   });
 
-  it('finds audit logs, state history, and workflow audit access', async () => {
+  it('should find audit logs, state history, and workflow audit access', async () => {
     const now = new Date('2026-01-01T00:00:00.000Z');
     query
       .mockResolvedValueOnce([

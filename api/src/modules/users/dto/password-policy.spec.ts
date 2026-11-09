@@ -7,7 +7,7 @@ import { CreateUserDto } from './create-user.dto';
 import { ResetPasswordDto } from './reset-password.dto';
 
 describe('User password policy DTO validation', () => {
-  it('rejects create-user passwords shorter than 16 characters', async () => {
+  it('should reject create-user passwords shorter than 16 characters', async () => {
     const dto = plainToInstance(CreateUserDto, {
       name: 'Alice Editor',
       email: 'alice@example.com',
@@ -21,7 +21,7 @@ describe('User password policy DTO validation', () => {
     expect(errors.some((error) => error.property === 'password')).toBe(true);
   });
 
-  it('rejects reset passwords that miss required character classes', async () => {
+  it('should reject reset passwords that miss required character classes', async () => {
     const dto = plainToInstance(ResetPasswordDto, {
       newPassword: 'alllowercase12345',
     });
@@ -31,7 +31,7 @@ describe('User password policy DTO validation', () => {
     expect(errors.some((error) => error.property === 'newPassword')).toBe(true);
   });
 
-  it('accepts passwords that satisfy the full policy', async () => {
+  it('should accept passwords that satisfy the full policy', async () => {
     const createDto = plainToInstance(CreateUserDto, {
       name: 'Alice Editor',
       email: 'alice@example.com',

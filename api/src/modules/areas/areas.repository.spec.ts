@@ -35,7 +35,7 @@ describe('AreasRepository', () => {
     repository = module.get<AreasRepository>(AreasRepository);
   });
 
-  it('finds all areas, by id, and by code', async () => {
+  it('should find all areas, by id, and by code', async () => {
     query
       .mockResolvedValueOnce([sampleRow])
       .mockResolvedValueOnce([sampleRow])
@@ -54,7 +54,7 @@ describe('AreasRepository', () => {
     expect(await repository.findByCode('A1')).toMatchObject({ id: 'area-1' });
   });
 
-  it('checks ownership, team membership, and child processes', async () => {
+  it('should check ownership, team membership, and child processes', async () => {
     query
       .mockResolvedValueOnce([{ exists: true }])
       .mockResolvedValueOnce([{ exists: false }])
@@ -69,7 +69,7 @@ describe('AreasRepository', () => {
     expect(await repository.hasProcesses('area-2')).toBe(false);
   });
 
-  it('computes the next area code', async () => {
+  it('should compute the next area code', async () => {
     query
       .mockResolvedValueOnce([{ max_code_number: null }])
       .mockResolvedValueOnce([{ max_code_number: 4 }]);
@@ -78,7 +78,7 @@ describe('AreasRepository', () => {
     expect(await repository.getNextAreaCode()).toBe('A5');
   });
 
-  it('creates, updates, and deletes areas and validates required identifiers', async () => {
+  it('should create, update, and deletes areas and validate required identifiers', async () => {
     query
       .mockResolvedValueOnce([{ id: 'area-1' }])
       .mockResolvedValueOnce([sampleRow])

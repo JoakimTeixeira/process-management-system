@@ -31,7 +31,7 @@ describe('BpmnViewerComponent', () => {
     }).compileComponents();
   });
 
-  it('uses signal inputs while preserving the compact empty state', () => {
+  it('should use signal inputs while preserving the compact empty state', () => {
     const fixture = TestBed.createComponent(BpmnViewerComponent);
     const component = fixture.componentInstance as unknown as BpmnViewerHarness;
 
@@ -51,7 +51,7 @@ describe('BpmnViewerComponent', () => {
     expect(getXml).not.toHaveBeenCalled();
   });
 
-  it('loads the latest diagram asynchronously and ignores a stale response', async () => {
+  it('should load the latest diagram asynchronously and ignore a stale response', async () => {
     const firstResponse = new Subject<string>();
     const secondResponse = new Subject<string>();
     const canvas = {
@@ -92,7 +92,7 @@ describe('BpmnViewerComponent', () => {
     expect(fixture.nativeElement.querySelector('.viewer-state')).toBeNull();
   });
 
-  it('enters and exits fullscreen from the toolbar', async () => {
+  it('should enter and exit fullscreen from the toolbar', async () => {
     const requestFullscreen = vi.fn().mockResolvedValue(undefined);
     const exitFullscreen = vi.fn().mockResolvedValue(undefined);
     const resized = vi.fn();

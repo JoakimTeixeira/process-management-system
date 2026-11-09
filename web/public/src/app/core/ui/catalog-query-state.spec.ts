@@ -7,7 +7,7 @@ import {
 } from './catalog-query-state';
 
 describe('catalog-query-state', () => {
-  it('reads and trims canonical catalog query values', () => {
+  it('should read and trims canonical catalog query values', () => {
     expect(
       readCatalogQueryState(
         convertToParamMap({
@@ -27,13 +27,13 @@ describe('catalog-query-state', () => {
     });
   });
 
-  it('does not treat presentation route values as domain architecture states', () => {
+  it('should not treat presentation route values as domain architecture states', () => {
     expect(normalizeArchitectureFilter('as-is')).toBe('');
     expect(normalizeArchitectureFilter('to-be')).toBe('');
     expect(normalizeArchitectureFilter('AS-IS')).toBe('AS-IS');
   });
 
-  it('drops a procedure-only process filter from process navigation', () => {
+  it('should drop a procedure-only process filter from process navigation', () => {
     expect(
       buildCatalogQueryParams({
         tab: 'processes',
@@ -51,7 +51,7 @@ describe('catalog-query-state', () => {
     });
   });
 
-  it('preserves a selected process when navigating the procedure catalog', () => {
+  it('should preserve a selected process when navigating the procedure catalog', () => {
     expect(
       buildCatalogQueryParams({
         tab: 'procedures',

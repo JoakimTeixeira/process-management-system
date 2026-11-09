@@ -36,7 +36,7 @@ describe('AuthRepository', () => {
     repository = module.get<AuthRepository>(AuthRepository);
   });
 
-  it('finds users by email and id and maps optional team data', async () => {
+  it('should find users by email and id and map optional team data', async () => {
     query
       .mockResolvedValueOnce([sampleRow])
       .mockResolvedValueOnce([])

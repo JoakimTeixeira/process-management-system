@@ -11,7 +11,7 @@ describe('MethodologyPageComponent', () => {
     }).compileComponents();
   });
 
-  it('renders methodology sections and breadcrumbs', () => {
+  it('should render methodology sections and breadcrumbs', () => {
     const fixture = TestBed.createComponent(MethodologyPageComponent);
     fixture.detectChanges();
     expect(fixture.componentInstance).toBeTruthy();

@@ -50,7 +50,7 @@ describe('UserFormPageComponent', () => {
     }).compileComponents();
   });
 
-  it('loads team and role values for edit mode', async () => {
+  it('should load team and role values for edit mode', async () => {
     const fixture = TestBed.createComponent(UserFormPageComponent);
 
     fixture.componentRef.setInput('id', 'user-1');
@@ -75,7 +75,7 @@ describe('UserFormPageComponent', () => {
     expect(component.resetPasswordForm.controls.newPassword.enabled).toBe(true);
   });
 
-  it('shows password requirements for create mode and blocks weak passwords', async () => {
+  it('should show password requirements for create mode and block weak passwords', async () => {
     const fixture = TestBed.createComponent(UserFormPageComponent);
 
     api.createUser.mockReturnValue(
@@ -119,7 +119,7 @@ describe('UserFormPageComponent', () => {
     expect(component.form.controls.password.invalid).toBe(true);
   });
 
-  it('shows reset password requirements and blocks weak temporary passwords', async () => {
+  it('should show reset password requirements and block weak temporary passwords', async () => {
     const fixture = TestBed.createComponent(UserFormPageComponent);
 
     fixture.componentRef.setInput('id', 'user-1');
@@ -143,7 +143,7 @@ describe('UserFormPageComponent', () => {
     expect(component.resetPasswordForm.controls.newPassword.invalid).toBe(true);
   });
 
-  it('only sends changed fields when reactivating an existing user', async () => {
+  it('should send only changed fields when reactivating an existing user', async () => {
     const fixture = TestBed.createComponent(UserFormPageComponent);
 
     api.getUser.mockReturnValue(

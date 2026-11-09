@@ -67,7 +67,7 @@ describe('high-risk PostgreSQL paths', () => {
     }
   });
 
-  it('enforces same-team RBAC through real ownership joins', async () => {
+  it('should enforce same-team RBAC through real ownership joins', async () => {
     const scenario = await seedLifecycleScenario(dataSource, 'rbac');
     const { workflowAuthorizationService } =
       createHighRiskSqlContext(dataSource);
@@ -99,7 +99,7 @@ describe('high-risk PostgreSQL paths', () => {
     ).resolves.toBeUndefined();
   });
 
-  it('persists lifecycle transitions, archival, history, and audit atomically', async () => {
+  it('should persist lifecycle transitions, archival, history, and audit atomically', async () => {
     const scenario = await seedLifecycleScenario(dataSource, 'lifecycle');
     const { processVersionsService } = createHighRiskSqlContext(dataSource);
 
@@ -218,7 +218,7 @@ describe('high-risk PostgreSQL paths', () => {
     );
   });
 
-  it('exposes only published process, version, procedure, and BPMN SQL rows', async () => {
+  it('should expose only published process, version, procedure, and BPMN SQL rows', async () => {
     const scenario = await seedVisibilityScenario(dataSource, 'visibility');
     const { publicProcessesRepository, publicProceduresRepository } =
       createHighRiskSqlContext(dataSource);
@@ -268,7 +268,7 @@ describe('high-risk PostgreSQL paths', () => {
     expect(draftBpmn).toBeNull();
   });
 
-  it('promotes TO-BE by cloning procedure and asset content through real SQL', async () => {
+  it('should promote TO-BE by cloning procedure and asset content through real SQL', async () => {
     const scenario = await seedPromotionScenario(dataSource, 'promotion');
     const { processVersionsService } = createHighRiskSqlContext(dataSource);
 

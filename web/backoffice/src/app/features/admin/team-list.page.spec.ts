@@ -36,7 +36,7 @@ describe('TeamListPageComponent', () => {
     }).compileComponents();
   });
 
-  it('loads teams for the administration list', async () => {
+  it('should load teams for the administration list', async () => {
     const fixture = TestBed.createComponent(TeamListPageComponent);
     fixture.detectChanges();
     await fixture.whenStable();

@@ -24,13 +24,13 @@ function getControllerMethod(target: object, key: string): ControllerMethod {
 }
 
 describe('ProcessVersionsController metadata', () => {
-  it('protects the controller with JWT and roles guards', () => {
+  it('should protect the controller with JWT and roles guards', () => {
     expect(
       Reflect.getMetadata(GUARDS_METADATA, ProcessVersionsController),
     ).toEqual([JwtAuthGuard, RolesGuard]);
   });
 
-  it('restricts editor workflow methods to EDITOR', () => {
+  it('should restrict editor workflow methods to EDITOR', () => {
     for (const methodName of ['create', 'update', 'submitForReview']) {
       expect(
         Reflect.getMetadata(
@@ -41,7 +41,7 @@ describe('ProcessVersionsController metadata', () => {
     }
   });
 
-  it('restricts reviewer lifecycle methods to REVIEWER', () => {
+  it('should restrict reviewer lifecycle methods to REVIEWER', () => {
     for (const methodName of ['approve', 'reject', 'reopen']) {
       expect(
         Reflect.getMetadata(
@@ -52,7 +52,7 @@ describe('ProcessVersionsController metadata', () => {
     }
   });
 
-  it('restricts publisher lifecycle methods to PUBLISHER', () => {
+  it('should restrict publisher lifecycle methods to PUBLISHER', () => {
     for (const methodName of ['publish', 'archive', 'promote']) {
       expect(
         Reflect.getMetadata(
@@ -63,7 +63,7 @@ describe('ProcessVersionsController metadata', () => {
     }
   });
 
-  it('restricts version reads to content roles', () => {
+  it('should restrict version reads to content roles', () => {
     for (const methodName of ['listByProcessId', 'getById']) {
       expect(
         Reflect.getMetadata(

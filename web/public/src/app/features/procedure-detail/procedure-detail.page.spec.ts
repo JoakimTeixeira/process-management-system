@@ -74,7 +74,7 @@ describe('ProcedureDetailPageComponent', () => {
     }).compileComponents();
   });
 
-  it('loads procedure detail and preserves process-origin breadcrumb context', () => {
+  it('should load procedure detail and preserve process-origin breadcrumb context', () => {
     const fixture = TestBed.createComponent(ProcedureDetailPageComponent);
     const page = fixture.componentInstance as unknown as ProcedureDetailPageHarness;
 
@@ -89,7 +89,7 @@ describe('ProcedureDetailPageComponent', () => {
     });
   });
 
-  it('reads canonical and legacy activity fields and supplies an empty value label', () => {
+  it('should read canonical and legacy activity fields and supply an empty value label', () => {
     const fixture = TestBed.createComponent(ProcedureDetailPageComponent);
     const page = fixture.componentInstance as unknown as ProcedureDetailPageHarness;
 

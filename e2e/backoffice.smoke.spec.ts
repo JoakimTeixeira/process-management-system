@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 import { backofficeBaseUrl } from '../playwright.config';
 
-test('backoffice boots its anonymous login route in Chromium', async ({ page }) => {
+test('should boot the backoffice anonymous login route in Chromium', async ({ page }) => {
   const pageErrors: Error[] = [];
   page.on('pageerror', (error) => pageErrors.push(error));
 

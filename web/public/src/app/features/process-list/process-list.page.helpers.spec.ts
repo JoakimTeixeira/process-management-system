@@ -80,7 +80,7 @@ describe('process-list.page.helpers', () => {
     process: { id: 'p2', code: '2', title: 'Access Control' },
   };
 
-  it('resolves catalog tabs, page titles, and descriptions', () => {
+  it('should resolve catalog tabs, page titles, and descriptions', () => {
     expect(CATALOG_ARCHITECTURE_OPTIONS).toHaveLength(2);
     expect(getDefaultCatalogTab('procedures')).toBe('procedures');
     expect(getDefaultCatalogTab('other')).toBe('processes');
@@ -93,7 +93,7 @@ describe('process-list.page.helpers', () => {
     expect(getCatalogPageDescription('procedures')).toContain('published procedures');
   });
 
-  it('computes process and procedure view and version labels', () => {
+  it('should compute process and procedure view and version labels', () => {
     expect(getDefaultProcessView(processAsIs)).toBe('as-is');
     expect(getDefaultProcessView(processToBe)).toBe('to-be');
 
@@ -111,7 +111,7 @@ describe('process-list.page.helpers', () => {
     ).toBe(1);
   });
 
-  it('resolves selected area and process labels and sorts process options', () => {
+  it('should resolve selected area and process labels and sort process options', () => {
     expect(getSelectedArea([area], 'a1')).toEqual(area);
     expect(getSelectedArea([area], 'missing')).toBeNull();
 
@@ -129,7 +129,7 @@ describe('process-list.page.helpers', () => {
     expect(getSelectedProcessLabel(options, 'missing')).toBeNull();
   });
 
-  it('filters processes and procedures by area, architecture, process, and query', () => {
+  it('should filter processes and procedures by area, architecture, process, and query', () => {
     const processes = [processAsIs, processToBe];
     expect(filterBaseProcesses(processes, 'other-area', '')).toEqual([]);
     expect(filterBaseProcesses(processes, 'a1', 'TO-BE')).toEqual([processToBe]);
@@ -146,7 +146,7 @@ describe('process-list.page.helpers', () => {
     expect(filterProcedures(procedures, 'triage')).toEqual([procedureWithVersion]);
   });
 
-  it('builds catalog tab definitions and normalizes selected process IDs', () => {
+  it('should build catalog tab definitions and normalize selected process IDs', () => {
     expect(buildCatalogTabDefinitions(4, 9)).toEqual([
       { id: 'processes', label: 'Processes', badge: '4' },
       { id: 'procedures', label: 'Procedures', badge: '9' },

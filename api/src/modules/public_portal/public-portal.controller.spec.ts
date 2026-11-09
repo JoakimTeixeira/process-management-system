@@ -14,7 +14,7 @@ import type {
 } from './public-portal.types';
 
 describe('PublicPortalController metadata', () => {
-  it('does not apply backoffice auth guards to public endpoints', () => {
+  it('should not apply backoffice auth guards to public endpoints', () => {
     expect(
       Reflect.getMetadata(GUARDS_METADATA, PublicPortalController),
     ).toBeUndefined();
@@ -52,7 +52,7 @@ describe('PublicPortalController', () => {
     );
   });
 
-  it('returns public areas', async () => {
+  it('should return public areas', async () => {
     const areas: PublicAreaSummary[] = [
       { id: 'area-1', code: 'AREA_OPS', title: 'Operations' },
     ];
@@ -61,7 +61,7 @@ describe('PublicPortalController', () => {
     await expect(controller.listAreas()).resolves.toEqual(areas);
   });
 
-  it('parses architecture filters for the public catalog', async () => {
+  it('should parse architecture filters for the public catalog', async () => {
     const processes: PublicProcessSummary[] = [];
     service.listProcesses.mockResolvedValue(processes);
 
@@ -80,7 +80,7 @@ describe('PublicPortalController', () => {
     });
   });
 
-  it('returns mixed catalog search results', async () => {
+  it('should return mixed catalog search results', async () => {
     const results: PublicCatalogSearchResult[] = [
       {
         kind: 'Area',
@@ -100,7 +100,7 @@ describe('PublicPortalController', () => {
     });
   });
 
-  it('returns process detail, history, bpmn xml, and procedure detail', async () => {
+  it('should return process detail, history, bpmn xml, and procedure detail', async () => {
     const detail = {
       process: {
         id: 'process-1',

@@ -7,7 +7,7 @@ import { CreateProcedureDto } from './create-procedure.dto';
 import { UpdateProcedureDto } from './update-procedure.dto';
 
 describe('Procedure DTO validation', () => {
-  it('rejects create payloads without activities, inputs, and outputs', async () => {
+  it('should reject create payloads without activities, inputs, and outputs', async () => {
     const dto = plainToInstance(CreateProcedureDto, {
       title: 'Validate request',
       utility: 'Ensure the request is complete',
@@ -27,7 +27,7 @@ describe('Procedure DTO validation', () => {
     expect(failingProperties).toContain('outputs');
   });
 
-  it('rejects update payloads that try to clear activities, inputs, or outputs', async () => {
+  it('should reject update payloads that try to clear activities, inputs, or outputs', async () => {
     const dto = plainToInstance(UpdateProcedureDto, {
       activities: [],
       inputs: ['   '],
@@ -42,7 +42,7 @@ describe('Procedure DTO validation', () => {
     expect(failingProperties).toContain('outputs');
   });
 
-  it('accepts complete procedure payloads', async () => {
+  it('should accept complete procedure payloads', async () => {
     const dto = plainToInstance(CreateProcedureDto, {
       title: 'Validate request',
       utility: 'Ensure the request is complete',

@@ -6,7 +6,7 @@ import { AuthService } from '../../core/auth/auth.service';
 import { RoleHomePageComponent } from './role-home.page';
 
 describe('RoleHomePageComponent', () => {
-  it('redirects to the current role home after Angular initializes the component', async () => {
+  it('should redirect to the current role home after Angular initializes the component', async () => {
     const getDefaultRoute = vi.fn().mockReturnValue('/processes');
     const navigateByUrl = vi.fn().mockResolvedValue(true);
     await TestBed.configureTestingModule({

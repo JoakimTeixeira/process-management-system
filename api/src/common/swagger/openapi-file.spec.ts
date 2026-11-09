@@ -10,7 +10,7 @@ describe('OpenAPI file contract', () => {
     paths: {},
   };
 
-  it('serializes a stable, newline-terminated document', () => {
+  it('should serialize a stable, newline-terminated document', () => {
     const first = serializeOpenApiDocument(document);
     const second = serializeOpenApiDocument(document);
 
@@ -18,7 +18,7 @@ describe('OpenAPI file contract', () => {
     expect(first.endsWith('\n')).toBe(true);
   });
 
-  it('accepts a current contract and rejects drift', () => {
+  it('should accept a current contract and reject drift', () => {
     const expected = serializeOpenApiDocument(document);
 
     expect(() =>

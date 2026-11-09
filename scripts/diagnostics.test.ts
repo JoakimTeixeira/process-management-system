@@ -12,7 +12,7 @@ import {
   sonarProperties,
 } from "./diagnostics-regression.ts";
 
-void test("resolveDiagnosticsChecks selects fast, sonar, and all check lists", () => {
+void test("should select fast, sonar, and all diagnostic check lists", () => {
   assert.deepEqual(resolveDiagnosticsChecks("fast"), fastDiagnosticsChecks);
   assert.deepEqual(resolveDiagnosticsChecks("sonar"), sonarDiagnosticsChecks);
   assert.deepEqual(resolveDiagnosticsChecks("all"), [
@@ -25,7 +25,7 @@ void test("resolveDiagnosticsChecks selects fast, sonar, and all check lists", (
   );
 });
 
-void test("runDiagnostics executes checks and reports clean status when all succeed", () => {
+void test("should execute diagnostic checks and report clean status when all succeed", () => {
   const logged: string[] = [];
   const invokedArgs: (readonly string[])[] = [];
 
@@ -48,7 +48,7 @@ void test("runDiagnostics executes checks and reports clean status when all succ
   assert.ok(logged.some((msg) => msg.includes("All sonar diagnostics passed.")));
 });
 
-void test("runDiagnostics records spawn errors and non-zero exit statuses", () => {
+void test("should record diagnostic spawn errors and non-zero exit statuses", () => {
   const errors: string[] = [];
   let callIndex = 0;
 
@@ -81,14 +81,14 @@ void test("runDiagnostics records spawn errors and non-zero exit statuses", () =
   assert.ok(errors.some((msg) => msg.includes("Failed checks:")));
 });
 
-void test("runDiagnostics rejects missing npm_execpath", () => {
+void test("should reject a missing npm_execpath", () => {
   assert.throws(
     () => runDiagnostics({ mode: "fast", npmCli: "" }),
     /Run diagnostics through npm/u,
   );
 });
 
-void test("diagnostics-regression helpers build properties and guard fixture paths", () => {
+void test("should build diagnostic properties and guard regression fixture paths", () => {
   const props = sonarProperties("src");
   assert.match(props, /sonar\.sources=src/u);
   assert.match(props, /sonar\.scm\.exclusions\.disabled=true/u);

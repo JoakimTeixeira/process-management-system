@@ -44,7 +44,7 @@ describe('ProceduresRepository', () => {
     repository = module.get<ProceduresRepository>(ProceduresRepository);
   });
 
-  it('finds procedures by id, version, backoffice list, and code', async () => {
+  it('should find procedures by id, version, backoffice list, and code', async () => {
     query
       .mockResolvedValueOnce([sampleRow])
       .mockResolvedValueOnce([])
@@ -66,7 +66,7 @@ describe('ProceduresRepository', () => {
     expect(await repository.findByVersionAndCode('v1', '9.9')).toBeNull();
   });
 
-  it('computes the next procedure code and rejects missing process codes', async () => {
+  it('should compute the next procedure code and reject missing process codes', async () => {
     query
       .mockResolvedValueOnce([{ process_code: '1', max_suffix: 2 }])
       .mockResolvedValueOnce([{ process_code: '1', max_suffix: null }])
@@ -79,7 +79,7 @@ describe('ProceduresRepository', () => {
     );
   });
 
-  it('creates, updates, and deletes procedures and validates required records', async () => {
+  it('should create, update, and deletes procedures and validate required records', async () => {
     query
       .mockResolvedValueOnce([{ id: 'proc-1' }])
       .mockResolvedValueOnce([sampleRow])

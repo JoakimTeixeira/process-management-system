@@ -31,7 +31,7 @@ describe('AreaDetailPageComponent', () => {
     }).compileComponents();
   });
 
-  it('keeps the loading state visible until both area and process requests resolve', async () => {
+  it('should keep the loading state visible until both area and process requests resolve', async () => {
     const fixture = TestBed.createComponent(AreaDetailPageComponent);
     fixture.componentRef.setInput('id', 'area-1');
     fixture.detectChanges();

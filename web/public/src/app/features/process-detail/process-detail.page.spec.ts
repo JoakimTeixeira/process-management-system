@@ -99,7 +99,7 @@ describe('ProcessDetailPageComponent', () => {
     }).compileComponents();
   });
 
-  it('loads detail and history while normalizing duplicate compare selections', () => {
+  it('should load detail and history while normalizing duplicate compare selections', () => {
     const fixture = TestBed.createComponent(ProcessDetailPageComponent);
     const page = fixture.componentInstance as unknown as ProcessDetailPageHarness;
 
@@ -115,7 +115,7 @@ describe('ProcessDetailPageComponent', () => {
     expect(page.breadcrumbs().at(-1)?.label).toBe('Compare');
   });
 
-  it('navigates history without carrying view query parameters', () => {
+  it('should navigate history without carrying view query parameters', () => {
     const fixture = TestBed.createComponent(ProcessDetailPageComponent);
     const page = fixture.componentInstance as unknown as ProcessDetailPageHarness;
     fixture.componentInstance.ngOnInit();

@@ -17,7 +17,7 @@ describe('BreadcrumbsComponent', () => {
     }).compileComponents();
   });
 
-  it('renders linked ancestors and a plain-text current item from a signal input', () => {
+  it('should render linked ancestors and a plain-text current item from a signal input', () => {
     const fixture = TestBed.createComponent(BreadcrumbsComponent);
     const component = fixture.componentInstance as unknown as BreadcrumbsHarness;
     const items: BreadcrumbItem[] = [

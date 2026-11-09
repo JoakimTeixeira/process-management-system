@@ -3,16 +3,23 @@
 ## T1 — Baseline naming, runtime, scripts, and coverage
 
 - **Requirements:** TSO-01, TSO-02, TSO-03, TSO-04
-- **Status:** In progress
+- **Status:** Complete
 - **Done when:** current violations, package timings, script bottlenecks, LCOV imports, and SonarQube
   file-level coverage gaps are recorded from executable commands.
+- **Evidence:** the audit found 234 nonconforming titles in 127 test files; root unit execution took
+  about 58 seconds before runner changes; API isolation spawned 58 workers; diagnostics used
+  synchronous child processes; external links were checked serially; and the live SonarQube baseline
+  reported 60.0 percent overall coverage and 8.5 percent new-code coverage.
 
 ## T2 — Enforce standardized test titles
 
 - **Requirements:** TSO-01, TSO-05
 - **Depends on:** T1
+- **Status:** Complete
 - **Done when:** every static test title starts with `should ` and a tested repository audit rejects a
   controlled nonconforming fixture with file and line output.
+- **Evidence:** `npm run test:naming`, the focused checker tests, root lint, and root typecheck pass;
+  every discovered static `it` and `test` title starts with `should `.
 
 ## T3 — Optimize unit runner execution
 

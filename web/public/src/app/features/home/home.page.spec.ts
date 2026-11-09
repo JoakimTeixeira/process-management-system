@@ -22,7 +22,7 @@ describe('HomePageComponent', () => {
     }).compileComponents();
   });
 
-  it('creates the home page with quick access cards', () => {
+  it('should create the home page with quick access cards', () => {
     const fixture = TestBed.createComponent(HomePageComponent);
     fixture.detectChanges();
     expect(fixture.componentInstance).toBeTruthy();

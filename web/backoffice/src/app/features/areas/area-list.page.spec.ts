@@ -60,7 +60,7 @@ describe('AreaListPageComponent', () => {
     }).compileComponents();
   });
 
-  it('loads areas and confirms deletion before calling the api', async () => {
+  it('should load areas and confirm deletion before calling the api', async () => {
     const fixture = TestBed.createComponent(AreaListPageComponent);
     fixture.detectChanges();
     await fixture.whenStable();

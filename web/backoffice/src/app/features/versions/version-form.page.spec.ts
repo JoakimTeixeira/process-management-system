@@ -99,7 +99,7 @@ describe('VersionFormPageComponent', () => {
     }).compileComponents();
   });
 
-  it('creates versions without exposing version-number input to the client payload', async () => {
+  it('should create versions without exposing version-number input to the client payload', async () => {
     const fixture = TestBed.createComponent(VersionFormPageComponent);
     const router = TestBed.inject(Router);
     vi.spyOn(router, 'navigate').mockResolvedValue(true);
@@ -130,7 +130,7 @@ describe('VersionFormPageComponent', () => {
     });
   });
 
-  it('blocks version creation for editors outside the process team', async () => {
+  it('should block version creation for editors outside the process team', async () => {
     auth.currentUser = () => ({
       id: 'editor-2',
       name: 'Finley Editor',

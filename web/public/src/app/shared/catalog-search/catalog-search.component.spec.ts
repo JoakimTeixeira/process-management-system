@@ -34,7 +34,7 @@ describe('CatalogSearchComponent', () => {
     vi.useRealTimers();
   });
 
-  it('normalizes API search links through the centralized route adapter', async () => {
+  it('should normalize API search links through the centralized route adapter', async () => {
     const fixture = TestBed.createComponent(CatalogSearchComponent);
     fixture.detectChanges();
     const input = fixture.nativeElement.querySelector('input') as HTMLInputElement;
@@ -57,7 +57,7 @@ describe('CatalogSearchComponent', () => {
     expect(link.getAttribute('href')).toBe('/catalog/processes/process-1/diagram?view=to-be');
   });
 
-  it('closes a popover and clears its results after an outside document click', async () => {
+  it('should close a popover and clear its results after an outside document click', async () => {
     const fixture = TestBed.createComponent(CatalogSearchComponent);
     fixture.componentRef.setInput('mode', 'popover');
     fixture.detectChanges();

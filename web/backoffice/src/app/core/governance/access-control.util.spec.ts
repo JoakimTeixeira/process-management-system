@@ -52,7 +52,7 @@ describe('AccessControlUtil', () => {
     service = TestBed.inject(AccessControlUtil);
   });
 
-  it('allows same-team editors to manage processes and create versions', () => {
+  it('should allow same-team editors to manage processes and create versions', () => {
     expect(service.canManageProcess(process)).toBe(true);
     expect(service.canCreateVersion(process)).toBe(true);
     expect(service.getAvailableTeams([{ id: 'team-1', name: 'Operations' }])).toEqual([
@@ -61,7 +61,7 @@ describe('AccessControlUtil', () => {
     expect(service.getLockedTeamId(process)).toBe('team-1');
   });
 
-  it('blocks non-editors and cross-team editors from process and version mutation', () => {
+  it('should block non-editors and cross-team editors from process and version mutation', () => {
     currentUserState.set({
       id: 'reviewer-1',
       name: 'Riley Reviewer',
@@ -87,13 +87,13 @@ describe('AccessControlUtil', () => {
     expect(service.canManageVersion(process, { lifecycleState: 'Draft' })).toBe(false);
   });
 
-  it('allows direct version mutation only for same-team editors on draft versions', () => {
+  it('should allow direct version mutation only for same-team editors on draft versions', () => {
     expect(service.canManageVersion(process, { lifecycleState: 'Draft' })).toBe(true);
     expect(service.canManageVersion(process, { lifecycleState: 'Approved' })).toBe(false);
     expect(service.canManageVersion(process, { lifecycleState: 'Published' })).toBe(false);
   });
 
-  it('reflects helper role checks and empty-team behavior', () => {
+  it('should reflect helper role checks and empty-team behavior', () => {
     expect(service.hasRole('EDITOR')).toBe(true);
     expect(service.hasAnyRole(['EDITOR', 'PUBLISHER'])).toBe(true);
 

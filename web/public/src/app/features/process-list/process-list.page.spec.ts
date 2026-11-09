@@ -84,7 +84,7 @@ describe('ProcessListPageComponent', () => {
     }).compileComponents();
   });
 
-  it('loads route-backed filters and clears a process selection before options arrive', () => {
+  it('should load route-backed filters and clear a process selection before options arrive', () => {
     const fixture = TestBed.createComponent(ProcessListPageComponent);
     const page = fixture.componentInstance as unknown as ProcessListPageHarness;
 
@@ -99,7 +99,7 @@ describe('ProcessListPageComponent', () => {
     expect(page.filteredProcedures()).toEqual([procedure]);
   });
 
-  it('replaces the current URL with the page current filter state when search changes', () => {
+  it('should replace the current URL with the page current filter state when search changes', () => {
     const fixture = TestBed.createComponent(ProcessListPageComponent);
     const page = fixture.componentInstance as unknown as ProcessListPageHarness;
     fixture.componentInstance.ngOnInit();

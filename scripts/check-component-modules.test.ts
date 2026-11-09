@@ -45,7 +45,7 @@ function createMockComponentFs(
   };
 }
 
-void test("runComponentModuleAudit passes when all component modules have external companions", () => {
+void test("should pass when all component modules have external companions", () => {
   const root = "/workspace/web/backoffice";
   const appDir = join(root, "src", "app");
   const compBase = join(appDir, "example.component");
@@ -89,7 +89,7 @@ void test("runComponentModuleAudit passes when all component modules have extern
   );
 });
 
-void test("auditComponentModules reports missing companion files and inline metadata violations", () => {
+void test("should report missing companion files and inline metadata violations", () => {
   const root = "/workspace/web/backoffice";
   const appDir = join(root, "src", "app");
   const nestedDir = join(appDir, "features");

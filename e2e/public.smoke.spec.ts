@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 import { publicBaseUrl } from '../playwright.config';
 
-test('public portal boots its home route in Chromium', async ({ page }) => {
+test('should boot the public portal home route in Chromium', async ({ page }) => {
   const pageErrors: Error[] = [];
   page.on('pageerror', (error) => pageErrors.push(error));
 

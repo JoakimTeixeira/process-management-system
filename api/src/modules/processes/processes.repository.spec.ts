@@ -34,7 +34,7 @@ describe('ProcessesRepository', () => {
     repository = module.get<ProcessesRepository>(ProcessesRepository);
   });
 
-  it('finds processes and maps governance summaries', async () => {
+  it('should find processes and map governance summaries', async () => {
     query
       .mockResolvedValueOnce([sampleRow])
       .mockResolvedValueOnce([
@@ -94,7 +94,7 @@ describe('ProcessesRepository', () => {
     expect(await repository.findByCode('missing')).toBeNull();
   });
 
-  it('checks area, owner, team, version existence, and next process code', async () => {
+  it('should check area, owner, team, version existence, and next process code', async () => {
     query
       .mockResolvedValueOnce([{ exists: true }])
       .mockResolvedValueOnce([])
@@ -115,7 +115,7 @@ describe('ProcessesRepository', () => {
     expect(await repository.getNextProcessCode()).toBe('8');
   });
 
-  it('creates, updates, and deletes processes and validates required records', async () => {
+  it('should create, update, and deletes processes and validate required records', async () => {
     query
       .mockResolvedValueOnce([{ id: 'process-1' }])
       .mockResolvedValueOnce([sampleRow])

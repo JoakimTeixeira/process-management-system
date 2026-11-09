@@ -52,7 +52,7 @@ describe('BackofficeShellComponent', () => {
     }).compileComponents();
   });
 
-  it('keeps Procedures between Processes and Glossary for content roles', () => {
+  it('should keep Procedures between Processes and Glossary for content roles', () => {
     const fixture = TestBed.createComponent(BackofficeShellComponent);
     const component = fixture.componentInstance as unknown as BackofficeShellTestInstance;
 

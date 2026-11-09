@@ -86,7 +86,7 @@ describe('process-detail.page.helpers', () => {
     },
   };
 
-  it('builds tab definitions with badges for version and empty state', () => {
+  it('should build tab definitions with badges for version and empty state', () => {
     const withVersion = buildProcessDetailTabDefinitions(asIsVersion, 3, 2);
     expect(withVersion.find((tab) => tab.id === 'diagram')?.badge).toBe('1');
     expect(withVersion.find((tab) => tab.id === 'procedures')?.badge).toBe('1');
@@ -98,7 +98,7 @@ describe('process-detail.page.helpers', () => {
     expect(withoutVersion.find((tab) => tab.id === 'compare')?.badge).toBe('0');
   });
 
-  it('normalizes active tab IDs, view selectors, and tab labels', () => {
+  it('should normalize active tab IDs, view selectors, and tab labels', () => {
     expect(getCurrentDetailTabId('default')).toBe('overview');
     expect(getCurrentDetailTabId('diagram')).toBe('diagram');
 
@@ -115,7 +115,7 @@ describe('process-detail.page.helpers', () => {
     expect(getProcessTabLabel('compare')).toBe('Compare');
   });
 
-  it('builds version options and resolves version for view', () => {
+  it('should build version options and resolve version for view', () => {
     expect(buildProcessVersionOptions(null)).toEqual([]);
     expect(buildProcessVersionOptions(fullDetail)).toEqual([
       { id: 'as-is', label: 'Current State (v1)' },
@@ -128,7 +128,7 @@ describe('process-detail.page.helpers', () => {
     expect(getProcessVersionForView(null, 'to-be')).toBeNull();
   });
 
-  it('formats view labels, compare headers, procedure counts, and view summaries', () => {
+  it('should format view labels, compare headers, procedure counts, and view summaries', () => {
     expect(getViewLabel('as-is')).toBe('Current State');
     expect(getViewLabel('to-be')).toBe('Target State');
 
@@ -150,13 +150,13 @@ describe('process-detail.page.helpers', () => {
     ).toBe('No published views');
   });
 
-  it('formats history dates and handles missing or invalid dates', () => {
+  it('should format history dates and handle missing or invalid dates', () => {
     expect(formatProcessHistoryDate()).toBe('Not recorded');
     expect(formatProcessHistoryDate('not-a-date')).toBe('Not recorded');
     expect(formatProcessHistoryDate('2026-03-15T10:00:00.000Z')).toContain('2026');
   });
 
-  it('reads tab IDs from query params or route data and builds query params', () => {
+  it('should read tab IDs from query params or route data and build query params', () => {
     expect(
       readProcessDetailTabId({ tab: 'overview' }, convertToParamMap({ tab: 'procedures' })),
     ).toBe('procedures');
@@ -176,7 +176,7 @@ describe('process-detail.page.helpers', () => {
     });
   });
 
-  it('resolves available process views for single-view and dual-view processes', () => {
+  it('should resolve available process views for single-view and dual-view processes', () => {
     const onlyToBe: PublicProcessDetail = {
       ...fullDetail,
       versions: { asIs: null, toBe: toBeVersion },

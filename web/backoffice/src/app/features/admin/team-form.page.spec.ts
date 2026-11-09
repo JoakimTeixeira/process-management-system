@@ -46,7 +46,7 @@ describe('TeamFormPageComponent', () => {
     }).compileComponents();
   });
 
-  it('loads team data in edit mode and allows deactivation', async () => {
+  it('should load team data in edit mode and allow deactivation', async () => {
     api.deactivateTeam.mockReturnValue(
       of({
         id: 'team-1',
@@ -83,7 +83,7 @@ describe('TeamFormPageComponent', () => {
     expect(toast.success).toHaveBeenCalledWith('Team deactivated successfully');
   });
 
-  it('sends a create payload from create mode', async () => {
+  it('should send a create payload from create mode', async () => {
     api.createTeam.mockReturnValue(
       of({
         id: 'team-2',
@@ -117,7 +117,7 @@ describe('TeamFormPageComponent', () => {
     expect(toast.success).toHaveBeenCalledWith('Team created successfully');
   });
 
-  it('sends only changed fields when updating an existing team', async () => {
+  it('should send only changed fields when updating an existing team', async () => {
     api.updateTeam.mockReturnValue(
       of({
         id: 'team-1',

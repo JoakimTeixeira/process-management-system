@@ -84,7 +84,7 @@ function createComposeSpawner(status = 0, failDockerComposePlugin = false) {
   return { calls, spawner };
 }
 
-void test("findCompose and compose select working docker compose binary and handle failures", () => {
+void test("should findCompose and compose select working docker compose binary and handle failures", () => {
   const plugin = createComposeSpawner(0, false);
   assert.deepEqual(findCompose(plugin.spawner), {
     command: "docker",
@@ -107,7 +107,7 @@ void test("findCompose and compose select working docker compose binary and hand
   assert.ok(plugin.calls.some((call) => call.args.includes("ps")));
 });
 
-void test("waitUntilReady and printServerStatus handle readiness and HTTP failures", async () => {
+void test("should waitUntilReady and printServerStatus handle readiness and HTTP failures", async () => {
   let attempts = 0;
   await waitUntilReady(serverUrl, {
     fetchImpl: () => {
@@ -144,7 +144,7 @@ void test("waitUntilReady and printServerStatus handle readiness and HTTP failur
   );
 });
 
-void test("ensureStrictQualityGate creates gate, updates conditions, and sets default", async () => {
+void test("should create the strict gate, update its conditions, and set it as default", async () => {
   const requests: string[] = [];
   await ensureStrictQualityGate(serverUrl, "tok", (input) => {
     const url = resolveRequestUrl(input);
@@ -169,7 +169,7 @@ void test("ensureStrictQualityGate creates gate, updates conditions, and sets de
   assert.ok(requests.includes("/api/qualitygates/set_as_default"));
 });
 
-void test("runSonarLocal handles stop, status, token, and start credential bootstrap", async () => {
+void test("should handle stop, status, token, and start credential bootstrap", async () => {
   const fs = createMemoryFs({ ".sonarqube/token": "stale-token" });
   const { spawner } = createComposeSpawner(0);
   const logs: string[] = [];
@@ -280,7 +280,7 @@ void test("runSonarLocal handles stop, status, token, and start credential boots
   );
 });
 
-void test("secret and URL helpers handle missing files, permissions, and trailing slashes", async () => {
+void test("should secret and URL helpers handle missing files, permissions, and trailing slashes", async () => {
   const fs = createMemoryFs();
   assert.equal(await readOptionalSecret("/missing", fs), undefined);
   await assert.rejects(

@@ -108,7 +108,7 @@ describe('ProcedureListPageComponent', () => {
     }).compileComponents();
   });
 
-  it('loads procedures for the backoffice workspace', async () => {
+  it('should load procedures for the backoffice workspace', async () => {
     api.listAllProcedures.mockReturnValue(
       of([
         {
@@ -151,7 +151,7 @@ describe('ProcedureListPageComponent', () => {
     ]);
   });
 
-  it('surfaces a functional load error without crashing', async () => {
+  it('should surface a functional load error without crashing', async () => {
     api.listAllProcedures.mockReturnValue(throwError(() => new Error('Backend unavailable')));
 
     const fixture = TestBed.createComponent(ProcedureListPageComponent);
@@ -165,7 +165,7 @@ describe('ProcedureListPageComponent', () => {
     expect(component.errorMessage()).toBe('Backend unavailable');
   });
 
-  it('filters procedures by area and process', async () => {
+  it('should filter procedures by area and process', async () => {
     api.listAllProcedures.mockReturnValue(
       of([
         {

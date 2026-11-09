@@ -24,7 +24,7 @@ describe('WorkflowAuthorizationRepository', () => {
     );
   });
 
-  it('resolves team IDs for users, processes, process versions, and procedures', async () => {
+  it('should resolve team IDs for users, processes, process versions, and procedures', async () => {
     query
       .mockResolvedValueOnce([{ team_id: 'team-1' }])
       .mockResolvedValueOnce([])

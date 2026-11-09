@@ -30,7 +30,7 @@ describe('TeamsRepository', () => {
     repository = module.get<TeamsRepository>(TeamsRepository);
   });
 
-  it('finds all teams and by id', async () => {
+  it('should find all teams and by id', async () => {
     query
       .mockResolvedValueOnce([sampleRow])
       .mockResolvedValueOnce([sampleRow])
@@ -50,7 +50,7 @@ describe('TeamsRepository', () => {
     expect(await repository.findById('missing')).toBeNull();
   });
 
-  it('creates, updates, and deactivates teams and validates required records', async () => {
+  it('should create, update, and deactivates teams and validate required records', async () => {
     query
       .mockResolvedValueOnce([{ id: 'team-1' }])
       .mockResolvedValueOnce([sampleRow])

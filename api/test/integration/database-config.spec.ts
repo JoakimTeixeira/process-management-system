@@ -14,7 +14,7 @@ describe('integration database configuration', () => {
     DB_SSL: 'false',
   };
 
-  it('uses a dedicated test-scoped database by default', () => {
+  it('should use a dedicated test-scoped database by default', () => {
     const config = buildIntegrationDatabaseConfig(baseEnvironment);
 
     expect(config).toEqual({
@@ -28,7 +28,7 @@ describe('integration database configuration', () => {
     expect(config.database).not.toBe(baseEnvironment.DB_NAME);
   });
 
-  it('honors integration-specific connection overrides', () => {
+  it('should honor integration-specific connection overrides', () => {
     const config = buildIntegrationDatabaseConfig({
       ...baseEnvironment,
       INTEGRATION_DB_HOST: 'integration-db',
@@ -49,7 +49,7 @@ describe('integration database configuration', () => {
     });
   });
 
-  it('refuses database names that are not explicitly test-scoped', () => {
+  it('should refuse database names that are not explicitly test-scoped', () => {
     for (const databaseName of [
       'process_management_system',
       'postgres',
@@ -62,7 +62,7 @@ describe('integration database configuration', () => {
     }
   });
 
-  it('accepts names with a distinct test marker', () => {
+  it('should accept names with a distinct test marker', () => {
     for (const databaseName of [
       'process_management_system_test',
       'test_process_management_system',

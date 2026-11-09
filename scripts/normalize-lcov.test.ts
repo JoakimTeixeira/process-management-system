@@ -7,7 +7,7 @@ import {
   normalizeLcov,
 } from "./normalize-lcov.ts";
 
-void test("maps source records to repository files and drops generated bundles", () => {
+void test("should map source records to repository files and drop generated bundles", () => {
   const input = [
     "TN:",
     "SF:dist\\test-out\\run-id\\chunk-ABC.js",
@@ -35,7 +35,7 @@ void test("maps source records to repository files and drops generated bundles",
   assert.equal(normalized.match(/end_of_record/gu)?.length, 1);
 });
 
-void test("normalizes API records that are already relative to src", () => {
+void test("should normalize API records that are already relative to src", () => {
   const normalized = normalizeLcov(
     "SF:src\\main.ts\nDA:1,1\nend_of_record\n",
     "api",
@@ -45,7 +45,7 @@ void test("normalizes API records that are already relative to src", () => {
   assert.match(normalized, /SF:C:\/workspace\/project\/api\/src\/main\.ts/u);
 });
 
-void test("maps tooling records relative to the repository root", () => {
+void test("should map tooling records relative to the repository root", () => {
   const normalized = normalizeLcov(
     "SF:scripts\\check-links.ts\nDA:1,1\nend_of_record\nSF:node_modules\\x.js\nDA:1,0\nend_of_record\n",
     ".",
@@ -60,7 +60,7 @@ void test("maps tooling records relative to the repository root", () => {
   assert.doesNotMatch(normalized, /node_modules/u);
 });
 
-void test("normalizeCoverageReports rewrites configured LCOV files on disk", async () => {
+void test("should rewrite configured LCOV files on disk", async () => {
   const tempRoot = resolve(".diagnostics-fixtures", "lcov-test");
   await mkdir(tempRoot, { recursive: true });
   try {

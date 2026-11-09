@@ -5,7 +5,7 @@ import { appConfig } from './app.config';
 import { routes } from './app.routes';
 
 describe('public app routes', () => {
-  it('preserves the public paths, redirect, and route data', () => {
+  it('should preserve the public paths, redirect, and route data', () => {
     expect(
       routes.map(({ path, pathMatch, redirectTo, data }) => ({
         path,
@@ -81,7 +81,7 @@ describe('public app routes', () => {
     ]);
   });
 
-  it('loads every feature route lazily', () => {
+  it('should load every feature route lazily', () => {
     const featureRoutes = routes.filter((route) => route.redirectTo === undefined);
 
     expect(featureRoutes).not.toHaveLength(0);
@@ -91,7 +91,7 @@ describe('public app routes', () => {
     }
   });
 
-  it('enables router component input binding', () => {
+  it('should enable router component input binding', () => {
     TestBed.configureTestingModule({ providers: appConfig.providers });
 
     expect(TestBed.inject(Router).componentInputBindingEnabled).toBe(true);

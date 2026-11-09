@@ -45,7 +45,7 @@ describe('frontend-consumed OpenAPI schema quality', () => {
   ] as const;
 
   it.each(nullableStringFields)(
-    '%s.%s remains a nullable string contract',
+    'should %s.%s remains a nullable string contract',
     (schemaName, propertyName) => {
       expect(
         document.components.schemas[schemaName]?.properties?.[propertyName],
@@ -53,7 +53,7 @@ describe('frontend-consumed OpenAPI schema quality', () => {
     },
   );
 
-  it('documents public procedure activities as extensible objects', () => {
+  it('should document public procedure activities as extensible objects', () => {
     const activities =
       document.components.schemas.PublicProcedureSummaryResponseDto?.properties
         ?.activities;

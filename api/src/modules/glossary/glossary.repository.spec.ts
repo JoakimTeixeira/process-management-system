@@ -14,7 +14,7 @@ describe('GlossaryRepository', () => {
     repository = new GlossaryRepository({ query } as unknown as DataSource);
   });
 
-  it('maps INSERT ... RETURNING results when TypeORM returns [rows, rowCount]', async () => {
+  it('should map INSERT ... RETURNING results when TypeORM returns [rows, rowCount]', async () => {
     query.mockResolvedValue([
       [
         {
@@ -47,7 +47,7 @@ describe('GlossaryRepository', () => {
     });
   });
 
-  it('maps UPDATE ... RETURNING results when TypeORM returns [rows, rowCount]', async () => {
+  it('should map UPDATE ... RETURNING results when TypeORM returns [rows, rowCount]', async () => {
     query.mockResolvedValue([
       [
         {

@@ -43,7 +43,7 @@ describe('ProcessVersionsRepository procedure and asset queries', () => {
     );
   });
 
-  it('checks procedure existence for a process version', async () => {
+  it('should check procedure existence for a process version', async () => {
     dataSourceQuery.mockResolvedValue([{ exists: true }]);
 
     await expect(repository.procedureExists('version-1')).resolves.toBe(true);
@@ -54,7 +54,7 @@ describe('ProcessVersionsRepository procedure and asset queries', () => {
     );
   });
 
-  it('clones procedure content through the supplied transaction executor', async () => {
+  it('should clone procedure content through the supplied transaction executor', async () => {
     executorQuery
       .mockResolvedValueOnce([
         {
@@ -102,7 +102,7 @@ describe('ProcessVersionsRepository procedure and asset queries', () => {
     );
   });
 
-  it('clones asset metadata through the supplied transaction executor', async () => {
+  it('should clone asset metadata through the supplied transaction executor', async () => {
     executorQuery
       .mockResolvedValueOnce([
         {
@@ -144,7 +144,7 @@ describe('ProcessVersionsRepository procedure and asset queries', () => {
     );
   });
 
-  it('queries process versions, existence flags, counts, and history actors', async () => {
+  it('should query process versions, existence flags, counts, and history actors', async () => {
     dataSourceQuery
       .mockResolvedValueOnce([{ exists: true }])
       .mockResolvedValueOnce([sampleRow])
@@ -181,7 +181,7 @@ describe('ProcessVersionsRepository procedure and asset queries', () => {
     expect(await repository.getNextVersionNumber('p1')).toBe(4);
   });
 
-  it('creates, updates, transitions, and records state history', async () => {
+  it('should create, update, transition, and record state history', async () => {
     dataSourceQuery
       .mockResolvedValueOnce([{ id: 'v1' }])
       .mockResolvedValueOnce([sampleRow])

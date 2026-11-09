@@ -21,7 +21,7 @@ import {
 const serverUrl = "http://localhost:9000";
 const token = "fixture-token";
 
-void test("classifies an unavailable server as infrastructure failure", async () => {
+void test("should classify an unavailable server as infrastructure failure", async () => {
   await assert.rejects(
     assertServerReady(serverUrl, token, () => {
       return Promise.reject(new Error("connection refused"));
@@ -30,7 +30,7 @@ void test("classifies an unavailable server as infrastructure failure", async ()
   );
 });
 
-void test("classifies invalid authentication", async () => {
+void test("should classify invalid authentication", async () => {
   await assert.rejects(
     assertServerReady(
       serverUrl,
@@ -41,7 +41,7 @@ void test("classifies invalid authentication", async () => {
   );
 });
 
-void test("times out when compute processing never completes", async () => {
+void test("should time out when compute processing never completes", async () => {
   let calls = 0;
   await assert.rejects(
     waitForComputeTask(
@@ -62,7 +62,7 @@ void test("times out when compute processing never completes", async () => {
   assert.equal(calls, 2);
 });
 
-void test("collects every API page", async () => {
+void test("should collect every API page", async () => {
   const requestedPages: number[] = [];
   const issues = await fetchPages<{ key: string }>(
     serverUrl,
@@ -92,7 +92,7 @@ void test("collects every API page", async () => {
   assert.deepEqual(requestedPages, [1, 2]);
 });
 
-void test("rejects missing authentication configuration", async () => {
+void test("should reject missing authentication configuration", async () => {
   const missingFile = Object.assign(new Error("missing"), { code: "ENOENT" });
   await assert.rejects(
     runSonarCheck({
@@ -103,7 +103,7 @@ void test("rejects missing authentication configuration", async () => {
   );
 });
 
-void test("classifies scanner execution failures", async () => {
+void test("should classify scanner execution failures", async () => {
   await assert.rejects(
     runSonarCheck({
       environment: configuredEnvironment(),
@@ -114,7 +114,7 @@ void test("classifies scanner execution failures", async () => {
   );
 });
 
-void test("rejects a scan without its report configuration", async () => {
+void test("should reject a scan without its report configuration", async () => {
   const missingFile = Object.assign(new Error("missing"), { code: "ENOENT" });
   await assert.rejects(
     runSonarCheck({
@@ -127,7 +127,7 @@ void test("rejects a scan without its report configuration", async () => {
   );
 });
 
-void test("returns a genuine clean analysis result", async () => {
+void test("should return a genuine clean analysis result", async () => {
   const logged: string[] = [];
   const result = await runSonarCheck({
     environment: configuredEnvironment(),
@@ -156,7 +156,7 @@ void test("returns a genuine clean analysis result", async () => {
   );
 });
 
-void test("reports the metric details for a failed quality gate", async () => {
+void test("should report the metric details for a failed quality gate", async () => {
   const logged: string[] = [];
   const result = await runSonarCheck({
     environment: configuredEnvironment(),
@@ -198,7 +198,7 @@ void test("reports the metric details for a failed quality gate", async () => {
   );
 });
 
-void test("fails when overall coverage is below 80 percent or duplication is above 0", async () => {
+void test("should fail when overall coverage is below 80 percent or duplication is above 0", async () => {
   const logged: string[] = [];
   const result = await runSonarCheck({
     environment: configuredEnvironment(),
@@ -237,7 +237,7 @@ void test("fails when overall coverage is below 80 percent or duplication is abo
   );
 });
 
-void test("covers sonar-api error branches and formatting helpers", async () => {
+void test("should cover sonar-api error branches and formatting helpers", async () => {
   await assert.rejects(
     assertServerReady(serverUrl, token, () =>
       Promise.resolve(jsonResponse({ status: "STARTING" })),
@@ -324,7 +324,7 @@ void test("covers sonar-api error branches and formatting helpers", async () => 
   assert.equal(formatLocation("other/b.ts", undefined, "fixture"), "other/b.ts");
 });
 
-void test("loads token from file and formats unresolved issues and hotspots", async () => {
+void test("should load token from file and formats unresolved issues and hotspots", async () => {
   const logged: string[] = [];
   const defaultRouteFetch = routeFetch();
   const result = await runSonarCheck({

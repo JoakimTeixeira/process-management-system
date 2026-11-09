@@ -50,7 +50,7 @@ describe('backoffice auth guards', () => {
     });
   });
 
-  it('authGuard allows authenticated users and redirects anonymous users to login', () => {
+  it('should allow authenticated users and redirect anonymous users to login', () => {
     const loginTree = router.createUrlTree(['/login']);
 
     const anonymousResult = TestBed.runInInjectionContext(() =>
@@ -68,7 +68,7 @@ describe('backoffice auth guards', () => {
     expect(authenticatedResult).toBe(true);
   });
 
-  it('anonymousOnlyGuard redirects authenticated users to their default route', () => {
+  it('should redirect authenticated users from anonymous-only routes to their default route', () => {
     const anonymousResult = TestBed.runInInjectionContext(() =>
       anonymousOnlyGuard({} as never, {} as never),
     );
@@ -86,7 +86,7 @@ describe('backoffice auth guards', () => {
     expect(authenticatedResult).toEqual(defaultRouteTree);
   });
 
-  it('roleGuard allows matching roles, denies non-matching roles, and ignores empty role metadata', () => {
+  it('should allow matching roles, deny non-matching roles, and ignore empty role metadata', () => {
     currentRoleState.set('EDITOR');
     const deniedTree = router.createUrlTree(['/processes']);
 

@@ -106,7 +106,7 @@ describe('ProcessVersionsPageComponent', () => {
     }).compileComponents();
   });
 
-  it('allows creating versions only for editors on the same team', async () => {
+  it('should allow creating versions only for editors on the same team', async () => {
     const fixture = TestBed.createComponent(ProcessVersionsPageComponent);
     fixture.componentRef.setInput('id', 'process-1');
     fixture.detectChanges();
@@ -126,7 +126,7 @@ describe('ProcessVersionsPageComponent', () => {
     ]);
   });
 
-  it('blocks creating versions for editors outside the process team', async () => {
+  it('should block creating versions for editors outside the process team', async () => {
     currentUserState.set({
       id: 'editor-2',
       name: 'Finley Editor',

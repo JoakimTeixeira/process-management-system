@@ -6,7 +6,7 @@ import {
   resolveSwaggerOpenCommand,
 } from "../api/scripts/open-swagger.ts";
 
-void test("resolveSwaggerOpenCommand selects platform-specific browser launcher", () => {
+void test("should select the platform-specific browser launcher", () => {
   assert.deepEqual(
     resolveSwaggerOpenCommand("win32", "http://localhost:3000/docs"),
     {
@@ -30,7 +30,7 @@ void test("resolveSwaggerOpenCommand selects platform-specific browser launcher"
   );
 });
 
-void test("openSwaggerUrl spawns detached browser launcher and unrefs child process", () => {
+void test("should spawn a detached browser launcher and unref the child process", () => {
   let spawnedCommand = "";
   let spawnedArgs: readonly string[] = [];
   let unrefCalled = false;

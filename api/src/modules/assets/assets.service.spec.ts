@@ -77,7 +77,7 @@ describe('AssetsService', () => {
     );
   });
 
-  it('rejects BPMN upload for non-draft versions', async () => {
+  it('should reject BPMN upload for non-draft versions', async () => {
     processVersionsRepository.findById.mockResolvedValue({
       id: 'version-1',
       processId: 'process-1',
@@ -107,7 +107,7 @@ describe('AssetsService', () => {
     ).rejects.toBeInstanceOf(ConflictException);
   });
 
-  it('validates BPMN XML content and computes checksum metadata', async () => {
+  it('should validate BPMN XML content and compute checksum metadata', async () => {
     const mkdirMock = vi.mocked(mkdir);
     const writeFileMock = vi.mocked(writeFile);
 
@@ -184,7 +184,7 @@ describe('AssetsService', () => {
     );
   });
 
-  it('rejects non-BPMN XML payloads', async () => {
+  it('should reject non-BPMN XML payloads', async () => {
     processVersionsRepository.findById.mockResolvedValue({
       id: 'version-1',
       processId: 'process-1',
@@ -213,7 +213,7 @@ describe('AssetsService', () => {
     ).rejects.toBeInstanceOf(ConflictException);
   });
 
-  it('does not treat BPMN element names in attributes as BPMN elements', async () => {
+  it('should not treat BPMN element names in attributes as BPMN elements', async () => {
     processVersionsRepository.findById.mockResolvedValue({
       id: 'version-1',
       processId: 'process-1',
@@ -243,7 +243,7 @@ describe('AssetsService', () => {
     ).rejects.toBeInstanceOf(ConflictException);
   });
 
-  it('normalizes generic octet-stream BPMN uploads to application/xml metadata', async () => {
+  it('should normalize generic octet-stream BPMN uploads to application/xml metadata', async () => {
     const mkdirMock = vi.mocked(mkdir);
     const writeFileMock = vi.mocked(writeFile);
 
@@ -298,7 +298,7 @@ describe('AssetsService', () => {
     );
   });
 
-  it('rejects missing BPMN uploads', async () => {
+  it('should reject missing BPMN uploads', async () => {
     processVersionsRepository.findById.mockResolvedValue({
       id: 'version-1',
       processId: 'process-1',
@@ -327,7 +327,7 @@ describe('AssetsService', () => {
     ).rejects.toMatchObject({ message: 'A BPMN file upload is required' });
   });
 
-  it('returns stored asset content', async () => {
+  it('should return stored asset content', async () => {
     const readFileMock = vi.mocked(readFile);
 
     assetsRepository.findById.mockResolvedValue({
@@ -355,7 +355,7 @@ describe('AssetsService', () => {
     });
   });
 
-  it('rejects BPMN upload for non-editor actors', async () => {
+  it('should reject BPMN upload for non-editor actors', async () => {
     await expect(
       service.createBpmnAsset(
         'version-1',
@@ -372,7 +372,7 @@ describe('AssetsService', () => {
     ).rejects.toBeInstanceOf(ForbiddenException);
   });
 
-  it('rejects asset reads for non-content roles', async () => {
+  it('should reject asset reads for non-content roles', async () => {
     await expect(
       service.listByProcessVersionId('version-1', {
         ...currentUser,
@@ -381,7 +381,7 @@ describe('AssetsService', () => {
     ).rejects.toBeInstanceOf(ForbiddenException);
   });
 
-  it('supersedes existing asset when uploading new BPMN for same version', async () => {
+  it('should supersede existing asset when uploading new BPMN for same version', async () => {
     const mkdirMock = vi.mocked(mkdir);
     const writeFileMock = vi.mocked(writeFile);
 
@@ -469,7 +469,7 @@ describe('AssetsService', () => {
     );
   });
 
-  it('does not supersede when no existing asset exists', async () => {
+  it('should not supersede when no existing asset exists', async () => {
     const mkdirMock = vi.mocked(mkdir);
     const writeFileMock = vi.mocked(writeFile);
 

@@ -7,7 +7,7 @@ import type {
 } from '../models/backoffice.models';
 
 describe('backoffice generated API contract', () => {
-  it('accepts canonical roles and process-version states from generated schemas', () => {
+  it('should accept canonical roles and process-version states from generated schemas', () => {
     const roles: AppRole[] = ['EDITOR', 'REVIEWER', 'PUBLISHER', 'VIEWER', 'SYSTEM_ADMIN'];
     const lifecycleStates: LifecycleState[] = [
       'Draft',
@@ -35,7 +35,7 @@ describe('backoffice generated API contract', () => {
     expect(version.architectureState).toBe('AS-IS');
   });
 
-  it('types glossary mutation responses from operation response schemas', () => {
+  it('should type glossary mutation responses from operation response schemas', () => {
     const createdTerm: CreateGlossaryTermResponse = {
       id: 'term-id',
       term: 'Incident management',

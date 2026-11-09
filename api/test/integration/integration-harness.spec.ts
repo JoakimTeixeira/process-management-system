@@ -31,7 +31,7 @@ describe('Postgres integration harness', () => {
     }
   });
 
-  it('connects only to the configured integration database', async () => {
+  it('should connect only to the configured integration database', async () => {
     const [row] = await dataSource.query<CurrentDatabaseRow[]>(
       'SELECT current_database()',
     );
@@ -41,7 +41,7 @@ describe('Postgres integration harness', () => {
     );
   });
 
-  it('runs the project migrations before integration specs', async () => {
+  it('should run the project migrations before integration specs', async () => {
     const [migrationCount] = await dataSource.query<CountRow[]>(
       'SELECT COUNT(*)::text AS count FROM migrations',
     );

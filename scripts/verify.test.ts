@@ -9,7 +9,7 @@ import {
   validateProjectName,
 } from "../verification/scripts/verify.ts";
 
-void test("validateProjectName accepts lowercase compose project names and rejects invalid characters", () => {
+void test("should accept lowercase Compose project names and reject invalid characters", () => {
   assert.equal(
     validateProjectName("process-management-system_verify-1"),
     "process-management-system_verify-1",
@@ -20,14 +20,14 @@ void test("validateProjectName accepts lowercase compose project names and rejec
   );
 });
 
-void test("displayCommand quotes arguments with whitespace", () => {
+void test("should displayCommand quotes arguments with whitespace", () => {
   assert.equal(
     displayCommand("docker", ["compose", "--project-name", "my project"]),
     'docker compose --project-name "my project"',
   );
 });
 
-void test("parseRuntimeEnvContent and requireUuid validate runtime verification artifacts", () => {
+void test("should parseRuntimeEnvContent and requireUuid validate runtime verification artifacts", () => {
   const parsed = parseRuntimeEnvContent(
     [
       "# comment",
@@ -49,7 +49,7 @@ void test("parseRuntimeEnvContent and requireUuid validate runtime verification 
   );
 });
 
-void test("resolveBash locates bash on Windows and POSIX platforms", () => {
+void test("should resolveBash locates bash on Windows and POSIX platforms", () => {
   assert.equal(
     resolveBash({
       platform: "linux",
@@ -77,7 +77,7 @@ void test("resolveBash locates bash on Windows and POSIX platforms", () => {
   );
 });
 
-void test("assertDbEvidence verifies lifecycle transition rows and audit logs", () => {
+void test("should assertDbEvidence verifies lifecycle transition rows and audit logs", () => {
   const logs: string[] = [];
   const runtimeEnv = {
     WORKFLOW_REOPEN_VERSION_ID: "fcf2391c-fc49-47fc-a6d3-341cfdc06288",

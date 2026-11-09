@@ -5,7 +5,7 @@ import { GlossaryService } from './glossary.service';
 import type { AuditLogWriterService } from '../audit/audit-log-writer.service';
 
 describe('GlossaryService', () => {
-  it('returns glossary terms and practices together', async () => {
+  it('should return glossary terms and practices together', async () => {
     const repository: Mocked<
       Pick<GlossaryRepository, 'listTerms' | 'listPractices'>
     > = {

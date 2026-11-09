@@ -23,7 +23,7 @@ describe('BackofficeBpmnViewerComponent', () => {
     }).compileComponents();
   });
 
-  it('exposes the title, subtitle, and empty-state inputs without constructing a viewer', async () => {
+  it('should expose the title, subtitle, and empty-state inputs without constructing a viewer', async () => {
     const fixture = TestBed.createComponent(BackofficeBpmnViewerComponent);
     fixture.componentRef.setInput('title', 'Current BPMN');
     fixture.componentRef.setInput('subtitle', 'Process version v3 - Diagram preview');
@@ -41,7 +41,7 @@ describe('BackofficeBpmnViewerComponent', () => {
     expect(text).toContain('Choose a BPMN revision.');
   });
 
-  it('shows the empty message when xml is null and imports XML when provided', async () => {
+  it('should show the empty message when xml is null and import XML when provided', async () => {
     const fixture = TestBed.createComponent(BackofficeBpmnViewerComponent);
     const component = fixture.componentInstance as unknown as BackofficeBpmnViewerHarness;
     const canvas = {
@@ -83,7 +83,7 @@ describe('BackofficeBpmnViewerComponent', () => {
     expect(destroy).toHaveBeenCalledTimes(1);
   });
 
-  it('handles importXML errors and fullscreen toggling', async () => {
+  it('should handle importXML errors and fullscreen toggling', async () => {
     const requestFullscreen = vi.fn().mockResolvedValue(undefined);
     const exitFullscreen = vi.fn().mockResolvedValue(undefined);
     let fullscreenElement: Element | null = null;

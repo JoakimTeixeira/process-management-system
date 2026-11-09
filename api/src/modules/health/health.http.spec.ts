@@ -39,7 +39,7 @@ describe('Health endpoint', () => {
     await app.close();
   });
 
-  it('returns 200 when the database is up', async () => {
+  it('should return 200 when the database is up', async () => {
     dataSource.query.mockResolvedValue([{ '?column?': 1 }]);
 
     await request(app.getHttpServer() as Express)
@@ -53,7 +53,7 @@ describe('Health endpoint', () => {
       });
   });
 
-  it('returns 503 when the database is down', async () => {
+  it('should return 503 when the database is down', async () => {
     dataSource.query.mockRejectedValue(new Error('connection failed'));
 
     await request(app.getHttpServer() as Express)

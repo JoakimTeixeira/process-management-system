@@ -24,7 +24,7 @@ describe('frontend-consumed OpenAPI coverage', () => {
   ) as OpenApiContract;
 
   it.each(FRONTEND_API_OPERATIONS)(
-    '$method $path documents its $responseKind success response',
+    'should $method $path documents its $responseKind success response',
     ({ method, path, responseKind }) => {
       const operation = document.paths[path]?.[method];
       expect(operation).toBeDefined();

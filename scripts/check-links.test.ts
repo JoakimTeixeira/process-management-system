@@ -30,7 +30,7 @@ test.afterEach(async () => {
   await rm(fixtureDirectory, { force: true, recursive: true });
 });
 
-void test("reports every broken path, anchor, and reference via CLI and in-process runner", async () => {
+void test("should report every broken path, anchor, and reference via CLI and in-process runner", async () => {
   await mkdir(fixtureDirectory, { recursive: true });
   const fixture = path.join(fixtureDirectory, "broken.md");
   await writeFile(
@@ -69,7 +69,7 @@ void test("reports every broken path, anchor, and reference via CLI and in-proce
   assert.match(result.stderr, /3 broken link\(s\) found/);
 });
 
-void test("accepts valid relative paths, headings, HTML anchors, and external links", async () => {
+void test("should accept valid relative paths, headings, HTML anchors, and external links", async () => {
   await mkdir(fixtureDirectory, { recursive: true });
   const target = path.join(fixtureDirectory, "target.md");
   const fixture = path.join(fixtureDirectory, "valid.md");
@@ -128,7 +128,7 @@ void test("accepts valid relative paths, headings, HTML anchors, and external li
   assert.match(result.stdout, /all internal links passed/);
 });
 
-void test("validates helper edge cases for link parsing and external HTTP errors", async () => {
+void test("should validate helper edge cases for link parsing and external HTTP errors", async () => {
   assert.deepEqual(parseArguments(["--external", "README.md"], "/repo"), {
     external: true,
     targets: ["README.md"],

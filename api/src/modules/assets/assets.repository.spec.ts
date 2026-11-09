@@ -37,7 +37,7 @@ describe('AssetsRepository', () => {
     repository = module.get<AssetsRepository>(AssetsRepository);
   });
 
-  it('creates, finds, and supersedes BPMN assets', async () => {
+  it('should create, finds, and supersedes BPMN assets', async () => {
     query
       .mockResolvedValueOnce([{ id: 'asset-1' }])
       .mockResolvedValueOnce([sampleRow])
@@ -76,7 +76,7 @@ describe('AssetsRepository', () => {
     );
   });
 
-  it('rejects creation when asset identifier or row is missing', async () => {
+  it('should reject creation when asset identifier or row is missing', async () => {
     query.mockResolvedValueOnce([]);
     await expect(
       repository.createBpmnAsset({

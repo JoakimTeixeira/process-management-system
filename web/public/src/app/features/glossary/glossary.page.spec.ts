@@ -60,7 +60,7 @@ describe('GlossaryPageComponent', () => {
     }).compileComponents();
   });
 
-  it('loads glossary data and filters terms by search and normalized category labels', () => {
+  it('should load glossary data and filter terms by search and normalized category labels', () => {
     const fixture = TestBed.createComponent(GlossaryPageComponent);
     const page = fixture.componentInstance as unknown as GlossaryPageHarness;
     fixture.detectChanges();
@@ -79,7 +79,7 @@ describe('GlossaryPageComponent', () => {
     expect(page.filteredTerms()).toEqual(glossary.terms);
   });
 
-  it('releases its glossary request when the page is destroyed', () => {
+  it('should release its glossary request when the page is destroyed', () => {
     const response$ = new Subject<PublicGlossaryResponse>();
     const api = TestBed.inject(PublicPortalApiService);
     vi.mocked(api.getGlossary).mockReturnValue(response$);

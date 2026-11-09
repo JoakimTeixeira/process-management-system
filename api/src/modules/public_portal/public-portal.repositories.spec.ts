@@ -37,7 +37,7 @@ describe('PublicPortal repositories and assets service', () => {
     );
   });
 
-  it('queries public processes, versions, and BPMN assets with filters', async () => {
+  it('should query public processes, versions, and BPMN assets with filters', async () => {
     query
       .mockResolvedValueOnce([{ id: 'p1' }])
       .mockResolvedValueOnce([])
@@ -83,7 +83,7 @@ describe('PublicPortal repositories and assets service', () => {
     ).toBeNull();
   });
 
-  it('queries public procedures by filters, version, and id', async () => {
+  it('should query public procedures by filters, version, and id', async () => {
     query
       .mockResolvedValueOnce([{ id: 'pr1' }])
       .mockResolvedValueOnce([])
@@ -106,7 +106,7 @@ describe('PublicPortal repositories and assets service', () => {
     ).toBeNull();
   });
 
-  it('rejects absolute, escaping, or missing BPMN asset paths', async () => {
+  it('should reject absolute, escaping, or missing BPMN asset paths', async () => {
     await expect(
       assetsService.readPublishedBpmnXml('/etc/passwd'),
     ).rejects.toBeInstanceOf(NotFoundException);

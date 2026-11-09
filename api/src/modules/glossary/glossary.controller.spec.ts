@@ -7,7 +7,7 @@ import type {
 } from './glossary.service';
 
 describe('GlossaryController', () => {
-  it('returns the public glossary payload', async () => {
+  it('should return the public glossary payload', async () => {
     const response: PublicGlossaryResponse = {
       terms: [
         {

@@ -38,7 +38,7 @@ describe('BreadcrumbService', () => {
     service = TestBed.inject(BreadcrumbService);
   });
 
-  it('builds breadcrumbs from route data', async () => {
+  it('should build breadcrumbs from route data', async () => {
     await router.navigateByUrl('/processes/abc/versions');
 
     expect(service.items()).toEqual([
@@ -48,7 +48,7 @@ describe('BreadcrumbService', () => {
     expect(service.isVisible()).toBe(true);
   });
 
-  it('prefers scoped overrides and restores route breadcrumbs when cleared', async () => {
+  it('should prefer scoped overrides and restore route breadcrumbs when cleared', async () => {
     const owner = Symbol('breadcrumb-spec');
     await router.navigateByUrl('/processes');
 
@@ -69,7 +69,7 @@ describe('BreadcrumbService', () => {
     expect(service.items()).toEqual([{ label: 'Processes', url: '/processes' }]);
   });
 
-  it('hides breadcrumbs for entry routes that opt out, while preserving items', async () => {
+  it('should hide breadcrumbs for entry routes that opt out, while preserving items', async () => {
     await router.navigateByUrl('/processes');
 
     expect(service.items()).toEqual([{ label: 'Processes', url: '/processes' }]);

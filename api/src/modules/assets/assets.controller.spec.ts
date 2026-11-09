@@ -25,14 +25,14 @@ function getControllerMethod(target: object, key: string): ControllerMethod {
 }
 
 describe('AssetsController metadata', () => {
-  it('protects the controller with JWT and roles guards', () => {
+  it('should protect the controller with JWT and roles guards', () => {
     expect(Reflect.getMetadata(GUARDS_METADATA, AssetsController)).toEqual([
       JwtAuthGuard,
       RolesGuard,
     ]);
   });
 
-  it('restricts BPMN upload to EDITOR', () => {
+  it('should restrict BPMN upload to EDITOR', () => {
     expect(
       Reflect.getMetadata(
         ROLES_KEY,
@@ -41,7 +41,7 @@ describe('AssetsController metadata', () => {
     ).toEqual([Role.EDITOR]);
   });
 
-  it('restricts BPMN reads to content roles', () => {
+  it('should restrict BPMN reads to content roles', () => {
     for (const methodName of ['listByProcessVersionId', 'getAssetContent']) {
       expect(
         Reflect.getMetadata(

@@ -1,7 +1,7 @@
 import { routes } from './app.routes';
 
 describe('backoffice routes', () => {
-  it('keeps login anonymous-only and the shell authenticated', () => {
+  it('should keep login anonymous-only and the shell authenticated', () => {
     const loginRoute = routes.find((route) => route.path === 'login');
     const shellRoute = routes.find((route) => route.path === '');
 
@@ -9,7 +9,7 @@ describe('backoffice routes', () => {
     expect(shellRoute?.canActivate?.length).toBe(1);
   });
 
-  it('restricts editor-only content mutation routes to EDITOR', () => {
+  it('should restrict editor-only content mutation routes to EDITOR', () => {
     const editorOnlyPaths = [
       'areas',
       'areas/new',
@@ -30,7 +30,7 @@ describe('backoffice routes', () => {
     }
   });
 
-  it('allows content consultation routes to content roles and admin routes to SYSTEM_ADMIN only', () => {
+  it('should allow content consultation routes to content roles and admin routes to SYSTEM_ADMIN only', () => {
     const shellChildren = routes.find((route) => route.path === '')?.children ?? [];
     const contentRoles = ['EDITOR', 'REVIEWER', 'PUBLISHER', 'VIEWER'];
 
@@ -60,7 +60,7 @@ describe('backoffice routes', () => {
     }
   });
 
-  it('provides breadcrumb metadata for the main backoffice workspaces', () => {
+  it('should provide breadcrumb metadata for the main backoffice workspaces', () => {
     const shellChildren = routes.find((route) => route.path === '')?.children ?? [];
 
     for (const path of [
@@ -91,7 +91,7 @@ describe('backoffice routes', () => {
     }
   });
 
-  it('hides breadcrumbs on entry list pages while keeping them on deeper workflows', () => {
+  it('should hide breadcrumbs on entry list pages while keeping them on deeper workflows', () => {
     const shellChildren = routes.find((route) => route.path === '')?.children ?? [];
 
     for (const path of [

@@ -24,14 +24,14 @@ function getControllerMethod(target: object, key: string): ControllerMethod {
 }
 
 describe('ProcessesController metadata', () => {
-  it('protects the controller with JWT and roles guards', () => {
+  it('should protect the controller with JWT and roles guards', () => {
     expect(Reflect.getMetadata(GUARDS_METADATA, ProcessesController)).toEqual([
       JwtAuthGuard,
       RolesGuard,
     ]);
   });
 
-  it('restricts create, update, and delete to EDITOR', () => {
+  it('should restrict create, update, and delete to EDITOR', () => {
     for (const methodName of ['create', 'update', 'delete']) {
       expect(
         Reflect.getMetadata(
@@ -42,7 +42,7 @@ describe('ProcessesController metadata', () => {
     }
   });
 
-  it('restricts process reads to content roles', () => {
+  it('should restrict process reads to content roles', () => {
     for (const methodName of ['list', 'getById']) {
       expect(
         Reflect.getMetadata(

@@ -11,7 +11,7 @@ describe('FaqPageComponent', () => {
     }).compileComponents();
   });
 
-  it('renders FAQ items and breadcrumbs', () => {
+  it('should render FAQ items and breadcrumbs', () => {
     const fixture = TestBed.createComponent(FaqPageComponent);
     fixture.detectChanges();
     expect(fixture.componentInstance).toBeTruthy();

@@ -1,4 +1,4 @@
-import { Test, type TestingModule } from '@nestjs/testing';
+﻿import { Test, type TestingModule } from '@nestjs/testing';
 import type { Mock } from 'vitest';
 import { DataSource } from 'typeorm';
 
@@ -36,7 +36,7 @@ describe('UsersRepository team queries', () => {
     repository = module.get<UsersRepository>(UsersRepository);
   });
 
-  it('returns only active teams from team options', async () => {
+  it('should return only active teams from team options', async () => {
     query.mockResolvedValue([
       {
         id: 'team-1',
@@ -59,7 +59,7 @@ describe('UsersRepository team queries', () => {
     );
   });
 
-  it('requires teams to be active when checking existence', async () => {
+  it('should require teams to be active when checking existence', async () => {
     query.mockResolvedValue([{ exists: true }]);
 
     await expect(repository.teamExists('team-1')).resolves.toBe(true);
@@ -70,7 +70,7 @@ describe('UsersRepository team queries', () => {
     );
   });
 
-  it('finds owner options, users, and roles', async () => {
+  it('should find owner options, users, and roles', async () => {
     query
       .mockResolvedValueOnce([
         { id: 'user-1', name: 'Alice', team_id: 'team-1', is_active: true },
@@ -107,7 +107,7 @@ describe('UsersRepository team queries', () => {
     expect(await repository.findRoleByName(Role.VIEWER)).toBeNull();
   });
 
-  it('creates and updates users and password hashes', async () => {
+  it('should create and update users and password hashes', async () => {
     query
       .mockResolvedValueOnce([{ id: 'user-1' }])
       .mockResolvedValueOnce([sampleUserRow])
@@ -145,3 +145,4 @@ describe('UsersRepository team queries', () => {
     expect(afterPassword.id).toBe('user-1');
   });
 });
+

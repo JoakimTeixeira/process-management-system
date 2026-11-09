@@ -29,7 +29,7 @@ describe('ItilPracticesRepository', () => {
     repository = module.get<ItilPracticesRepository>(ItilPracticesRepository);
   });
 
-  it('finds all practices, by id, by code or name, and creates practices', async () => {
+  it('should find all practices, by id, by code or name, and create practices', async () => {
     query
       .mockResolvedValueOnce([sampleRow])
       .mockResolvedValueOnce([sampleRow])
