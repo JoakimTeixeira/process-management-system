@@ -25,49 +25,49 @@ void test("should select fast, sonar, and all diagnostic check lists", () => {
   );
 });
 
-void test("should execute diagnostic checks and report clean status when all succeed", () => {
+void test("should execute diagnostic checks and report clean status when all succeed", async () => {
   const logged: string[] = [];
-  const invokedArgs: (readonly string[])[] = [];
+  const invokedChecks: string[] = [];
 
-  const result = runDiagnostics({
+  const result = await runDiagnostics({
     mode: "sonar",
     npmCli: "/usr/local/lib/npm-cli.js",
     logger: {
       log: (msg) => logged.push(msg),
       error: (msg) => logged.push(msg),
     },
-    spawnSyncImpl: (_cmd, args) => {
-      invokedArgs.push(args);
-      return { status: 0, error: undefined };
+    runCheckImpl: (check) => {
+      invokedChecks.push(check.name);
+      return Promise.resolve({ status: 0 });
     },
   });
 
   assert.equal(result.clean, true);
   assert.deepEqual(result.failures, []);
-  assert.equal(invokedArgs.length, 2);
+  assert.deepEqual(invokedChecks, sonarDiagnosticsChecks.map(({ name }) => name));
   assert.ok(logged.some((msg) => msg.includes("All sonar diagnostics passed.")));
 });
 
-void test("should record diagnostic spawn errors and non-zero exit statuses", () => {
+void test("should record diagnostic spawn errors and non-zero exit statuses", async () => {
   const errors: string[] = [];
   let callIndex = 0;
 
-  const result = runDiagnostics({
+  const result = await runDiagnostics({
     mode: "fast",
     npmCli: "/usr/local/lib/npm-cli.js",
     logger: {
       log: () => {},
       error: (msg) => errors.push(msg),
     },
-    spawnSyncImpl: () => {
+    runCheckImpl: () => {
       callIndex += 1;
       if (callIndex === 1) {
-        return { status: null, error: new Error("spawn EACCES") };
+        return Promise.resolve({ status: null, error: new Error("spawn EACCES") });
       }
       if (callIndex === 2) {
-        return { status: 1, error: undefined };
+        return Promise.resolve({ status: 1, error: undefined });
       }
-      return { status: 0, error: undefined };
+      return Promise.resolve({ status: 0, error: undefined });
     },
   });
   process.exitCode = 0;
@@ -81,11 +81,35 @@ void test("should record diagnostic spawn errors and non-zero exit statuses", ()
   assert.ok(errors.some((msg) => msg.includes("Failed checks:")));
 });
 
-void test("should reject a missing npm_execpath", () => {
-  assert.throws(
-    () => runDiagnostics({ mode: "fast", npmCli: "" }),
+void test("should reject a missing npm_execpath", async () => {
+  await assert.rejects(
+    runDiagnostics({ mode: "fast", npmCli: "" }),
     /Run diagnostics through npm/u,
   );
+});
+
+void test("should bound fast checks and keep SonarQube phases serial", async () => {
+  let active = 0;
+  let maximumActive = 0;
+  const completed: string[] = [];
+
+  const result = await runDiagnostics({
+    mode: "all",
+    npmCli: "/usr/local/lib/npm-cli.js",
+    logger: { log: () => {}, error: () => {} },
+    runCheckImpl: async (check) => {
+      active += 1;
+      maximumActive = Math.max(maximumActive, active);
+      await new Promise((resolvePromise) => setTimeout(resolvePromise, 1));
+      active -= 1;
+      completed.push(check.name);
+      return { status: 0 };
+    },
+  });
+
+  assert.equal(result.clean, true);
+  assert.equal(maximumActive, 4);
+  assert.deepEqual(completed.slice(-2), sonarDiagnosticsChecks.map(({ name }) => name));
 });
 
 void test("should build diagnostic properties and guard regression fixture paths", () => {

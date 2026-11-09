@@ -36,8 +36,12 @@
 
 - **Requirements:** TSO-03, TSO-05
 - **Depends on:** T1
+- **Status:** Complete
 - **Done when:** independent checks and external requests use bounded concurrency, ordered gates stay
   serialized, and focused tests prove complete failure collection.
+- **Evidence:** fast diagnostics run with a maximum of four child processes, coverage and SonarQube
+  analysis remain serial phases, external URLs use a configurable eight-request limit, and focused
+  tests verify ordering, concurrency limits, and complete failure reporting.
 
 ## T5 — Restore honest 80 percent SonarQube coverage
 

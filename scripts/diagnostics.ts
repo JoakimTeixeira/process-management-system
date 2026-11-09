@@ -1,5 +1,6 @@
-import { spawnSync, type SpawnSyncReturns } from "node:child_process";
+import { spawn } from "node:child_process";
 import { basename } from "node:path";
+import { mapWithConcurrency } from "./bounded-concurrency.ts";
 
 export type DiagnosticsMode = "all" | "fast" | "sonar";
 
@@ -13,6 +14,13 @@ export interface DiagnosticsLogger {
   log: (message: string) => void;
   error: (message: string) => void;
 }
+
+export interface DiagnosticsRunResult {
+  error?: Error;
+  status: number | null;
+}
+
+const FAST_DIAGNOSTICS_CONCURRENCY = 4;
 
 export const fastDiagnosticsChecks: readonly DiagnosticsCheck[] = [
   { name: "Repository ESLint and SonarJS", script: "lint:root" },
@@ -41,6 +49,7 @@ export const fastDiagnosticsChecks: readonly DiagnosticsCheck[] = [
     prefix: "web/backoffice",
   },
   { name: "Documentation links", script: "links:check:internal" },
+  { name: "Test title conventions", script: "test:naming" },
 ];
 
 export const sonarDiagnosticsChecks: readonly DiagnosticsCheck[] = [
@@ -60,49 +69,81 @@ export function resolveDiagnosticsChecks(
   ];
 }
 
-export function runDiagnostics({
+function resolveDiagnosticsPhases(mode: string): readonly (readonly DiagnosticsCheck[])[] {
+  resolveDiagnosticsChecks(mode);
+  return [
+    ...(mode === "sonar" ? [] : [fastDiagnosticsChecks]),
+    ...(mode === "fast"
+      ? []
+      : sonarDiagnosticsChecks.map((check) => [check] as const)),
+  ];
+}
+
+function runNpmCheck(
+  check: DiagnosticsCheck,
+  npmCli: string,
+): Promise<DiagnosticsRunResult> {
+  const args = [npmCli, "run", check.script];
+  if (check.prefix) {
+    args.push("--prefix", check.prefix);
+  }
+
+  return new Promise((resolve) => {
+    const child = spawn(process.execPath, args, { stdio: "inherit" });
+    let settled = false;
+    child.once("error", (error) => {
+      settled = true;
+      resolve({ error, status: null });
+    });
+    child.once("close", (status) => {
+      if (!settled) {
+        resolve({ status });
+      }
+    });
+  });
+}
+
+export async function runDiagnostics({
   mode = process.argv[2] ?? "all",
   npmCli = process.env.npm_execpath,
-  spawnSyncImpl = spawnSync,
+  runCheckImpl = runNpmCheck,
   logger = console,
 }: {
   mode?: string;
   npmCli?: string;
-  spawnSyncImpl?: (
-    command: string,
-    args: readonly string[],
-    options: { stdio: "inherit" },
-  ) => Pick<SpawnSyncReturns<Buffer>, "error" | "status">;
+  runCheckImpl?: (
+    check: DiagnosticsCheck,
+    npmCli: string,
+  ) => Promise<DiagnosticsRunResult>;
   logger?: DiagnosticsLogger;
-} = {}): { clean: boolean; failures: string[] } {
+} = {}): Promise<{ clean: boolean; failures: string[] }> {
   if (!npmCli) {
     throw new Error(
       "Run diagnostics through npm so npm_execpath is available.",
     );
   }
-  const checks = resolveDiagnosticsChecks(mode);
   const failures: string[] = [];
 
-  for (const { name, script, prefix } of checks) {
-    logger.log(`\n[diagnostics] ${name}`);
+  for (const phase of resolveDiagnosticsPhases(mode)) {
+    const phaseResults = await mapWithConcurrency(
+      phase,
+      FAST_DIAGNOSTICS_CONCURRENCY,
+      async (check) => {
+        logger.log(`\n[diagnostics] ${check.name}`);
+        const result = await runCheckImpl(check, npmCli);
+        if (result.error) {
+          logger.error(
+            `[diagnostics] ${check.name} could not start: ${result.error.message}`,
+          );
+        }
+        return { check, result };
+      },
+    );
 
-    const args = [npmCli, "run", script];
-    if (prefix) {
-      args.push("--prefix", prefix);
-    }
-
-    const result = spawnSyncImpl(process.execPath, args, { stdio: "inherit" });
-
-    if (result.error) {
-      logger.error(
-        `[diagnostics] ${name} could not start: ${result.error.message}`,
-      );
-      failures.push(name);
-      continue;
-    }
-
-    if (result.status !== 0) {
-      failures.push(name);
+    for (const { check, result } of phaseResults) {
+      if (result.error || result.status !== 0) {
+        failures.push(check.name);
+      }
     }
   }
 
@@ -117,6 +158,6 @@ export function runDiagnostics({
 }
 
 if (basename(process.argv[1] ?? "") === "diagnostics.ts") {
-  runDiagnostics();
+  void runDiagnostics();
 }
 

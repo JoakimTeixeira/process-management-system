@@ -166,3 +166,45 @@ void test("should validate helper edge cases for link parsing and external HTTP 
   assert.match(networkError ?? "", /offline/);
 });
 
+void test("should bound external requests and report every failed URL", async () => {
+  await mkdir(fixtureDirectory, { recursive: true });
+  const fixture = path.join(fixtureDirectory, "external.md");
+  await writeFile(
+    fixture,
+    [1, 2, 3, 4]
+      .map((value) => `[external ${value}](https://example.com/${value})`)
+      .join("\n"),
+  );
+
+  let active = 0;
+  let maximumActive = 0;
+  const result = await runLinkCheck({
+    arguments_: ["--external", fixture],
+    externalConcurrency: 2,
+    fetchImpl: async (url) => {
+      active += 1;
+      maximumActive = Math.max(maximumActive, active);
+      await new Promise((resolvePromise) => setTimeout(resolvePromise, 5));
+      active -= 1;
+      const requestedUrl =
+        typeof url === "string"
+          ? url
+          : url instanceof URL
+            ? url.href
+            : url.url;
+      const failed = requestedUrl.endsWith("/2") || requestedUrl.endsWith("/4");
+      return {
+        body: { cancel: () => Promise.resolve() },
+        ok: !failed,
+        status: failed ? 500 : 200,
+      } as unknown as Response;
+    },
+    logger: { log: () => {}, error: () => {} },
+  });
+  process.exitCode = 0;
+
+  assert.equal(maximumActive, 2);
+  assert.equal(result.failures.length, 2);
+  assert.ok(result.failures.every(({ message }) => message.includes("HTTP 500")));
+});
+

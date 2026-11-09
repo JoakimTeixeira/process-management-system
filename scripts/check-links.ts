@@ -1,6 +1,7 @@
 import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
+import { mapWithConcurrency } from "./bounded-concurrency.ts";
 
 const repositoryRoot = process.cwd();
 const excludedDirectories = new Set([
@@ -18,6 +19,7 @@ const excludedDirectories = new Set([
 ]);
 const externalSchemes = /^(?:https?:|mailto:|tel:)/i;
 const ignoredSchemes = /^(?:data:|javascript:)/i;
+const DEFAULT_EXTERNAL_CONCURRENCY = 8;
 
 export interface ParsedArguments {
   external: boolean;
@@ -554,11 +556,13 @@ export async function runLinkCheck({
   fetchImpl = fetch,
   logger = console,
   root = repositoryRoot,
+  externalConcurrency = DEFAULT_EXTERNAL_CONCURRENCY,
 }: {
   arguments_?: readonly string[];
   fetchImpl?: typeof fetch;
   logger?: { log: (message: string) => void; error: (message: string) => void };
   root?: string;
+  externalConcurrency?: number;
 } = {}): Promise<{ checkedFiles: number; failures: LinkFailure[] }> {
   const { external, targets } = parseArguments(arguments_, root);
   const files = await collectMarkdownFiles(targets, root);
@@ -592,8 +596,17 @@ export async function runLinkCheck({
   }
 
   if (external) {
-    for (const [url, references] of externalReferences) {
-      const message = await validateExternalLink(url, fetchImpl);
+    const externalResults = await mapWithConcurrency(
+      [...externalReferences],
+      externalConcurrency,
+      async ([url, references]) => ({
+        message: await validateExternalLink(url, fetchImpl),
+        references,
+        url,
+      }),
+    );
+
+    for (const { message, references, url } of externalResults) {
       if (message) {
         for (const reference of references) {
           failures.push({
