@@ -58,8 +58,14 @@
 
 - **Requirements:** TSO-05
 - **Depends on:** T2, T3, T4, T5
+- **Status:** Complete
 - **Done when:** script tests, unit, integration, contract, e2e, browser, diagnostics, build, and verify
   pass serially where shared state requires it, with final timing and coverage evidence recorded.
+- **Evidence:** fast diagnostics and production builds pass without TypeScript, ESLint, SonarJS, link,
+  component-module, or test-title findings; unit gates pass 379 API, 94 backoffice, 62 public, and 44
+  tooling tests; contract, integration, e2e, and two Chromium smoke tests pass; production dependency
+  audits report zero vulnerabilities; and the release verifier passes all 120 HTTP assertions plus
+  migrations, deterministic seed, RBAC, visibility, and database evidence.
 
 ## T7 — Harden and validate web containers
 

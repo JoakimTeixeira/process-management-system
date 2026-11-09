@@ -3,6 +3,9 @@ import { defineConfig, devices } from '@playwright/test';
 const backofficeBaseUrl = 'http://127.0.0.1:4300';
 const publicBaseUrl = 'http://127.0.0.1:4301';
 
+// Playwright forces colored worker output; remove the conflicting inherited flag before it forks.
+delete process.env['NO_COLOR'];
+
 export default defineConfig({
   testDir: './e2e',
   fullyParallel: true,
