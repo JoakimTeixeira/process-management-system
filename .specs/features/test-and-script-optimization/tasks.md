@@ -25,8 +25,12 @@
 
 - **Requirements:** TSO-02, TSO-05
 - **Depends on:** T1
+- **Status:** Complete
 - **Done when:** safe runner/concurrency changes pass repeated package and root unit runs and improve
   or preserve elapsed time without reducing the test floor.
+- **Evidence:** configuration builders now accept explicit validated inputs, allowing Vitest worker
+  reuse without cross-file mock leakage; repeated API runs pass 379 tests in 5–7 seconds instead of
+  17–18 seconds, and the complete root unit gate passes in about 39 seconds instead of 58 seconds.
 
 ## T4 — Optimize diagnostics and link scripts
 

@@ -1,6 +1,9 @@
 import { registerAs } from '@nestjs/config';
 
-import { getValidatedEnvironment } from './env.validation';
+import {
+  EnvironmentVariables,
+  getValidatedEnvironment,
+} from './env.validation';
 
 export interface DatabaseConfig {
   host: string;
@@ -11,9 +14,9 @@ export interface DatabaseConfig {
   ssl: boolean;
 }
 
-export function buildDatabaseConfig(): DatabaseConfig {
-  const env = getValidatedEnvironment();
-
+export function buildDatabaseConfig(
+  env: EnvironmentVariables = getValidatedEnvironment(),
+): DatabaseConfig {
   return {
     host: env.DB_HOST,
     port: env.DB_PORT,

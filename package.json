@@ -47,7 +47,7 @@
     "@playwright/test": "^1.65.0",
     "@sonar/scan": "^4.3.5",
     "@types/node": "^26.6.6",
-    "concurrently": "^8.2.2",
+    "concurrently": "^9.2.5",
     "eslint": "^10.14.0",
     "eslint-plugin-sonarjs": "^4.2.2",
     "globals": "^17.14.0",

@@ -1,15 +1,18 @@
 import { registerAs } from '@nestjs/config';
 
-import { getValidatedEnvironment } from './env.validation';
+import {
+  EnvironmentVariables,
+  getValidatedEnvironment,
+} from './env.validation';
 
 export interface AppConfig {
   nodeEnv: 'development' | 'production' | 'test';
   port: number;
 }
 
-export function buildAppConfig(): AppConfig {
-  const env = getValidatedEnvironment();
-
+export function buildAppConfig(
+  env: EnvironmentVariables = getValidatedEnvironment(),
+): AppConfig {
   return {
     nodeEnv: env.NODE_ENV,
     port: env.PORT,

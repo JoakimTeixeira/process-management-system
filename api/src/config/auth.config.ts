@@ -1,6 +1,9 @@
 import { registerAs } from '@nestjs/config';
 
-import { getValidatedEnvironment } from './env.validation';
+import {
+  EnvironmentVariables,
+  getValidatedEnvironment,
+} from './env.validation';
 import {
   SECONDS_PER_DAY,
   SECONDS_PER_HOUR,
@@ -36,9 +39,9 @@ function parseJwtExpiresIn(value: string): number {
   return amount * unitMultiplier;
 }
 
-export function buildAuthConfig(): AuthConfig {
-  const env = getValidatedEnvironment();
-
+export function buildAuthConfig(
+  env: EnvironmentVariables = getValidatedEnvironment(),
+): AuthConfig {
   return {
     passwordPepper: env.PASSWORD_PEPPER,
     jwtSecret: env.JWT_SECRET,

@@ -8,6 +8,7 @@ export default defineConfig({
     include: ['src/**/*.spec.ts', 'src/**/*.vitest-spec.ts'],
     globals: true,
     environment: 'node',
+    isolate: false,
     setupFiles: ['reflect-metadata'],
     clearMocks: true,
     mockReset: true,

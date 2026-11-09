@@ -1,63 +1,44 @@
-import type { Mock } from 'vitest';
-
 import { buildAppConfig } from './app.config';
-import { getValidatedEnvironment } from './env.validation';
+import type { EnvironmentVariables } from './env.validation';
 
 import {
   DEFAULT_DB_PORT,
   DEFAULT_PORT,
   TEST_PORT,
   TEST_PORT_ALTERNATIVE,
-  TEST_TOKEN_EXPIRES_IN_SECONDS,
 } from '../common/constants/workflow.constants';
 
-vi.mock('./env.validation');
+const baseEnvironment: EnvironmentVariables = {
+  NODE_ENV: 'development',
+  PORT: DEFAULT_PORT,
+  DB_HOST: 'localhost',
+  DB_PORT: DEFAULT_DB_PORT,
+  DB_USERNAME: 'user',
+  DB_PASSWORD: 'pass',
+  DB_NAME: 'db',
+  DB_SSL: false,
+  PASSWORD_PEPPER: 'pepper',
+  JWT_SECRET: 'secret',
+  JWT_EXPIRES_IN: '15m',
+};
 
 describe('app.config', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   it('should build app config from environment', () => {
-    (getValidatedEnvironment as Mock).mockReturnValue({
-      NODE_ENV: 'development',
-      PORT: DEFAULT_PORT,
-      DB_HOST: 'localhost',
-      DB_PORT: DEFAULT_DB_PORT,
-      DB_USERNAME: 'user',
-      DB_PASSWORD: 'pass',
-      DB_NAME: 'db',
-      DB_SSL: false,
-      JWT_SECRET: 'secret',
-      JWT_EXPIRES_IN_SECONDS: TEST_TOKEN_EXPIRES_IN_SECONDS,
-      PASSWORD_PEPPER: 'pepper',
-    });
-
-    const config = buildAppConfig();
+    const config = buildAppConfig(baseEnvironment);
 
     expect(config).toEqual({
       nodeEnv: 'development',
       port: DEFAULT_PORT,
     });
-    expect(getValidatedEnvironment).toHaveBeenCalled();
   });
 
   it('should build app config with production environment', () => {
-    (getValidatedEnvironment as Mock).mockReturnValue({
+    const config = buildAppConfig({
+      ...baseEnvironment,
       NODE_ENV: 'production',
       PORT: TEST_PORT,
-      DB_HOST: 'localhost',
-      DB_PORT: DEFAULT_DB_PORT,
-      DB_USERNAME: 'user',
-      DB_PASSWORD: 'pass',
-      DB_NAME: 'db',
       DB_SSL: true,
-      JWT_SECRET: 'secret',
-      JWT_EXPIRES_IN_SECONDS: TEST_TOKEN_EXPIRES_IN_SECONDS,
-      PASSWORD_PEPPER: 'pepper',
     });
-
-    const config = buildAppConfig();
 
     expect(config).toEqual({
       nodeEnv: 'production',
@@ -66,21 +47,11 @@ describe('app.config', () => {
   });
 
   it('should build app config with test environment', () => {
-    (getValidatedEnvironment as Mock).mockReturnValue({
+    const config = buildAppConfig({
+      ...baseEnvironment,
       NODE_ENV: 'test',
       PORT: TEST_PORT_ALTERNATIVE,
-      DB_HOST: 'localhost',
-      DB_PORT: DEFAULT_DB_PORT,
-      DB_USERNAME: 'user',
-      DB_PASSWORD: 'pass',
-      DB_NAME: 'db',
-      DB_SSL: false,
-      JWT_SECRET: 'secret',
-      JWT_EXPIRES_IN_SECONDS: TEST_TOKEN_EXPIRES_IN_SECONDS,
-      PASSWORD_PEPPER: 'pepper',
     });
-
-    const config = buildAppConfig();
 
     expect(config).toEqual({
       nodeEnv: 'test',

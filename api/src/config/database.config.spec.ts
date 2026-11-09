@@ -1,39 +1,30 @@
-import type { Mock } from 'vitest';
-
 import { buildDatabaseConfig } from './database.config';
-import { getValidatedEnvironment } from './env.validation';
+import type { EnvironmentVariables } from './env.validation';
 
 import {
   DEFAULT_DB_PORT,
   DEFAULT_PORT,
   TEST_DATABASE_PORT,
   TEST_PORT,
-  TEST_TOKEN_EXPIRES_IN_SECONDS,
 } from '../common/constants/workflow.constants';
 
-vi.mock('./env.validation');
+const baseEnvironment: EnvironmentVariables = {
+  NODE_ENV: 'development',
+  PORT: DEFAULT_PORT,
+  DB_HOST: 'localhost',
+  DB_PORT: DEFAULT_DB_PORT,
+  DB_USERNAME: 'user',
+  DB_PASSWORD: 'pass',
+  DB_NAME: 'db',
+  DB_SSL: false,
+  PASSWORD_PEPPER: 'pepper',
+  JWT_SECRET: 'secret',
+  JWT_EXPIRES_IN: '15m',
+};
 
 describe('database.config', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   it('should build database config from environment', () => {
-    (getValidatedEnvironment as Mock).mockReturnValue({
-      NODE_ENV: 'development',
-      PORT: DEFAULT_PORT,
-      DB_HOST: 'localhost',
-      DB_PORT: DEFAULT_DB_PORT,
-      DB_USERNAME: 'user',
-      DB_PASSWORD: 'pass',
-      DB_NAME: 'db',
-      DB_SSL: false,
-      JWT_SECRET: 'secret',
-      JWT_EXPIRES_IN_SECONDS: TEST_TOKEN_EXPIRES_IN_SECONDS,
-      PASSWORD_PEPPER: 'pepper',
-    });
-
-    const config = buildDatabaseConfig();
+    const config = buildDatabaseConfig(baseEnvironment);
 
     expect(config).toEqual({
       host: 'localhost',
@@ -43,25 +34,19 @@ describe('database.config', () => {
       database: 'db',
       ssl: false,
     });
-    expect(getValidatedEnvironment).toHaveBeenCalled();
   });
 
   it('should build database config with SSL enabled', () => {
-    (getValidatedEnvironment as Mock).mockReturnValue({
+    const config = buildDatabaseConfig({
+      ...baseEnvironment,
       NODE_ENV: 'production',
       PORT: TEST_PORT,
       DB_HOST: 'prod-db.example.com',
-      DB_PORT: DEFAULT_DB_PORT,
       DB_USERNAME: 'prod-user',
       DB_PASSWORD: 'prod-password',
       DB_NAME: 'prod-db',
       DB_SSL: true,
-      JWT_SECRET: 'secret',
-      JWT_EXPIRES_IN_SECONDS: TEST_TOKEN_EXPIRES_IN_SECONDS,
-      PASSWORD_PEPPER: 'pepper',
     });
-
-    const config = buildDatabaseConfig();
 
     expect(config).toEqual({
       host: 'prod-db.example.com',
@@ -74,21 +59,10 @@ describe('database.config', () => {
   });
 
   it('should build database config with custom port', () => {
-    (getValidatedEnvironment as Mock).mockReturnValue({
-      NODE_ENV: 'development',
-      PORT: DEFAULT_PORT,
-      DB_HOST: 'localhost',
+    const config = buildDatabaseConfig({
+      ...baseEnvironment,
       DB_PORT: TEST_DATABASE_PORT,
-      DB_USERNAME: 'user',
-      DB_PASSWORD: 'pass',
-      DB_NAME: 'db',
-      DB_SSL: false,
-      JWT_SECRET: 'secret',
-      JWT_EXPIRES_IN_SECONDS: TEST_TOKEN_EXPIRES_IN_SECONDS,
-      PASSWORD_PEPPER: 'pepper',
     });
-
-    const config = buildDatabaseConfig();
 
     expect(config).toEqual({
       host: 'localhost',
