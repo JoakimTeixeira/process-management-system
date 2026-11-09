@@ -15,8 +15,8 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "lint": "eslint \"{src,apps,libs,test,seeds,scripts}/**/*.{ts,js}\" \"*.config.ts\" eslint.config.js --fix",
-    "lint:check": "eslint \"{src,apps,libs,test,seeds,scripts}/**/*.{ts,js}\" \"*.config.ts\" eslint.config.js --max-warnings=0",
+    "lint": "eslint \"{src,apps,libs,test,seeds,scripts}/**/*.{ts,js}\" \"*.config.{ts,mts}\" eslint.config.js --fix",
+    "lint:check": "eslint \"{src,apps,libs,test,seeds,scripts}/**/*.{ts,js}\" \"*.config.{ts,mts}\" eslint.config.js --max-warnings=0",
     "seed": "node --require ts-node/register --require tsconfig-paths/register ./seeds/run.ts",
     "typeorm": "node --require ts-node/register --require tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "migrate": "npm run db:init && node --require ts-node/register --require tsconfig-paths/register ./node_modules/typeorm/cli.js migration:run -d src/database/typeorm.datasource.ts",
@@ -26,11 +26,11 @@
     "openapi:check": "node --require ts-node/register --require tsconfig-paths/register ./scripts/generate-openapi.ts --check",
     "test": "vitest run --config ./vitest.config.mts",
     "test:contract": "npm run openapi:check && vitest run --config ./vitest.config.mts src/common/swagger/frontend-api-coverage.spec.ts src/common/swagger/frontend-schema-quality.spec.ts",
-    "test:integration": "vitest run --config ./vitest.integration.config.ts",
+    "test:integration": "vitest run --config ./vitest.integration.config.mts",
     "test:watch": "vitest --config ./vitest.config.mts",
     "test:cov": "vitest run --coverage --config ./vitest.config.mts",
     "test:debug": "node --inspect-brk ./node_modules/vitest/vitest.mjs run --config ./vitest.config.mts --no-file-parallelism --maxWorkers=1",
-    "test:e2e": "vitest run --config ./vitest.e2e.config.ts",
+    "test:e2e": "vitest run --config ./vitest.e2e.config.mts",
     "test:mutation": "stryker run",
     "typecheck": "tsc --noEmit -p tsconfig.json"
   },
@@ -87,5 +87,11 @@
     "typescript-eslint": "^8.20.0",
     "unplugin-swc": "^2.0.0",
     "vitest": "^5.1.0"
+  },
+  "overrides": {
+    "glob": "14.0.4",
+    "minimatch": "11.0.5",
+    "multer": "2.5.0",
+    "qs": "6.17.1"
   }
 }

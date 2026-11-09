@@ -5,10 +5,14 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    include: ['test/**/*.e2e-spec.ts'],
+    include: ['test/integration/**/*.spec.ts'],
     globals: true,
     environment: 'node',
     setupFiles: ['reflect-metadata'],
+    globalSetup: ['./test/integration/global-setup.ts'],
+    fileParallelism: false,
+    maxWorkers: 1,
+    isolate: false,
     clearMocks: true,
     mockReset: true,
     restoreMocks: true,
@@ -30,7 +34,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      src: resolve(__dirname, './src'),
+      src: resolve(import.meta.dirname, './src'),
     },
   },
 });
