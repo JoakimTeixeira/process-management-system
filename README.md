@@ -1,448 +1,102 @@
 # Process Management System
 
-COBIT-guided process management system.
+[![License](https://img.shields.io/badge/MIT-3B82F6?style=flat&logo=opensourceinitiative&label=License)](LICENSE)
+[![Backend](https://img.shields.io/badge/NestJS%2011-E0234E?style=flat&logo=nestjs&label=Backend)](https://github.com/nestjs/nest)
+[![Frontend](https://img.shields.io/badge/Angular%2020-DD0031?style=flat&logo=angular&label=Frontend)](https://github.com/angular/angular)
+[![Database](https://img.shields.io/badge/PostgreSQL%2016-4169E1?style=flat&logo=postgresql&label=Database)](https://github.com/postgres/postgres)
+[![Containers](https://img.shields.io/badge/Docker%20Compose-2496ED?style=flat&logo=docker&label=Containers)](https://github.com/docker/compose)
+[![Unit Tests](https://img.shields.io/badge/Vitest-6E9F18?style=flat&logo=vitest&label=Unit%20Tests)](https://github.com/vitest-dev/vitest)
+[![E2E Tests](https://img.shields.io/badge/Playwright-2EAD33?style=flat&logo=playwright&label=E2E%20Tests)](https://github.com/microsoft/playwright)
 
-## Prerequisites
+A web platform for documenting, governing, and publishing an organization's business processes, built on the COBIT 2019 IT governance framework. Processes are authored, reviewed, approved, and then shared with everyone through a public portal.
 
-- Docker Desktop with `docker compose`
-- Node.js 22+
-- npm 10+
-- Git Bash on Windows, or another POSIX-style shell
+## About
 
-For direct local development without Docker you will also need:
+Content is organized as Area → Process → Procedure. Every Process is stored as a **Process Version** that moves through a controlled lifecycle (`Draft` → `In Review` → `Approved` → `Published` → `Archived`). Each version can carry a Business Process Model and Notation (BPMN) diagram and be described in two architecture states: `AS-IS` (shown as "Current State") and `TO-BE` (shown as "Target State").
 
-- PostgreSQL 16+
+The system replaces a static portal that went offline for unknown reasons, was refreshed only by an overnight batch import, and had an unmaintained, non-versioned codebase. PMS addresses each of these:
 
-## Maintainer Quickstart
+- Current content: the portal reads published content straight from the API, with no batch import delay.
+- Trust: only `Published` versions are public. Every change passes through role-separated review and approval, and every state transition is recorded in an audit log.
+- Resilience: the database, API, and both web apps run as independent services behind Nginx entrypoints, and the application tier scales horizontally.
+- Maintainability: an open-source TypeScript stack with an OpenAPI contract, generated frontend types, and layered automated tests.
 
-From a fresh clone, install the locked dependencies and run the complete verification path:
+## Architecture
 
-```bash
-cp .env.example .env
-npm ci
-npm ci --prefix api
-npm ci --prefix web/backoffice
-npm ci --prefix web/public
-npm run test:browser:install
-npm run diagnostics:fast
-npm run sonar:start
-npm run diagnostics:sonar
-npm run test:all
-npm run test:browser
-npm run build
-npm run verify
+```mermaid
+flowchart LR
+    visitor["Public visitor"]
+    staff["Backoffice user"]
+    dev["API client / Swagger UI"]
+
+    subgraph docker["Docker Compose network"]
+        direction LR
+        publb["public-lb<br/>Nginx :8080"]
+        backlb["backoffice-lb<br/>Nginx :8081"]
+        apilb["api-lb<br/>Nginx :3000"]
+        webpub["web-public<br/>Angular"]
+        webback["web-backoffice<br/>Angular"]
+        api["api<br/>NestJS"]
+        pg[("postgres<br/>PostgreSQL 16")]
+        uploads[/"api/uploads<br/>BPMN files"/]
+    end
+
+    visitor --> publb --> webpub
+    staff --> backlb --> webback
+    webpub -- "/api/*" --> apilb
+    webback -- "/api/*" --> apilb
+    dev --> apilb
+    apilb --> api
+    api --> pg
+    api --> uploads
 ```
 
-`npm run verify` owns an isolated Compose project, applies migrations, seeds deterministic data, exercises the critical curl/RBAC/visibility flows, asserts database evidence, and cleans up. For an interactive stack, continue with [Local Docker Run](#local-docker-run), which shows `docker compose`, migrate, and seed commands.
+*Figure 1. Runtime architecture in Docker Compose. Users reach each app through its Nginx load balancer, and both web apps call the API through `api-lb`. Only the API talks to PostgreSQL and the BPMN upload folder.*
 
-| Command | Purpose |
+| Service | Role |
 | --- | --- |
-| `npm run test:unit` | Run all API, public, and backoffice Vitest unit suites. |
-| `npm run test:integration` | Run isolated PostgreSQL integration tests. |
-| `npm run test:contract` | Check OpenAPI, generated types, schemas, and frontend fixtures. |
-| `npm run test:e2e` | Run the API bootstrap and `/health` Supertest smoke. |
-| `npm run test:all` | Run all non-release test layers. |
-| `npm run test:browser` | Run public and backoffice entry-route smokes in Chromium. |
-| `npm run test:mutation --prefix api` | Run the scoped, non-blocking Stryker pilot. |
-| `npm run diagnostics` | Run TypeScript, strict ESLint, module conformance, and a full SonarQube project scan; print every unresolved issue and fail on warnings or errors. |
-| `npm run diagnostics:fast` | Run TypeScript, strict ESLint/SonarJS, module, and internal-link checks without requiring SonarQube. |
-| `npm run diagnostics:sonar` | Generate package coverage, then run the authenticated full-project SonarQube scan and server result retrieval. |
-| `npm run sonar:check` | Scan all supported project languages, wait for server processing, and print unresolved SonarQube issues and hotspots as CLI file/line diagnostics. |
-| `npm run sonar:start` / `sonar:stop` | Start or stop the optional local SonarQube Compose service while preserving its data volumes. |
-| `npm run test:diagnostics` | Prove analyzer coverage and failure handling with controlled fixtures. |
-| `npm run lint` | Run read-only ESLint with zero warnings and the backoffice module audit. |
-| `npm run typecheck` | Type-check application and test TypeScript across all packages. |
-| `npm run build` | Build all three packages. |
-| `npm run verify` | Run the release-level Compose, curl, and database gate. |
-| `npm run start:all` | Install and start all three development apps. |
+| `api` | NestJS REST API with JWT auth, role-based access control, workflow rules, and the audit trail. |
+| `web-public` | Angular public portal for published content. |
+| `web-backoffice` | Angular backoffice for authenticated governance and administration. |
+| `postgres` | Single PostgreSQL instance, persisted in the `pgdata` volume. |
+| `*-lb` | Nginx load balancers that stay the public entrypoints when services are scaled. |
 
-See the [diagnostics guide](docs/diagnostics.md), [contributor contract](AGENTS.md), [testing strategy](.specs/codebase/TESTING.md), and [verification guide](verification/README.md) for detailed setup and troubleshooting.
+Ports, roles, the content model, and the lifecycle diagram are in the [architecture guide](docs/architecture.md).
 
-### SonarQube CLI and VS Code parity
+## Quick start
 
-Start the pinned free Community Build service and run the full diagnostics gate:
-
-```powershell
-npm run sonar:start
-npm run diagnostics
-```
-
-```bash
-npm run sonar:start
-npm run diagnostics
-```
-
-Local credentials are generated under the ignored `.sonarqube/` directory rather than the
-application `.env`; CI should provide `SONAR_TOKEN` from its encrypted secret store. Bind VS Code
-Connected Mode to `http://localhost:9000` and project key `process-management-system`. The
-[diagnostics guide](docs/diagnostics.md) documents credential rotation, environment overrides,
-coverage, failure categories, and the limits of IDE/CLI parity.
-
-## Overview
-
-The system is split into four runtime concerns:
-
-- `postgres`: persistent relational database
-- `api`: NestJS backend with JWT auth, RBAC, workflow rules, Swagger, audit trail, and public catalog endpoints
-- `web-public`: Angular public portal for published processes, procedures, glossary, and BPMN viewing
-- `web-backoffice`: Angular backoffice for authenticated governance and administration
-
-In Docker, the application tier is exposed through Nginx load balancers:
-
-- `api-lb` on `http://localhost:3000`
-- `public-lb` on `http://localhost:8080`
-- `backoffice-lb` on `http://localhost:8081`
-
-The application services run on the internal Docker network and can be scaled horizontally. PostgreSQL remains a single persistent instance backed by the named volume `pgdata`.
-
-## Repository Structure
-
-```text
-process-management-system/
-├── api/                     NestJS backend
-├── web/public/              Angular public portal
-├── web/backoffice/          Angular backoffice
-├── docker/                  Nginx load balancer configs
-├── docs/                    Supporting project documentation
-├── .env.example             Root environment template
-└── docker-compose.yml       Local container orchestration
-```
-
-## Main Capabilities
-
-### API
-
-- JWT login and protected backoffice routes
-- Role-based access control for governance actions
-- CRUD flows for users, teams, glossary, areas, processes, versions, assets, and procedures
-- Workflow transitions for process versions
-- Audit log and version state history tracking
-- Public catalog endpoints under `/public/*`
-- Swagger UI at `/docs`
-- Health endpoint at `/health`
-
-### Public Portal
-
-- Browse published areas, processes, and procedures
-- Search published content
-- View process details and published versions
-- View BPMN diagrams
-- Compare current and target-state content
-- Browse glossary and supporting informational pages
-
-### Backoffice
-
-- Login with seeded or managed users
-- Manage teams and users
-- Create and update governed content
-- Upload BPMN assets
-- Move versions through lifecycle states
-- Review version history and governance metadata
-
-## Local Docker Run
-
-1. Create the local environment file:
+You need [Docker Desktop](https://www.docker.com/products/docker-desktop/) (or Docker Engine) with `docker compose`, and free ports `3000`, `8080`, `8081`, and `5431`. On Windows, run the commands in PowerShell or Git Bash. Node.js is not required.
 
 ```bash
 cp .env.example .env
-```
-
-2. Validate the Compose file:
-
-```bash
-docker compose config
-```
-
-3. Build and start the stack:
-
-```bash
-docker compose up -d --build
-```
-
-4. Run controlled schema and data bootstrap:
-
-```bash
-docker compose run --rm api npm run migrate
-docker compose run --rm api npm run seed
-```
-
-5. Confirm the running services:
-
-```bash
-docker compose ps
-```
-
-### Default URLs
-
-- API health: `http://localhost:3000/health`
-- Swagger: `http://localhost:3000/docs`
-- OpenAPI JSON: `http://localhost:3000/docs-json`
-- OpenAPI YAML: `http://localhost:3000/docs-yaml`
-- Public portal: `http://localhost:8080`
-- Back office: `http://localhost:8081`
-- PostgreSQL: `http://localhost:5432`
-
-### Seeded Users
-
-After `npm run seed`, these users are available with the password stored in `DEMO_USER_PASSWORD`:
-
-- `alice.editor@example.com` - `EDITOR`
-- `rachel.reviewer@example.com` - `REVIEWER`
-- `peter.publisher@example.com` - `PUBLISHER`
-- `victor.viewer@example.com` - `VIEWER`
-- `sam.admin@example.com` - `SYSTEM_ADMIN`
-
-## Rebuilding After Code Changes
-
-This setup does not hot-reload container images. After code changes, rebuild the affected service.
-
-### Rebuild the full stack
-
-```bash
-docker compose up -d --build
-```
-
-### Rebuild only the API
-
-```bash
-docker compose build api
-docker compose up -d api api-lb
-```
-
-### Rebuild only the public portal
-
-```bash
-docker compose build web-public
-docker compose up -d web-public public-lb
-```
-
-### Rebuild only the backoffice
-
-```bash
-docker compose build web-backoffice
-docker compose up -d web-backoffice backoffice-lb
-```
-
-### When schema changes
-
-```bash
-docker compose build api
-docker compose up -d api api-lb
-docker compose run --rm api npm run migrate
-```
-
-### When seed data changes
-
-```bash
-docker compose build api
-docker compose up -d api api-lb
-docker compose run --rm api npm run seed
-```
-
-## Creating Migrations
-
-Create a migration whenever you change the database schema or need a controlled data fix that must be applied consistently across environments.
-
-This repository currently uses manual migrations. The TypeORM CLI datasource used for migrations does not register entity metadata for auto-generation, so `migration:generate` is not the normal workflow here.
-
-Create an empty migration file and then write the SQL or TypeORM statements manually:
-
-```bash
-cd api
-npm run typeorm -- migration:create ./migrations/DescribeChangeHere
-```
-
-If you intentionally wire the CLI datasource to include entity metadata in the future, you can then use:
-
-```bash
-cd api
-npm run typeorm -- migration:generate ./migrations/DescribeChangeHere -d src/database/typeorm.datasource.ts
-```
-
-After creating a migration:
-
-1. Review the generated file under `api/migrations/`.
-2. Rebuild the API if you are using Docker.
-3. Apply the migration with `npm run migrate` locally or `docker compose run --rm api npm run migrate` in Docker.
-4. Reseed only if your change requires refreshed local demo data.
-
-Useful migration commands:
-
-```bash
-cd api
-npm run migrate
-npm run migrate:show
-npm run migrate:revert
-```
-
-## Scaling the Application Tier
-
-The exposed URLs stay the same even when services are scaled because the load balancers remain the public entrypoints.
-
-### Scale the API
-
-```bash
-docker compose up -d --scale api=2
-```
-
-### Scale the public portal
-
-```bash
-docker compose up -d --scale web-public=2
-```
-
-### Scale the backoffice
-
-```bash
-docker compose up -d --scale web-backoffice=2
-```
-
-### Scale all three application services
-
-```bash
-docker compose up -d --scale api=2 --scale web-public=2 --scale web-backoffice=2
-```
-
-PostgreSQL is intentionally not scaled with the same pattern. It remains a single persistent instance, while the application tier demonstrates horizontal scalability.
-
-## Useful Operations
-
-```bash
-# Show the current status of every service in the Compose stack.
-docker compose ps
-
-# Stream backend logs until you stop the command.
-docker compose logs -f api
-
-# Stream PostgreSQL logs until you stop the command.
-docker compose logs -f postgres
-
-# Stop and remove the containers, but keep the Postgres data volume and uploaded BPMN files.
-docker compose down
-
-# Stop and remove the containers and also delete the Postgres data volume.
-# This resets the database, but it does not delete uploaded BPMN files in ./api/uploads.
-docker compose down -v
-```
-
-## Resetting Local Persistent State
-
-The local Docker setup persists data in two places:
-
-- PostgreSQL data is stored in the named Docker volume `pgdata`.
-- Uploaded BPMN files are stored in the host folder `./api/uploads`.
-
-Reset only the database:
-
-```bash
-docker compose down -v
 docker compose up -d --build
 docker compose run --rm api npm run migrate
 docker compose run --rm api npm run seed
 ```
 
-Reset only uploaded BPMN asset files:
+The default values in `.env` work for a local demo without edits. Change `DB_PASSWORD`, `JWT_SECRET`, `PASSWORD_PEPPER`, and `DEMO_USER_PASSWORD` before sharing the stack.
 
-```bash
-docker compose down
-rm -rf ./api/uploads
-docker compose up -d --build
-```
+Then open:
 
-Full local reset of database and uploaded BPMN files:
+| App | URL |
+| --- | --- |
+| Public portal | <http://localhost:8080> |
+| Backoffice | <http://localhost:8081> |
+| Swagger UI | <http://localhost:3000/docs> |
+| API health | <http://localhost:3000/health> |
 
-```bash
-docker compose down -v
-rm -rf ./api/uploads
-docker compose up -d --build
-docker compose run --rm api npm run migrate
-docker compose run --rm api npm run seed
-```
+Sign in to the backoffice with any seeded user and the password from `DEMO_USER_PASSWORD` in `.env`: `alice.editor@example.com` (`EDITOR`), `rachel.reviewer@example.com` (`REVIEWER`), `peter.publisher@example.com` (`PUBLISHER`), `victor.viewer@example.com` (`VIEWER`), or `sam.admin@example.com` (`SYSTEM_ADMIN`).
 
-Use the full reset when you need to discard all local persisted state and return to a clean migrated-and-seeded environment.
+Run `docker compose down` to stop the stack and keep your data, or `docker compose down -v` to also delete the database.
 
-## Development Without Docker
+## Documentation
 
-Install dependencies first:
+- [Development guide](docs/development.md): hot-reload setup, migrations, tests, and diagnostics.
+- [Operations guide](docs/operations.md): scaling, resets, and troubleshooting.
+- [Architecture guide](docs/architecture.md): services, content model, lifecycle, and roles.
+- [Scope](docs/scope.md), [business rules](docs/business-rules.md), [user roles](docs/user-roles.md), and [technical specification](docs/technical-specification.md): requirements and COBIT traceability.
+- [Contributor contract](AGENTS.md) and [testing strategy](.specs/codebase/TESTING.md): read these before contributing.
 
-```bash
-cd api && npm install
-cd ../web/backoffice && npm install
-cd ../public && npm install
-```
+## License
 
-You can then run the apps directly from their project folders:
-
-- `api`: `npm run start:dev`
-- `web/public`: `npm start`
-- `web/backoffice`: `npm start`
-
-For direct local development:
-
-1. Create a root `.env` from `.env.example`.
-2. Make sure PostgreSQL is running and matches the root `.env` values.
-3. In `api/`, run:
-
-```bash
-npm run migrate
-npm run seed
-npm run start:dev
-```
-
-4. In separate terminals, run:
-
-```bash
-cd web/public && npm start
-cd web/backoffice && npm start
-```
-
-The frontend API base-url helpers use `http://localhost:3000` when the Angular dev servers are running on their own ports.
-
-## Common Commands
-
-### API
-
-```bash
-cd api
-npm run start:dev
-npm test
-npm run lint
-npm run migrate
-npm run seed
-```
-
-### Backoffice
-
-```bash
-cd web/backoffice
-npm start
-npm run test:headless
-npm run lint
-```
-
-### Public Portal
-
-```bash
-cd web/public
-npm start
-npm run test:headless
-npm run lint
-```
-
-## Verification
-
-Quick checks after setup:
-
-```bash
-docker compose ps
-docker compose logs --tail 50 api
-```
-
-Or validate the key URLs directly:
-
-- `http://localhost:3000/health`
-- `http://localhost:3000/docs`
-- `http://localhost:3000/docs-json`
-- `http://localhost:3000/docs-yaml`
-- `http://localhost:8080`
-- `http://localhost:8081`
+Released under the [MIT License](LICENSE).
