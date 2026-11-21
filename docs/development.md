@@ -43,21 +43,25 @@ Hot reload runs the API and both Angular dev servers on your machine and uses Po
    npm run seed
    ```
 
-To run each app in its own terminal instead, install dependencies once and then start the apps from their folders:
+To run each app in its own terminal instead:
 
-```bash
-cd api && npm install
-cd ../web/backoffice && npm install
-cd ../public && npm install
-```
+1. Install dependencies across all packages:
 
-| Package | Run | Test | Lint |
-| --- | --- | --- | --- |
-| `api` | `npm run start:dev` | `npm test` | `npm run lint` |
-| `web/public` | `npm start` | `npm run test:headless` | `npm run lint` |
-| `web/backoffice` | `npm start` | `npm run test:headless` | `npm run lint` |
+   ```bash
+   cd api && npm install
+   cd ../web/backoffice && npm install
+   cd ../public && npm install
+   ```
 
-Run these commands from inside each package folder. When the Angular dev servers run on their own ports, the frontends call the API at <http://localhost:3000>.
+2. Start the development servers in separate terminals:
+
+   | Package | Run | Test | Lint |
+   | --- | --- | --- | --- |
+   | `api` | `npm run start:dev` | `npm test` | `npm run lint` |
+   | `web/public` | `npm start` | `npm run test:headless` | `npm run lint` |
+   | `web/backoffice` | `npm start` | `npm run test:headless` | `npm run lint` |
+
+When the Angular dev servers run on their own ports, the frontends call the API at <http://localhost:3000>.
 
 ## Rebuild Docker images after code changes
 
@@ -80,7 +84,10 @@ docker compose build web-backoffice
 docker compose up -d web-backoffice backoffice-lb
 ```
 
-After a schema change, rebuild the API and run `docker compose run --rm api npm run migrate`. After a seed-data change, rebuild the API and run `docker compose run --rm api npm run seed`.
+When updating data definitions in Docker:
+
+- Schema changes: rebuild the API and run `docker compose run --rm api npm run migrate`.
+- Seed data changes: rebuild the API and run `docker compose run --rm api npm run seed`.
 
 ## Create a migration
 
@@ -100,7 +107,10 @@ Then:
 3. Apply it with `npm run migrate` locally or `docker compose run --rm api npm run migrate` in Docker.
 4. Reseed only if your change requires refreshed local demo data.
 
-Other migration commands, run inside `api/`: `npm run migrate:show` and `npm run migrate:revert`.
+Other migration commands (run inside `api/`):
+
+- `npm run migrate:show` to list applied and pending migrations
+- `npm run migrate:revert` to rollback the most recently applied migration
 
 If you later wire the CLI datasource to include entity metadata, `npm run typeorm -- migration:generate ./migrations/DescribeChangeHere -d src/database/typeorm.datasource.ts` becomes available.
 

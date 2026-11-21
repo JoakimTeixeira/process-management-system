@@ -50,32 +50,36 @@ The local Docker setup persists data in two places:
 
 On Windows, replace `rm -rf ./api/uploads` with `Remove-Item -Recurse -Force ./api/uploads` in PowerShell, or use Git Bash.
 
-Reset only the database:
+### Reset options
 
-```bash
-docker compose down -v
-docker compose up -d --build
-docker compose run --rm api npm run migrate
-docker compose run --rm api npm run seed
-```
+Choose the appropriate command set based on the state to clear:
 
-Reset only uploaded BPMN files:
+1. Reset only the database (preserves uploaded BPMN files):
 
-```bash
-docker compose down
-rm -rf ./api/uploads
-docker compose up -d --build
-```
+   ```bash
+   docker compose down -v
+   docker compose up -d --build
+   docker compose run --rm api npm run migrate
+   docker compose run --rm api npm run seed
+   ```
 
-Full reset of the database and uploaded files, returning to a clean migrated-and-seeded environment:
+2. Reset only uploaded BPMN files (preserves database records):
 
-```bash
-docker compose down -v
-rm -rf ./api/uploads
-docker compose up -d --build
-docker compose run --rm api npm run migrate
-docker compose run --rm api npm run seed
-```
+   ```bash
+   docker compose down
+   rm -rf ./api/uploads
+   docker compose up -d --build
+   ```
+
+3. Full local reset (discards all database records and uploaded files):
+
+   ```bash
+   docker compose down -v
+   rm -rf ./api/uploads
+   docker compose up -d --build
+   docker compose run --rm api npm run migrate
+   docker compose run --rm api npm run seed
+   ```
 
 ## Troubleshooting
 

@@ -29,7 +29,12 @@ Follow the test pyramid and gate commands in [.specs/codebase/TESTING.md](.specs
 
 ## Generated contracts
 
-The API OpenAPI document is the contract source. Do not hand-maintain frontend copies of contract-covered DTO fields or enums. Regenerate the per-app contract types after API schema changes and include generated output in the same commit.
+The API OpenAPI document is the contract source. Follow these rules for contract maintenance:
+
+1. Treat the API OpenAPI schema as the single source of truth.
+2. Do not hand-maintain frontend copies of contract-covered DTO fields or enums.
+3. Regenerate per-app contract types immediately after API schema changes.
+4. Include generated contract output in the same commit as the schema changes.
 
 ## Reference guides
 

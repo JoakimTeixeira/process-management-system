@@ -85,7 +85,13 @@ Then open:
 | Swagger UI | <http://localhost:3000/docs> |
 | API health | <http://localhost:3000/health> |
 
-Sign in to the backoffice with any seeded user and the password from `DEMO_USER_PASSWORD` in `.env`: `alice.editor@example.com` (`EDITOR`), `rachel.reviewer@example.com` (`REVIEWER`), `peter.publisher@example.com` (`PUBLISHER`), `victor.viewer@example.com` (`VIEWER`), or `sam.admin@example.com` (`SYSTEM_ADMIN`).
+Sign in to the backoffice using the password from `DEMO_USER_PASSWORD` in `.env` with any seeded account:
+
+- `alice.editor@example.com` (`EDITOR`)
+- `rachel.reviewer@example.com` (`REVIEWER`)
+- `peter.publisher@example.com` (`PUBLISHER`)
+- `victor.viewer@example.com` (`VIEWER`)
+- `sam.admin@example.com` (`SYSTEM_ADMIN`)
 
 Run `docker compose down` to stop the stack and keep your data, or `docker compose down -v` to also delete the database.
 

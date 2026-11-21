@@ -10,7 +10,12 @@
 | `web/backoffice` | Angular native Vitest | 32 | 86 | Pass |
 | **Unit total** | Vitest | 98 | **486** | Pass |
 
-Vitest is the active runner for all three packages. Jest and Karma configs and direct dependencies have been removed. Any Jest-named package remaining in a dependency tree is transitive build tooling, not an active test runner. Counts are a no-regression floor unless a task records an explicit reason. The 11 additional backoffice specs compile previously uncovered standalone component definitions and enforce the external module structure.
+Core runner policies:
+
+- Vitest is the active runner across all three packages (`api`, `web/public`, and `web/backoffice`).
+- Jest, Karma, and Jasmine configurations or direct dependencies have been removed. Any Jest-named package in a dependency tree is transitive build tooling, not an active test runner.
+- Recorded test counts serve as a strict no-regression floor unless a task documents an explicit reason.
+- The 11 additional backoffice specs compile previously uncovered standalone component definitions and enforce the external module structure.
 
 **Runner audit (2026-11-08):** the API uses `vitest.config.mts` plus focused e2e and integration Vitest configs, and both Angular projects use `@angular/build:unit-test`. Active manifests and source or config files contain no direct Jest, ts-jest, Jasmine, or Karma runner dependency or configuration.
 
@@ -63,8 +68,12 @@ Package-level focused commands remain useful while iterating: `npm test --prefix
 ## Recommended use
 
 1. During a focused change, run the affected package or spec.
-2. During iteration run `npm run diagnostics:fast`. Before handoff run `npm run diagnostics` with the local SonarQube service available.
-3. Before release handoff, run `npm run test:all`, `npm run test:browser`, `npm run build`, and `npm run verify` serially.
+2. During iteration, run `npm run diagnostics:fast`. Before handoff, run `npm run diagnostics` with the local SonarQube service available.
+3. Before release handoff, run the verification gates serially:
+   - `npm run test:all`
+   - `npm run test:browser`
+   - `npm run build`
+   - `npm run verify`
 
 `npm run verify` requires Docker Desktop with Compose v2 and free host ports `3100` and `55432`. See [verification/README.md](../../verification/README.md) for overrides and failure cleanup. Do not run it concurrently with another verification stack unless every project name and host port is isolated.
 
